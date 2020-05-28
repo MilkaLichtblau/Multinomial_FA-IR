@@ -1,5 +1,5 @@
-package multinomial;
+package algorithm;
 
-public class MeikeMultinomialFairRanker {
+public class MultinomialFairRanker {
 
 }
