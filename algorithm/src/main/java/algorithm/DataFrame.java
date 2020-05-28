@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-public class MeikeDataFrame {
+public class DataFrame {
     private Double[][] data;
     private String[] columnHeaders;
     
