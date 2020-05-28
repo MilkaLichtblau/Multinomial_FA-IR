@@ -1,2 +1,27 @@
+##################################
+# src code
+###################################
 *.project
 *.pydevproject
+
+# latex compiled sources
+########################
+
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.synctex.gz
+*.cut
+*.fls
+*.fdb_latexmk
+*.synctex(busy)
+
+########################
+# other
+########################
+*.eps
+samplebody*
+./paper/acmart-master/
