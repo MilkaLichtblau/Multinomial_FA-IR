@@ -1,0 +1,21 @@
+\section{Conclusions}\label{sec:conclusions}
+
+The method we have presented can generate a ranking with a guaranteed ranked group fairness, and as we have observed, does not introduce a large utility loss.
+%
+Compared to the baseline of~\citet{Feldman2015}, in general we introduce the same or less utility loss. We also do not assume that the distributions of qualifications in the protected and non-protected groups have a similar shape.
+%
+More importantly, we can directly control through a parameter $p$ the trade-off between fairness and utility.
+
+\spara{Future work.}
+For simplicity, we have considered a situation where people belong to a protected or a non-protected group, and leave the case of multiple protected groups or combinations of protected attributes for future work; we plan to adapt methods based on linear programming to achieve this~\cite{celis2017ranking}.
+%
+We are also experimenting with the related problems we considered in \S\ref{concept:related-problems}, including directly bounding the maximum utility loss (ordering or selection), while maximizing ranked group fairness, or weighing the three criteria.
+
+One of the main challenges is to create an in-processing ranking method instead of a post-processing one. However, we must also be cautious as results by \citet{kleinberg2016inherent} stating that one cannot have a predictor of risk that is well calibrated and satisfies statistical parity requirements, may imply that having a fair ranking by construction is not possible. We should also consider explainable discrimination~\cite{vzliobaite2011handling}, \todo{reference broken?}or even try to show a causal relation between protected attributes and qualification scores.
+
+Experimentally, there are several directions. For instance, we have used real datasets that exhibit some differences among protected and non-protected groups; experiments with synthetic datasets would allow to test with more extreme differences that are more rarely found in real data.
+%
+Further experimental work may be done to measure robustness to noise in qualifications, and later to evaluate the impact of this in a real application.
+
+\spara{Reproducibility.}
+All the code and data used on this paper is available online at \url{https://github.com/MilkaLichtblau/FA-IR_Ranking}.

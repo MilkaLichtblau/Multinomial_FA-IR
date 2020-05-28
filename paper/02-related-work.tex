@@ -1,0 +1,96 @@
+%!TEX root = main.tex
+\section{Related Work}\label{sec:related-work}
+\note[Meike]{Done}
+%Discrimination analysis is a multi-disciplinary problem, involving sociological causes, legal reasoning, economic models, statistical techniques~\cite{Romeimulti}.
+Anti-discrimination has only recently been considered from an algorithmic perspective~\cite{tuto2016}. Some proposals are oriented to discovering and measuring discrimination (e.g., \cite{peder2008,Bonchi2015,angwin_2016_machine}); while others deal with mitigating or removing discrimination to ensure that the results of different algorithms do not lead to discriminatory decisions
+%even if the training dataset reflects the historical bias against members of a protected group
+(e.g., \cite{CaldersICDM,HajianFerrer12,hajian2014,Dwork2012,Zemel2013}).
+%
+All these methods are known as \emph{fairness-aware algorithms}.
+
+\subsection{Group fairness and individual fairness}
+Two basic frameworks have been adopted in recent studies on algorithmic discrimination: \begin{inparaenum}[(i)]
+	\item \emph{individual fairness}, a requirement that individuals should be treated consistently~\cite{Dwork2012, zliobaite2015survey}; and
+	\item \emph{group fairness}, also known as statistical parity, a requirement that the protected groups should be treated similarly to the advantaged group or the populations as a whole \cite{peder2008,pederruggi2009}.
+\end{inparaenum}
+
+Different fairness-aware algorithms have been proposed to achieve group and/or individual fairness, mostly for predictive tasks. \citet{Calders2010} consider three approaches to deal with naive Bayes models by modifying the learning algorithm.
+%, two of which consist in modifying the learning algorithm: training a separate model for each protected group; and adding a
+%latent variable to model the class value in the absence of discrimination.
+\citet{CaldersICDM} modify the entropy-based splitting criterion in decision tree induction to account for attributes denoting protected groups.
+\citet{Kamishima2012}  apply a regularization (i.e., a
+change in the objective minimization function) to probabilistic discriminative models, such
+as logistic regression. \citet{zafar2015} describe fairness constraints for several classification methods.
+
+\citet{Feldman2015} study \emph{disparate impact} in data, which corresponds to an unintended form of group discrimination, in which a protected group is less likely to receive a benefit than a non-protected group~\cite{Barocas2014}.
+%
+A technically similar framework has been proposed by~\citet{zehlike2020matching} for a setting with multiple protected groups, which continuously interpolates between group fairness as statistical parity and individual fairness.
+%
+We use this method as one of our experimental baselines in \S\ref{sec:experiments-baselines}.
+%
+Their method uses optimal transport to calculate a fair score representation for each group, which is a the Wasserstein-barycenter of all group distributions.
+%
+It also enables a ``continuous interpolation'' that generates protected group scores between the original distribution in the protected groups and the distribution of the barycenter; this is controlled by a parameter but there are no guarantees on the proportions along the ranking.
+%
+Recently, other fairness-aware algorithms have been proposed for mostly supervised learning algorithms and different bias mitigation strategies \cite{hardt2016equality, jabbari2016fair, friedler2016possibility, celis2016fair, corbett2017algorithmic}.
+%
+\citet{hardt2016equality} study fairness in terms of \emph{equalized odds} and propose methods to ensure equal precision across groups.
+%
+\citet{zafar2017fairness} introduce a new concept called \emph{disparate mistreatment} and propose a method that seeks to reduce differences in error rates.
+
+In contrast, our paper considers the more general setting by achieving fairness in ranking algorithms and it even can be reduced to other problems such as classification (see section~\ref{concept:related-problems}). Our framework provides an evaluation criterion, ranked group fairness, and offers guarantees under this criterion, which can be directly controlled by a external parameter. Moreover, it takes into account both frameworks of group and individual fairness.
+
+\subsection{Fair Ranking}
+%
+Algorithmic fairness for rankings is concerned with a sufficient representation of different groups and consistent treatment of individuals across all ranking positions~\cite{castillo2018fairness}.
+%
+This leads to the motivation of producing rankings that do not systematically place items from protected groups at the lower positions of the result list.
+
+\citet{yang2016measuring} propose a statistical parity measure based on comparing the distributions of protected and non-protected candidates on different prefixes of the list and then averaging these differences in a discounted manner.
+%
+%The discount used is logarithmic, similarly to Normalized Discounted Cumulative Gain (NDCG, a popular measure used in Information Retrieval~\cite{jarvelin2002cumulated}).
+%
+%Finally, they show very preliminary results on incorporating their statistical parity measure into an optimization framework for improving fairness of ranked outputs while maintaining accuracy.
+%
+We use the synthetic ranking generation procedure of~\citet{yang2016measuring} to calibrate our method, and optimize directly the utility of a ranking that has statistical properties (ranked group fairness) resembling the ones of a ranking generated using that procedure; in other words, unlike them, we connect the creation of the ranking with the metric used for assessing fairness.
+Moreover, we also take into account the individual fairness criteria.
+%
+\citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
+%
+\citet{kulshrestha_2017_quantifying} determine search bias in rankings, proposing a quantification framework that measures the bias of the results of a search engine.
+This framework discerns to what extent this output bias is due to the input dataset that feeds into the ranking system, and how much is due to the bias introduced by the system itself.
+%
+\citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
+%
+Another quantification and bias mitigation framework is presented by~\citet{geyik2019fairness}, which can be tuned towards different definitions of fairness such as demographic parity and so-called equal opportunity.
+
+\citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
+
+\citet{singh2018fairness} introduce the concept of exposure of a group that incorporates the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
+%
+Parallel with~\citet{biega2018equity} they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. \cite{biega2018equity} additionally introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
+
+\citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
+
+\citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
+%
+The learning objective is concerned with disparate impact, whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
+
+
+\subsection{Diversity}
+
+To avoid showing only items of the same class has been studied in the Information Retrieval community for many years. The motivation there is that the user query may have different intents and we want to cover several of them with results.
+%
+The most common approach, since \citet{carbonell1998use}, is to consider distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is too similar to an element already appearing at a higher position.
+%
+Another often-used definition is that diversity should be understood as a way of incorporating uncertainty over user intents, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
+%
+\citet{kunaver2017diversity} and \citet{channamsetty2017recommender} deal with different kinds of bias such as presentation bias, where, only a few items are shown and most of the items are not shown, and also popularity bias and a negative bias towards new items.
+%
+An exception is \citet{sakai2011evaluating}, that provides a framework for per-intent NDCG for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} that we describe before, and not with a construction of such ranking, as we do in this paper.
+
+In contrast with most of the research on diversity of ranking results or recommendation systems, our work operates on a discrete set of classes (not based on similarity to previous items).
+%
+Furthermore, \emph{we are not only concerned with the utility that search system users receive}, but also with the exposure of the items being ranked, which can represent individual, organizations, or places.
+%
+Another key difference is that diversification is usually symmetric yielding interchangeable groups, while \emph{fairness-aware algorithms are usually asymmetric}, as they focus on increasing the overall benefit received by a disadvantaged or protected group.

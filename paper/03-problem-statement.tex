@@ -1,0 +1,315 @@
+%!TEX root = main.tex
+
+\section{The Fair Top-k Ranking Problem}\label{sec:problem}
+
+In this section, we first present the needed notation (\S\ref{subsec:preliminaries}), then the ranked group fairness criterion (\S\ref{subsec:group-fairness}-\S\ref{subsec:group-fairness-correction}) and criteria for utility (\S\ref{subsec:individual-fairness}). Finally we provide a formal problem statement (\S\ref{subsec:problem-statement}).
+%
+This formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting.
+
+\subsection{Preliminaries and Notation}
+\label{subsec:preliminaries}
+\spara{Notation.}
+Our notation is summarized on Table~\ref{tbl:notation}.
+%
+Let $[n] = \{ 1, 2, \dots, n \}$ represent a set of candidates out of which $k$ candidates will be selected; let $q_i$ for $i \in [n]$ denote the ``utility'' of candidate $i$: this can be interpreted as an overall summary of the fitness of candidate $i$ for the specific job, task, or search query, and it could be obtained by the combination of several different attributes.
+%
+If this utility is computed by a machine learning model, an effort must be done to prevent preexisting technical biases with respect to a protected group to be embodied in the model (see, e.g., \citemissing).
+%
+We define a set of candidate groups $G = \left\{ g_0, g_1, ... \right\}$ that form a partition of $[n]$. We will consider $g_0$ as non-protected (or privileged) and all remaining groups $g_i, i>0$ as protected (or disadvantaged).
+%: \left\{g \in \mathbb{N}_0 : g=0 \leftrightarrow g \text{ is non-protected, } g > 0 \leftrightarrow g \text{ is protected} \right\} $ such that $ g_i $ represents the group of candidate $ i $.
+%
+To simplify the presentation of the algorithms, we will assume there are at least $k$ candidates in each group. % enough candidates of each group, i.e., at least $k$ of each kind.
+
+Let ${\mathcal P}_{k,n}$ represent all the subsets of $[n]$ containing exactly $k$ elements.
+%
+Let ${\mathcal T}_{k,n}$ represent the union of all permutations of sets in ${\mathcal P}_{k,n}$, i.e., the solution space of the top-$k$ ranking problem.
+%
+For a permutation $\tau \in {\mathcal T}_{k,n}$ and an element $i \in [n]$, let
+\[
+r(i, \tau) = \begin{cases}
+\mathrm{rank~of~} i \mathrm{~in~} \tau & \mathrm{if~} i \in \tau~, \\
+%|\tau| + 1 & \mathrm{otherwise}.
+k + 1 & \mathrm{otherwise}.
+\end{cases}
+\]
+
+We further define $\tau_g$ to be the number of elements of group $ g $ that are present in $\tau$, i.e. $\tau_g = | \{ i \in \tau \wedge i \in g \} |$.
+%
+We set $ \tau_G = \langle\tau_g\rangle_{g \in G}$, i.e., the vector that contains these numbers for each group.
+%
+Let $c \in {\mathcal T}_{n,n}$ be the permutation of all candidates that sorts them by decreasing utility: $\forall i,j \in [n], r(i,c) < r(j,c) \Rightarrow q_i \ge q_j$.
+%
+For simplicity of exposition, we will assume all utilities $q_i$ are different, although our algorithms do not require this to be the case.
+%
+We call this the \emph{color-blind} ranking of elements in $[n]$, because it simply focuses on the utility and ignores whether elements are protected or non-protected.
+%
+Let $c|_k = \langle c(1), c(2), \dots, c(k) \rangle$ be a prefix of size $k$ of this ranking. \label{concept:color-blind-ranking}
+%
+
+\begin{table}[t]
+\caption{Notation.}
+\label{tbl:notation}
+\todo[Meike]{Edit this table to adapt it to the text.}
+\small\begin{tabular}{rl}\toprule
+\multicolumn{2}{c}{Candidates} \\
+$[n]$ & Set of candidates \\
+$q_i$ & Qualifications of candidate $i$ \\
+$g_i \in G$ & 0 if candidate $i$ is in the non-protected group, $ >0 $ otherwise\\
+\midrule
+\multicolumn{2}{c}{Rankings} \\
+${\mathcal T}_{k,n}$ & All permutations of $k$ elements of $[n]$ \\
+$\tau$ & One such permutation \\
+$r(i,\tau)$ & The position of $i$ in $\tau$, or $|\tau|+1$ if $i \notin \tau$ \\
+$ \tau_G = \left(\tau_1, \tau_2, \ldots, \tau_{|G|}\right)$ & Vector of number of elements from group $ g $ in $\tau$ \\
+$c$ & The ``color-blind'' ranking of $[n]$ by decreasing $q_i$ \\
+\midrule
+\multicolumn{2}{c}{Group fairness criteria} \\
+$p_G=\left(p_1, p_2, \ldots, p_{|G|}\right)$ & Vector of minimum proportions for candidates of each protected group $ g > 0 $ \\
+$\alpha$ & Significance value for ranked group fairness test \\
+$\alphaadj$ & Adjusted significance for each fair representation test \\
+\midrule
+\multicolumn{2}{c}{Individual fairness criteria} \\
+\midrule
+\multicolumn{2}{c}{Model Adjustment} \\
+$ \failprob $ & Probability that our test fails on a fair ranking \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\spara{Fair top-$k$ ranking criteria.}\label{concept:criteria}
+We would like to obtain $\tau \in {\mathcal T}_{k,n}$ with the following objectives, which we describe formally next: %\S\ref{subsec:group-fairness} and \S\ref{subsec:individual-fairness}:
+
+\begin{enumerate}[{Criterion} 1.]
+	\item Ranked group fairness: $\tau$ should fairly represent each protected group; \label{cond:ranking}
+
+	\item Selection utility: $\tau$ should contain the most qualified candidates; and \label{cond:selection}
+
+	\item Ordering utility: $\tau$ should be ordered by decreasing qualifications.\label{cond:ordering}
+\end{enumerate}
+
+We will provide a formal problem statement in \S\ref{subsec:problem-statement}, but first, we need to provide a formal definition of each of the criteria, which we do in the next sections.
+
+\subsection{Group Fairness for Rankings}
+\label{subsec:group-fairness}
+
+We operationalize criterion~\ref{cond:ranking} of section~\ref{concept:criteria} by means of a \emph{ranked group fairness criterion}, which takes as input
+\begin{inparaenum}[(i)]
+	\item $ \tau_G $, the number of candidates from each protected group in ranking $ \tau $, and
+	\item $ p_G $, a vector containing minimum target proportions for each protected group.
+\end{inparaenum}
+Intuitively, this criterion declares the ranking as unfair if candidates in a protected group is far below the required number according to the target proportions.
+%
+Additionally, this criterion looks at the ordering in which those candidates appear.
+%
+Specifically, the ranked group fairness criterion compares the number of protected elements from each group \emph{in every prefix} of the ranking, with the expected number of protected elements if they were picked at random using a stochastic process with a multinomial distribution, such as the roll of a dice.
+
+\begin{definition}[Multinomial Cumulative Distribution Function]
+	\note[ChaTo]{We need the number of groups to be defined somewhere, so the number of different events that can happen here is the number of groups. Otherwise using $k$ as the number of possible events is confusing, because we will be testing with $k$ trials, and $|G|$ possible events.}
+	\label{def:multinomialCDF}
+	% We do not need to cite this -- ChaTo
+  %	Adopting the notation from~\cite{multinomcdf}
+	Let $ n \in \mathbb{N}$ be a number of trials where each trial results in one of the events $ E_1, E_2, \ldots, E_k $ and on each trial $ E_j $ occurs with probability $ p_j $.
+	%
+	Let then $X$ %=\left\{X_1, X_2, \ldots, X_k\right\} $
+	be a set of random variables that is multinomially distributed $ X \sim \operatorname{Mult}(n, p)$ with parameters $ n $ and $ p = \langle p_1, p_2, \ldots, p_k \rangle$, and let $ X_j $ be the number of trials in which event $ E_j $ occurs.
+	%
+	We then define $ F\left(X; n, p\right) = P\left(E_1 \leq X_1, E_2 \leq X_2, \ldots, E_k \leq X_k\right)$ the multinomial cumulative distribution function which computes the probability that each event $ E_j $ occurs at most $ X_j $ times in $ n $ trials given probabilities $ p $.
+\end{definition}
+With the multinomial CDF the ranked group fairness criterion is formulated as a statistical significance test, and we include a significance parameter ($\alpha$) corresponding to the probability of rejecting a fair ranking (i.e., a Type I error).
+
+\begin{definition}[Fair representation condition]
+	\label{def:fair-representation-condition}
+	% Using n and p because they're standard notation for binomials
+	Let $F(X;n,p)$ be the multinomial cumulative distribution function as defined above.
+	%
+	A set $\tau \subseteq \mathcal{T}_{k,n}$, having $\tau_G$ protected candidates from each group fairly represents all protected groups with minimal proportions $p_G = (p_1, p_2, \ldots, p_{|G|})$ and significance $\alpha$,
+	%
+	if $F(\tau_G;k,p_G) > \alpha$.
+\end{definition}
+
+This is equivalent to using a statistical test where the null hypothesis $H_0$ is that the protected elements of each group are represented with a sufficient proportion $p_t$ ($\forall g \in G, p_t \ge p_g$), and the alternative hypothesis $H_a$ is that the proportion of protected elements is insufficient ($\exists g \in G: p_t < p_g$). In this test, the p-value is $F(\tau_G; k, p_G)$ and we reject the null hypothesis, and thus declare the ranking as unfair, if the p-value is less than or equal to the threshold $\alpha$.
+%
+Note that according to this definition, in the case of a set of size one, either the element is in the protected group, and then we satisfy fair representation, or the element is not in the protected group, and then we satisfy fair representation if $1 - F > \alpha$.
+
+The ranked group fairness criterion enforces the fair representation condition over all prefixes of the ranking:
+
+\begin{definition}[Ranked group fairness condition]
+	\label{def:ranked-group-fairness-condition}
+	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(\alpha, k, p)$.
+	%
+	Function $\adj(\alpha, k, p)$ is a corrected significance to account for multiple hypotheses testing (described in section~\ref{subsec:group-fairness-correction}).
+\end{definition}
+
+We note that a larger $\alpha$ means a larger probability of declaring a fair ranking as unfair.
+%
+In our experiments (section~\ref{sec:experiments}), we use a relatively conservative setting of $\alpha=0.1$.
+\todo{note other alphas here if needed}
+%
+The ranked group fairness condition can be used to create a \emph{ranked group fairness measure}. For a ranking $\tau$ and probabilities $p_G$, the ranked group fairness measure is the maximum $\alpha \in [0,1]$ for which $\tau$ satisfies the ranked group fairness condition.
+%
+Larger values indicate a stricter adherence to the required number of protected elements at each position.
+
+<<<<<<< HEAD
+=======
+\subsection{Verifying Ranked Group Fairness Efficiently}
+\todo{move this and the next section into their own section (a section only for model justment)}
+To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure of the inverse multinomial CDF with parameters $k, p_G$ and $ \alpha $ can be used.
+%
+The inverse CDF specifies value of a random variable such that the probability of the variable being less than or equal to that value equals a given probability (in our case $p_G$).
+%
+\subsubsection{Verifying ranked group fairness for a single protected group. }
+%
+For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF is called the quantile function.
+%
+Table~\ref{tbl:ranked_group_fairness_table} shows an example of such a pre-computed data structure with different $ k $ and $ p $, using $\alpha=0.1$.
+%
+For instance, for $p=0.5$ we see that at least 1 candidate from the protected group is needed in the top 4 positions, and 2 protected candidates in the top 7 positions.
+
+\begin{table}[t!]
+	\caption{Example values of $m_{\alpha,p}(k)$, the minimum number of candidates in the protected group that must appear in the top $k$ positions to pass the ranked group fairness criteria with $\alpha=0.1$ in a binomial setting.}
+	\vspace{-3mm}
+	\label{tbl:ranked_group_fairness_table}
+	\small\begin{tabular}{r|cccccccccccc}
+		\diaghead{some text}%
+		{p}{k}&
+		% & \multicolumn{10}{c}{k} \\
+		1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ \midrule
+		0.1      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  &  0 &  0 \\
+		0.2      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  &  1 &  1 \\
+		0.3      & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1  &  1 &  2 \\
+		0.4      & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 2 & 2  &  2 &  3 \\
+		0.5      & 0 & 0 & 0 & 1 & 1 & 1 & 2 & 2 & 3 & 3  &  3 &  4 \\
+		0.6      & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4  &  5 &  5 \\
+		0.7      & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 5 & 5  &  6 &  6 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsubsection{Verifying ranked group fairness for multiple protected groups.}
+As in the binomial case, the verification of ranked group fairness can be done efficiently with a pre-computed data structure.
+
+%
+For multiple protected groups this data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $ rather than a single line as in table~\ref{tbl:example_mtable}.
+%
+As the multinomial CDF is not injective and has hence no inverse, there is no quantile function that tells us exactly how many candidates are needed at each $ k $.
+%
+Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure becomes a tree.
+%
+Note that each tree level corresponds to the respective ranking position, i.e. the root level corresponds to the first ranking position and so forth.
+%
+Also note that each path corresponds to a valid distribution of protected candidates in the ranking.
+%
+\input{mTrees}
+%
+Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree. It assumes there are two protected groups with minimum proportions $1/3$ and $1/3$. Levels go from left to right starting from zero. To determine how many elements of each protected group are required in the ranking, we look at all nodes at a given level, which provide the acceptable configurations.
+%
+For instance in this tree when there are 3 elements, there are 3 nodes named ``[2,0],'' ``[1,1],'' and ``[0,2].'' This means it is acceptable to have among the first 3 elements in the ranking either at least 2 elements from group 1, or at least 1 element from each group, or at least 2 elements from group 2.
+%
+The tree is symmetric when the minimum proportions are equal. Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+
+Each path in these trees corresponds to a valid strategy to place a minimum amount of protected candidates in the ranking under test (or construction).
+%
+These trees can be constructed using the process described in algorithms~\ref{alg:computeMTree} and~\ref{alg:imcdf}.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALGORITHM COMPUTE MTREE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{algo-computeTree.tex}
+\todo[ChaTo]{Running time and space requirements of the algorithms in the worst case is needed.}
+
+\FloatBarrier
+\subsection{Utility}
+\label{subsec:individual-fairness}
+
+Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
+%
+In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity.
+%
+The qualifications may have been even proven to be biased against a protected group, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the ranked group fairness constraint.
+
+\spara{Ranked utility.}
+The ranked individual utility associated to a candidate $i$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
+
+\begin{definition}[Ranked utility of an element]
+	\label{def:rankedIndividualFairness}
+	The ranked utility of an element $i \in [n]$ in ranking $\tau$, is:
+	\[
+	\texttt{utility}(i,\tau) = \begin{cases}
+	\overline{q} - q_i & \textrm{if~} \overline{q} \triangleq \min_{j: r(j,\tau) < r(i,\tau)} q_j < q_i \\
+	0 & \textrm{otherwise}\\
+	\end{cases}
+	\]
+\end{definition}
+%
+\noindent By this definition, the maximum ranked individual utility that can be attained by an element is zero.
+%
+%Next, we apply the definition of ranked individual utility to two separate cases: when an element $i$ is included in the ranking, and when it is not included.
+
+\spara{Selection utility.}
+%
+We operationalize criterion~\ref{cond:selection} of Section~\ref{concept:criteria} by means of a \emph{selection utility} objective, which we will use to prefer rankings in which the more qualified candidates are included, and the less qualified, excluded.
+%
+\begin{definition}[Selection utility]
+	\label{def:selectionFairness}
+	The selection utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is $\min_{i \in [n], i \notin \tau} \texttt{utility}(i,\tau)$.
+\end{definition}
+%
+\noindent Naturally, a ``color-blind'' top-k ranking $c|_k$ maximizes selection utility, i.e., has selection utility zero.
+
+\spara{Ordering utility and in-group monotonicity.}
+%
+We operationalize criterion~\ref{cond:ordering} of Section \ref{concept:criteria} by means of an \emph{ordering utility} objective and an \emph{in-group monotonicity constraint}, which we will use to prefer top-$k$ lists in which the more qualified candidates are ranked above the less qualified ones.
+
+\begin{definition}[Ordering utility]
+	\label{def:orderingFairness}
+	The ordering utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is $\min_{i \in \tau} \texttt{utility}(i,\tau)$.
+\end{definition}
+
+\noindent The ordering utility of a ranking is only concerned with the candidate attaining the worst (minimum) ranked individual utility. Instead, the in-group monotonicity constraints refer to all elements, and specifies that both protected and non-protected candidates, independently, must be sorted by decreasing qualifications.
+
+\begin{definition}[In-group monotonicity]
+	\label{def:inGroupMonotonicity}
+	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the in-group monotonicity condition if $\forall i,j$ s.t. $g_i = g_j$, $r(i,\tau) < r(j,\tau) \Rightarrow q_i \ge q_j$.
+\end{definition}
+
+\noindent Again, the ``color-blind'' top-k ranking $c|_k$ maximizes ordering utility, i.e., has ordering utility zero; it also satisfies the in-group monotonicity constraint.
+
+\spara{Connection to the individual fairness notion.}\label{concept:our-utility-individual-fairness}
+%
+Our notion of utility is centered on individuals, for instance by taking the minima instead of averaging.
+%
+While other choices are possible, this has the advantage that we can trace loss of utility to specific individuals. These are the people who are ranked below a less qualified candidate, or excluded from the ranking, due to the ranked group fairness constraint.
+%
+This is connected to the notion of individual fairness, which requires people to be treated consistently~\cite{Dwork2012}. Under this interpretation, a consistent treatment should require that two people with the same qualifications be treated equally, and any deviation from this is in our framework a utility loss. This allows trade-offs to be made explicit.
+
+\subsection{Formal Problem Statement}
+\label{subsec:problem-statement}
+The criteria we have described allow for different problem statements, depending on whether we use ranked group fairness as a constraint and maximize ranked utility, or vice versa.
+%In this paper, we study in depth the following problem statement (an algorithm is presented in Section~\ref{sec:algorithms}).
+
+\newtheorem*{problem*}{Problem}
+\begin{problem*}[Fair top-k ranking]
+	Given a set of candidates $[n]$ and parameters $k$, $p_G$, and $\alpha$, produce a ranking $\tau \in {\mathcal T}_{k,n}$ that:
+	\begin{compactenum}[(i)]
+		\item \label{problem:constraint-monotonicity} satisfies the in-group monotonicity constraint;
+		\item \label{problem:constraint-rank} satisfies ranked group fairness with parameters $p_G$ and $\alpha$;
+		\item \label{problem:optimal-sel} achieves optimal selection utility subject to (\ref{problem:constraint-monotonicity}) and (\ref{problem:constraint-rank}); and
+		\item \label{problem:maximum-ord} maximizes ordering utility subject to (\ref{problem:constraint-monotonicity}), (\ref{problem:constraint-rank}), and (\ref{problem:optimal-sel}).
+	\end{compactenum}
+\end{problem*}
+
+\spara{Related problems.}\label{concept:related-problems}
+%
+Alternative problem definitions are possible with the general criteria described in Section~\ref{concept:criteria}.
+%
+For instance, instead of maximizing selection and ordering utility, we may seek to keep the utility loss bounded, e.g., producing a ranking that satisfies in-group monotonicity and ranked group fairness, and that produces an $\epsilon$-bounded loss with respect to ordering and/or selection utility.
+%
+If the ordering does not matter, we have a {\sc Fair Top-$k$ Selection Problem}, in which we just want to maximize selection utility.
+%
+Conversely, if the entire set $[n]$ must be ordered, we have a {\sc Fair Ranking Problem}, in which we just want to maximize ordering utility.
+%
+If $k$ is not specified, we have a {\sc Fair Selection Problem}, which resembles a classification problem, and in which the objective might be to  maximize a combination of ranked group fairness, selection utility, and ordering utility.
+%
+This multi-objective problem would require a definition of how to combine the different criteria.
+%
