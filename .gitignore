@@ -48,6 +48,7 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+.settings
 
 # Android Studio
 *.iml
