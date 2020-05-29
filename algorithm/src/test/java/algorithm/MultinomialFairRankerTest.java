@@ -1,7 +1,7 @@
-package algorithm;
-
 import static org.junit.Assert.*;
 
+import algorithm.Candidate;
+import algorithm.MultinomialFairRanker;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,11 +18,6 @@ public class MultinomialFairRankerTest {
         double[] p = {1.0/3.0, 1.0/3.0, 1.0/3.0};
         double alpha = 0.1;
         this.ranker = new MultinomialFairRanker(k,p,alpha);
-    }
-
-    @Test
-    public void testMTree() {
-        fail("Not yet implemented");
     }
 
     @Test
