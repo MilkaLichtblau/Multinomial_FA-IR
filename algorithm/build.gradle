@@ -19,6 +19,12 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ["src/test/java/algorithm"]  // Note @Peter's comment below
+        }
+    }
 }
