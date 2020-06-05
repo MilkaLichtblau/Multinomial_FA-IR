@@ -1,3 +1,5 @@
+package algorithm;
+
 import static org.junit.Assert.*;
 
 import algorithm.MCDFCache;
