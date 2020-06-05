@@ -430,7 +430,7 @@ Let $MT$ be a mTree and $\tau$ a ranking of size $k$. If and only if there exist
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
 	For all entries $m_{g}(h+1)$ of $m_{G,(h+1)}$ it is that $m_{g}(h) \leq m_{g}(h+1)$ by construction of the mTree in which requirements for protected candidates can only increase or stay the same.
-	
+
 	\noindent We can now distinguish between the following two cases:
 	\\
 	\textbf{Case 1:} $m_{G,(h+1)}$ is a child of $m_{G,h}$.
@@ -444,7 +444,7 @@ Let $MT$ be a mTree and $\tau$ a ranking of size $k$. If and only if there exist
 	Because of $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, and a successful test at level $h+1$, the following inequations hold: $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| \leq 1$ and $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| \leq 1$.
 	%
 	If $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ or $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it follows that $m_{G,(h+1)} = {m'}_{G,(h+1)}$ and we would have a contradiction with the fact that ${m'}_{G,(h+1)}$ is not a child of $m_{G,h}$, because then the nodes would be equal or different by one unit in one position.
-	
+
 	Hence, we need that either
 	(2.1) $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1$ and $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$,
 	or
@@ -452,14 +452,17 @@ Let $MT$ be a mTree and $\tau$ a ranking of size $k$. If and only if there exist
 	%
 	Case (2.1) means because of $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1 < \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ that the mTree accepts a ranking with one more protected candidate than required by the actual child of $m_{G,h}$, which contradicts our hypothesis that the ranking included the exact amount of required protected candidates. It follows that if we test $\tau_g (h+1)$ successfully with $m_{G,h+1}$ it would also satisfy ${m'}_{G,h+1}$.
 Case (2.2) is impossible according to algorithm \ref{alg:imcdf}.
-In detail, if $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ it means that $ m_g(h+1) = m_{g}(h)$ and therefore, $F(m_{g}(h);h+1,p_G) > \alpha$ (line $4$ of algorithm \ref{alg:imcdf}). But if for the child of $m_{G,h}$, namely ${m'}_{G,h+1}$ it holds that $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it means that 
-$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions can't be true at the same time, Case (2.2) can not occur.
+In detail, if $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ it means that $ m_g(h+1) = m_{g}(h)$ and therefore, $F(m_{g}(h);h+1,p_G) > \alpha$ (line $4$ of algorithm \ref{alg:imcdf}). But if for the child of $m_{G,h}$, namely ${m'}_{G,h+1}$ it holds that $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it means that
+$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) can not occur.
 \\
-In summary, we showed that Case (2.1) will only occur, if we ranked more protected candidates than needed and that the resulting test would be more strict than following a path through the mTree. We showed that Case (2.2) is impossible. There is only Case 1 left if we have ranked exactly the number of protected candidates needed at each level of the mTree.
-It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than the path.
+In summary, Case (2.1) will only occur if we ranked more protected candidates than needed, and that the resulting test would be more strict than following a path through the mTree.
+%
+We showed that Case (2.2) is impossible. There is only Case 1 left if we have ranked exactly the number of protected candidates needed at each level of the mTree.
+%
+It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than such path.
 \end{proof}
 %
-\noindent Because of theorem \ref{theorem:lazy-mTree-test} we can forget about the tree structure and store only a list of tuples for each position, additionally to removing doubled entries.
+\noindent Because of theorem \ref{theorem:lazy-mTree-test} we do not need to keep the tree structure and may store only a list of tuples for each level, additionally to removing duplicate entries.
 %
 In case of symmetric minimum proportions $p_G$, we can further save memory and computation time, by reducing mirrored entries such as $[0,2]$ and $[2,0]$.
 %
