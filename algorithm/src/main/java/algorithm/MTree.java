@@ -15,8 +15,8 @@ public class MTree {
      * Stores the minimum number of protected candidates needed at each position for all protected groups.
      * The inner HashSet represents all valid nodes of a particular level in the mTree without duplicates and without mirrors.
      */
-    private HashMap<Integer, HashSet<List<Integer>>> tree; //FIXME: write comment about how this data structure looks like
-    private HashMap<List<Integer>, Integer> nodeWeights;
+    private HashMap<Integer, HashSet<List<Integer>>> tree; 
+    private HashMap<List<Integer>, Integer> nodeWeights; //FIXME: write comment about how this data structure looks like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
