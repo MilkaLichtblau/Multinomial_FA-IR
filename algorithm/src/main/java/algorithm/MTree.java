@@ -4,13 +4,21 @@ import java.util.*;
 
 public class MTree {
 
+    public static int RUNS_FOR_FAILPROB = 10000;
+
     private double alpha;
     public double unadjustedAlpha;
     private double[] p;
     private int k;
+    /**
+     * Stores the minimum number of protected candidates needed at each position for all protected groups.
+     * The inner HashSet represents all valid nodes of a particular level in the mTree without duplicates and without mirrors.
+     */
     private HashMap<Integer, HashSet<List<Integer>>> tree; //FIXME: write comment about how this data structure looks like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
+    private boolean isMinimumProportionsSymmetric;
+    private Double failprob;
 
 
     public MTree(int k, double[] p, double alpha, boolean doAdjust, MCDFCache mcdfCache) {
@@ -20,6 +28,7 @@ public class MTree {
         this.unadjustedAlpha = alpha;
         this.doAdjust = doAdjust;
         this.mcdfCache = mcdfCache;
+        this.isMinimumProportionsSymmetric = isMinimumProportionsSymmetric();
         if (doAdjust) {
             this.tree = this.buildAdjustedMTree();
         } else {
@@ -87,19 +96,98 @@ public class MTree {
 
     private double getFailprob() {
         //TODO: Implement with experimental failprob calculation
-        return 0;
+        if (this.failprob == null) {
+            int successes = 0;
+            HashMap<ArrayList<Integer>, Boolean> testCache = new HashMap<>();
+            double[] cumulativeProportions = new double[p.length];
+            cumulativeProportions[0] = p[0];
+            for (int i = 1; i < p.length; i++) {
+                cumulativeProportions[i] = p[i] + cumulativeProportions[i - 1];
+            }
+            for (int i = 0; i < RUNS_FOR_FAILPROB; i++) {
+                ArrayList<Integer> ranking = createRanking(k, cumulativeProportions);
+                boolean test = testWithLazyMTree(ranking, testCache);
+                if (test) {
+                    successes++;
+                }
+            }
+
+            return 1 - (double) successes / RUNS_FOR_FAILPROB;
+        } else {
+            return this.failprob;
+        }
+    }
+
+    private ArrayList<Integer> createRanking(int k, double[] cumulativeProportions) {
+        ArrayList<Integer> ranking = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < k; i++) {
+            double r = random.nextDouble();
+            for (int j = 0; j < cumulativeProportions.length; j++) {
+                if (r <= cumulativeProportions[j]) {
+                    ranking.add(j);
+                    break;
+                }
+            }
+        }
+        return ranking;
+    }
+
+    private boolean testWithLazyMTree(ArrayList<Integer> ranking, HashMap<ArrayList<Integer>, Boolean> testCache) {
+        if (testCache.containsKey(ranking)) {
+            return testCache.get(ranking);
+        }
+        int[] seenSoFar = new int[p.length];
+        for (int i = 0; i < ranking.size(); i++) {
+            seenSoFar[ranking.get(i)]++;
+            HashSet<List<Integer>> nodes = this.tree.get(i);
+            int enoughProtectedCount = 0;
+            for (List<Integer> t : nodes) {
+                if (enoughProtected(t, seenSoFar)) {
+                    enoughProtectedCount++;
+                    break;
+                }
+            }
+            if (enoughProtectedCount == 0) {
+                testCache.put(ranking, false);
+                return false;
+            }
+        }
+        testCache.put(ranking, true);
+        return true;
+    }
+
+    private boolean enoughProtected(List<Integer> node, int[] seenSoFar) {
+        if (this.isMinimumProportionsSymmetric) {
+            boolean mirror1 = true;
+            boolean mirror2 = true;
+            List<Integer> mirrorNode = this.mirror(node);
+            for (int i = 1; i < seenSoFar.length; i++) {
+                if (node.get(i) > seenSoFar[i]) {
+                    mirror1 = false;
+                }
+                if (mirrorNode.get(i) > seenSoFar[i]) {
+                    mirror2 = false;
+                }
+            }
+            return mirror1 || mirror2;
+        } else {
+            for (int i = 1; i < seenSoFar.length; i++) {
+                if (node.get(i) > seenSoFar[i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private HashMap<Integer, HashSet<List<Integer>>> buildMTree() {
         HashMap<Integer, HashSet<List<Integer>>> tree = new HashMap<>();
         int position = 0;
 
-        //if minimum proportions in p[] are equal, we can delete many "mirrored" nodes and thus be more efficient
-        boolean isSymmetricPreferences = isMinimumProportionsSymmetric();
-
         //Create root node and fill it with zero entries
         //we need the root node for initialisation it represents ranking position 0 which is no real position
-        //FIXME: Maybe delete root node after creating the mtree
         List<Integer> root = new ArrayList<>(Arrays.asList(new Integer[this.p.length]));
         Collections.fill(root, 0);
         HashSet<List<Integer>> positionZero = new HashSet<>();
@@ -112,12 +200,14 @@ public class MTree {
             for (List<Integer> node : currentLevel) {
                 currentChildCandidates.addAll(inverseMultinomialCDF(node));
             }
-            if (isSymmetricPreferences) {
+            //if minimum proportions in p[] are equal, we can delete many "mirrored" nodes and thus be more efficient
+            if (this.isMinimumProportionsSymmetric) {
                 currentChildCandidates = removeMirroredNodes(currentChildCandidates);
             }
             position++;
             tree.put(position, currentChildCandidates);
         }
+        tree.remove(0);
         return tree;
     }
 
@@ -175,7 +265,7 @@ public class MTree {
      *
      * @return true if they are equal, otherwise false
      */
-    public boolean isMinimumProportionsSymmetric() {
+    private boolean isMinimumProportionsSymmetric() {
         if (p.length <= 2) {
             return false;
         }
@@ -188,7 +278,7 @@ public class MTree {
         }
         return true;
     }
-    
+
     public HashSet<List<Integer>> getAllNodesOfLevel(int k) {
         return this.tree.get(k);
     }
@@ -211,5 +301,9 @@ public class MTree {
 
     public HashMap<Integer, HashSet<List<Integer>>> getTree() {
         return tree;
+    }
+
+    public MCDFCache getMcdfCache() {
+        return this.mcdfCache;
     }
 }

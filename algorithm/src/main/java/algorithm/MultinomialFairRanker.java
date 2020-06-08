@@ -14,8 +14,8 @@ public class MultinomialFairRanker {
 
     private MTree mTree;
 
-    public MultinomialFairRanker(int k, double[] p, double alpha) {
-        this.mTree = new MTree(k,p,alpha);
+    public MultinomialFairRanker(int k, double[] p, double alpha, boolean doAdjust) {
+        this.mTree = new MTree(k,p,alpha, doAdjust, new MCDFCache(p));
     }
 
     /**
@@ -30,7 +30,9 @@ public class MultinomialFairRanker {
      * @return
      */
     public List<Candidate> buildFairRanking(HashMap<Integer, List<Candidate>> groupLists, FairRankingStrategy strategy, Integer length) {
-        
+        boolean isMinimumProportionsSymmetric = this.mTree.isMinimumProportionsSymmetric();
+        MCDFCache mcdfCache = this.mTree.getMcdfCache();
+
         for(int k=0; k < length; k++) {
             
         }
