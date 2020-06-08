@@ -5,6 +5,7 @@ import java.util.*;
 public class MTree {
 
     public static int RUNS_FOR_FAILPROB = 10000;
+    public static double EPS = 0.001;
 
     private double alpha;
     public double unadjustedAlpha;
@@ -15,6 +16,7 @@ public class MTree {
      * The inner HashSet represents all valid nodes of a particular level in the mTree without duplicates and without mirrors.
      */
     private HashMap<Integer, HashSet<List<Integer>>> tree; //FIXME: write comment about how this data structure looks like
+    private HashMap<List<Integer>, Integer> nodeWeights;
     private boolean doAdjust;
     private MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
@@ -28,22 +30,23 @@ public class MTree {
         this.unadjustedAlpha = alpha;
         this.doAdjust = doAdjust;
         this.mcdfCache = mcdfCache;
-        
+        this.nodeWeights = new HashMap<>();
+
         //check if we have symmetric proportions p[] to allow later optimizations
         this.isMinimumProportionsSymmetric = true;
         if (p.length <= 2) {
             // we only have one protected group
-            this.isMinimumProportionsSymmetric =  false;
+            this.isMinimumProportionsSymmetric = false;
         } else {
             for (int i = 1; i < p.length; i++) {
                 for (int j = 1; j < p.length; j++) {
                     if (p[i] != p[j]) {
-                        this.isMinimumProportionsSymmetric =  false;
+                        this.isMinimumProportionsSymmetric = false;
                     }
                 }
             }
         }
-        
+
         //check if Alpha Adjustment shall be used
         if (doAdjust) {
             this.tree = this.buildAdjustedMTree();
@@ -53,61 +56,49 @@ public class MTree {
     }
 
     private HashMap<Integer, HashSet<List<Integer>>> buildAdjustedMTree() {
-        //TODO: Refactor this
-//            double aMin = 0;
-//            double aMax = this.alpha;
-//            double aMid = (aMin + aMax) / 2.0;
-//
-//            MTree max = new MTree(this.k, this.p, aMax,false, this.mcdfCache);
-//            if (max.getFailprob() == 0) {
-//                return max.tree;
-//            }
-//            MultinomialMTableFailProbPair min = new MultinomialMTableFailProbPair(k, p, aMin, mcdfCache);
-//            MultinomialMTableFailProbPair mid = new MultinomialMTableFailProbPair(k, p, aMid, mcdfCache);
-//
-//            if (Math.abs(max.getFailprob() - alphaOld) <= tolerance) {
-//                return max;
-//            }
-//            while (true) {
-//                boolean trigger = false;
-//                char side = '0';
-//                if (mid.getFailprob() < alphaOld) {
-//                    aMin = aMid;
-//                    trigger = true;
-//                    side = 'l';
-//                } else if (mid.getFailprob() > alphaOld) {
-//                    aMax = aMid;
-//                    trigger = true;
-//                    side = 'r';
-//                }
-//                if (trigger && side == 'l') {
-//                    min = new MultinomialMTableFailProbPair(k, p, aMin, mcdfCache);
-//                    aMid = (aMin + aMax) / 2.0;
-//                    mid = new MultinomialMTableFailProbPair(k, p, aMid, mcdfCache);
-//                } else if (trigger && side == 'r') {
-//                    max = new MultinomialMTableFailProbPair(k, p, aMax, mcdfCache);
-//                    aMid = (aMin + aMax) / 2.0;
-//                    mid = new MultinomialMTableFailProbPair(k, p, aMid, mcdfCache);
-//                }
-//
-//                double midDiff = Math.abs(mid.getFailprob() - alphaOld);
-//                double maxDiff = Math.abs(max.getFailprob() - alphaOld);
-//                double minDiff = Math.abs(min.getFailprob() - alphaOld);
-//                if (midDiff <= tolerance && midDiff <= maxDiff && midDiff <= minDiff) {
-////                System.out.println("MID:Failprob: " + mid.getFailprob() + " ; k: " + k);
-//                    return mid;
-//                }
-//                if (minDiff <= tolerance && minDiff <= maxDiff && minDiff <= midDiff) {
-////                System.out.println("MIN:Failprob: " + min.getFailprob() + " ; k: " + k);
-//                    return min;
-//                }
-//                if (maxDiff <= tolerance && maxDiff <= minDiff && maxDiff <= midDiff) {
-////                System.out.println("MAX:Failprob: " + max.getFailprob() + " ; k: " + k);
-//                    return max;
-//                }
-////            System.out.println("midDiff: " + midDiff);
-//            }
-        return null;
+        double aMin = 0;
+        double aMax = this.alpha;
+        double aMid = (aMin + aMax) / 2.0;
+
+        MTree max = new MTree(this.k, this.p, aMax, false, this.mcdfCache);
+        if (max.getFailprob() == 0) {
+            return max.tree;
+        }
+        MTree min = new MTree(k, p, aMin, false, mcdfCache);
+        MTree mid = new MTree(k, p, aMid, false, mcdfCache);
+
+        if (Math.abs(max.getFailprob() - this.alpha) <= EPS) {
+            return max.tree;
+        }
+        while (true) {
+            if(mid.getFailprob() == this.alpha){
+                return mid.tree;
+            }
+            if (mid.getFailprob() < this.alpha) {
+                aMin = aMid;
+                min = new MTree(k, p, aMin,false, mcdfCache);
+                aMid = (aMin + aMax) / 2.0;
+                mid = new MTree(k, p, aMid,false, mcdfCache);
+            } else if (mid.getFailprob() > this.alpha) {
+                aMax = aMid;
+                max = new MTree(k, p, aMax,false, mcdfCache);
+                aMid = (aMin + aMax) / 2.0;
+                mid = new MTree(k, p, aMid,false, mcdfCache);
+            }
+
+            double midDiff = Math.abs(mid.getFailprob() - this.alpha);
+            double maxDiff = Math.abs(max.getFailprob() - this.alpha);
+            double minDiff = Math.abs(min.getFailprob() - this.alpha);
+            if (midDiff <= EPS && (midDiff <= maxDiff && midDiff <= minDiff)) {
+                return mid.tree;
+            }
+            if (minDiff <= EPS && (minDiff <= maxDiff && minDiff <= midDiff)) {
+                return min.tree;
+            }
+            if (maxDiff <= EPS && maxDiff <= minDiff && maxDiff <= midDiff) {
+                return max.tree;
+            }
+        }
     }
 
     private double getFailprob() {
@@ -127,11 +118,9 @@ public class MTree {
                     successes++;
                 }
             }
-
-            return 1 - (double) successes / RUNS_FOR_FAILPROB;
-        } else {
-            return this.failprob;
+            this.failprob = 1 - (double) successes / (double) RUNS_FOR_FAILPROB;
         }
+        return this.failprob;
     }
 
     private ArrayList<Integer> createRanking(int k, double[] cumulativeProportions) {
@@ -262,6 +251,7 @@ public class MTree {
         HashSet<List<Integer>> result = new HashSet<>();
         double mcdf = this.mcdfCache.mcdf(childNode);
         if (mcdf > this.alpha) {
+            this.nodeWeights.put(childNode,1);
             result.add(childNode);
         } else {
             for (int i = 1; i < node.size(); i++) {
@@ -295,7 +285,7 @@ public class MTree {
     public int getK() {
         return k;
     }
-    
+
     public boolean isMinimumProportionsSymmetric() {
         return isMinimumProportionsSymmetric;
     }
@@ -306,5 +296,13 @@ public class MTree {
 
     public MCDFCache getMcdfCache() {
         return this.mcdfCache;
+    }
+
+    public Integer getWeightOfNode(List<Integer> node){
+        if(this.nodeWeights.containsKey(node)){
+            return this.nodeWeights.get(node);
+        }else{
+            throw new IllegalArgumentException("MTree does not contain node.");
+        }
     }
 }
