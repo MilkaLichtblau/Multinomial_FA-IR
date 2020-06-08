@@ -1,31 +1,36 @@
 package algorithm;
 
-public class Candidate {
+public class Candidate implements Comparable<Candidate> {
 
-    private double score;
-    private double originalScore;
+    private Double score;
+    private Double originalScore;
     private int group;
 
-    public Candidate(double score, int group) {
+    public Candidate(Double score, int group) {
         this.score = score;
         this.originalScore = score;
         this.group = group;
     }
 
-    public void setScore(double score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 
-    public double getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public double getOriginalScore() {
+    public Double getOriginalScore() {
         return this.originalScore;
     }
 
     public int getGroup() {
         return group;
+    }
+    
+    @Override
+    public int compareTo(Candidate cand) {
+        return this.score.compareTo(cand.getScore());
     }
 
 }
