@@ -18,12 +18,12 @@ public class MCDFCache implements Serializable {
     }
 
     public double mcdf(List<Integer> signature){
-        int trials = signature.get(0);
-        int[] signatureAsArray = new int[p.length];
-        for(int i = 0; i<p.length; i++){
-            signatureAsArray[i] = signature.get(i);
-        }
         if(mcdfCache.get(signature)==null){
+            int trials = signature.get(0);
+            int[] signatureAsArray = new int[p.length];
+            for(int i = 0; i<p.length; i++){
+                signatureAsArray[i] = signature.get(i);
+            }
             double cdf = MultinomialDist.cdf(trials, p, signatureAsArray);
             mcdfCache.put(signature, cdf);
             return cdf;

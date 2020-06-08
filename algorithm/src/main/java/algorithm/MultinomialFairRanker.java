@@ -1,5 +1,6 @@
 package algorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ public class MultinomialFairRanker {
         
         this.mTree.isMinimumProportionsSymmetric();
         MCDFCache mcdfCache = this.mTree.getMcdfCache();
+        List<Candidate> result = new ArrayList<>();
 
         for(int k=0; k < length; k++) {
             //check how many candidates of each group is needed at least at current k
@@ -41,8 +43,9 @@ public class MultinomialFairRanker {
             // if the tree is symmetric, the selected node has a mirror with the exact same mcdf and 
             // is therefore equally likely to be selected. Pick one of these at random
             HashSet<List<Integer>> mNodesAtPosition = this.mTree.getAllNodesOfLevel(k);
+            Double highestMCDF = 0.0; 
             for (List<Integer> mNode : mNodesAtPosition) {
-                
+                nodeWithHighestMCDF = 
             }
         }
         
