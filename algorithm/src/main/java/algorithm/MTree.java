@@ -8,7 +8,7 @@ public class MTree {
     public double unadjustedAlpha;
     private double[] p;
     private int k;
-    private HashMap<Integer, HashSet<List<Integer>>> tree;
+    private HashMap<Integer, HashSet<List<Integer>>> tree; //FIXME: write comment about how this data structure looks like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
 
@@ -187,6 +187,10 @@ public class MTree {
             }
         }
         return true;
+    }
+    
+    public HashSet<List<Integer>> getAllNodesOfLevel(int k) {
+        return this.tree.get(k);
     }
 
     public boolean isAdjusted() {
