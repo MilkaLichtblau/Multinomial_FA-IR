@@ -102,7 +102,6 @@ public class MTree {
     }
 
     private double getFailprob() {
-        //TODO: Implement with experimental failprob calculation
         if (this.failprob == null) {
             int successes = 0;
             HashMap<ArrayList<Integer>, Boolean> testCache = new HashMap<>();
