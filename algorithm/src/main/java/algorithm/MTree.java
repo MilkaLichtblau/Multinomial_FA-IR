@@ -28,7 +28,23 @@ public class MTree {
         this.unadjustedAlpha = alpha;
         this.doAdjust = doAdjust;
         this.mcdfCache = mcdfCache;
-        this.isMinimumProportionsSymmetric = isMinimumProportionsSymmetric();
+        
+        //check if we have symmetric proportions p[] to allow later optimizations
+        this.isMinimumProportionsSymmetric = true;
+        if (p.length <= 2) {
+            // we only have one protected group
+            this.isMinimumProportionsSymmetric =  false;
+        } else {
+            for (int i = 1; i < p.length; i++) {
+                for (int j = 1; j < p.length; j++) {
+                    if (p[i] != p[j]) {
+                        this.isMinimumProportionsSymmetric =  false;
+                    }
+                }
+            }
+        }
+        
+        //check if Alpha Adjustment shall be used
         if (doAdjust) {
             this.tree = this.buildAdjustedMTree();
         } else {
@@ -260,25 +276,6 @@ public class MTree {
         return result;
     }
 
-    /**
-     * Method that checks if minimum proportions in p[] are equal
-     *
-     * @return true if they are equal, otherwise false
-     */
-    private boolean isMinimumProportionsSymmetric() {
-        if (p.length <= 2) {
-            return false;
-        }
-        for (int i = 1; i < p.length; i++) {
-            for (int j = 1; j < p.length; j++) {
-                if (p[i] != p[j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     public HashSet<List<Integer>> getAllNodesOfLevel(int k) {
         return this.tree.get(k);
     }
@@ -297,6 +294,10 @@ public class MTree {
 
     public int getK() {
         return k;
+    }
+    
+    public boolean isMinimumProportionsSymmetric() {
+        return isMinimumProportionsSymmetric;
     }
 
     public HashMap<Integer, HashSet<List<Integer>>> getTree() {
