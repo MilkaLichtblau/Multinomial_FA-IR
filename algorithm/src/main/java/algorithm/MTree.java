@@ -259,6 +259,7 @@ public class MTree {
                 temp.set(i, temp.get(i) + 1);
                 double mcdfTemp = this.mcdfCache.mcdf(temp);
                 if (mcdfTemp > this.alpha) {
+                    this.nodeWeights.put(temp,1);
                     result.add(temp);
                 }
             }
