@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import algorithm.MCDFCache;
 import algorithm.MTree;
+
+import org.checkerframework.checker.units.qual.m;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,19 +14,15 @@ import java.util.*;
 
 public class MTreeTest {
 
-    private MTree emptyMTree;
-
-    @Before
-    public void setup() {
-        int k = 0;
-        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
-        double alpha = 0.1;
-        this.emptyMTree = new MTree(k, p, alpha, false, new MCDFCache(p));
-    }
-
     @Test
     public void testRemoveMirroredNodes() {
-        //1. [1,1,1] case
+        int k = 9;
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        //1. [1,1,1] case: if the mirror of a node is equal to the node itself, 
+        //it must not delete itself
         HashSet<List<Integer>> expected = new HashSet<>();
         List<Integer> case1 = new ArrayList<>();
 
@@ -33,7 +31,7 @@ public class MTreeTest {
         case1.add(1);
         expected.add(case1);
 
-        HashSet<List<Integer>> actual = this.emptyMTree.removeMirroredNodes(expected);
+        HashSet<List<Integer>> actual = mTree.removeMirroredNodes(expected);
 
         assertEquals(expected, actual);
 
@@ -55,7 +53,7 @@ public class MTreeTest {
         case4.add(1);
         case4.add(1);
         expected2.add(case4);
-        HashSet<List<Integer>> actual2 = this.emptyMTree.removeMirroredNodes((HashSet<List<Integer>>) expected2.clone());
+        HashSet<List<Integer>> actual2 = mTree.removeMirroredNodes((HashSet<List<Integer>>) expected2.clone());
 
         assertEquals(expected2, actual2);
         //3. there are some mirror cases
@@ -81,7 +79,7 @@ public class MTreeTest {
         case8.add(1);
         case8.add(1);
         expected3.add(case8);
-        HashSet<List<Integer>> actual3 = this.emptyMTree.removeMirroredNodes((HashSet<List<Integer>>) expected3.clone());
+        HashSet<List<Integer>> actual3 = mTree.removeMirroredNodes((HashSet<List<Integer>>) expected3.clone());
 
         assertNotEquals(expected3, actual3);
     }
@@ -92,14 +90,6 @@ public class MTreeTest {
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
         HashMap<Integer, HashSet<List<Integer>>> expected = new HashMap<>();
-        //Root
-        HashSet<List<Integer>> position0 = new HashSet<>();
-        List<Integer> node0 = new ArrayList<>();
-        node0.add(0);
-        node0.add(0);
-        node0.add(0);
-        position0.add(node0);
-        expected.put(0, position0);
         //position 1
         HashSet<List<Integer>> position1 = new HashSet<>();
         List<Integer> node1 = new ArrayList<>();
@@ -149,5 +139,25 @@ public class MTreeTest {
         double[] p4 = {1.0/3.0,1.0/3.0,1.0/3.0};
         MTree t4 = new MTree(k,p4,alpha,false,new MCDFCache(p4));
         assertTrue(t4.isMinimumProportionsSymmetric());
+    }
+    
+    @Test
+    public void testToString() {
+        int k = 9;
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        String expected = "[1, 0, 0]\n"
+                + "[2, 0, 0]\n"
+                + "[3, 1, 0]\n"
+                + "[4, 2, 0], [4, 1, 1]\n"
+                + "[5, 3, 0], [5, 2, 1], [5, 1, 1]\n"
+                + "[6, 3, 1], [6, 2, 1]\n"
+                + "[7, 3, 1], [7, 2, 2]\n"
+                + "[8, 4, 1], [8, 3, 2], [8, 2, 2]\n";
+        String actual = mTree.toString();
+        
+        assertEquals(expected, actual);
     }
 }

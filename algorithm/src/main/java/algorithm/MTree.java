@@ -1,6 +1,7 @@
 package algorithm;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MTree {
 
@@ -304,5 +305,15 @@ public class MTree {
         }else{
             throw new IllegalArgumentException("MTree does not contain node.");
         }
+    }
+    
+    public String toString() {
+        String result = new String();
+        for (int pos = 1; pos < this.k; pos++) {
+            HashSet<List<Integer>> nodes = getAllNodesOfLevel(pos);
+            String line = nodes.stream().map(Object::toString).collect(Collectors.joining(", "));
+            result = result + line + "\n";
+        }
+        return result;
     }
 }
