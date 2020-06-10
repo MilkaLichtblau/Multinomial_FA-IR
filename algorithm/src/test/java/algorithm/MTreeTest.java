@@ -142,6 +142,58 @@ public class MTreeTest {
     }
     
     @Test
+    public void testGetActualChildren() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        // test level 3
+        List<Integer> thisNode = Arrays.asList(3, 0, 1);        
+        HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(4,0,1));
+        
+        HashSet<List<Integer>> actual = mTree.getActualChildren(thisNode, 4);
+        assertEquals(expected, actual);
+        
+        // test level 4
+        thisNode = Arrays.asList(4, 0, 1);        
+        expected = new HashSet<>();
+        expected.add(Arrays.asList(5,1,1));
+        expected.add(Arrays.asList(5,0,2));
+        
+        actual = mTree.getActualChildren(thisNode, 5);
+        assertEquals(expected, actual);
+        
+        // test level 6
+        thisNode = Arrays.asList(6, 1, 1);        
+        expected = new HashSet<>();
+        expected.add(Arrays.asList(7,1,2));
+        expected.add(Arrays.asList(7,2,1));
+        
+        actual = mTree.getActualChildren(thisNode, 7);
+        assertEquals(expected, actual);
+        
+        // test level 8
+        thisNode = Arrays.asList(8, 1, 2);        
+        expected = new HashSet<>();
+        expected.add(Arrays.asList(9,2,2));
+        expected.add(Arrays.asList(9,1,3));
+        
+        actual = mTree.getActualChildren(thisNode, 9);
+        assertEquals(expected, actual);
+        
+        // test level 8
+        thisNode = Arrays.asList(8, 1, 3);        
+        expected = new HashSet<>();
+        expected.add(Arrays.asList(9,1,3));
+        
+        actual = mTree.getActualChildren(thisNode, 9);
+        assertEquals(expected, actual);
+        
+    }
+    
+    @Test
     public void testToString() {
         int k = 9;
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};

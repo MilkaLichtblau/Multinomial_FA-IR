@@ -13,16 +13,17 @@ public class MTree {
     private double[] p;
     private int k;
     /**
-     * Stores the minimum number of protected candidates needed at each position for all protected groups.
-     * The inner HashSet represents all valid nodes of a particular level in the mTree without duplicates and without mirrors.
+     * Stores the minimum number of protected candidates needed at each position for
+     * all protected groups. The inner HashSet represents all valid nodes of a
+     * particular level in the mTree without duplicates and without mirrors.
      */
-    private HashMap<Integer, HashSet<List<Integer>>> tree; 
-    private HashMap<List<Integer>, Integer> nodeWeights; //FIXME: write comment about how this data structure looks like
+    private HashMap<Integer, HashSet<List<Integer>>> tree;
+    private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
+                                                         // like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
     private Double failprob;
-
 
     public MTree(int k, double[] p, double alpha, boolean doAdjust, MCDFCache mcdfCache) {
         this.k = k;
@@ -33,7 +34,7 @@ public class MTree {
         this.mcdfCache = mcdfCache;
         this.nodeWeights = new HashMap<>();
 
-        //check if we have symmetric proportions p[] to allow later optimizations
+        // check if we have symmetric proportions p[] to allow later optimizations
         this.isMinimumProportionsSymmetric = true;
         if (p.length <= 2) {
             // we only have one protected group
@@ -48,7 +49,7 @@ public class MTree {
             }
         }
 
-        //check if Alpha Adjustment shall be used
+        // check if Alpha Adjustment shall be used
         if (doAdjust) {
             this.tree = this.buildAdjustedMTree();
         } else {
@@ -72,19 +73,19 @@ public class MTree {
             return max.tree;
         }
         while (true) {
-            if(mid.getFailprob() == this.alpha){
+            if (mid.getFailprob() == this.alpha) {
                 return mid.tree;
             }
             if (mid.getFailprob() < this.alpha) {
                 aMin = aMid;
-                min = new MTree(k, p, aMin,false, mcdfCache);
+                min = new MTree(k, p, aMin, false, mcdfCache);
                 aMid = (aMin + aMax) / 2.0;
-                mid = new MTree(k, p, aMid,false, mcdfCache);
+                mid = new MTree(k, p, aMid, false, mcdfCache);
             } else if (mid.getFailprob() > this.alpha) {
                 aMax = aMid;
-                max = new MTree(k, p, aMax,false, mcdfCache);
+                max = new MTree(k, p, aMax, false, mcdfCache);
                 aMid = (aMin + aMax) / 2.0;
-                mid = new MTree(k, p, aMid,false, mcdfCache);
+                mid = new MTree(k, p, aMid, false, mcdfCache);
             }
 
             double midDiff = Math.abs(mid.getFailprob() - this.alpha);
@@ -191,8 +192,9 @@ public class MTree {
         HashMap<Integer, HashSet<List<Integer>>> tree = new HashMap<>();
         int position = 0;
 
-        //Create root node and fill it with zero entries
-        //we need the root node for initialisation it represents ranking position 0 which is no real position
+        // Create root node and fill it with zero entries
+        // we need the root node for initialisation it represents ranking position 0
+        // which is no real position
         List<Integer> root = new ArrayList<>(Arrays.asList(new Integer[this.p.length]));
         Collections.fill(root, 0);
         HashSet<List<Integer>> positionZero = new HashSet<>();
@@ -205,7 +207,8 @@ public class MTree {
             for (List<Integer> node : currentLevel) {
                 currentChildCandidates.addAll(inverseMultinomialCDF(node));
             }
-            //if minimum proportions in p[] are equal, we can delete many "mirrored" nodes and thus be more efficient
+            // if minimum proportions in p[] are equal, we can delete many "mirrored" nodes
+            // and thus be more efficient
             if (this.isMinimumProportionsSymmetric) {
                 currentChildCandidates = removeMirroredNodes(currentChildCandidates);
             }
@@ -221,7 +224,7 @@ public class MTree {
         /// 1. Nehme einen Knoten aus dem set
         // 2. Copy and Mirror den Knoten
         // 3. Gucke ob Mirror = Knoten ? Ja --> nächster Knoten Nein? ---> 4.
-        //4. Gibt es den im Set?
+        // 4. Gibt es den im Set?
 
         for (List<Integer> node : currentChildCandidates) {
             List<Integer> mirror = mirror(node);
@@ -251,7 +254,7 @@ public class MTree {
         HashSet<List<Integer>> result = new HashSet<>();
         double mcdf = this.mcdfCache.mcdf(childNode);
         if (mcdf > this.alpha) {
-            this.nodeWeights.put(childNode,1);
+            this.nodeWeights.put(childNode, 1);
             result.add(childNode);
         } else {
             for (int i = 1; i < node.size(); i++) {
@@ -259,7 +262,7 @@ public class MTree {
                 temp.set(i, temp.get(i) + 1);
                 double mcdfTemp = this.mcdfCache.mcdf(temp);
                 if (mcdfTemp > this.alpha) {
-                    this.nodeWeights.put(temp,1);
+                    this.nodeWeights.put(temp, 1);
                     result.add(temp);
                 }
             }
@@ -269,6 +272,45 @@ public class MTree {
 
     public HashSet<List<Integer>> getAllNodesOfLevel(int k) {
         return this.tree.get(k);
+    }
+
+    public HashSet<List<Integer>> getActualChildren(List<Integer> thisNode, int nextPosition) {
+        /**
+         * we have to retrieve the parent-child relationship for each tree layer in
+         * order to find a continuous path.
+         * 
+         * @returns all nodes that are actual children of a given node
+         */
+        HashSet<List<Integer>> actualChildren = new HashSet<>();
+        for (List<Integer> mNode : getAllNodesOfLevel(nextPosition)) {
+            ArrayList<Integer> nodeDistance = new ArrayList<Integer>();
+            for (int i = 0; i < thisNode.size(); i++) {
+                nodeDistance.add(mNode.get(i) - thisNode.get(i));
+            }
+            if (nodeDistance.stream().anyMatch(i -> i < 0)) {
+                // a child cannot have a lower value than thisNode at any Integer in the node
+                continue;
+            } else {
+                switch (nodeDistance.stream().reduce(0, Integer::sum)) {
+                case 1:
+                    // the child and thisNode have the same signature, in this case it is the only
+                    // child
+                    // any child candidates that may have been found before are invalid
+                    actualChildren.removeAll(actualChildren);
+                    actualChildren.add(mNode);
+                    return actualChildren;
+                case 2:
+                    // the child and thisNode have a distance of 1, which makes it a possible child,
+                    // if no child with the same node signature is found later
+                    actualChildren.add(mNode);
+                default:
+                    // a node distance larger than 2 indicates that this node is not a possible child
+                    break;
+                }
+            }
+        }
+
+        return actualChildren;
     }
 
     public boolean isAdjusted() {
@@ -299,14 +341,14 @@ public class MTree {
         return this.mcdfCache;
     }
 
-    public Integer getWeightOfNode(List<Integer> node){
-        if(this.nodeWeights.containsKey(node)){
+    public Integer getWeightOfNode(List<Integer> node) {
+        if (this.nodeWeights.containsKey(node)) {
             return this.nodeWeights.get(node);
-        }else{
+        } else {
             throw new IllegalArgumentException("MTree does not contain node.");
         }
     }
-    
+
     public String toString() {
         String result = new String();
         for (int pos = 1; pos < this.k; pos++) {
