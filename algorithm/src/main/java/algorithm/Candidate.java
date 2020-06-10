@@ -30,7 +30,11 @@ public class Candidate implements Comparable<Candidate> {
     
     @Override
     public int compareTo(Candidate cand) {
-        return this.score.compareTo(cand.getScore());
+        return cand.getScore().compareTo(this.score);
+    }
+    
+    public String toString() {
+        return "(group: " + group + ", score: " + score + ")\n";
     }
 
 }
