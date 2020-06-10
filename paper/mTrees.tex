@@ -93,9 +93,9 @@
 				[{[2, 0]}, before drawing tree={y-=1em}
 					[{[2, 1]}, before drawing tree={y-=1em}
 						[{[2, 1]}, before drawing tree={y-=1em}
-							[{[2, 1]}, before drawing tree={y-=2em}
+							[{[2, 1]}, name=doubled5, before drawing tree={y-=2em}
 								[{[2, 2]},  before drawing tree={y-=2em}
-									[{[2, 2]},  before drawing tree={y-=2em}
+									[{[2, 2]}, name=doubled6, before drawing tree={y-=2em}
 										[{[3, 2]},  before drawing tree={y-=2em}]
 									]
 								]
@@ -103,9 +103,9 @@
 						]]]
 				[{[1, 1]}
 				[{[1, 1]}, name=doubled1
-					[{[1, 1]}
+					[{[1, 1]}, name=parentDoubled5
 						[{[1, 2]}, name=doubled2, before drawing tree={y-=1em}
-							[{[1, 2]}, before drawing tree={y-=1em}
+							[{[1, 2]}, name=parentDoubled6, before drawing tree={y-=1em}
 								[{[1, 3]}, name=doubled3, before drawing tree={y-=2em}
 									[{[2, 3]},  before drawing tree={y-=2em}]
 									[{[1, 4]}, name=doubled4, before drawing tree={y-=2em}]
@@ -133,8 +133,11 @@
 				]]
 		]]
 		\draw (parentDoubled1.east)--(doubled1.west);
-		\draw (parentDoubled2.east)--(doubled2.west);				\draw (parentDoubled3.east)--(doubled3.west);
-		\draw (parentDoubled4.east)--(doubled4.west);
+		\draw (parentDoubled2.east)--(doubled2.west);				
+		\draw (parentDoubled3.east)--(doubled3.west);
+		\draw (parentDoubled4.east)--(doubled4.west);				
+		\draw (parentDoubled5.east)--(doubled5.west);
+		\draw (parentDoubled6.east)--(doubled6.west);
 	\end{forest}
 	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=\langle 0.2, 0.4 \rangle $ and $ \alpha=0.1 $. We see that the tree, in contrast to the mTree in Figure~\ref{fig:mtree-symmetric-unadjusted}, is not symmetric because the minimum proportions $ p_G $ differ.
 	\label{fig:mtree-asymmetric-unadjusted}}
