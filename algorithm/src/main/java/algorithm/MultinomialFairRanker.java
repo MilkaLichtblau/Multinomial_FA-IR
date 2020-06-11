@@ -67,7 +67,7 @@ public class MultinomialFairRanker {
             // get the next mNode in mTree, that maps the strategy
             // as their may be several possibilities when the tree is symmetric, take the one most fitting with the
             // given strategy
-            List<Integer> mNode = this.mTree.getCorrectChildNode(strategy, k, parent);
+            List<Integer> mNode = this.mTree.getCorrectChildNode(strategy, parent);
             boolean candidateAdded = false;
             // start from index 1, because first entry in mNode is current ranking position
             for (int groupID = 1; groupID < mNode.size(); groupID++) {
