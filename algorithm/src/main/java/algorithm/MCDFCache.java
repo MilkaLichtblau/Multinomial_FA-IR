@@ -3,6 +3,7 @@ package algorithm;
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class MCDFCache implements Serializable {
         this.mcdfCache = new HashMap<>();
         this.minimumProportionsAreEqual = MTree.checkIfMinimumProportionsAreEqual(this.p);
 
+    }
+
+    public double[] getP(){
+        return this.p;
     }
 
     public double mcdf(List<Integer> signature){
@@ -36,5 +41,19 @@ public class MCDFCache implements Serializable {
             return cdf;
         }
         return mcdfCache.get(signature);
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(List<Integer> key : mcdfCache.keySet()){
+            stringBuilder.append(key);
+            stringBuilder.append(" : ");
+            stringBuilder.append(mcdfCache.get(key));
+            stringBuilder.append('\n');
+        }
+        stringBuilder.append("p=");
+        stringBuilder.append(Arrays.toString(p));
+        return stringBuilder.toString();
     }
 }

@@ -20,7 +20,7 @@ public class MTreeTest {
         int k = 9;
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         //1. [1,1,1] case: if the mirror of a node is equal to the node itself, 
         //it must not delete itself
@@ -131,7 +131,7 @@ public class MTreeTest {
         node3.add(0);
         position3.add(node3);
         expected.put(3, position3);
-        HashMap<Integer, HashSet<List<Integer>>> actual = new MTree(k, p, alpha, false, new MCDFCache(p)).getTree();
+        HashMap<Integer, HashSet<List<Integer>>> actual = new MTree(k, p, alpha, false).getTree();
 
         assertEquals(expected, actual);
     }
@@ -142,19 +142,19 @@ public class MTreeTest {
         double alpha = 0.1;
 
         double[] p1 = {0.5,0.5};
-        MTree t1 = new MTree(k,p1,alpha,false,new MCDFCache(p1));
+        MTree t1 = new MTree(k,p1,alpha,false);
         assertFalse(t1.isMinimumProportionsSymmetric());
 
         double[] p2 = {0.6,0.4};
-        MTree t2 = new MTree(k,p2,alpha,false,new MCDFCache(p2));
+        MTree t2 = new MTree(k,p2,alpha,false);
         assertFalse(t2.isMinimumProportionsSymmetric());
 
         double[] p3 = {0.2,0.2,0.2,0.2,0.2};
-        MTree t3 = new MTree(k,p3,alpha,false,new MCDFCache(p3));
+        MTree t3 = new MTree(k,p3,alpha,false);
         assertTrue(t3.isMinimumProportionsSymmetric());
 
         double[] p4 = {1.0/3.0,1.0/3.0,1.0/3.0};
-        MTree t4 = new MTree(k,p4,alpha,false,new MCDFCache(p4));
+        MTree t4 = new MTree(k,p4,alpha,false);
         assertTrue(t4.isMinimumProportionsSymmetric());
     }
     
@@ -163,7 +163,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         //test level 2
         List<Integer> thisNode = Arrays.asList(2, 0, 0);        
@@ -224,7 +224,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
@@ -237,7 +237,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
@@ -254,7 +254,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
@@ -268,7 +268,7 @@ public class MTreeTest {
         int k = 9;
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         String expected = "[1, 0, 0]\n"
                 + "[2, 0, 0]\n"

@@ -1,8 +1,9 @@
 package algorithm;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class FailProbabilityEstimator {
+public class FailProbabilityEstimator implements Serializable {
 
     public static int RUNS_FOR_FAILPROB = 10000;
     private MTree mTree;

@@ -22,7 +22,7 @@ public class MultinomialFairRanker {
     private HashMap<Integer, Integer> numberOfCandidatesInResultPerGroup;
 
     public MultinomialFairRanker(int k, double[] p, double alpha, boolean doAdjust, List<Candidate> unfairRanking) {
-        this.mTree = new MTree(k, p, alpha, doAdjust, new MCDFCache(p));
+        this.mTree = new MTree(k, p, alpha, doAdjust);
 
         // create separate lists of candidates per group, with candidates sorted by
         // score

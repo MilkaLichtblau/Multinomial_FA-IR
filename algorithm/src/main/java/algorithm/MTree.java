@@ -1,16 +1,17 @@
 package algorithm;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
-public class MTree {
+public class MTree implements Serializable {
 
     public static double EPS = 0.001;
 
     private double alpha;
-    public double unadjustedAlpha;
+    private double unadjustedAlpha;
     private double[] p;
     private int k;
     /**
@@ -20,30 +21,51 @@ public class MTree {
      */
     private HashMap<Integer, HashSet<List<Integer>>> tree;
     private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
-                                                         // like
+    // like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
     private FailProbabilityEstimator failProbabilityEstimator;
 
-    public MTree(int k, double[] p, double alpha, boolean doAdjust, MCDFCache mcdfCache) {
-        this.k = k;
-        this.p = p;
-        this.alpha = alpha;
-        this.unadjustedAlpha = alpha;
-        this.doAdjust = doAdjust;
-        this.mcdfCache = mcdfCache;
-        this.nodeWeights = new HashMap<>();
-
-        // check if we have symmetric proportions p[] to allow later optimizations
-        this.isMinimumProportionsSymmetric = MTree.checkIfMinimumProportionsAreEqual(this.p);
-
-        // check if Alpha Adjustment shall be used
-        if (doAdjust) {
-            this.tree = this.buildAdjustedMTree();
+    public MTree(int k, double[] p, double alpha, boolean doAdjust) {
+        MTree loadedMTree = Serializer.loadMTree(k, p, alpha, doAdjust);
+        if (loadedMTree != null) {
+            this.loadMTreeFromSerializedObject(loadedMTree);
         } else {
-            this.tree = this.buildMTree();
+            this.k = k;
+            this.p = p;
+            this.alpha = alpha;
+            this.unadjustedAlpha = alpha;
+            this.doAdjust = doAdjust;
+            this.mcdfCache = Serializer.loadMCDFCache(p);
+            if (this.mcdfCache == null) {
+                this.mcdfCache = new MCDFCache(p);
+            }
+            this.nodeWeights = new HashMap<>();
+
+            // check if we have symmetric proportions p[] to allow later optimizations
+            this.isMinimumProportionsSymmetric = MTree.checkIfMinimumProportionsAreEqual(this.p);
+
+            // check if Alpha Adjustment shall be used
+            if (doAdjust) {
+                this.tree = this.buildAdjustedMTree();
+            } else {
+                this.tree = this.buildMTree();
+            }
         }
+    }
+
+    private void loadMTreeFromSerializedObject(MTree loadedMTree) {
+        this.k = loadedMTree.getK();
+        this.p = loadedMTree.getP();
+        this.alpha = loadedMTree.getAlpha();
+        this.unadjustedAlpha = loadedMTree.getUnadjustedAlpha();
+        this.doAdjust = loadedMTree.isAdjusted();
+        this.isMinimumProportionsSymmetric = loadedMTree.isMinimumProportionsSymmetric();
+        this.failProbabilityEstimator = loadedMTree.failProbabilityEstimator;
+        this.nodeWeights = loadedMTree.nodeWeights;
+        this.tree = loadedMTree.getTree();
+        this.mcdfCache = loadedMTree.getMcdfCache();
     }
 
     private HashMap<Integer, HashSet<List<Integer>>> buildAdjustedMTree() {
@@ -51,42 +73,48 @@ public class MTree {
         double aMax = this.alpha;
         double aMid = (aMin + aMax) / 2.0;
 
-        MTree max = new MTree(this.k, this.p, aMax, false, this.mcdfCache);
-        if (max.getFailprob() == 0) {
+        MTree max = new MTree(this.k, this.p, aMax, false);
+        if (max.getFailprob() == 0 || Math.abs(max.getFailprob() - this.alpha) <= EPS) {
             return max.tree;
         }
-        MTree min = new MTree(k, p, aMin, false, mcdfCache);
-        MTree mid = new MTree(k, p, aMid, false, mcdfCache);
 
-        if (Math.abs(max.getFailprob() - this.alpha) <= EPS) {
-            return max.tree;
-        }
+        MTree min = new MTree(k, p, aMin, false);
+        MTree mid = new MTree(k, p, aMid, false);
+
         while (true) {
             if (mid.getFailprob() == this.alpha) {
+                this.unadjustedAlpha = this.alpha;
+                this.alpha = mid.getAlpha();
                 return mid.tree;
             }
             if (mid.getFailprob() < this.alpha) {
                 aMin = aMid;
-                min = new MTree(k, p, aMin, false, mcdfCache);
+                min = new MTree(k, p, aMin, false);
                 aMid = (aMin + aMax) / 2.0;
-                mid = new MTree(k, p, aMid, false, mcdfCache);
+                mid = new MTree(k, p, aMid, false);
             } else if (mid.getFailprob() > this.alpha) {
                 aMax = aMid;
-                max = new MTree(k, p, aMax, false, mcdfCache);
+                max = new MTree(k, p, aMax, false);
                 aMid = (aMin + aMax) / 2.0;
-                mid = new MTree(k, p, aMid, false, mcdfCache);
+                mid = new MTree(k, p, aMid, false);
             }
 
             double midDiff = Math.abs(mid.getFailprob() - this.alpha);
             double maxDiff = Math.abs(max.getFailprob() - this.alpha);
             double minDiff = Math.abs(min.getFailprob() - this.alpha);
             if (midDiff <= EPS && (midDiff <= maxDiff && midDiff <= minDiff)) {
+                this.unadjustedAlpha = this.alpha;
+                this.alpha = mid.getAlpha();
                 return mid.tree;
             }
             if (minDiff <= EPS && (minDiff <= maxDiff && minDiff <= midDiff)) {
+                this.unadjustedAlpha = this.alpha;
+                this.alpha = min.getAlpha();
                 return min.tree;
             }
             if (maxDiff <= EPS && maxDiff <= minDiff && maxDiff <= midDiff) {
+                this.unadjustedAlpha = this.alpha;
+                this.alpha = max.getAlpha();
                 return max.tree;
             }
         }
@@ -99,7 +127,6 @@ public class MTree {
         }
         return failProbabilityEstimator.getFailProbability();
     }
-
 
 
     private HashMap<Integer, HashSet<List<Integer>>> buildMTree() {
@@ -129,6 +156,8 @@ public class MTree {
             position++;
             tree.put(position, currentChildCandidates);
         }
+        //FIXME: This will produce a LOT of files if we adjust
+        //Serializer.storeMTree(this);
         return tree;
     }
 
@@ -161,7 +190,7 @@ public class MTree {
         return mirror;
     }
 
-    public static boolean checkIfMinimumProportionsAreEqual(double[] p){
+    public static boolean checkIfMinimumProportionsAreEqual(double[] p) {
         if (p.length <= 2) {
             // we only have one protected group
             return false;
@@ -203,7 +232,7 @@ public class MTree {
         /**
          * we have to retrieve the parent-child relationship for each tree layer in
          * order to find a continuous path through the tree
-         * 
+         *
          * @returns all nodes that are actual children of @thisNode
          */
         HashSet<List<Integer>> actualChildren = new HashSet<>();
@@ -218,40 +247,40 @@ public class MTree {
                 continue;
             } else {
                 switch (nodeDistance.stream().reduce(0, Integer::sum)) {
-                case 1:
-                    // the child and thisNode have the same signature, in this case it is the only
-                    // child
-                    // any child candidates that may have been found before are invalid
-                    actualChildren.removeAll(actualChildren);
-                    actualChildren.add(mNode);
-                    return actualChildren;
-                case 2:
-                    // the child and thisNode have a distance of 1, which makes it a possible child,
-                    // if no child with the same node signature is found later
-                    actualChildren.add(mNode);
-                default:
-                    // a node distance larger than 2 indicates that this node is not a possible child
-                    break;
+                    case 1:
+                        // the child and thisNode have the same signature, in this case it is the only
+                        // child
+                        // any child candidates that may have been found before are invalid
+                        actualChildren.removeAll(actualChildren);
+                        actualChildren.add(mNode);
+                        return actualChildren;
+                    case 2:
+                        // the child and thisNode have a distance of 1, which makes it a possible child,
+                        // if no child with the same node signature is found later
+                        actualChildren.add(mNode);
+                    default:
+                        // a node distance larger than 2 indicates that this node is not a possible child
+                        break;
                 }
             }
         }
 
         return actualChildren;
     }
-    
+
     protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, List<Integer> parent) {
         /**
          * from all possible mNodes at this layer, returns the node that fits the
          * defined strategy
-         * 
+         *
          * if the minimum proportions are symmetric, we have a symmetric tree and hence
          * all nodes may have mirror nodes that have the same mcdf value. In this case
          * they should be equally likely to be picked.
-         * 
+         *
          * @param strategy: enum to choose from different ranking strategies --
          *        MOST_LIKELY = child node with highest mcdf MOST_UNLIKELY = child with
          *        lowest mcdf (still valid though) RANDOM = pick random child node
-         * 
+         *
          */
         HashSet<List<Integer>> children = getActualChildren(parent);
 
@@ -259,42 +288,42 @@ public class MTree {
         List<Integer> result = children.iterator().next();
 
         switch (strategy) {
-        case MOST_LIKELY:
-            Double highestMCDF = 0.0;
-            // find the likeliest node from all possible children (which are not all nodes at this layer)
-            for (List<Integer> mNode : children) {
-                if (mcdfCache.mcdf(mNode) > highestMCDF) {
-                    highestMCDF = mcdfCache.mcdf(mNode);
-                    result = mNode;
+            case MOST_LIKELY:
+                Double highestMCDF = 0.0;
+                // find the likeliest node from all possible children (which are not all nodes at this layer)
+                for (List<Integer> mNode : children) {
+                    if (mcdfCache.mcdf(mNode) > highestMCDF) {
+                        highestMCDF = mcdfCache.mcdf(mNode);
+                        result = mNode;
+                    }
                 }
-            }
-            break;
-        case MOST_UNLIKELY:
-            Double lowestMCDF = 1.0;
-            // find the unlikeliest node
-            for (List<Integer> mNode : children) {
-                if (mcdfCache.mcdf(mNode) < lowestMCDF) {
-                    lowestMCDF = mcdfCache.mcdf(mNode);
-                    result = mNode;
+                break;
+            case MOST_UNLIKELY:
+                Double lowestMCDF = 1.0;
+                // find the unlikeliest node
+                for (List<Integer> mNode : children) {
+                    if (mcdfCache.mcdf(mNode) < lowestMCDF) {
+                        lowestMCDF = mcdfCache.mcdf(mNode);
+                        result = mNode;
+                    }
                 }
-            }
-            break;
-        case RANDOM:
-            // from all elements in set, pick one at random from uniform distributed
-            // randomness
-            int randomIndex = new Random().nextInt(children.size());
-            Iterator<List<Integer>> iter = children.iterator();
-            for (int i = 0; i < randomIndex; i++) {
-                iter.next();
-            }
-            result = iter.next();
-            break;
-        default:
-            throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
+                break;
+            case RANDOM:
+                // from all elements in set, pick one at random from uniform distributed
+                // randomness
+                int randomIndex = new Random().nextInt(children.size());
+                Iterator<List<Integer>> iter = children.iterator();
+                for (int i = 0; i < randomIndex; i++) {
+                    iter.next();
+                }
+                result = iter.next();
+                break;
+            default:
+                throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
         }
         return result;
     }
-    
+
     public List<Integer> getRoot() {
         return this.tree.get(0).iterator().next();
     }
@@ -343,5 +372,9 @@ public class MTree {
             result = result + line + "\n";
         }
         return result;
+    }
+
+    public double getUnadjustedAlpha() {
+        return this.unadjustedAlpha;
     }
 }
