@@ -6,7 +6,6 @@ import algorithm.MCDFCache;
 import algorithm.MTree;
 import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
-import org.checkerframework.checker.units.qual.m;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,8 +25,14 @@ public class MTreeTest {
         //1. [1,1,1] case: if the mirror of a node is equal to the node itself, 
         //it must not delete itself
         HashSet<List<Integer>> expected = new HashSet<>();
-        List<Integer> case1 = new ArrayList<>();
 
+        List<Integer> case0 = new ArrayList<>();
+        case0.add(0);
+        case0.add(0);
+        case0.add(0);
+        expected.add(case0);
+
+        List<Integer> case1 = new ArrayList<>();
         case1.add(1);
         case1.add(1);
         case1.add(1);
@@ -39,6 +44,7 @@ public class MTreeTest {
 
         //2. there is no mirror case
         HashSet<List<Integer>> expected2 = new HashSet<>();
+        expected2.add(case0);
         List<Integer> case2 = new ArrayList<>();
         case2.add(1);
         case2.add(0);
@@ -60,6 +66,7 @@ public class MTreeTest {
         assertEquals(expected2, actual2);
         //3. there are some mirror cases
         HashSet<List<Integer>> expected3 = new HashSet<>();
+        expected3.add(case0);
         List<Integer> case5 = new ArrayList<>();
         case5.add(2);
         case5.add(0);
@@ -92,6 +99,14 @@ public class MTreeTest {
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
         HashMap<Integer, HashSet<List<Integer>>> expected = new HashMap<>();
+        //position 0 (root)
+        List<Integer> node0 = new ArrayList<>();
+        node0.add(0);
+        node0.add(0);
+        node0.add(0);
+        HashSet<List<Integer>> position0 = new HashSet<>();
+        position0.add(node0);
+        expected.put(0,position0);
         //position 1
         HashSet<List<Integer>> position1 = new HashSet<>();
         List<Integer> node1 = new ArrayList<>();
