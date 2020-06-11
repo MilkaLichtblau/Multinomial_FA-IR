@@ -160,7 +160,7 @@ public class MTree {
         return mirror;
     }
 
-    public static boolean checkIfMinimumProportionsAreEqual(double[] p){
+    public static boolean checkIfMinimumProportionsAreEqual(double[] p) {
         if (p.length <= 2) {
             // we only have one protected group
             return false;
@@ -206,8 +206,8 @@ public class MTree {
          * @returns all nodes that are actual children of @thisNode
          */
         HashSet<List<Integer>> actualChildren = new HashSet<>();
-        int nextPosition = thisNode.get(0);
-        for (List<Integer> mNode : this.tree.get(nextPosition)) {
+        int nextPosition = thisNode.get(0) + 1;
+        for (List<Integer> mNode : getAllNodesOfTreeLevel(nextPosition)) {
             ArrayList<Integer> nodeDistance = new ArrayList<Integer>();
             for (int i = 0; i < thisNode.size(); i++) {
                 nodeDistance.add(mNode.get(i) - thisNode.get(i));
@@ -229,7 +229,8 @@ public class MTree {
                     // if no child with the same node signature is found later
                     actualChildren.add(mNode);
                 default:
-                    // a node distance larger than 2 indicates that this node is not a possible child
+                    // a node distance larger than 2 indicates that this node is not a possible
+                    // child
                     break;
                 }
             }
@@ -237,7 +238,7 @@ public class MTree {
 
         return actualChildren;
     }
-    
+
     protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, List<Integer> parent) {
         /**
          * from all possible mNodes at this layer, returns the node that fits the
@@ -255,16 +256,25 @@ public class MTree {
         HashSet<List<Integer>> children = getActualChildren(parent);
 
         // get any node of this layer in the mTree to initialize
-        List<Integer> result = children.iterator().next();
+        List<Integer> result = new ArrayList<>();
+        HashSet<List<Integer>> possibleResults = new HashSet<>();
 
         switch (strategy) {
         case MOST_LIKELY:
             Double highestMCDF = 0.0;
-            // find the likeliest node from all possible children (which are not all nodes at this layer)
+            // find the likeliest node from all possible children (which are not all nodes
+            // at this layer)
             for (List<Integer> mNode : children) {
                 if (mcdfCache.mcdf(mNode) > highestMCDF) {
                     highestMCDF = mcdfCache.mcdf(mNode);
-                    result = mNode;
+                    // for a symmetric tree check if mirror node is also in the set of children and has the same mcdf
+                    if (isMinimumProportionsSymmetric && children.contains(mirror(mNode))) {
+                        // pick one of them at random
+                        result = 0.5 >= Math.random() ? mNode : mirror(mNode);
+                    } else {
+                        result = mNode;
+                    }
+
                 }
             }
             break;
@@ -293,9 +303,9 @@ public class MTree {
         }
         return result;
     }
-    
+
     public HashSet<List<Integer>> getAllNodesOfTreeLevel(int level) {
-        if(this.isMinimumProportionsSymmetric) {
+        if (this.isMinimumProportionsSymmetric) {
             // we have to recreate all mirrored nodes
             HashSet<List<Integer>> result = new HashSet<>(tree.get(level));
             for (List<Integer> node : tree.get(level)) {
@@ -307,7 +317,7 @@ public class MTree {
             return tree.get(level);
         }
     }
-    
+
     public List<Integer> getRoot() {
         return this.tree.get(0).iterator().next();
     }

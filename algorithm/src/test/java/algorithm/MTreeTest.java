@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -309,7 +310,7 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_onlyOneChildExists() {
+    public void testGetCorrectChildNode_onlyOneChildExists_asymmetric() {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
@@ -322,7 +323,7 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely() {
+    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely_asymmetric() {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
@@ -339,7 +340,56 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild() {
+    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild_asymmetric() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+        
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_onlyOneChildExists_symmetric() {
+        fail("Not yet implemented");
+
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely_symmetric() {
+        fail("Not yet implemented");
+
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+        
+        expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
+        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, parent);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild_symmetric() {
+        fail("Not yet implemented");
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
