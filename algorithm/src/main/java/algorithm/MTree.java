@@ -335,7 +335,7 @@ public class MTree {
             // find the likeliest node from all possible children (which are not all nodes at this layer)
             for (List<Integer> mNode : children) {
                 if (mcdfCache.mcdf(mNode) > highestMCDF) {
-                    System.out.println("mNode: " + mNode + ", mcdf: " + mcdfCache.mcdf(mNode));
+                    highestMCDF = mcdfCache.mcdf(mNode);
                     result = mNode;
                 }
             }
@@ -345,6 +345,7 @@ public class MTree {
             // find the unlikeliest node
             for (List<Integer> mNode : children) {
                 if (mcdfCache.mcdf(mNode) < lowestMCDF) {
+                    lowestMCDF = mcdfCache.mcdf(mNode);
                     result = mNode;
                 }
             }
@@ -362,7 +363,6 @@ public class MTree {
         default:
             throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
         }
-        System.out.println("mNode return: " + result + ", " + mcdfCache.mcdf(result));
         return result;
     }
     
