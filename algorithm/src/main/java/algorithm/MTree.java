@@ -49,8 +49,10 @@ public class MTree implements Serializable {
             // check if Alpha Adjustment shall be used
             if (doAdjust) {
                 this.tree = this.buildAdjustedMTree();
+                this.store(); //Store Mtree and MCDF Cache to file for later use
             } else {
                 this.tree = this.buildMTree();
+                this.store(); //Store Mtree and MCDF Cache to file for later use
             }
         }
     }
@@ -156,8 +158,6 @@ public class MTree implements Serializable {
             position++;
             tree.put(position, currentChildCandidates);
         }
-        //FIXME: This will produce a LOT of files if we adjust
-        //Serializer.storeMTree(this);
         return tree;
     }
 
@@ -376,5 +376,10 @@ public class MTree implements Serializable {
 
     public double getUnadjustedAlpha() {
         return this.unadjustedAlpha;
+    }
+
+    public void store(){
+        Serializer.storeMTree(this);
+        Serializer.storeMCDFCache(this.mcdfCache);
     }
 }
