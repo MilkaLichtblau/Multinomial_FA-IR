@@ -261,9 +261,6 @@ public class MTreeTest {
         List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 3, parent);
         assertEquals(expected, actual);
         
-        expected = Arrays.stream(new int[] {4, 1, 0}).boxed().collect(Collectors.toList());
-        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, 3, parent);
-        assertEquals(expected, actual);
     }
     
     @Test
