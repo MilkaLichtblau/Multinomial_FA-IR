@@ -163,6 +163,91 @@ public class MTreeTest {
     }
     
     @Test
+    public void testGetAllNodesOfTreeLevel_symmetricTree() {
+        int k = 9;
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        //level 2
+        HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(2,0,0));
+        
+        HashSet<List<Integer>> actual = mTree.getAllNodesOfTreeLevel(2);
+        assertEquals(expected, actual);
+        
+        //level 3
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(3,0,1));
+        expected.add(Arrays.asList(3,1,0));
+        
+        actual = mTree.getAllNodesOfTreeLevel(3);
+        assertEquals(expected, actual);
+        
+        //level 4
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(4,0,2));
+        expected.add(Arrays.asList(4,2,0));
+        expected.add(Arrays.asList(4,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(4);
+        assertEquals(expected, actual);
+        
+        //level 5
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(5,0,3));
+        expected.add(Arrays.asList(5,3,0));
+        expected.add(Arrays.asList(5,1,2));
+        expected.add(Arrays.asList(5,2,1));
+        expected.add(Arrays.asList(5,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(5);
+        assertEquals(expected, actual);
+
+    }
+    
+    @Test
+    public void testGetAllNodesOfTreeLevel_asymmetricTree() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        //level 2
+        HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(2,0,0));
+        
+        HashSet<List<Integer>> actual = mTree.getAllNodesOfTreeLevel(2);
+        assertEquals(expected, actual);
+        
+        //level 3
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(3,0,1));
+        expected.add(Arrays.asList(3,1,0));
+        
+        actual = mTree.getAllNodesOfTreeLevel(3);
+        assertEquals(expected, actual);
+        
+        //level 4
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(4,0,1));
+        expected.add(Arrays.asList(4,2,0));
+        expected.add(Arrays.asList(4,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(4);
+        assertEquals(expected, actual);
+        
+        //level 5
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(5,0,2));
+        expected.add(Arrays.asList(5,2,1));
+        expected.add(Arrays.asList(5,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(5);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
     public void testGetActualChildren() {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};

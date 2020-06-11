@@ -294,6 +294,20 @@ public class MTree {
         return result;
     }
     
+    public HashSet<List<Integer>> getAllNodesOfTreeLevel(int level) {
+        if(this.isMinimumProportionsSymmetric) {
+            // we have to recreate all mirrored nodes
+            HashSet<List<Integer>> result = new HashSet<>(tree.get(level));
+            for (List<Integer> node : tree.get(level)) {
+                List<Integer> mirrorNode = mirror(node);
+                result.add(mirrorNode);
+            }
+            return result;
+        } else {
+            return tree.get(level);
+        }
+    }
+    
     public List<Integer> getRoot() {
         return this.tree.get(0).iterator().next();
     }
