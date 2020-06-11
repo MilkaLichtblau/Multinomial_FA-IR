@@ -19,6 +19,7 @@ public class MTree {
      * particular level in the mTree without duplicates and without mirrors.
      */
     private HashMap<Integer, HashSet<List<Integer>>> tree;
+    @Deprecated
     private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
                                                          // like
     private boolean doAdjust;
@@ -111,8 +112,6 @@ public class MTree {
         }
         return failProbabilityEstimator.getFailProbability();
     }
-
-
 
     private HashMap<Integer, HashSet<List<Integer>>> buildMTree() {
         HashMap<Integer, HashSet<List<Integer>>> tree = new HashMap<>();
@@ -323,6 +322,7 @@ public class MTree {
         return this.mcdfCache;
     }
 
+    @Deprecated
     public Integer getWeightOfNode(List<Integer> node) {
         if (this.nodeWeights.containsKey(node)) {
             return this.nodeWeights.get(node);
