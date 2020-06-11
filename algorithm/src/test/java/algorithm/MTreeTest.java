@@ -1,16 +1,20 @@
 package algorithm;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
-import algorithm.MCDFCache;
-import algorithm.MTree;
-import algorithm.MultinomialFairRanker.FairRankingStrategy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
 
 public class MTreeTest {
