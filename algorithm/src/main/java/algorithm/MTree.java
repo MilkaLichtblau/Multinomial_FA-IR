@@ -37,19 +37,7 @@ public class MTree {
         this.nodeWeights = new HashMap<>();
 
         // check if we have symmetric proportions p[] to allow later optimizations
-        this.isMinimumProportionsSymmetric = true;
-        if (p.length <= 2) {
-            // we only have one protected group
-            this.isMinimumProportionsSymmetric = false;
-        } else {
-            for (int i = 1; i < p.length; i++) {
-                for (int j = 1; j < p.length; j++) {
-                    if (p[i] != p[j]) {
-                        this.isMinimumProportionsSymmetric = false;
-                    }
-                }
-            }
-        }
+        this.isMinimumProportionsSymmetric = MTree.checkIfMinimumProportionsAreEqual(this.p);
 
         // check if Alpha Adjustment shall be used
         if (doAdjust) {
@@ -162,7 +150,7 @@ public class MTree {
         return currentChildCandidates;
     }
 
-    public List<Integer> mirror(List<Integer> node) {
+    public static List<Integer> mirror(List<Integer> node) {
         List<Integer> node_sublist = node.subList(1, node.size());
         List<Integer> mirror = new ArrayList<>();
         for (Integer m_i : node_sublist) {
@@ -170,6 +158,22 @@ public class MTree {
         }
         mirror.add(0, node.get(0));
         return mirror;
+    }
+
+    public static boolean checkIfMinimumProportionsAreEqual(double[] p){
+        if (p.length <= 2) {
+            // we only have one protected group
+            return false;
+        } else {
+            for (int i = 1; i < p.length; i++) {
+                for (int j = 1; j < p.length; j++) {
+                    if (p[i] != p[j]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     private HashSet<List<Integer>> inverseMultinomialCDF(List<Integer> node) {

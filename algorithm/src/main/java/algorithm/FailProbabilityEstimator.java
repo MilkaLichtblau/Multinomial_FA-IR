@@ -57,7 +57,7 @@ public class FailProbabilityEstimator {
         if (this.mTree.isMinimumProportionsSymmetric()) {
             boolean mirror1 = true;
             boolean mirror2 = true;
-            List<Integer> mirrorNode = this.mTree.mirror(node);
+            List<Integer> mirrorNode = MTree.mirror(node);
             for (int i = 1; i < seenSoFar.length; i++) {
                 if (node.get(i) > seenSoFar[i]) {
                     mirror1 = false;
