@@ -156,7 +156,7 @@ public class MTreeTest {
         expected.add(Arrays.asList(3,0,1));
         expected.add(Arrays.asList(3,1,0));
         
-        HashSet<List<Integer>> actual = mTree.getActualChildren(thisNode, 3);
+        HashSet<List<Integer>> actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
         // test level 3
@@ -164,7 +164,7 @@ public class MTreeTest {
         expected = new HashSet<>();
         expected.add(Arrays.asList(4,0,1));
         
-        actual = mTree.getActualChildren(thisNode, 4);
+        actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
         // test level 4
@@ -173,7 +173,7 @@ public class MTreeTest {
         expected.add(Arrays.asList(5,1,1));
         expected.add(Arrays.asList(5,0,2));
         
-        actual = mTree.getActualChildren(thisNode, 5);
+        actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
         // test level 6
@@ -182,7 +182,7 @@ public class MTreeTest {
         expected.add(Arrays.asList(7,1,2));
         expected.add(Arrays.asList(7,2,1));
         
-        actual = mTree.getActualChildren(thisNode, 7);
+        actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
         // test level 8
@@ -191,7 +191,7 @@ public class MTreeTest {
         expected.add(Arrays.asList(9,2,2));
         expected.add(Arrays.asList(9,1,3));
         
-        actual = mTree.getActualChildren(thisNode, 9);
+        actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
         // test level 8
@@ -199,7 +199,7 @@ public class MTreeTest {
         expected = new HashSet<>();
         expected.add(Arrays.asList(9,1,3));
         
-        actual = mTree.getActualChildren(thisNode, 9);
+        actual = mTree.getActualChildren(thisNode);
         assertEquals(expected, actual);
         
     }
