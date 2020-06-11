@@ -56,7 +56,7 @@ public class MultinomialFairRanker {
      * @return
      */
     public List<Candidate> buildFairRanking(FairRankingStrategy strategy, Integer length) {
-        this.mTree.isMinimumProportionsSymmetric();
+        //FIXME: write symmetric stuff
         List<Candidate> result = new ArrayList<>(Arrays.asList(new Candidate[length]));
         List<Integer> parent = this.mTree.getRoot();
         for (int k = 0; k < length; k++) {
@@ -67,7 +67,7 @@ public class MultinomialFairRanker {
             // get the next mNode in mTree, that maps the strategy
             // as their may be several possibilities when the tree is symmetric, take the one most fitting with the
             // given strategy
-            List<Integer> mNode = this.mTree.getCorrectChildNode(strategy, k + 1, parent);
+            List<Integer> mNode = this.mTree.getCorrectChildNode(strategy, k, parent);
             boolean candidateAdded = false;
             // start from index 1, because first entry in mNode is current ranking position
             for (int groupID = 1; groupID < mNode.size(); groupID++) {
@@ -118,6 +118,7 @@ public class MultinomialFairRanker {
                 groupLists.get(bestCandidate.getGroup()).remove(0);
             }
             parent = mNode;
+            System.out.println(result.toString());
         }
         return result;
     }

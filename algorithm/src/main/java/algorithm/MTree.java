@@ -271,7 +271,7 @@ public class MTree {
         return result;
     }
 
-    public HashSet<List<Integer>> getActualChildren(List<Integer> thisNode, int nextPosition) {
+    protected HashSet<List<Integer>> getActualChildren(List<Integer> thisNode, int nextPosition) {
         /**
          * we have to retrieve the parent-child relationship for each tree layer in
          * order to find a continuous path through the tree
@@ -310,7 +310,7 @@ public class MTree {
         return actualChildren;
     }
     
-    protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, int currentPosition, List<Integer> thisNode) {
+    protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, int currentPosition, List<Integer> parent) {
         /**
          * from all possible mNodes at this layer, returns the node that fits the
          * defined strategy
@@ -324,16 +324,16 @@ public class MTree {
          *        lowest mcdf (still valid though) RANDOM = pick random child node
          * 
          */
-        HashSet<List<Integer>> mNodesAtPosition = this.tree.get(currentPosition);
+        HashSet<List<Integer>> children = getActualChildren(parent, currentPosition + 1);
 
         // get any node of this layer in the mTree to initialize
-        List<Integer> result = mNodesAtPosition.iterator().next();
+        List<Integer> result = children.iterator().next();
 
         switch (strategy) {
         case MOST_LIKELY:
             Double highestMCDF = 0.0;
             // find the likeliest node from all possible children (which are not all nodes at this layer)
-            for (List<Integer> mNode : mNodesAtPosition) {
+            for (List<Integer> mNode : children) {
                 if (mcdfCache.mcdf(mNode) > highestMCDF) {
                     System.out.println("mNode: " + mNode + ", mcdf: " + mcdfCache.mcdf(mNode));
                     result = mNode;
@@ -343,7 +343,7 @@ public class MTree {
         case MOST_UNLIKELY:
             Double lowestMCDF = 1.0;
             // find the unlikeliest node
-            for (List<Integer> mNode : mNodesAtPosition) {
+            for (List<Integer> mNode : children) {
                 if (mcdfCache.mcdf(mNode) < lowestMCDF) {
                     result = mNode;
                 }
@@ -352,8 +352,8 @@ public class MTree {
         case RANDOM:
             // from all elements in set, pick one at random from uniform distributed
             // randomness
-            int randomIndex = new Random().nextInt(mNodesAtPosition.size());
-            Iterator<List<Integer>> iter = mNodesAtPosition.iterator();
+            int randomIndex = new Random().nextInt(children.size());
+            Iterator<List<Integer>> iter = children.iterator();
             for (int i = 0; i < randomIndex; i++) {
                 iter.next();
             }
@@ -362,6 +362,7 @@ public class MTree {
         default:
             throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
         }
+        System.out.println("mNode return: " + result + ", " + mcdfCache.mcdf(result));
         return result;
     }
     

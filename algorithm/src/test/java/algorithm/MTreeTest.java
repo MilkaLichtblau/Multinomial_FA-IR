@@ -150,12 +150,21 @@ public class MTreeTest {
         double alpha = 0.1;
         MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
         
-        // test level 3
-        List<Integer> thisNode = Arrays.asList(3, 0, 1);        
+        //test level 2
+        List<Integer> thisNode = Arrays.asList(2, 0, 0);        
         HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(3,0,1));
+        expected.add(Arrays.asList(3,1,0));
+        
+        HashSet<List<Integer>> actual = mTree.getActualChildren(thisNode, 3);
+        assertEquals(expected, actual);
+        
+        // test level 3
+        thisNode = Arrays.asList(3, 0, 1);        
+        expected = new HashSet<>();
         expected.add(Arrays.asList(4,0,1));
         
-        HashSet<List<Integer>> actual = mTree.getActualChildren(thisNode, 4);
+        actual = mTree.getActualChildren(thisNode, 4);
         assertEquals(expected, actual);
         
         // test level 4
@@ -204,7 +213,7 @@ public class MTreeTest {
         
         List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 2, parent);
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 1, parent);
         assertEquals(expected, actual);
     }
     
@@ -217,11 +226,11 @@ public class MTreeTest {
         
         List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 3, parent);
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 2, parent);
         assertEquals(expected, actual);
         
         expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
-        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, 3, parent);
+        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, 2, parent);
         assertEquals(expected, actual);
     }
     
@@ -237,7 +246,7 @@ public class MTreeTest {
         List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 3, parent);
         assertEquals(expected, actual);
         
-        expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
+        expected = Arrays.stream(new int[] {4, 1, 0}).boxed().collect(Collectors.toList());
         actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, 3, parent);
         assertEquals(expected, actual);
     }
