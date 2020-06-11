@@ -213,7 +213,7 @@ public class MTreeTest {
         
         List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 1, parent);
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
         assertEquals(expected, actual);
     }
     
@@ -226,11 +226,11 @@ public class MTreeTest {
         
         List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 2, parent);
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
         assertEquals(expected, actual);
         
         expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
-        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, 2, parent);
+        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, parent);
         assertEquals(expected, actual);
     }
     
@@ -243,7 +243,7 @@ public class MTreeTest {
         
         List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, 3, parent);
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
         assertEquals(expected, actual);
         
     }

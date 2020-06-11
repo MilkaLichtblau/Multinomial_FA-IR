@@ -311,7 +311,7 @@ public class MTree {
         return actualChildren;
     }
     
-    protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, int currentPosition, List<Integer> parent) {
+    protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, List<Integer> parent) {
         /**
          * from all possible mNodes at this layer, returns the node that fits the
          * defined strategy
