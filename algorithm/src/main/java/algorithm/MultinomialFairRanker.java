@@ -118,7 +118,7 @@ public class MultinomialFairRanker {
                 groupLists.get(bestCandidate.getGroup()).remove(0);
             }
             parent = mNode;
-            System.out.println(result.toString());
+//            System.out.println(result.toString());
         }
         return result;
     }

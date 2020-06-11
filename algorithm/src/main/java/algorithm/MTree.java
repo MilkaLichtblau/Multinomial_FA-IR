@@ -195,7 +195,7 @@ public class MTree {
         return result;
     }
 
-    protected HashSet<List<Integer>> getActualChildren(List<Integer> thisNode, int nextPosition) {
+    protected HashSet<List<Integer>> getActualChildren(List<Integer> thisNode) {
         /**
          * we have to retrieve the parent-child relationship for each tree layer in
          * order to find a continuous path through the tree
@@ -203,6 +203,7 @@ public class MTree {
          * @returns all nodes that are actual children of @thisNode
          */
         HashSet<List<Integer>> actualChildren = new HashSet<>();
+        int nextPosition = thisNode.get(0);
         for (List<Integer> mNode : this.tree.get(nextPosition)) {
             ArrayList<Integer> nodeDistance = new ArrayList<Integer>();
             for (int i = 0; i < thisNode.size(); i++) {
@@ -248,7 +249,7 @@ public class MTree {
          *        lowest mcdf (still valid though) RANDOM = pick random child node
          * 
          */
-        HashSet<List<Integer>> children = getActualChildren(parent, currentPosition + 1);
+        HashSet<List<Integer>> children = getActualChildren(parent);
 
         // get any node of this layer in the mTree to initialize
         List<Integer> result = children.iterator().next();
