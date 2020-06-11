@@ -3,6 +3,8 @@ package algorithm;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import algorithm.MultinomialFairRanker.FairRankingStrategy;
+
 public class MTree {
 
     public static int RUNS_FOR_FAILPROB = 10000;
@@ -215,7 +217,6 @@ public class MTree {
             position++;
             tree.put(position, currentChildCandidates);
         }
-        tree.remove(0);
         return tree;
     }
 
@@ -270,19 +271,15 @@ public class MTree {
         return result;
     }
 
-    public HashSet<List<Integer>> getAllNodesOfLevel(int k) {
-        return this.tree.get(k);
-    }
-
     public HashSet<List<Integer>> getActualChildren(List<Integer> thisNode, int nextPosition) {
         /**
          * we have to retrieve the parent-child relationship for each tree layer in
-         * order to find a continuous path.
+         * order to find a continuous path through the tree
          * 
-         * @returns all nodes that are actual children of a given node
+         * @returns all nodes that are actual children of @thisNode
          */
         HashSet<List<Integer>> actualChildren = new HashSet<>();
-        for (List<Integer> mNode : getAllNodesOfLevel(nextPosition)) {
+        for (List<Integer> mNode : this.tree.get(nextPosition)) {
             ArrayList<Integer> nodeDistance = new ArrayList<Integer>();
             for (int i = 0; i < thisNode.size(); i++) {
                 nodeDistance.add(mNode.get(i) - thisNode.get(i));
@@ -311,6 +308,65 @@ public class MTree {
         }
 
         return actualChildren;
+    }
+    
+    protected List<Integer> getCorrectChildNode(FairRankingStrategy strategy, int currentPosition, List<Integer> thisNode) {
+        /**
+         * from all possible mNodes at this layer, returns the node that fits the
+         * defined strategy
+         * 
+         * if the minimum proportions are symmetric, we have a symmetric tree and hence
+         * all nodes may have mirror nodes that have the same mcdf value. In this case
+         * they should be equally likely to be picked.
+         * 
+         * @param strategy: enum to choose from different ranking strategies --
+         *        MOST_LIKELY = child node with highest mcdf MOST_UNLIKELY = child with
+         *        lowest mcdf (still valid though) RANDOM = pick random child node
+         * 
+         */
+        HashSet<List<Integer>> mNodesAtPosition = this.tree.get(currentPosition);
+
+        // get any node of this layer in the mTree to initialize
+        List<Integer> result = mNodesAtPosition.iterator().next();
+
+        switch (strategy) {
+        case MOST_LIKELY:
+            Double highestMCDF = 0.0;
+            // find the likeliest node from all possible children (which are not all nodes at this layer)
+            for (List<Integer> mNode : mNodesAtPosition) {
+                if (mcdfCache.mcdf(mNode) > highestMCDF) {
+                    System.out.println("mNode: " + mNode + ", mcdf: " + mcdfCache.mcdf(mNode));
+                    result = mNode;
+                }
+            }
+            break;
+        case MOST_UNLIKELY:
+            Double lowestMCDF = 1.0;
+            // find the unlikeliest node
+            for (List<Integer> mNode : mNodesAtPosition) {
+                if (mcdfCache.mcdf(mNode) < lowestMCDF) {
+                    result = mNode;
+                }
+            }
+            break;
+        case RANDOM:
+            // from all elements in set, pick one at random from uniform distributed
+            // randomness
+            int randomIndex = new Random().nextInt(mNodesAtPosition.size());
+            Iterator<List<Integer>> iter = mNodesAtPosition.iterator();
+            for (int i = 0; i < randomIndex; i++) {
+                iter.next();
+            }
+            result = iter.next();
+            break;
+        default:
+            throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
+        }
+        return result;
+    }
+    
+    public List<Integer> getRoot() {
+        return this.tree.get(0).iterator().next();
     }
 
     public boolean isAdjusted() {
@@ -352,7 +408,7 @@ public class MTree {
     public String toString() {
         String result = new String();
         for (int pos = 1; pos < this.k; pos++) {
-            HashSet<List<Integer>> nodes = getAllNodesOfLevel(pos);
+            HashSet<List<Integer>> nodes = this.tree.get(pos);
             String line = nodes.stream().map(Object::toString).collect(Collectors.joining(", "));
             result = result + line + "\n";
         }
