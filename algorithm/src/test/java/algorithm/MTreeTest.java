@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import algorithm.MTree;
 import org.junit.Test;
 
 import algorithm.MTree.FairRankingStrategy;
