@@ -3,10 +3,7 @@ package algorithm;
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class MCDFCache implements Serializable {
 
@@ -19,6 +16,14 @@ public class MCDFCache implements Serializable {
         this.mcdfCache = new HashMap<>();
         this.minimumProportionsAreEqual = MTree.checkIfMinimumProportionsAreEqual(this.p);
 
+    }
+    public int getMaxK(){
+        List<Integer> maximum = mcdfCache.keySet().stream().max(Comparator.comparing(l -> l.get(0))).get();
+        return maximum.get(0);
+    }
+
+    public int getSize(){
+        return mcdfCache.size();
     }
 
     public double[] getP(){

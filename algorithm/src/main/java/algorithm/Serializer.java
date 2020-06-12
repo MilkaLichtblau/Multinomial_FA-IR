@@ -6,6 +6,29 @@ import java.nio.file.Paths;
 
 public class Serializer {
 
+    public static boolean checkIfMCDFFileExists(MCDFCache cache){
+        String filename = createMCDFCacheFileNameFromObject(cache);
+        File file = new File(filename);
+        return file.exists();
+    }
+
+    public static boolean checkIfMCDFCacheShouldBeStored(MCDFCache cache){
+        if(!checkIfMCDFFileExists(cache)){
+            return true;
+        }
+        MCDFCache storedCache = loadMCDFCache(cache.getP());
+        if(storedCache.getMaxK() > cache.getMaxK()){
+            return false;
+        }
+        if(storedCache.getMaxK()< cache.getMaxK()){
+            return true;
+        }
+        if(storedCache.getMaxK() == cache.getMaxK()){
+            return storedCache.getSize() < cache.getSize();
+        }
+        return true;
+    }
+
     public static void storeMTree(MTree mTree) {
         FileOutputStream fOutputStream;
         ObjectOutputStream OOutputStream;
