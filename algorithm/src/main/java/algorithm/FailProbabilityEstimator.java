@@ -5,6 +5,7 @@ import java.util.*;
 
 public class FailProbabilityEstimator implements Serializable {
 
+    private static final long serialVersionUID = 1895126116989477298L;
     public static int RUNS_FOR_FAILPROB = 10000;
     private MTree mTree;
     private Double failProbability;
