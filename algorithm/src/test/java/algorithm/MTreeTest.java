@@ -1,16 +1,21 @@
 package algorithm;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import algorithm.MCDFCache;
-import algorithm.MTree;
-import algorithm.MultinomialFairRanker.FairRankingStrategy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
 
 public class MTreeTest {
@@ -159,6 +164,91 @@ public class MTreeTest {
     }
     
     @Test
+    public void testGetAllNodesOfTreeLevel_symmetricTree() {
+        int k = 9;
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        //level 2
+        HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(2,0,0));
+        
+        HashSet<List<Integer>> actual = mTree.getAllNodesOfTreeLevel(2);
+        assertEquals(expected, actual);
+        
+        //level 3
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(3,0,1));
+        expected.add(Arrays.asList(3,1,0));
+        
+        actual = mTree.getAllNodesOfTreeLevel(3);
+        assertEquals(expected, actual);
+        
+        //level 4
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(4,0,2));
+        expected.add(Arrays.asList(4,2,0));
+        expected.add(Arrays.asList(4,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(4);
+        assertEquals(expected, actual);
+        
+        //level 5
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(5,0,3));
+        expected.add(Arrays.asList(5,3,0));
+        expected.add(Arrays.asList(5,1,2));
+        expected.add(Arrays.asList(5,2,1));
+        expected.add(Arrays.asList(5,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(5);
+        assertEquals(expected, actual);
+
+    }
+    
+    @Test
+    public void testGetAllNodesOfTreeLevel_asymmetricTree() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        //level 2
+        HashSet<List<Integer>> expected = new HashSet<>();
+        expected.add(Arrays.asList(2,0,0));
+        
+        HashSet<List<Integer>> actual = mTree.getAllNodesOfTreeLevel(2);
+        assertEquals(expected, actual);
+        
+        //level 3
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(3,0,1));
+        expected.add(Arrays.asList(3,1,0));
+        
+        actual = mTree.getAllNodesOfTreeLevel(3);
+        assertEquals(expected, actual);
+        
+        //level 4
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(4,0,1));
+        expected.add(Arrays.asList(4,2,0));
+        expected.add(Arrays.asList(4,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(4);
+        assertEquals(expected, actual);
+        
+        //level 5
+        expected.removeAll(expected);
+        expected.add(Arrays.asList(5,0,2));
+        expected.add(Arrays.asList(5,2,1));
+        expected.add(Arrays.asList(5,1,1));
+        
+        actual = mTree.getAllNodesOfTreeLevel(5);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
     public void testGetActualChildren() {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
@@ -220,7 +310,53 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_onlyOneChildExists() {
+    public void testGetCorrectChildNode_onlyOneChildExists_asymmetric() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely_asymmetric() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+        
+        expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
+        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, parent);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild_asymmetric() {
+        int k = 10;
+        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double alpha = 0.1;
+        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        
+        List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
+        assertEquals(expected, actual);
+        
+    }
+    
+    @Test
+    public void testGetCorrectChildNode_onlyOneChildExists_symmetric() {
+        fail("Not yet implemented");
+
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
@@ -233,7 +369,9 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely() {
+    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely_symmetric() {
+        fail("Not yet implemented");
+
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
@@ -250,7 +388,8 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild() {
+    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild_symmetric() {
+        fail("Not yet implemented");
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;

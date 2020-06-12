@@ -45,10 +45,6 @@ public class MultinomialFairRanker {
     }
 
     /**
-     * @param groupLists: contains all available candidates for the ranking sorted
-     *        into separate lists per group. Hashmap with group id as key and list
-     *        of candidates of this group as value. Candidates are sorted by
-     *        decreasing scores
      * @param strategy: enum to choose from different ranking strategies --
      *        MOST_LIKELY = child node with highest mcdf MOST_UNLIKELY = child with
      *        lowest mcdf (still valid though) RANDOM = pick random child node

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
+import static algorithm.MultinomialFairRanker.FairRankingStrategy.MOST_UNLIKELY;
+
 public class MTree implements Serializable {
 
     public static double EPS = 0.001;
@@ -20,6 +22,7 @@ public class MTree implements Serializable {
      * particular level in the mTree without duplicates and without mirrors.
      */
     private HashMap<Integer, HashSet<List<Integer>>> tree;
+    @Deprecated
     private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
     // like
     private boolean doAdjust;
@@ -122,6 +125,10 @@ public class MTree implements Serializable {
         }
     }
 
+    public double getAlpha() {
+        return this.alpha;
+    }
+
     private double getFailprob() {
         if (this.failProbabilityEstimator == null) {
             this.failProbabilityEstimator = new FailProbabilityEstimator(this);
@@ -129,7 +136,6 @@ public class MTree implements Serializable {
         }
         return failProbabilityEstimator.getFailProbability();
     }
-
 
     private HashMap<Integer, HashSet<List<Integer>>> buildMTree() {
         HashMap<Integer, HashSet<List<Integer>>> tree = new HashMap<>();
@@ -236,8 +242,8 @@ public class MTree implements Serializable {
          * @returns all nodes that are actual children of @thisNode
          */
         HashSet<List<Integer>> actualChildren = new HashSet<>();
-        int nextPosition = thisNode.get(0);
-        for (List<Integer> mNode : this.tree.get(nextPosition)) {
+        int nextPosition = thisNode.get(0) + 1;
+        for (List<Integer> mNode : getAllNodesOfTreeLevel(nextPosition)) {
             ArrayList<Integer> nodeDistance = new ArrayList<Integer>();
             for (int i = 0; i < thisNode.size(); i++) {
                 nodeDistance.add(mNode.get(i) - thisNode.get(i));
@@ -259,7 +265,8 @@ public class MTree implements Serializable {
                         // if no child with the same node signature is found later
                         actualChildren.add(mNode);
                     default:
-                        // a node distance larger than 2 indicates that this node is not a possible child
+                        // a node distance larger than 2 indicates that this node is not a possible
+                        // child
                         break;
                 }
             }
@@ -285,16 +292,24 @@ public class MTree implements Serializable {
         HashSet<List<Integer>> children = getActualChildren(parent);
 
         // get any node of this layer in the mTree to initialize
-        List<Integer> result = children.iterator().next();
+        List<Integer> result = new ArrayList<>();
+        HashSet<List<Integer>> possibleResults = new HashSet<>();
 
         switch (strategy) {
             case MOST_LIKELY:
                 Double highestMCDF = 0.0;
-                // find the likeliest node from all possible children (which are not all nodes at this layer)
+                // find the likeliest node from all possible children (which are not all nodes
+                // at this layer)
                 for (List<Integer> mNode : children) {
                     if (mcdfCache.mcdf(mNode) > highestMCDF) {
                         highestMCDF = mcdfCache.mcdf(mNode);
-                        result = mNode;
+                        // for a symmetric tree check if mirror node is also in the set of children and has the same mcdf
+                        if (isMinimumProportionsSymmetric && children.contains(mirror(mNode))) {
+                            // pick one of them at random
+                            result = 0.5 >= Math.random() ? mNode : mirror(mNode);
+                        } else {
+                            result = mNode;
+                        }
                     }
                 }
                 break;
@@ -321,7 +336,22 @@ public class MTree implements Serializable {
             default:
                 throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
         }
+
         return result;
+    }
+
+    public HashSet<List<Integer>> getAllNodesOfTreeLevel(int level) {
+        if (this.isMinimumProportionsSymmetric) {
+            // we have to recreate all mirrored nodes
+            HashSet<List<Integer>> result = new HashSet<>(tree.get(level));
+            for (List<Integer> node : tree.get(level)) {
+                List<Integer> mirrorNode = mirror(node);
+                result.add(mirrorNode);
+            }
+            return result;
+        } else {
+            return tree.get(level);
+        }
     }
 
     public List<Integer> getRoot() {
@@ -330,10 +360,6 @@ public class MTree implements Serializable {
 
     public boolean isAdjusted() {
         return this.doAdjust;
-    }
-
-    public double getAlpha() {
-        return alpha;
     }
 
     public double[] getP() {
@@ -356,6 +382,7 @@ public class MTree implements Serializable {
         return this.mcdfCache;
     }
 
+    @Deprecated
     public Integer getWeightOfNode(List<Integer> node) {
         if (this.nodeWeights.containsKey(node)) {
             return this.nodeWeights.get(node);
@@ -378,7 +405,7 @@ public class MTree implements Serializable {
         return this.unadjustedAlpha;
     }
 
-    public void store(){
+    public void store() {
         Serializer.storeMTree(this);
         Serializer.storeMCDFCache(this.mcdfCache);
     }
