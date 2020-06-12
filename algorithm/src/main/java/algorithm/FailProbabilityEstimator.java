@@ -55,7 +55,7 @@ public class FailProbabilityEstimator implements Serializable {
         return true;
     }
 
-    private boolean enoughProtected(List<Integer> node, int[] seenSoFar) {
+    public boolean enoughProtected(List<Integer> node, int[] seenSoFar) {
         if (this.mTree.isMinimumProportionsSymmetric()) {
             boolean mirror1 = true;
             boolean mirror2 = true;
