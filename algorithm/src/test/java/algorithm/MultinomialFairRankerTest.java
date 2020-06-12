@@ -1,7 +1,6 @@
 package algorithm;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import algorithm.MTree.FairRankingStrategy;
-import junit.framework.AssertionFailedError;
 
 public class MultinomialFairRankerTest {
 
