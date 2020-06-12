@@ -29,8 +29,6 @@ public class MTree implements Serializable {
      * particular level in the mTree without duplicates and without mirrors.
      */
     private HashMap<Integer, HashSet<List<Integer>>> tree;
-    @Deprecated
-    private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
     private boolean doAdjust;
     private transient MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
@@ -50,7 +48,6 @@ public class MTree implements Serializable {
             if (this.mcdfCache == null) {
                 this.mcdfCache = new MCDFCache(p);
             }
-            this.nodeWeights = new HashMap<>();
 
             // check if we have symmetric proportions p[] to allow later optimizations
             this.isMinimumProportionsSymmetric = MTree.checkIfMinimumProportionsAreEqual(this.p);
@@ -74,7 +71,6 @@ public class MTree implements Serializable {
         this.doAdjust = loadedMTree.isAdjusted();
         this.isMinimumProportionsSymmetric = loadedMTree.isMinimumProportionsSymmetric();
         this.failProbabilityEstimator = loadedMTree.failProbabilityEstimator;
-        this.nodeWeights = loadedMTree.nodeWeights;
         this.tree = loadedMTree.getTree();
         this.mcdfCache = Serializer.loadMCDFCache(p);
         if (this.mcdfCache == null) {
@@ -227,7 +223,6 @@ public class MTree implements Serializable {
         HashSet<List<Integer>> result = new HashSet<>();
         double mcdf = this.mcdfCache.mcdf(childNode);
         if (mcdf > this.alpha) {
-            this.nodeWeights.put(childNode, 1);
             result.add(childNode);
         } else {
             for (int i = 1; i < node.size(); i++) {
@@ -235,7 +230,6 @@ public class MTree implements Serializable {
                 temp.set(i, temp.get(i) + 1);
                 double mcdfTemp = this.mcdfCache.mcdf(temp);
                 if (mcdfTemp > this.alpha) {
-                    this.nodeWeights.put(temp, 1);
                     result.add(temp);
                 }
             }
@@ -388,15 +382,6 @@ public class MTree implements Serializable {
 
     public MCDFCache getMcdfCache() {
         return this.mcdfCache;
-    }
-
-    @Deprecated
-    public Integer getWeightOfNode(List<Integer> node) {
-        if (this.nodeWeights.containsKey(node)) {
-            return this.nodeWeights.get(node);
-        } else {
-            throw new IllegalArgumentException("MTree does not contain node.");
-        }
     }
 
     public String toString() {
