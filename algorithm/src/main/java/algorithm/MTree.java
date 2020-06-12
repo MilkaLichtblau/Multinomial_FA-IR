@@ -1,14 +1,21 @@
 package algorithm;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import algorithm.MultinomialFairRanker.FairRankingStrategy;
 
-import static algorithm.MultinomialFairRanker.FairRankingStrategy.MOST_UNLIKELY;
-
 public class MTree implements Serializable {
+
+    private static final long serialVersionUID = -5797820121404671859L;
 
     public static double EPS = 0.001;
 
@@ -24,7 +31,6 @@ public class MTree implements Serializable {
     private HashMap<Integer, HashSet<List<Integer>>> tree;
     @Deprecated
     private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
-    // like
     private boolean doAdjust;
     private MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
@@ -293,7 +299,6 @@ public class MTree implements Serializable {
 
         // get any node of this layer in the mTree to initialize
         List<Integer> result = new ArrayList<>();
-        HashSet<List<Integer>> possibleResults = new HashSet<>();
 
         switch (strategy) {
             case MOST_LIKELY:

@@ -10,6 +10,10 @@ import java.util.Objects;
 
 public class MCDFCache implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7599506547007946239L;
     private double[] p;
     private HashMap<List<Integer>,Double> mcdfCache;
     private boolean minimumProportionsAreEqual;
