@@ -5,6 +5,7 @@ Created on May 19, 2020
 '''
 import pandas as pd
 import numpy as np
+from util import prepareForJavaCode
 
 
 def main():
@@ -49,11 +50,17 @@ def main():
 
     # higher scores should be better scores
     data["score"] = data["score"].max() - data["score"]
-    print(data["score"])
     # drop these columns
     data = data.drop(columns=['decile_score', 'v_decile_score', 'priors_count'])
 
     data.to_csv("../data/COMPAS/compas_sexAgeRace.csv", header=True, index=False)
+
+    prepareForJavaCode(data, ["sex"]).to_csv("../data/COMPAS/compas_sex_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["race"]).to_csv("../data/COMPAS/compas_race_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["age_cat"]).to_csv("../data/COMPAS/compas_age_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["sex", "race"]).to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["sex", "age_cat"]).to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["age_cat", "race"]).to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
 
 
 if __name__ == '__main__':
