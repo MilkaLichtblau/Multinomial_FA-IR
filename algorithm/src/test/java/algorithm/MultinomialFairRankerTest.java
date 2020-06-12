@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import algorithm.MultinomialFairRanker.FairRankingStrategy;
+import algorithm.MTree.FairRankingStrategy;
 import junit.framework.AssertionFailedError;
 
 public class MultinomialFairRankerTest {
@@ -71,7 +71,6 @@ public class MultinomialFairRankerTest {
         /**
          * SYMMETRIC TREE: All nodes have mirrors with the same probability, such that
          * we cannot guarantee a fixed output. It will be one of the four possibilities
-         * Expected Ranking: NP|NP|P1|P2|NP|P1|P2|NP|P1
          */
         
         MultinomialFairRanker ranker = new MultinomialFairRanker(9, new double[] { 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 },
@@ -161,34 +160,6 @@ public class MultinomialFairRankerTest {
 
         assertArrayEquals(actualRankingAsymmetric.toArray(), expectedRankingAsymmetric.toArray());
 
-    }
-
-    @Test
-    public void testBuildFairRanking_asymmetricTreeMostUnlikely() {
-        /**
-         * ASYMMETRIC TREE most unlikely path: Expected Ranking:
-         * NP|NP|P1|P1|P2|NP|NP|P2|NP|P1
-         */
-
-        MultinomialFairRanker ranker = new MultinomialFairRanker(10, new double[] { 2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0 },
-                0.1, false, this.unfairRanking);
-
-        List<Candidate> expectedRankingAsymmetric = new ArrayList<>();
-
-        expectedRankingAsymmetric.add(candidate_11_0);
-        expectedRankingAsymmetric.add(candidate_10_0);
-        expectedRankingAsymmetric.add(candidate_06_1);
-        expectedRankingAsymmetric.add(candidate_05_1);
-        expectedRankingAsymmetric.add(candidate_03_2);
-        expectedRankingAsymmetric.add(candidate_09_0);
-        expectedRankingAsymmetric.add(candidate_08_0);
-        expectedRankingAsymmetric.add(candidate_02_2);
-        expectedRankingAsymmetric.add(candidate_07_0);
-        expectedRankingAsymmetric.add(candidate_04_1);
-
-        List<Candidate> actualRankingAsymmetric = ranker.buildFairRanking(FairRankingStrategy.MOST_UNLIKELY, 10);
-
-        assertArrayEquals(actualRankingAsymmetric.toArray(), expectedRankingAsymmetric.toArray());
     }
 
     @Test(expected = IllegalArgumentException.class)

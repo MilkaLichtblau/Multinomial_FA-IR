@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import algorithm.MultinomialFairRanker.FairRankingStrategy;
+import algorithm.MTree.FairRankingStrategy;
 
 
 public class MTreeTest {
@@ -334,9 +334,6 @@ public class MTreeTest {
         List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
         assertEquals(expected, actual);
         
-        expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
-        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, parent);
-        assertEquals(expected, actual);
     }
     
     @Test
@@ -382,9 +379,6 @@ public class MTreeTest {
         List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
         assertEquals(expected, actual);
         
-        expected = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
-        actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_UNLIKELY, parent);
-        assertEquals(expected, actual);
     }
     
     @Test
