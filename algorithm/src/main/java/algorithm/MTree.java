@@ -32,7 +32,7 @@ public class MTree implements Serializable {
     @Deprecated
     private HashMap<List<Integer>, Integer> nodeWeights; // FIXME: write comment about how this data structure looks
     private boolean doAdjust;
-    private MCDFCache mcdfCache;
+    private transient MCDFCache mcdfCache;
     private boolean isMinimumProportionsSymmetric;
     private FailProbabilityEstimator failProbabilityEstimator;
 
@@ -76,7 +76,10 @@ public class MTree implements Serializable {
         this.failProbabilityEstimator = loadedMTree.failProbabilityEstimator;
         this.nodeWeights = loadedMTree.nodeWeights;
         this.tree = loadedMTree.getTree();
-        this.mcdfCache = loadedMTree.getMcdfCache();
+        this.mcdfCache = Serializer.loadMCDFCache(p);
+        if (this.mcdfCache == null) {
+            this.mcdfCache = new MCDFCache(p);
+        }
     }
 
     private HashMap<Integer, HashSet<List<Integer>>> buildAdjustedMTree() {
