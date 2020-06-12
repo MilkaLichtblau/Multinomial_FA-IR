@@ -6,16 +6,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MultinomialFairRanker {
+import algorithm.MTree.FairRankingStrategy;
 
-    public enum FairRankingStrategy {
-        /**
-         * enum to choose from different ranking strategies -- MOST_LIKELY = child node
-         * with highest mcdf MOST_UNLIKELY = child with lowest mcdf (still valid though)
-         * RANDOM = pick random child node
-         */
-        MOST_LIKELY, MOST_UNLIKELY, RANDOM;
-    }
+public class MultinomialFairRanker {
 
     private MTree mTree;
     private HashMap<Integer, List<Candidate>> groupLists;
@@ -86,7 +79,7 @@ public class MultinomialFairRanker {
                         // if a candidate from groupID should be put, but no more candidates from this
                         // group are available, a fair ranking cannot be created
                         throw new IllegalArgumentException("Not enough candidates in group " + groupID
-                                + " to create ranking with parameters k=" + this.mTree.getK() + ", p="
+                                + " to create fair ranking with parameters k=" + this.mTree.getK() + ", p="
                                 + this.mTree.getP() + ", and alpha=" + this.mTree.getAlpha());
                     }
                 }

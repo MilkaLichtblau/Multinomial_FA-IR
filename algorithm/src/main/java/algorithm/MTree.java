@@ -11,9 +11,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import algorithm.MultinomialFairRanker.FairRankingStrategy;
-
 public class MTree implements Serializable {
+    
+    public enum FairRankingStrategy {
+        /**
+         * enum to choose from different ranking strategies -- MOST_LIKELY = child node
+         * with highest mcdf, RANDOM = pick random child node
+         */
+        MOST_LIKELY, RANDOM;
+    }
 
     private static final long serialVersionUID = -5797820121404671859L;
 
@@ -315,16 +321,6 @@ public class MTree implements Serializable {
                     }
                 }
                 break;
-            case MOST_UNLIKELY:
-                Double lowestMCDF = 1.0;
-                // find the unlikeliest node
-                for (List<Integer> mNode : children) {
-                    if (mcdfCache.mcdf(mNode) < lowestMCDF) {
-                        lowestMCDF = mcdfCache.mcdf(mNode);
-                        result = mNode;
-                    }
-                }
-                break;
             case RANDOM:
                 // from all elements in set, pick one at random from uniform distributed
                 // randomness
@@ -336,7 +332,7 @@ public class MTree implements Serializable {
                 result = iter.next();
                 break;
             default:
-                throw new IllegalArgumentException("strategy must be either MOST_LIKELY, MOST_UNLIKELY or RANDOM");
+                throw new IllegalArgumentException("strategy must be either MOST_LIKELY or RANDOM");
         }
 
         return result;
