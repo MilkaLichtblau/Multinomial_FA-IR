@@ -168,7 +168,7 @@ public class MTreeTest {
         int k = 9;
         double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         //level 2
         HashSet<List<Integer>> expected = new HashSet<>();
@@ -212,7 +212,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         //level 2
         HashSet<List<Integer>> expected = new HashSet<>();
@@ -314,7 +314,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
@@ -327,7 +327,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
@@ -344,7 +344,7 @@ public class MTreeTest {
         int k = 10;
         double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
         double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false, new MCDFCache(p));
+        MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
         List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
