@@ -52,6 +52,7 @@ def main():
     data["score"] = data["score"].max() - data["score"]
     # drop these columns
     data = data.drop(columns=['decile_score', 'v_decile_score', 'priors_count'])
+    data.sort_values(by=["score"], ascending=False, inplace=True)
 
     data.to_csv("../data/COMPAS/compas_sexAgeRace.csv", header=True, index=False)
 

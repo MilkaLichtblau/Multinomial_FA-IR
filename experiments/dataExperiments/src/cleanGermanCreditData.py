@@ -7,6 +7,7 @@ Created on May 19, 2020
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
+from util import prepareForJavaCode
 
 
 def main():
@@ -48,8 +49,16 @@ def main():
 
     data = data.drop(columns=['accountStatus', 'creditDuration', 'creditAmount', 'employmentLength'])
     data['score'] = stats.zscore(data['score'])
+    data.sort_values(by=["score"], ascending=False, inplace=True)
 
     data.to_csv("../data/GermanCredit/germanCredit_sexAgeForeigner.csv", header=True, index=False)
+
+    prepareForJavaCode(data, ["sex"]).to_csv("../data/GermanCredit/germanCredit_sex_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["age"]).to_csv("../data/GermanCredit/germanCredit_age_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["foreigner"]).to_csv("../data/GermanCredit/germanCredit_foreigner_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["sex", "foreigner"]).to_csv("../data/GermanCredit/germanCredit_sexForeigner_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["sex", "age"]).to_csv("../data/GermanCredit/germanCredit_sexAge_java.csv", header=True, index=False)
+    prepareForJavaCode(data, ["age", "foreigner"]).to_csv("../data/GermanCredit/germanCredit_ageForeigner_java.csv", header=True, index=False)
 
 
 if __name__ == '__main__':
