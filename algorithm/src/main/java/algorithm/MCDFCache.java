@@ -6,8 +6,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-//FIXME: Implement Serializable for MCDFCache https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/io/Serializable.html
 public class MCDFCache implements Serializable {
 
     private double[] p;
@@ -55,5 +55,22 @@ public class MCDFCache implements Serializable {
         stringBuilder.append("p=");
         stringBuilder.append(Arrays.toString(p));
         return stringBuilder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MCDFCache)) return false;
+        MCDFCache cache = (MCDFCache) o;
+        return minimumProportionsAreEqual == cache.minimumProportionsAreEqual &&
+                Arrays.equals(getP(), cache.getP()) &&
+                mcdfCache.equals(cache.mcdfCache);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(mcdfCache, minimumProportionsAreEqual);
+        result = 31 * result + Arrays.hashCode(getP());
+        return result;
     }
 }

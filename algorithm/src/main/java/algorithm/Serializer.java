@@ -78,7 +78,7 @@ public class Serializer {
         stringBuilder.append(File.separator);
         for (int i = 0; i<cache.getP().length; i++) {
             stringBuilder.append(cache.getP()[i]);
-            if(i+1<cache.getP().length-1){
+            if(i+1<cache.getP().length){
                 stringBuilder.append('_');
             }
         }
@@ -96,7 +96,7 @@ public class Serializer {
         stringBuilder.append(File.separator);
         for (int i = 0; i<p.length; i++) {
             stringBuilder.append(p[i]);
-            if(i+1<p.length-1){
+            if(i+1<p.length){
                 stringBuilder.append('_');
             }
         }
