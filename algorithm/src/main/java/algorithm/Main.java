@@ -34,9 +34,11 @@ public class Main {
         reader.close();
     }
     
-    public static void main() {
+    public static void main(String[] args) {
+        String datafile = args[1];
+        
         try {
-            prepareDataExperiments("..", ",", true);
+            prepareDataExperiments(datafile, ",", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
