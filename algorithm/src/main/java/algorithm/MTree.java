@@ -162,6 +162,7 @@ public class MTree implements Serializable {
         tree.put(position, positionZero);
 
         while (position < this.k) {
+            System.out.println(position);
             HashSet<List<Integer>> currentLevel = tree.get(position);
             HashSet<List<Integer>> currentChildCandidates = new HashSet<>();
             for (List<Integer> node : currentLevel) {
