@@ -140,7 +140,7 @@ public class MTree implements Serializable {
         return this.alpha;
     }
 
-    private double getFailprob() {
+    public double getFailprob() {
         if (this.failProbabilityEstimator == null) {
             this.failProbabilityEstimator = new FailProbabilityEstimator(this);
             return this.failProbabilityEstimator.getFailProbability();

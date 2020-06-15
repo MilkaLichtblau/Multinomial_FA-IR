@@ -118,15 +118,4 @@ public class MultinomialFairRanker {
         }
         return false;
     }
-
-    public static void main(String[] args){
-        double[] p = {1.0/3.0,1.0/3.0,1.0/3.0};
-        int k = 410;
-        int max = 1500;
-        MCDFCache mcdfCache = new MCDFCache(p);
-        for(int i=k; i<=max; i+=10){
-            MTree mTree = new MTree(i,p,0.1,false);
-        }
-
-    }
 }
