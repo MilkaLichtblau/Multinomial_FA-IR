@@ -33,6 +33,7 @@ samplebody*
 
 # Java build artifacts class files
 *.class
+*.jar
 
 # other generated files
 bin/
@@ -49,7 +50,6 @@ local.properties
 .classpath
 .project
 .settings/
-*.jar
 
 # Android Studio
 *.iml
