@@ -77,7 +77,7 @@ public class Main {
         runFailProbabilityExperiment(kMax,p,alpha);
     }
 
-    public static void appendStrToFile(String fileName, String experimentName, String str) {
+    public static void appendStrToFile(String fileName, String str) {
         Path currentRelativePath = Paths.get("..");
         String extendedFileName = currentRelativePath.toAbsolutePath().toString() + File.separator +
                 "experiments" +
@@ -86,7 +86,7 @@ public class Main {
                 File.separator +
                 "results" +
                 File.separator +
-                experimentName +
+                "" +
                 File.separator +
                 fileName;
         try {
@@ -113,14 +113,14 @@ public class Main {
         stringBuilder.append(".csv");
         String fileName = stringBuilder.toString();
         String head = "k,failProbability" + '\n';
-        Main.appendStrToFile(fileName,"FailProbabilityExperiments", head);
+        Main.appendStrToFile(fileName, head);
         for (int k = 5; k <= kMax; k+=5) {
             if (k >= 500) {
                 k += 50;
             }
             MTree tree = new MTree(k, p, alpha, false);
             double failProb = tree.getFailprob();
-            Main.appendStrToFile(fileName,"FailProbabilityExperiments",""+k+","+ failProb +'\n');
+            Main.appendStrToFile(fileName,""+k+","+ failProb +'\n');
             System.out.println("finished writing failProbFor k = "+k);
         }
     }
