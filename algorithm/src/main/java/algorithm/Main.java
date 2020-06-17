@@ -1,6 +1,11 @@
 package algorithm;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.file.Path;
@@ -9,13 +14,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import algorithm.MTree.FairRankingStrategy;
 
 public class Main {
     private static ArrayList<String> columnHeaders;
     private static List<Candidate> unfairRanking;
+    private static List<Candidate> fairRanking;
 
     public static void prepareDataExperiments(String filename, String separator, boolean hasHeaders) throws IOException {
         unfairRanking = new ArrayList<>();
@@ -121,7 +125,14 @@ public class Main {
         }
     }
     
-    
+    public static void writeRankingToCSV(String resultFilename) {
+        //write headers
+        Main.appendStrToFile(resultFilename, "uuid, score, group");
+        for (Candidate candidate : fairRanking) {
+            String line = candidate.toString();
+            Main.appendStrToFile(resultFilename, line);
+        }
+    }
     
     public static void main(String[] args) {
 
@@ -137,10 +148,12 @@ public class Main {
                                               .mapToDouble(Double::parseDouble)
                                               .toArray();
                 double alpha = Double.parseDouble(args[4]);
+                String resultFilename = args[5];
                 
-                prepareDataExperiments(datafile, ",", true);
+                Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
-                ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
+                Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
+                Main.writeRankingToCSV(resultFilename);
             }
         } catch (IOException e) {
             e.printStackTrace();

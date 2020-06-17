@@ -1,12 +1,15 @@
 package algorithm;
 
-public class Candidate implements Comparable<Candidate> {
+import java.util.UUID;
 
+public class Candidate implements Comparable<Candidate> {
+    private UUID uuid;
     private Double score;
     private Double originalScore;
     private int group;
 
     public Candidate(Double score, int group) {
+        this.uuid = UUID.randomUUID();
         this.score = score;
         this.originalScore = score;
         this.group = group;
@@ -18,6 +21,10 @@ public class Candidate implements Comparable<Candidate> {
 
     public Double getScore() {
         return score;
+    }
+    
+    public UUID getUuid() {
+        return uuid;
     }
 
     public Double getOriginalScore() {
