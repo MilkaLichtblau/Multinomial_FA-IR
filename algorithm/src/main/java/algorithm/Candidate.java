@@ -41,7 +41,7 @@ public class Candidate implements Comparable<Candidate> {
     }
     
     public String toString() {
-        return "(group: " + group + ", score: " + score + ")\n";
+        return uuid.toString() + ", " + score.toString() + ", " + group + "\n";
     }
 
 }

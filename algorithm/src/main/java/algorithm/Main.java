@@ -77,7 +77,7 @@ public class Main {
         runFailProbabilityExperiment(kMax,p,alpha);
     }
 
-    public static void appendStrToFile(String fileName, String str) {
+    public static void appendStrToFile(String fileName, String experimentName, String str) {
         Path currentRelativePath = Paths.get("..");
         String extendedFileName = currentRelativePath.toAbsolutePath().toString() + File.separator +
                 "experiments" +
@@ -86,7 +86,7 @@ public class Main {
                 File.separator +
                 "results" +
                 File.separator +
-                "FailProbabilityExperiments" +
+                experimentName +
                 File.separator +
                 fileName;
         try {
@@ -113,29 +113,27 @@ public class Main {
         stringBuilder.append(".csv");
         String fileName = stringBuilder.toString();
         String head = "k,failProbability" + '\n';
-        Main.appendStrToFile(fileName, head);
+        Main.appendStrToFile(fileName,"FailProbabilityExperiments", head);
         for (int k = 5; k <= kMax; k+=5) {
             if (k >= 500) {
                 k += 50;
             }
             MTree tree = new MTree(k, p, alpha, false);
             double failProb = tree.getFailprob();
-            Main.appendStrToFile(fileName,""+k+","+ failProb +'\n');
+            Main.appendStrToFile(fileName,"FailProbabilityExperiments",""+k+","+ failProb +'\n');
             System.out.println("finished writing failProbFor k = "+k);
         }
     }
     
-    public static void writeRankingToCSV(String resultFilename) {
+    public static void writeRankingToCSV(String resultFilename, String experimentName) {
         //write headers
-        Main.appendStrToFile(resultFilename, "uuid, score, group");
+        Main.appendStrToFile(resultFilename, experimentName, "uuid, score, group\n");
         for (Candidate candidate : fairRanking) {
-            String line = candidate.toString();
-            Main.appendStrToFile(resultFilename, line);
+            Main.appendStrToFile(resultFilename, experimentName, candidate.toString());
         }
     }
     
     public static void main(String[] args) {
-
         try {
             if(args[0].equals("failprob")){
                 parseParametersForFailProbExperiment(args);
@@ -153,7 +151,7 @@ public class Main {
                 Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
                 Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
-                Main.writeRankingToCSV(resultFilename);
+                Main.writeRankingToCSV(resultFilename, "dataExperiments");
             }
         } catch (IOException e) {
             e.printStackTrace();
