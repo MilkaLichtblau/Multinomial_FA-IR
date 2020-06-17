@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import algorithm.MTree.FairRankingStrategy;
+
 public class Main {
     private static ArrayList<String> columnHeaders;
     private static List<Candidate> unfairRanking;
@@ -117,16 +119,28 @@ public class Main {
             Main.appendStrToFile(fileName,""+k+","+ failProb +'\n');
             System.out.println("finished writing failProbFor k = "+k);
         }
-
     }
     
+    
+    
     public static void main(String[] args) {
+
         try {
             if(args[0].equals("failprob")){
                 parseParametersForFailProbExperiment(args);
             }
             if(args[0].equals("prepare")){
-                prepareDataExperiments("..", ",", true);
+                String datafile = args[1];
+                int k = Integer.parseInt(args[2]);
+                String[] pStringArray = args[3].split(",");
+                double[] p = Arrays.stream(pStringArray)
+                                              .mapToDouble(Double::parseDouble)
+                                              .toArray();
+                double alpha = Double.parseDouble(args[4]);
+                
+                prepareDataExperiments(datafile, ",", true);
+                MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
+                ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
             }
         } catch (IOException e) {
             e.printStackTrace();
