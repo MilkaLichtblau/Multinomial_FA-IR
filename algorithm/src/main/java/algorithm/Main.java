@@ -125,11 +125,18 @@ public class Main {
         }
     }
     
-    public static void writeRankingToCSV(String resultFilename, String experimentName) {
+    public static void writeRankingsToCSV(String resultFilename, String experimentName) {
         //write headers
-        Main.appendStrToFile(resultFilename, experimentName, "uuid, score, group\n");
+        String fairResultFilename = resultFilename + "_fair.csv";
+        Main.appendStrToFile(fairResultFilename, experimentName, "uuid, score, group\n");
         for (Candidate candidate : fairRanking) {
-            Main.appendStrToFile(resultFilename, experimentName, candidate.toString());
+            Main.appendStrToFile(fairResultFilename, experimentName, candidate.toString());
+        }
+        
+        String unfairResultFilename = resultFilename + "_unfair.csv";
+        Main.appendStrToFile(unfairResultFilename, experimentName, "uuid, score, group\n");
+        for (Candidate candidate : unfairRanking) {
+            Main.appendStrToFile(unfairResultFilename, experimentName, candidate.toString());
         }
     }
     
@@ -138,7 +145,7 @@ public class Main {
             if(args[0].equals("failprob")){
                 parseParametersForFailProbExperiment(args);
             }
-            if(args[0].equals("prepare")){
+            if(args[0].equals("data")){
                 String datafile = args[1];
                 int k = Integer.parseInt(args[2]);
                 String[] pStringArray = args[3].split(",");
@@ -147,11 +154,12 @@ public class Main {
                                               .toArray();
                 double alpha = Double.parseDouble(args[4]);
                 String resultFilename = args[5];
+                System.out.println("Working Directory = " + System.getProperty("user.dir"));
                 
                 Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
                 Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
-                Main.writeRankingToCSV(resultFilename, "dataExperiments");
+                Main.writeRankingsToCSV(resultFilename, "dataExperiments");
             }
         } catch (IOException e) {
             e.printStackTrace();
