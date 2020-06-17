@@ -125,18 +125,18 @@ public class Main {
         }
     }
     
-    public static void writeRankingsToCSV(String resultFilename, String experimentName) {
+    public static void writeRankingsToCSV(String resultFilename) {
         //write headers
         String fairResultFilename = resultFilename + "_fair.csv";
-        Main.appendStrToFile(fairResultFilename, experimentName, "uuid, score, group\n");
+        Main.appendStrToFile(fairResultFilename, "uuid, score, group\n");
         for (Candidate candidate : fairRanking) {
-            Main.appendStrToFile(fairResultFilename, experimentName, candidate.toString());
+            Main.appendStrToFile(fairResultFilename, candidate.toString());
         }
         
         String unfairResultFilename = resultFilename + "_unfair.csv";
-        Main.appendStrToFile(unfairResultFilename, experimentName, "uuid, score, group\n");
+        Main.appendStrToFile(unfairResultFilename, "uuid, score, group\n");
         for (Candidate candidate : unfairRanking) {
-            Main.appendStrToFile(unfairResultFilename, experimentName, candidate.toString());
+            Main.appendStrToFile(unfairResultFilename, candidate.toString());
         }
     }
     
@@ -159,7 +159,7 @@ public class Main {
                 Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
                 Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
-                Main.writeRankingsToCSV(resultFilename, "dataExperiments");
+                Main.writeRankingsToCSV(resultFilename);
             }
         } catch (IOException e) {
             e.printStackTrace();
