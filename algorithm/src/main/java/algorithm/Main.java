@@ -72,8 +72,8 @@ public class Main {
     }
 
     public static void appendStrToFile(String fileName, String str) {
-        Path currentRelativePath = Paths.get("");
-        String extendedFileName = currentRelativePath.getParent().toAbsolutePath().toString() + File.separator +
+        Path currentRelativePath = Paths.get("..");
+        String extendedFileName = currentRelativePath.toAbsolutePath().toString() + File.separator +
                 "experiments" +
                 File.separator +
                 "dataExperiments" +
