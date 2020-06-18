@@ -1,8 +1,10 @@
 package algorithm;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class Serializer {
 
@@ -10,6 +12,60 @@ public class Serializer {
         String filename = createMCDFCacheFileNameFromObject(cache);
         File file = new File(filename);
         return file.exists();
+    }
+
+    public static boolean checkIfStorageDirectoriesExist(){
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        if(Files.notExists(Paths.get(stringBuilder.toString()))){
+            Scanner in = new Scanner(System.in);
+            System.out.print("Directory for MCDFCache and MTreeCache not found. Create it?(\"yes\") or stop here (\"no\")");
+            String decision = in.nextLine();
+            if(decision.contains("yes")){
+                String storageDir = stringBuilder.toString();
+                new File(storageDir).mkdir();
+                new File(storageDir + File.separator + "mcdfcache").mkdir();
+                new File(storageDir + File.separator + "mtree").mkdir();
+                in.close();
+                return true;
+            }else{
+                in.close();
+                return false;
+            }
+        }
+        if(Files.exists(Paths.get(stringBuilder.toString()))){
+            String storageDir = stringBuilder.toString();
+            if(Files.notExists(Paths.get(storageDir + File.separator + "mcdfcache")) ||
+                    Files.notExists(Paths.get(storageDir + File.separator + "mtree"))){
+                Scanner in = new Scanner(System.in);
+                System.out.print("Directory for MCDFCache or MTreeCache not found. Create it?(\"yes\") or stop here (\"no\")");
+                String decision = in.nextLine();
+                if(decision.contains("yes")){
+                    if(Files.notExists(Paths.get(storageDir + File.separator + "mcdfcache"))){
+                        new File(storageDir + File.separator + "mcdfcache").mkdir();
+                    }else{
+                        new File(storageDir + File.separator + "mtree").mkdir();
+                    }
+                    in.close();
+                    return true;
+                }else{
+                    in.close();
+                    return false;
+                }
+            }else{
+                int mcdfDirSize = new File(stringBuilder.toString() + File.separator + "mcdfcache").listFiles().length;
+                int mtreeDirSize = new File(stringBuilder.toString() + File.separator + "mtree").listFiles().length;
+                if(mcdfDirSize == 0 || mtreeDirSize == 0){
+                    System.out.println("WARNING: You should download the .cache and .mtree Files from the FA-IR repository. This will boost the performance" +
+                            "by several orders of magnitude.");
+                }
+                return true;
+            }
+
+        }
+        return false;
     }
 
     public static boolean checkIfMCDFCacheShouldBeStored(MCDFCache cache){

@@ -2,14 +2,11 @@ package algorithm;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,11 +39,11 @@ public class Main {
         reader.close();
     }
 
-    private static void parseParametersForFailProbExperiment(String[] args) {
+    private static void parseParametersForExperiment(String[] args) {
         int kMax = Integer.parseInt(args[1]);
         ArrayList<Double> pList = new ArrayList<>();
-        for(int i=2; i<args.length-1; i++){
-            if(args[i].charAt(0) == 'p'){
+        for (int i = 2; i < args.length - 1; i++) {
+            if (args[i].charAt(0) == 'p') {
                 Double d = null;
                 String decimal = args[i].substring(1);
                 if (decimal.contains("/")) {
@@ -57,25 +54,31 @@ public class Main {
                         BigDecimal response = d1.divide(d2, MathContext.DECIMAL128);
                         d = response.doubleValue();
                     }
-                }else{
+                } else {
                     d = Double.parseDouble(decimal);
                 }
                 pList.add(d);
-            }else{
+            } else {
                 break;
             }
         }
-        if(pList.size()<2){
+        if (pList.size() < 2) {
             throw new IllegalArgumentException("state at least 2 minimum proportion values in the style: " +
                     "p0.2 p0.2 .... . You may write p1.0/3.0 ..");
         }
         double[] p = new double[pList.size()];
-        for(int i=0; i<p.length; i++){
+        for (int i = 0; i < p.length; i++) {
             p[i] = pList.get(i);
         }
-        double alpha = Double.parseDouble(args[args.length-2]);
-        String fileName = args[args.length-1];
-        runFailProbabilityExperiment(kMax,p,alpha, fileName);
+        if (args[0].equals("failprob")) {
+            double alpha = Double.parseDouble(args[args.length - 2]);
+            String fileName = args[args.length - 1];
+            runFailProbabilityExperiment(kMax, p, alpha, fileName);
+        }
+        if (args[0].equals("adjust")) {
+            double alpha = Double.parseDouble(args[args.length - 1]);
+            MTree ajustedTree = new MTree(kMax, p, alpha, true);
+        }
     }
 
     public static void appendStrToFile(String fileName, String str) {
@@ -93,17 +96,17 @@ public class Main {
     public static void runFailProbabilityExperiment(int kMax, double[] p, double alpha, String fileName) {
         String head = "k,failProbability" + '\n';
         Main.appendStrToFile(fileName, head);
-        for (int k = 5; k <= kMax; k+=5) {
+        for (int k = 5; k <= kMax; k += 5) {
             if (k >= 500) {
                 k += 50;
             }
             MTree tree = new MTree(k, p, alpha, false);
             double failProb = tree.getFailprob();
-            Main.appendStrToFile(fileName,""+k+","+ failProb +'\n');
-            System.out.println("finished writing failProbFor k = "+k);
+            Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
+            System.out.println("finished writing failProbFor k = " + k);
         }
     }
-    
+
     public static void writeRankingsToCSV(String resultFilename) {
         //write headers
         String fairResultFilename = resultFilename + "_fair.csv";
@@ -111,7 +114,7 @@ public class Main {
         for (Candidate candidate : fairRanking) {
             Main.appendStrToFile(fairResultFilename, candidate.toString());
         }
-        
+
         String unfairResultFilename = resultFilename + "_unfair.csv";
         Main.appendStrToFile(unfairResultFilename, "uuid, score, group\n");
         for (Candidate candidate : unfairRanking) {
@@ -120,25 +123,39 @@ public class Main {
     }
 
     /**
+     * ***FailProb Experiment***
+     * args structure: kMax p1 p2 ... pn alpha PATH\FileName
+     * Creates unadjusted mTrees with parameters k=5 to kMax p1..pn alpha and stores their failprobability in the specified file in csv format.
      * Example for failProb experiment: java -jar algorithm.jar failprob 150 p0.3 p0.2 p0.5 0.05 PATH\TO\EXPERIMENT\FILE\OUTPUT\failProbExperiment1.csv
+     *
+     * ***Adjust***
+     * args structure k p1 ... pn alpha
+     * Creates the adjusted mTree with approx. failprobability of alpha
+     * Example for adjust experiment: java -jar algorithm.jar adjust 100 p1.0/3.0 p1.0/3.0 p1.0/3.0 0.1
+     *
+     * ***Data Experiment***
      * Example for data experiment: java -jar algorithm.jar data ....
      */
     public static void main(String[] args) {
         try {
-            if(args[0].equals("failprob")){
-                parseParametersForFailProbExperiment(args);
+            if (args[0].equals("failprob")) {
+                parseParametersForExperiment(args);
             }
-            if(args[0].equals("data")){
+            if (args[0].equals("adjust")) {
+                parseParametersForExperiment(args);
+                System.out.println("adjusted MTree stored in ..\\storage\\mtree\\..");
+            }
+            if (args[0].equals("data")) {
                 String datafile = args[1];
                 int k = Integer.parseInt(args[2]);
                 String[] pStringArray = args[3].split(",");
                 double[] p = Arrays.stream(pStringArray)
-                                              .mapToDouble(Double::parseDouble)
-                                              .toArray();
+                        .mapToDouble(Double::parseDouble)
+                        .toArray();
                 double alpha = Double.parseDouble(args[4]);
                 String resultFilename = args[5];
                 System.out.println("Working Directory = " + System.getProperty("user.dir"));
-                
+
                 Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
                 Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
