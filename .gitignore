@@ -35,6 +35,9 @@ samplebody*
 *.class
 *.jar
 
+#Python stuff
+*.pyc
+
 # other generated files
 bin/
 gen/

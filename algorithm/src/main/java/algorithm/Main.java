@@ -131,7 +131,7 @@ public class Main {
      *
      * ***Data Experiment***
      * args structure data path/to/input/file k p1...pn alpha path/to/output/file (without file extension)
-     * Example for data experiment: java -jar algorithm.jar data ../experiments/dataExperiments/data/COMPAS/compas_race_java.csv 500 0.5,0.5 0.1 ../experiments/dataExperiments/results/COMPAS/compas_race
+     * Example for data experiment: java -jar MultinomialFair.jar data ../experiments/dataExperiments/data/COMPAS/compas_race_java.csv 500 0.5,0.5 0.1 ../experiments/dataExperiments/results/COMPAS/compas_race
      */
 
     public static void main(String[] args) throws FileNotFoundException {

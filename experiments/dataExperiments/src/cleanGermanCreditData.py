@@ -37,6 +37,11 @@ def main():
     data["foreigner"] = data["foreigner"].replace({"A201":1,
                                                    "A202":0})
 
+    # categorize age data, under 30 and over 55 is protected
+    data["age"] = np.where(data["age"] < 30, 1, data["age"])
+    data["age"] = np.where(data["age"].between(30, 55), 0, data["age"])
+    data["age"] = np.where(data["age"] > 55, 2, data["age"])
+
     data["score"] = np.zeros(data.shape[0])
     for idx, row in data.iterrows():
         accountStatus = row.loc["accountStatus"]
@@ -53,12 +58,35 @@ def main():
 
     data.to_csv("../data/GermanCredit/germanCredit_sexAgeForeigner.csv", header=True, index=False)
 
-    prepareForJavaCode(data, ["sex"]).to_csv("../data/GermanCredit/germanCredit_sex_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["age"]).to_csv("../data/GermanCredit/germanCredit_age_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["foreigner"]).to_csv("../data/GermanCredit/germanCredit_foreigner_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["sex", "foreigner"]).to_csv("../data/GermanCredit/germanCredit_sexForeigner_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["sex", "age"]).to_csv("../data/GermanCredit/germanCredit_sexAge_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["age", "foreigner"]).to_csv("../data/GermanCredit/germanCredit_ageForeigner_java.csv", header=True, index=False)
+    resultData, docString = prepareForJavaCode(data, ["sex"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_sex_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_sex_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["age"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_age_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_age_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["foreigner"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_foreigner_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_foreigner_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["sex", "foreigner"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_sexForeigner_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_sexForeigner_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["sex", "age"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_sexAge_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_sexAge_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["age", "foreigner"])
+    resultData.to_csv("../data/GermanCredit/germanCredit_ageForeigner_java.csv", header=True, index=False)
+    with open("../data/GermanCredit/germanCredit_ageForeigner_doc.txt", "w") as text_file:
+        text_file.write(docString)
 
 
 if __name__ == '__main__':
