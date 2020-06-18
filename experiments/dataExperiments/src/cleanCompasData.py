@@ -56,12 +56,35 @@ def main():
 
     data.to_csv("../data/COMPAS/compas_sexAgeRace.csv", header=True, index=False)
 
-    prepareForJavaCode(data, ["sex"]).to_csv("../data/COMPAS/compas_sex_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["race"]).to_csv("../data/COMPAS/compas_race_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["age_cat"]).to_csv("../data/COMPAS/compas_age_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["sex", "race"]).to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["sex", "age_cat"]).to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
-    prepareForJavaCode(data, ["age_cat", "race"]).to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
+    resultData, docString = prepareForJavaCode(data, ["sex"])
+    resultData.to_csv("../data/COMPAS/compas_sex_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_sex_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["race"])
+    resultData.to_csv("../data/COMPAS/compas_race_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_race_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["age_cat"])
+    resultData.to_csv("../data/COMPAS/compas_age_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_age_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["sex", "race"])
+    resultData.to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_sexRace_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["sex", "age_cat"])
+    resultData.to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_sexAge_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, docString = prepareForJavaCode(data, ["age_cat", "race"])
+    resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
+        text_file.write(docString)
 
 
 if __name__ == '__main__':
