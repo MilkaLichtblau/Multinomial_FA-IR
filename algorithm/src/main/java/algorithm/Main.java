@@ -73,8 +73,9 @@ public class Main {
         for(int i=0; i<p.length; i++){
             p[i] = pList.get(i);
         }
-        double alpha = Double.parseDouble(args[args.length-1]);
-        runFailProbabilityExperiment(kMax,p,alpha);
+        double alpha = Double.parseDouble(args[args.length-2]);
+        String fileName = args[args.length-1];
+        runFailProbabilityExperiment(kMax,p,alpha, fileName);
     }
 
     public static void appendStrToFile(String fileName, String str) {
@@ -89,18 +90,7 @@ public class Main {
         }
     }
 
-    public static void runFailProbabilityExperiment(int kMax, double[] p, double alpha) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("failProbabilityExperiment_");
-        stringBuilder.append(kMax);
-        stringBuilder.append("_");
-        for (double v : p) {
-            stringBuilder.append(v);
-            stringBuilder.append('_');
-        }
-        stringBuilder.append(alpha);
-        stringBuilder.append(".csv");
-        String fileName = stringBuilder.toString();
+    public static void runFailProbabilityExperiment(int kMax, double[] p, double alpha, String fileName) {
         String head = "k,failProbability" + '\n';
         Main.appendStrToFile(fileName, head);
         for (int k = 5; k <= kMax; k+=5) {
@@ -128,7 +118,11 @@ public class Main {
             Main.appendStrToFile(unfairResultFilename, candidate.toString());
         }
     }
-    
+
+    /**
+     * Example for failProb experiment: java -jar algorithm.jar failprob 150 p0.3 p0.2 p0.5 0.05 PATH\TO\EXPERIMENT\FILE\OUTPUT\failProbExperiment1.csv
+     * Example for data experiment: java -jar algorithm.jar data ....
+     */
     public static void main(String[] args) {
         try {
             if(args[0].equals("failprob")){
