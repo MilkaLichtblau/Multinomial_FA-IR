@@ -208,7 +208,7 @@ public class Serializer {
         Path currentRelativePath = Paths.get("");
         int k = mTree.getK();
         double[] p = mTree.getP();
-        double alpha = mTree.getAlpha();
+        double alpha = mTree.getUnadjustedAlpha();
         boolean isAdjusted = mTree.isAdjusted();
         StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
         stringBuilder.append(File.separator);
