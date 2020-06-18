@@ -153,8 +153,7 @@ public class Main {
                         .mapToDouble(Double::parseDouble)
                         .toArray();
                 double alpha = Double.parseDouble(args[4]);
-                String resultFilename = args[5];
-                System.out.println("Working Directory = " + System.getProperty("user.dir"));
+                String resultFilename = args[5] + "_k=" + k + "_p="+ Arrays.toString(p) + "_alpha=" + alpha;
 
                 Main.prepareDataExperiments(datafile, ",", true);
                 MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
