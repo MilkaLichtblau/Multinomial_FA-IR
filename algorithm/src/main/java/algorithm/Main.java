@@ -78,21 +78,10 @@ public class Main {
     }
 
     public static void appendStrToFile(String fileName, String str) {
-        Path currentRelativePath = Paths.get("..");
-        String extendedFileName = currentRelativePath.toAbsolutePath().toString() + File.separator +
-                "experiments" +
-                File.separator +
-                "dataExperiments" +
-                File.separator +
-                "results" +
-                File.separator +
-                "" +
-                File.separator +
-                fileName;
         try {
             // Open given file in append mode.
             BufferedWriter out = new BufferedWriter(
-                    new FileWriter(extendedFileName, true));
+                    new FileWriter(fileName, true));
             out.write(str);
             out.close();
         } catch (IOException e) {
