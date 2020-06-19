@@ -28,10 +28,10 @@ def main():
                                                "Greater than 45":2})
     data["race"] = data["race"].replace({"Caucasian":0,
                                          "African-American":1,
-                                         "Hispanic":2,
-                                         "Asian":3,
-                                         "Native American":4,
-                                         "Other":5})
+                                         "Hispanic":1,
+                                         "Asian":1,
+                                         "Native American":1,
+                                         "Other":1})
     # normalize numeric columns to interval [0,1]
     scaledDecile = (data["decile_score"] - np.min(data["decile_score"])) / np.ptp(data["decile_score"])
     scaledVDecile = (data["v_decile_score"] - np.min(data["v_decile_score"])) / np.ptp(data["v_decile_score"])
