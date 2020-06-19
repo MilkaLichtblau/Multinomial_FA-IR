@@ -37,10 +37,12 @@ def main():
     data["foreigner"] = data["foreigner"].replace({"A201":1,
                                                    "A202":0})
 
-    # categorize age data, under 30 and over 55 is protected
-    data["age"] = np.where(data["age"] < 30, 1, data["age"])
-    data["age"] = np.where(data["age"].between(30, 55), 0, data["age"])
-    data["age"] = np.where(data["age"] > 55, 2, data["age"])
+    # categorize age data, oldest (group 2) and youngest (group 1) decile are protected
+    data["decileRank"] = pd.qcut(data["age"], 10, labels=False)
+
+    data["age"] = np.where(data["decileRank"] == 0, 1, data["age"])
+    data["age"] = np.where(data["decileRank"].between(1, 8), 0, data["age"])
+    data["age"] = np.where(data["decileRank"] == 9, 2, data["age"])
 
     data["score"] = np.zeros(data.shape[0])
     for idx, row in data.iterrows():
