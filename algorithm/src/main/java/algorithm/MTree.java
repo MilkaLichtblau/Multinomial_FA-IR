@@ -1,5 +1,8 @@
 package algorithm;
 
+import org.apache.commons.math3.fitting.PolynomialCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +15,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class MTree implements Serializable {
-    
+
     public enum FairRankingStrategy {
         /**
          * enum to choose from different ranking strategies -- MOST_LIKELY = child node
@@ -22,8 +25,9 @@ public class MTree implements Serializable {
     }
 
     private static final long serialVersionUID = -5797820121404671859L;
-
     public static double EPS = 0.001;
+    public static int K_STEP_LOWER_BOUND = 25;
+    public static int REGRESSION_ITERATIONS = 5;
 
     private double alpha;
     private double unadjustedAlpha;
@@ -60,7 +64,7 @@ public class MTree implements Serializable {
 
             // check if Alpha Adjustment shall be used
             if (doAdjust) {
-                this.tree = this.buildAdjustedMTree();
+                this.tree = this.regressionAdjustment(this.k / 2, REGRESSION_ITERATIONS);
                 this.store(); //Store Mtree and MCDF Cache to file for later use
             } else {
                 this.tree = this.buildMTree();
@@ -81,6 +85,115 @@ public class MTree implements Serializable {
         this.mcdfCache = Serializer.loadMCDFCache(p);
         if (this.mcdfCache == null) {
             this.mcdfCache = new MCDFCache(p);
+        }
+    }
+
+    public HashMap<Integer, HashSet<List<Integer>>> regressionAdjustment(int maxPreAdjustK, int iterations) {
+        int kTarget = this.k;
+        final WeightedObservedPoints obs = new WeightedObservedPoints();
+        double originalAlpha = alpha;
+        int kStep = this.k / 4;
+        int stepsize = Math.max(maxPreAdjustK / iterations, 1);
+        if (kStep + stepsize > maxPreAdjustK || maxPreAdjustK <= iterations || kStep <= K_STEP_LOWER_BOUND) {
+            return this.buildAdjustedMTree();
+        } else {
+            MTree tree = new MTree(kStep, p, alpha, true);
+            kStep += stepsize;
+            alpha = tree.getAlpha();
+            obs.add(kStep, alpha);
+            for (int i = 1; i < iterations; i++) {
+                tree = new MTree(kStep, p, alpha, true);
+                System.out.println("Calculated preAdjust " + kStep);
+                alpha = tree.getAlpha();
+                obs.add(kStep, alpha);
+                if (kStep + stepsize <= maxPreAdjustK && kStep + stepsize <= kTarget) {
+                    kStep += stepsize;
+                } else {
+                    break;
+                }
+            }
+            if (kStep == kTarget) {
+                this.alpha = tree.getAlpha();
+                return tree.getTree();
+            }
+            //Add data points in case of too few iterations in the beginning
+            //This is legit because the curve fitting will else be negative for k > maxPreAdjustK
+            obs.add(10000, 0.0);
+            obs.add(kTarget * 1000, 0.0);
+
+            final PolynomialCurveFitter fitter = PolynomialCurveFitter.create(2);
+            final double[] coeff = fitter.fit(obs.toList());
+            double alphaPredict = Math.max(0.0, coeff[0] + coeff[1] * kTarget + coeff[2] * (kTarget * kTarget));
+            tree = new MTree(k, p, alphaPredict, false);
+            double failProbPredict = tree.getFailprob();
+            System.out.println(failProbPredict);
+            if (failProbPredict > originalAlpha) {
+                return postRegressionAdjustment(alphaPredict, originalAlpha, false);
+            }
+            if (failProbPredict < originalAlpha) {
+                return postRegressionAdjustment(alphaPredict, originalAlpha, true);
+            } else {
+                return tree.getTree();
+            }
+        }
+    }
+
+    private HashMap<Integer, HashSet<List<Integer>>> postRegressionAdjustment(double alphaPredict, double originalAlpha, boolean predictionIsMin) {
+        double aMin;
+        double aMax;
+        double aMid;
+        if (predictionIsMin) {
+            aMin = alphaPredict;
+            aMax = originalAlpha;
+        } else {
+            aMin = 0.0;
+            aMax = alphaPredict;
+        }
+        aMid = (aMin + aMax) / 2.0;
+        MTree mid = new MTree(k, p, aMid, false);
+        if (mid.getFailprob() == 0 || Math.abs(mid.getFailprob() - originalAlpha) <= EPS) {
+            return mid.tree;
+        }
+        MTree max = new MTree(this.k, this.p, aMax, false);
+        MTree min = new MTree(k, p, aMin, false);
+
+        while (true) {
+            System.out.println(mid.getAlpha());
+            if (mid.getFailprob() == originalAlpha) {
+                this.unadjustedAlpha = originalAlpha;
+                this.alpha = mid.getAlpha();
+                return mid.tree;
+            }
+            if (mid.getFailprob() < originalAlpha) {
+                aMin = aMid;
+                min = new MTree(k, p, aMin, false);
+                aMid = (aMin + aMax) / 2.0;
+                mid = new MTree(k, p, aMid, false);
+            } else if (mid.getFailprob() > this.alpha) {
+                aMax = aMid;
+                max = new MTree(k, p, aMax, false);
+                aMid = (aMin + aMax) / 2.0;
+                mid = new MTree(k, p, aMid, false);
+            }
+
+            double midDiff = Math.abs(mid.getFailprob() - originalAlpha);
+            double maxDiff = Math.abs(max.getFailprob() - originalAlpha);
+            double minDiff = Math.abs(min.getFailprob() - originalAlpha);
+            if (midDiff <= EPS && (midDiff <= maxDiff && midDiff <= minDiff)) {
+                this.unadjustedAlpha = originalAlpha;
+                this.alpha = mid.getAlpha();
+                return mid.tree;
+            }
+            if (minDiff <= EPS && (minDiff <= maxDiff && minDiff <= midDiff)) {
+                this.unadjustedAlpha = originalAlpha;
+                this.alpha = min.getAlpha();
+                return min.tree;
+            }
+            if (maxDiff <= EPS && maxDiff <= minDiff && maxDiff <= midDiff) {
+                this.unadjustedAlpha = originalAlpha;
+                this.alpha = max.getAlpha();
+                return max.tree;
+            }
         }
     }
 
@@ -398,5 +511,11 @@ public class MTree implements Serializable {
     public void store() {
         Serializer.storeMTree(this);
         Serializer.storeMCDFCache(this.mcdfCache);
+    }
+
+    public static void main(String[] args) {
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+        MTree adjusted = new MTree(200, p, 0.1, true);
+        System.out.println(adjusted.getFailprob());
     }
 }

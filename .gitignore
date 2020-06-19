@@ -33,7 +33,6 @@ samplebody*
 
 # Java build artifacts class files
 *.class
-*.jar
 
 #Python stuff
 *.pyc
