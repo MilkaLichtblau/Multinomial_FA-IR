@@ -41,7 +41,7 @@ def main():
 
     resultData, docString = prepareForJavaCode(data, ["sex", "race"])
     resultData.to_csv("../data/LSAT/LSAT_sexRace_java.csv", header=True, index=False)
-    with open("../data/LSAT/LSAT_sexRace__doc.txt", "w") as text_file:
+    with open("../data/LSAT/LSAT_sexRace_doc.txt", "w") as text_file:
         text_file.write(docString)
 
 
