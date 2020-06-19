@@ -39,8 +39,10 @@ def main():
     data['race'] = data['race'].replace(to_replace="Other", value=1)
     data['race'] = data['race'].replace(to_replace="Puertorican", value=1)
 
-    resultData, docString = prepareForJavaCode(data, ["sex", "race"])
+    resultData, groups, docString = prepareForJavaCode(data, ["sex", "race"])
     resultData.to_csv("../data/LSAT/LSAT_sexRace_java.csv", header=True, index=False)
+    # we need the groups as extra dataframe for the baseline
+    groups.to_csv("../data/LSAT/LSAT_sexRace_groups.csv", header=True, index=False)
     with open("../data/LSAT/LSAT_sexRace_doc.txt", "w") as text_file:
         text_file.write(docString)
 
