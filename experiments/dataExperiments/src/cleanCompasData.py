@@ -23,8 +23,8 @@ def main():
     data = data[keep_cols]
     data["sex"] = data["sex"].replace({"Male":0,
                                        "Female":1})
-    data["age_cat"] = data["age_cat"].replace({"Less than 25":0,
-                                               "25 - 45":1,
+    data["age_cat"] = data["age_cat"].replace({"Less than 25":1,
+                                               "25 - 45":0,
                                                "Greater than 45":2})
     data["race"] = data["race"].replace({"Caucasian":0,
                                          "African-American":1,
