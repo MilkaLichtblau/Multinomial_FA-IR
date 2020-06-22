@@ -36,6 +36,8 @@ def prepareForJavaCode(data, headersToFormAGroup):
             groupID += 1
 
     result = result.drop(columns=headersToFormAGroup)
+    result.sort_values(by=["score"], ascending=False, inplace=True)
+
     docString = docString + "\n\n" + str(result["group"].value_counts(normalize=True))
 
     return result, pd.DataFrame({"group": result["group"].unique()}), docString
