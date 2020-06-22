@@ -4,6 +4,8 @@ Created on Jun 12, 2020
 @author: meike
 '''
 
+import pandas as pd
+
 
 def prepareForJavaCode(data, headersToFormAGroup):
 
@@ -34,6 +36,6 @@ def prepareForJavaCode(data, headersToFormAGroup):
             groupID += 1
 
     result = result.drop(columns=headersToFormAGroup)
-    print(result["group"].value_counts(normalize=True))
     docString = docString + "\n\n" + str(result["group"].value_counts(normalize=True))
-    return result, docString
+
+    return result, pd.DataFrame({"group": result["group"].unique()}), docString

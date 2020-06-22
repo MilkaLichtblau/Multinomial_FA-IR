@@ -23,15 +23,15 @@ def main():
     data = data[keep_cols]
     data["sex"] = data["sex"].replace({"Male":0,
                                        "Female":1})
-    data["age_cat"] = data["age_cat"].replace({"Less than 25":0,
-                                               "25 - 45":1,
+    data["age_cat"] = data["age_cat"].replace({"Less than 25":1,
+                                               "25 - 45":0,
                                                "Greater than 45":2})
     data["race"] = data["race"].replace({"Caucasian":0,
                                          "African-American":1,
-                                         "Hispanic":2,
-                                         "Asian":3,
-                                         "Native American":4,
-                                         "Other":5})
+                                         "Hispanic":1,
+                                         "Asian":1,
+                                         "Native American":1,
+                                         "Other":1})
     # normalize numeric columns to interval [0,1]
     scaledDecile = (data["decile_score"] - np.min(data["decile_score"])) / np.ptp(data["decile_score"])
     scaledVDecile = (data["v_decile_score"] - np.min(data["v_decile_score"])) / np.ptp(data["v_decile_score"])
@@ -56,33 +56,40 @@ def main():
 
     data.to_csv("../data/COMPAS/compas_sexAgeRace.csv", header=True, index=False)
 
-    resultData, docString = prepareForJavaCode(data, ["sex"])
+    # we need the groups as extra dataframe for the baselin
+    resultData, groups, docString = prepareForJavaCode(data, ["sex"])
     resultData.to_csv("../data/COMPAS/compas_sex_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_sex_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_sex_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, docString = prepareForJavaCode(data, ["race"])
+    resultData, groups, docString = prepareForJavaCode(data, ["race"])
     resultData.to_csv("../data/COMPAS/compas_race_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_race_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_race_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, docString = prepareForJavaCode(data, ["age_cat"])
+    resultData, groups, docString = prepareForJavaCode(data, ["age_cat"])
     resultData.to_csv("../data/COMPAS/compas_age_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_age_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_age_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, docString = prepareForJavaCode(data, ["sex", "race"])
+    resultData, groups, docString = prepareForJavaCode(data, ["sex", "race"])
     resultData.to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_sexRace_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_sexRace_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, docString = prepareForJavaCode(data, ["sex", "age_cat"])
+    resultData, groups, docString = prepareForJavaCode(data, ["sex", "age_cat"])
     resultData.to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_sexAge_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_sexAge_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, docString = prepareForJavaCode(data, ["age_cat", "race"])
+    resultData, groups, docString = prepareForJavaCode(data, ["age_cat", "race"])
     resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_ageRace_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
         text_file.write(docString)
 
