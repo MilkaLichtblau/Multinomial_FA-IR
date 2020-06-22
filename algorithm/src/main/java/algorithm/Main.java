@@ -3,6 +3,9 @@ package algorithm;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -236,7 +239,38 @@ public class Main {
                         String line = ""+trials+","+timeMcdf+","+timeCdf+""+'\n';
                         Main.appendStrToFile(fileName,line);
                     }
+                }
+                if(args[0].equals("runtime-multinomial-adjust")){
+                    System.out.println("WARNING: This will move your mcdfcache and mtree files to an archive directory!");
+                    moveMcdfStorageFilesToArchive();
+                    moveMTreeStorageFilesToArchive();
+                    int kMax = 200;
+                    double[] p = {1.0/3.0, 1.0/3.0, 1.0/3.0};
+                    double alpha = 0.1;
+                    double p_bin = 0.5;
+                    String fileName = args[args.length-1];
+                    String head = "k, time for regression adjustment, time for binary search adjustment" +'\n';
+                    Main.appendStrToFile(fileName, head);
+                    for(int k=10; k<=kMax; k+=10){
+                        long start = System.nanoTime();
+                        MTree mTree = new MTree(k,p,alpha,true,false,true);
+                        long end = System.nanoTime();
+                        double timeRegression = (end - start) / 1000000000.0;
 
+                        moveMcdfStorageFilesToArchive();
+                        moveMTreeStorageFilesToArchive();
+
+                        start = System.nanoTime();
+                        MTree mTree2 = new MTree(k,p,alpha,true,false,false);
+                        end = System.nanoTime();
+                        double timeBinary = (end - start) / 1000000000.0;
+
+                        moveMcdfStorageFilesToArchive();
+                        moveMTreeStorageFilesToArchive();
+
+                        String line = ""+timeRegression+","+timeBinary+'\n';
+                        Main.appendStrToFile(fileName,line);
+                    }
                 }
                 if (args[0].equals("data")) {
                     String datafile = args[1];
@@ -258,6 +292,50 @@ public class Main {
             }
         } else {
             throw new FileNotFoundException("Directories ./storage/mtree and ./storage/mcdfcache required.");
+        }
+    }
+
+    private static void moveMTreeStorageFilesToArchive() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mtree");
+        stringBuilder.append(File.separator);
+        currentRelativePath = Paths.get(stringBuilder.toString());
+        File mcdfCacheDir = currentRelativePath.toFile();
+        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
+            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
+        }
+        for(File file : mcdfCacheDir.listFiles()){
+            if(!file.isDirectory()){
+                Files.move(file.toPath(),
+                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
+                                + File.separator + file.getName()));
+            }
+        }
+    }
+
+    private static void moveMcdfStorageFilesToArchive() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mcdfcache");
+        stringBuilder.append(File.separator);
+        currentRelativePath = Paths.get(stringBuilder.toString());
+        File mcdfCacheDir = currentRelativePath.toFile();
+        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
+            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
+        }
+        for(File file : mcdfCacheDir.listFiles()){
+            if(!file.isDirectory()){
+                Files.move(file.toPath(),
+                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
+                                + File.separator + file.getName()));
+            }
         }
     }
 }
