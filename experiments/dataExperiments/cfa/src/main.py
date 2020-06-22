@@ -216,6 +216,8 @@ def main():
                         '../../data/GermanCredit/germanCredit_sexAge_groups.csv',
                         'score',
                         groupNames)
+    else:
+        print("unknown command line option.")
 
 
 if __name__ == '__main__':
