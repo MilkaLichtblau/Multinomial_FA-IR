@@ -138,6 +138,50 @@ public class Main {
         }
     }
 
+    private static void moveMTreeStorageFilesToArchive() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mtree");
+        stringBuilder.append(File.separator);
+        currentRelativePath = Paths.get(stringBuilder.toString());
+        File mcdfCacheDir = currentRelativePath.toFile();
+        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
+            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
+        }
+        for(File file : mcdfCacheDir.listFiles()){
+            if(!file.isDirectory()){
+                Files.move(file.toPath(),
+                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
+                                + File.separator + file.getName()));
+            }
+        }
+    }
+
+    private static void moveMcdfStorageFilesToArchive() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mcdfcache");
+        stringBuilder.append(File.separator);
+        currentRelativePath = Paths.get(stringBuilder.toString());
+        File mcdfCacheDir = currentRelativePath.toFile();
+        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
+            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
+        }
+        for(File file : mcdfCacheDir.listFiles()){
+            if(!file.isDirectory()){
+                Files.move(file.toPath(),
+                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
+                                + File.separator + file.getName()));
+            }
+        }
+    }
+
     private static void parseParametersForBinomialExperiment(String[] args) {
         String fileName = args[args.length-1];
         int k = Integer.parseInt(args[1]);
@@ -292,50 +336,6 @@ public class Main {
             }
         } else {
             throw new FileNotFoundException("Directories ./storage/mtree and ./storage/mcdfcache required.");
-        }
-    }
-
-    private static void moveMTreeStorageFilesToArchive() throws IOException {
-        Path currentRelativePath = Paths.get("");
-        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
-        stringBuilder.append(File.separator);
-        stringBuilder.append("storage");
-        stringBuilder.append(File.separator);
-        stringBuilder.append("mtree");
-        stringBuilder.append(File.separator);
-        currentRelativePath = Paths.get(stringBuilder.toString());
-        File mcdfCacheDir = currentRelativePath.toFile();
-        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
-            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
-        }
-        for(File file : mcdfCacheDir.listFiles()){
-            if(!file.isDirectory()){
-                Files.move(file.toPath(),
-                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
-                                + File.separator + file.getName()));
-            }
-        }
-    }
-
-    private static void moveMcdfStorageFilesToArchive() throws IOException {
-        Path currentRelativePath = Paths.get("");
-        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
-        stringBuilder.append(File.separator);
-        stringBuilder.append("storage");
-        stringBuilder.append(File.separator);
-        stringBuilder.append("mcdfcache");
-        stringBuilder.append(File.separator);
-        currentRelativePath = Paths.get(stringBuilder.toString());
-        File mcdfCacheDir = currentRelativePath.toFile();
-        if(Files.notExists(Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"))){
-            new File(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"). mkdir();
-        }
-        for(File file : mcdfCacheDir.listFiles()){
-            if(!file.isDirectory()){
-                Files.move(file.toPath(),
-                        Paths.get(mcdfCacheDir.getAbsolutePath() + File.separator+"archive"
-                                + File.separator + file.getName()));
-            }
         }
     }
 }
