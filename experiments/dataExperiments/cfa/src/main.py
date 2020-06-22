@@ -1,82 +1,15 @@
 import pandas as pd
 import numpy as np
-import argparse, os, math
+import sys, os, math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from time import process_time
 
-from data_preparation import LSAT, GermanCredit, COMPAS
-from visualization.plots import plotKDEPerGroup
 from cfa.cfa import ContinuousFairnessAlgorithm
 from evaluation.fairnessMeasures import groupPercentageAtK
 from evaluation.relevanceMeasures import pak, ndcg_score
 
 
-def createLSATDatasets():
-    creator = LSAT.LSATCreator('../data/LSAT/law_data.csv.xlsx')
-
-    # all ethnicity in one dataset
-    creator.prepareAllRaceData()
-    creator.writeToCSV('../data/LSAT/allRace/allEthnicityLSAT.csv',
-                       '../data/LSAT/allRace/allEthnicityGroups.csv')
-    groupNames = {"[0]":"White",
-                  "[1]":"Amerindian",
-                  "[2]":"Asian",
-                  "[3]":"Black",
-                  "[4]":"Hispanic",
-                  "[5]":"Mexican",
-                  "[6]":"Other",
-                  "[7]":"Puertorican"}
-    plotKDEPerGroup(creator.dataset, creator.groups, 'LSAT',
-                    '../data/LSAT/allRace/scoreDistributionPerGroup_AllRace_LSAT', groupNames)
-    plotKDEPerGroup(creator.dataset, creator.groups, 'ZFYA',
-                    '../data/LSAT/allRace/scoreDistributionPerGroup_AllRace_ZFYA', groupNames)
-
-    # gender dataset
-    creator.prepareGenderData()
-    creator.writeToCSV('../data/LSAT/gender/genderLSAT.csv',
-                       '../data/LSAT/gender/genderGroups.csv')
-    groupNames = {"[0]":"Male",
-                  "[1]":"Female"}
-    plotKDEPerGroup(creator.dataset, creator.groups, 'LSAT',
-                    '../data/LSAT/gender/scoreDistributionPerGroup_Gender_LSAT', groupNames)
-    plotKDEPerGroup(creator.dataset, creator.groups, 'ZFYA',
-                    '../data/LSAT/gender/scoreDistributionPerGroup_Gender_ZFYA', groupNames)
-
-
-def createCOMPASDatasets():
-    creator = LSAT.LSATCreator('../data/LSAT/law_data.csv.xlsx')
-
-    # all ethnicity in one dataset
-    creator.prepareAllRaceData()
-    creator.writeToCSV('../data/LSAT/allRace/allEthnicityLSAT.csv',
-                       '../data/LSAT/allRace/allEthnicityGroups.csv')
-    groupNames = {"[0]":"White",
-                  "[1]":"Amerindian",
-                  "[2]":"Asian",
-                  "[3]":"Black",
-                  "[4]":"Hispanic",
-                  "[5]":"Mexican",
-                  "[6]":"Other",
-                  "[7]":"Puertorican"}
-    plotKDEPerGroup(creator.dataset, creator.groups, 'LSAT',
-                    '../data/LSAT/allRace/scoreDistributionPerGroup_AllRace_LSAT', groupNames)
-    plotKDEPerGroup(creator.dataset, creator.groups, 'ZFYA',
-                    '../data/LSAT/allRace/scoreDistributionPerGroup_AllRace_ZFYA', groupNames)
-
-    # gender dataset
-    creator.prepareGenderData()
-    creator.writeToCSV('../data/LSAT/gender/genderLSAT.csv',
-                       '../data/LSAT/gender/genderGroups.csv')
-    groupNames = {"[0]":"Male",
-                  "[1]":"Female"}
-    plotKDEPerGroup(creator.dataset, creator.groups, 'LSAT',
-                    '../data/LSAT/gender/scoreDistributionPerGroup_Gender_LSAT', groupNames)
-    plotKDEPerGroup(creator.dataset, creator.groups, 'ZFYA',
-                    '../data/LSAT/gender/scoreDistributionPerGroup_Gender_ZFYA', groupNames)
-
-
-def rerank_with_cfa(score_stepsize, thetas, result_dir, pathToData, pathToGroups, qual_attr, group_names):
+def rerank_with_cfa(score_stepsize, thetas, result_filename, pathToData, pathToGroups, qual_attr, group_names):
     data = pd.read_csv(pathToData, sep=',')
     groups = pd.read_csv(pathToGroups, sep=',')
 
@@ -86,7 +19,8 @@ def rerank_with_cfa(score_stepsize, thetas, result_dir, pathToData, pathToGroups
             "invalid number of thetas, should be {numThetas} Specify one theta per group.".format(numThetas=groups.shape[0]))
 
     regForOT = 5e-3
-    t = process_time()
+    plot_dir = os.path.dirname(result_filename) + "/"
+    print(plot_dir)
     cfa = ContinuousFairnessAlgorithm(data,
                                       groups,
                                       group_names,
@@ -94,13 +28,10 @@ def rerank_with_cfa(score_stepsize, thetas, result_dir, pathToData, pathToGroups
                                       score_stepsize,
                                       thetas,
                                       regForOT,
-                                      path=result_dir,
+                                      path=plot_dir,
                                       plot=True)
     result = cfa.run()
-    elapsed_time = process_time() - t
-    result.to_csv(result_dir + "resultData.csv")
-
-    print('running time: ' + str(elapsed_time), file=open(result_dir + "runtime.txt", "a"))
+    result.to_csv(result_filename)
 
 
 def parseThetas(thetaString):
@@ -216,102 +147,75 @@ def evaluateFairness(data, groups, groupNames, result_dir, stepsize):
 
 
 def main():
-    # parse command line options
-    parser = argparse.ArgumentParser(prog='Continuous Fairness Algorithm',
-                                     epilog="=== === === end === === ===")
-
-    parser.add_argument("--create",
-                        nargs=1,
-                        choices=['synthetic', 'lsat'],
-                        help="creates datasets from raw data and writes them to disk")
-    parser.add_argument("--run",
-                        nargs=4,
-                        metavar=('DATASET NAME', 'STEPSIZE', 'THETAS', 'DIRECTORY'),
-                        help="runs continuous fairness algorithm for given DATASET NAME with \
-                              STEPSIZE and THETAS and stores results into DIRECTORY")
-    parser.add_argument("--evaluate",
-                        nargs=3,
-                        metavar=('DATASET NAME', 'PATH TO ORIG DATASET', 'PATH TO RESULT DATASET'),
-                        help="evaluates all experiments for respective dataset and \
-                              stores results into directory given in PATH TO RESULT DATASET")
-
-    args = parser.parse_args()
-
-    if args.run:
-        score_stepsize = float(args.run[1])
-        thetas = parseThetas(args.run[2])
-        result_dir = args.run[3]
-        if args.run[0] == 'compasAgeRace':
-            groupNames = {"[0 0]":"Group [0 0]",
-                          "[0 1]":"Group [0 1]",
-                          "[0 2]":"Group [0 2]",
-                          "[1 0]":"Group [1 0]",
-                          "[1 1]":"Group [1 1]",
-                          "[1 2]":"Group [1 2]"}
-            rerank_with_cfa(score_stepsize,
-                            thetas,
-                            result_dir,
-                            '../data/synthetic/dataset.csv',
-                            '../data/synthetic/groups.csv',
-                            'score',
-                            groupNames)
-        elif args.run[0] == 'lsat_gender':
-            # TODO: run experiments also with ZFYA
-            groupNames = {"[0]": "Male",
-                          "[1]": "Female"}
-            rerank_with_cfa(score_stepsize,
-                            thetas,
-                            result_dir,
-                            '../data/LSAT/gender/genderLSAT.csv',
-                            '../data/LSAT/gender/genderGroups.csv',
-                            'LSAT',
-                            groupNames)
-        elif args.run[0] == 'lsat_race':
-            groupNames = {"[0]":"White",
-                          "[1]":"Amerindian",
-                          "[2]":"Asian",
-                          "[3]":"Black",
-                          "[4]":"Hispanic",
-                          "[5]":"Mexican",
-                          "[6]":"Other",
-                          "[7]":"Puertorican"}
-            rerank_with_cfa(score_stepsize,
-                            thetas,
-                            result_dir,
-                            '../data/LSAT/allRace/allEthnicityLSAT.csv',
-                            '../data/LSAT/allRace/allEthnicityGroups.csv',
-                            'LSAT',
-                            groupNames)
-        else:
-            parser.error("unknown dataset. Options are 'synthetic', 'lsat_gender', 'lsat_race'")
-    elif args.evaluate:
-        pathToOrigData = args.evaluate[1]
-        pathToCFAResult = args.evaluate[2]
-        result_dir = os.path.dirname(pathToCFAResult) + '/'
-        if args.evaluate[0] == 'synthetic':
-            qualAttr = 'score'
-            groups = pd.read_csv('../data/synthetic/groups.csv', sep=',')
-            groupNames = ["Group [0 0]", "Group [0 1]", "Group [0 2]", "Group [1 0]", "Group [1 1]", "Group [1 2]"]
-
-        if args.evaluate[0] == 'lsat_race':
-            qualAttr = 'LSAT'
-            groups = pd.read_csv('../data/LSAT/allRace/allEthnicityGroups.csv', sep=',')
-            groupNames = ["White", "Amerindian", "Asian", "Black", "Hispanic", "Mexican", "Other", "Puertorican"]
-
-        if args.evaluate[0] == 'lsat_gender':
-            qualAttr = 'LSAT'
-            groups = pd.read_csv('../data/LSAT/gender/genderGroups.csv', sep=',')
-            groupNames = ["Male", "Female"]
-
-        origData = pd.read_csv(pathToOrigData, sep=',')
-        fairData = pd.read_csv(pathToCFAResult, sep=',')
-
-        score_stepsize = 1000
-
-        evaluateRelevance(origData, fairData, result_dir, qualAttr, score_stepsize)
-        evaluateFairness(fairData, groups, groupNames, result_dir, score_stepsize)
-    else:
-        parser.error("choose one command line option")
+    score_stepsize = float(sys.argv[2])
+    thetas = parseThetas(sys.argv[3])
+    result_dir = sys.argv[4]
+    if sys.argv[1] == 'compas_ageRace':
+        groupNames = {"[0 0]":"White, 25-45",
+                      "[0 1]":"White, < 25",
+                      "[0 2]":"White, > 45",
+                      "[1 0]":"Non-White, 25-45",
+                      "[1 1]":"Non-White, < 25",
+                      "[1 2]":"Non-White, > 45"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/COMPAS/compas_ageRace_java.csv',
+                        '../../data/COMPAS/compas_ageRace_groups.csv',
+                        'score',
+                        groupNames)
+    elif sys.argv[1] == 'compas_sexRace':
+        groupNames = {"[0 0]":"Male, White",
+                      "[1 0]":"Female, White",
+                      "[0 1]":"Male, Non-White",
+                      "[1 1]":"Female, Non-White"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/COMPAS/compas_sexRace_java.csv',
+                        '../../data/COMPAS/compas_sexRace_groups.csv',
+                        'score',
+                        groupNames)
+    elif sys.argv[1] == 'compas_sexAge':
+        groupNames = {"[0 0]":"Male, 25-45",
+                      "[0 1]":"Male, < 25",
+                      "[0 2]":"Male, > 45",
+                      "[1 0]":"Female, 25-45",
+                      "[1 1]":"Female, < 25",
+                      "[1 2]":"Female, > 45"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/COMPAS/compas_sexAge_java.csv',
+                        '../../data/COMPAS/compas_sexAge_groups.csv',
+                        'score',
+                        groupNames)
+    elif sys.argv[1] == 'LSAT_sexRace':
+        groupNames = {"[0 0]":"Male, White",
+                      "[1 0]":"Female, White",
+                      "[0 1]":"Male, Non-White",
+                      "[1 1]":"Female, Non-White"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/LSAT/LSAT_sexRace_java.csv',
+                        '../../data/LSAT/LSAT_sexRace_groups.csv',
+                        'LSAT',
+                        groupNames)
+    elif sys.argv[1] == 'germanCredit_sexAge':
+        groupNames = {"[0 0]":"Male, middle age",
+                      "[0 1]":"Male, among 100 youngest",
+                      "[0 2]":"Male, among 100 oldest",
+                      "[1 0]":"Female, middle age",
+                      "[1 1]":"Female, among 100 youngest",
+                      "[1 2]":"Female, among 100 oldest"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/GermanCredit/germanCredit_sexAge_java.csv',
+                        '../../data/GermanCredit/germanCredit_sexAge_groups.csv',
+                        'score',
+                        groupNames)
 
 
 if __name__ == '__main__':
