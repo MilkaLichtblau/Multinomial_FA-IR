@@ -9,6 +9,8 @@ import java.util.List;
 import algorithm.MTree.FairRankingStrategy;
 import com.fairsearch.fair.lib.MTableGenerator;
 import com.fairsearch.fair.lib.RecursiveNumericFailProbabilityCalculator;
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import umontreal.ssj.probdistmulti.MultinomialDist;
 
 public class Main {
     private static ArrayList<String> columnHeaders;
@@ -133,6 +135,16 @@ public class Main {
         }
     }
 
+    private static void parseParametersForBinomialExperiment(String[] args) {
+        String fileName = args[args.length-1];
+        int k = Integer.parseInt(args[1]);
+        double p = Double.parseDouble(args[2]);
+        double alpha = Double.parseDouble(args[3]);
+        if (args[0].equals("failprob-binomial")) {
+            runBinomialFailProbabilityExperiment(k,p,alpha,fileName);
+        }
+    }
+
     /**
      * ***FailProb Experiment***
      * args structure: kMax p1 p2 ... pn alpha PATH/FileName
@@ -195,15 +207,36 @@ public class Main {
                         Main.appendStrToFile(fileName,line);
                     }
                 }
-                if(args[0].equals("runtime-adjust")){
-
-                    //runtime regression adjust symmetric asymmetric
-                    //runtime binarysearch adjust symmetric asymmetric
-                    //runtime runtime binomial adjust
-                }
                 if(args[0].equals("runtime-cdf")){
-                    //runtime mcdf
-                    //runtime cdf
+                    int trialsMax = 10000;
+                    double[] p = {0.2, 0.3, 0.5};
+                    double p_bin = 0.5;
+                    String fileName = args[args.length-1];
+                    String head = "trials, time for mcdf, time for bcdf" +'\n';
+                    Main.appendStrToFile(fileName, head);
+                    for(int trials = 10; trials<=trialsMax; trials+=10) {
+
+                        //runtime mcdf
+                        int[] signatureAsArray = new int[3];
+                        signatureAsArray[0] = trials;
+                        signatureAsArray[1] = (int) Math.round(trials / p[1]);
+                        signatureAsArray[2] = (int) Math.round(trials / p[2]);
+                        long start = System.nanoTime();
+                        double mcdf = MultinomialDist.cdf(trials, p, signatureAsArray);
+                        long end = System.nanoTime();
+                        double timeMcdf = (end - start) / 1000000000.0;
+
+                        //runtime cdf
+                        start = System.nanoTime();
+                        BinomialDistribution dist = new BinomialDistribution(trials, p_bin);
+                        double cdf =dist.cumulativeProbability(trials,trials/2);
+                        end = System.nanoTime();
+                        double timeCdf = (end - start) / 1000000000.0;
+
+                        String line = ""+trials+","+timeMcdf+","+timeCdf+""+'\n';
+                        Main.appendStrToFile(fileName,line);
+                    }
+
                 }
                 if (args[0].equals("data")) {
                     String datafile = args[1];
@@ -225,16 +258,6 @@ public class Main {
             }
         } else {
             throw new FileNotFoundException("Directories ./storage/mtree and ./storage/mcdfcache required.");
-        }
-    }
-
-    private static void parseParametersForBinomialExperiment(String[] args) {
-        String fileName = args[args.length-1];
-        int k = Integer.parseInt(args[1]);
-        double p = Double.parseDouble(args[2]);
-        double alpha = Double.parseDouble(args[3]);
-        if (args[0].equals("failprob-binomial")) {
-            runBinomialFailProbabilityExperiment(k,p,alpha,fileName);
         }
     }
 }
