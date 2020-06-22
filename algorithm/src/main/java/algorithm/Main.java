@@ -6,8 +6,9 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import algorithm.MTree.FairRankingStrategy;
+import com.fairsearch.fair.lib.MTableGenerator;
+import com.fairsearch.fair.lib.RecursiveNumericFailProbabilityCalculator;
 
 public class Main {
     private static ArrayList<String> columnHeaders;
@@ -35,7 +36,7 @@ public class Main {
         reader.close();
     }
 
-    private static void parseParametersForExperiment(String[] args) {
+    private static void parseParametersForMultinomialExperiment(String[] args) {
         int kMax = Integer.parseInt(args[1]);
         ArrayList<Double> pList = new ArrayList<>();
         for (int i = 2; i < args.length - 1; i++) {
@@ -69,7 +70,7 @@ public class Main {
         if (args[0].equals("failprob")) {
             double alpha = Double.parseDouble(args[args.length - 2]);
             String fileName = args[args.length - 1];
-            runFailProbabilityExperiment(kMax, p, alpha, fileName);
+            runMultinomialFailProbabilityExperiment(kMax, p, alpha, fileName);
         }
         if (args[0].equals("adjust")) {
             double alpha = Double.parseDouble(args[args.length - 1]);
@@ -89,7 +90,7 @@ public class Main {
         }
     }
 
-    public static void runFailProbabilityExperiment(int kMax, double[] p, double alpha, String fileName) {
+    public static void runMultinomialFailProbabilityExperiment(int kMax, double[] p, double alpha, String fileName) {
         String head = "k,failProbability" + '\n';
         Main.appendStrToFile(fileName, head);
         for (int k = 5; k <= kMax; k += 5) {
@@ -98,6 +99,20 @@ public class Main {
             }
             MTree tree = new MTree(k, p, alpha, false);
             double failProb = tree.getFailprob();
+            Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
+            System.out.println("finished writing failProbFor k = " + k);
+        }
+    }
+
+    public static void runBinomialFailProbabilityExperiment(int kMax, double p, double alpha, String fileName) {
+        String head = "k,failProbability" + '\n';
+        Main.appendStrToFile(fileName, head);
+        for (int k = 5; k <= kMax; k += 5) {
+            if (k >= 500) {
+                k += 50;
+            }
+            RecursiveNumericFailProbabilityCalculator calculator = new RecursiveNumericFailProbabilityCalculator(k,p,alpha);
+            double failProb = calculator.calculateFailProbability(new MTableGenerator(k,p,alpha,false).getMTable());
             Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
             System.out.println("finished writing failProbFor k = " + k);
         }
@@ -123,12 +138,12 @@ public class Main {
      * args structure: kMax p1 p2 ... pn alpha PATH/FileName
      * Creates unadjusted mTrees with parameters k=5 to kMax p1..pn alpha and stores their failprobability in the specified file in csv format.
      * Example for failProb experiment: java -jar algorithm.jar failprob 150 p0.3 p0.2 p0.5 0.05 PATH/TO/EXPERIMENT/FILE/OUTPUT/failProbExperiment1.csv
-     *
+     * <p>
      * ***Adjust***
      * args structure k p1 ... pn alpha
      * Creates the adjusted mTree with approx. failprobability of alpha
      * Example for adjust experiment: java -jar algorithm.jar adjust 100 p1.0/3.0 p1.0/3.0 p1.0/3.0 0.1
-     *
+     * <p>
      * ***Data Experiment***
      * args structure data path/to/input/file k p1...pn alpha path/to/output/file (without file extension)
      * Example for data experiment: java -jar MultinomialFair.jar data ../experiments/dataExperiments/data/COMPAS/compas_race_java.csv 500 0.5,0.5 0.1 ../experiments/dataExperiments/results/COMPAS/compas_race
@@ -137,12 +152,58 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         if (Serializer.checkIfStorageDirectoriesExist()) {
             try {
-                if (args[0].equals("failprob")) {
-                    parseParametersForExperiment(args);
+                if (args[0].equals("failprob-multinomial")) {
+                    parseParametersForMultinomialExperiment(args);
+                }
+                if (args[0].equals("failprob-binomial")) {
+                    parseParametersForBinomialExperiment(args);
                 }
                 if (args[0].equals("adjust")) {
-                    parseParametersForExperiment(args);
+                    parseParametersForMultinomialExperiment(args);
                     System.out.println("adjusted MTree stored in ../storage/mtree/..");
+                }
+                if (args[0].equals("runtime-construct")) {
+                    double[] pSym = {1.0/3.0, 1.0/3.0, 1.0/3.0};
+                    double[] pASym = {0.2, 0.3, 0.5};
+                    double p = 0.5;
+                    int kMax = 500;
+                    double alpha = 0.1;
+                    String fileName = args[args.length-1];
+                    String head = "k, symmetric MTree, asymmetric MTree, MTable" +'\n';
+                    Main.appendStrToFile(fileName, head);
+
+                    for (int k = 5; k <= kMax; k += 5) {
+                        //runtime symmetric
+                        long start = System.nanoTime();
+                        MTree symmetricTree = new MTree(k, pSym, alpha, false, false, false);
+                        long end = System.nanoTime();
+                        double timeSymmetricTree = (end - start) / 1000000000.0;
+
+                        //runtime asymmetric
+                        start = System.nanoTime();
+                        MTree asymmetricTree = new MTree(k, pASym, alpha, false, false, false);
+                        end = System.nanoTime();
+                        double timeAsymmetricTree = (end - start) / 1000000000.0;
+
+                        //runtime mtable
+                        start = System.nanoTime();
+                        MTableGenerator mtableGenerator = new MTableGenerator(k, p, alpha, false);
+                        end = System.nanoTime();
+                        double timeMtable = (end - start) / 1000000000.0;
+
+                        String line = ""+k+","+timeSymmetricTree+","+timeAsymmetricTree+","+timeMtable+'\n';
+                        Main.appendStrToFile(fileName,line);
+                    }
+                }
+                if(args[0].equals("runtime-adjust")){
+
+                    //runtime regression adjust symmetric asymmetric
+                    //runtime binarysearch adjust symmetric asymmetric
+                    //runtime runtime binomial adjust
+                }
+                if(args[0].equals("runtime-cdf")){
+                    //runtime mcdf
+                    //runtime cdf
                 }
                 if (args[0].equals("data")) {
                     String datafile = args[1];
@@ -152,7 +213,7 @@ public class Main {
                             .mapToDouble(Double::parseDouble)
                             .toArray();
                     double alpha = Double.parseDouble(args[4]);
-                    String resultFilename = args[5] + "_k=" + k + "_p="+ Arrays.toString(p) + "_alpha=" + alpha;
+                    String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p) + "_alpha=" + alpha;
 
                     Main.prepareDataExperiments(datafile, ",", true);
                     MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
@@ -162,8 +223,18 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             throw new FileNotFoundException("Directories ./storage/mtree and ./storage/mcdfcache required.");
+        }
+    }
+
+    private static void parseParametersForBinomialExperiment(String[] args) {
+        String fileName = args[args.length-1];
+        int k = Integer.parseInt(args[1]);
+        double p = Double.parseDouble(args[2]);
+        double alpha = Double.parseDouble(args[3]);
+        if (args[0].equals("failprob-binomial")) {
+            runBinomialFailProbabilityExperiment(k,p,alpha,fileName);
         }
     }
 }

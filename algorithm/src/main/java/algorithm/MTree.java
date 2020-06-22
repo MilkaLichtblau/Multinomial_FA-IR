@@ -73,6 +73,31 @@ public class MTree implements Serializable {
         }
     }
 
+    public MTree(int k, double[] p, double alpha, boolean doAdjust, boolean useMemory, boolean useRegression) {
+        if (useMemory) {
+            loadMTreeFromSerializedObject(new MTree(k, p, alpha, doAdjust));
+        } else {
+            this.k = k;
+            this.p = p;
+            this.alpha = alpha;
+            this.unadjustedAlpha = alpha;
+            this.doAdjust = doAdjust;
+            this.mcdfCache = new MCDFCache(p);
+            // check if we have symmetric proportions p[] to allow later optimizations
+            this.isMinimumProportionsSymmetric = MTree.checkIfMinimumProportionsAreEqual(this.p);
+            // check if Alpha Adjustment shall be used
+            if (doAdjust) {
+                if (useRegression) {
+                    this.tree = this.regressionAdjustment(this.k / 2, REGRESSION_ITERATIONS);
+                } else {
+                    this.tree = this.buildAdjustedMTree();
+                }
+            } else {
+                this.tree = this.buildMTree();
+            }
+        }
+    }
+
     private void loadMTreeFromSerializedObject(MTree loadedMTree) {
         this.k = loadedMTree.getK();
         this.p = loadedMTree.getP();
