@@ -80,6 +80,7 @@ public class Main {
         if (args[0].equals("adjust")) {
             double alpha = Double.parseDouble(args[args.length - 1]);
             MTree ajustedTree = new MTree(kMax, p, alpha, true);
+            //FIXME: was macht der AdjustedTree hier ohne weiterverarbeitet zu werden?
         }
     }
 
