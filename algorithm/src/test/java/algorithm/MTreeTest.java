@@ -352,48 +352,24 @@ public class MTreeTest {
     }
     
     @Test
-    public void testGetCorrectChildNode_onlyOneChildExists_symmetric() {
-        fail("Not yet implemented");
+    public void testGetCorrectChildNode_twoChildrenWithSameLikelyhood_symmetric() {
 
         int k = 10;
-        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
-        double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false);
-        
-        List<Integer> parent = Arrays.stream(new int[] {1, 0, 0}).boxed().collect(Collectors.toList());
-        List<Integer> expected = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
-        assertEquals(expected, actual);
-    }
-    
-    @Test
-    public void testGetCorrectChildNode_twoChildrenWithOneMoreLikely_symmetric() {
-        fail("Not yet implemented");
-
-        int k = 10;
-        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
+        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
         double alpha = 0.1;
         MTree mTree = new MTree(k, p, alpha, false);
         
         List<Integer> parent = Arrays.stream(new int[] {2, 0, 0}).boxed().collect(Collectors.toList());
-        List<Integer> expected = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> expected1 = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
+        List<Integer> expected2 = Arrays.stream(new int[] {3, 1, 0}).boxed().collect(Collectors.toList());
         List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
-        assertEquals(expected, actual);
-        
-    }
-    
-    @Test
-    public void testGetCorrectChildNode_threeNodesAtLevelOnlyOneIsChild_symmetric() {
-        fail("Not yet implemented");
-        int k = 10;
-        double[] p = {2.0 / 5.0, 1.0 / 5.0, 2.0 / 5.0};
-        double alpha = 0.1;
-        MTree mTree = new MTree(k, p, alpha, false);
-        
-        List<Integer> parent = Arrays.stream(new int[] {3, 0, 1}).boxed().collect(Collectors.toList());
-        List<Integer> expected = Arrays.stream(new int[] {4, 0, 1}).boxed().collect(Collectors.toList());
-        List<Integer> actual = mTree.getCorrectChildNode(FairRankingStrategy.MOST_LIKELY, parent);
-        assertEquals(expected, actual);
+        try {
+            assertEquals(expected1, actual);
+            System.out.println("Child [3,0,1] matched");
+        } catch (AssertionError e1) {
+            assertEquals(expected2, actual);
+            System.out.println("Child [3,1,0] matched");
+        }
         
     }
     
@@ -408,8 +384,8 @@ public class MTreeTest {
                 + "[2, 0, 0]\n"
                 + "[3, 1, 0]\n"
                 + "[4, 2, 0], [4, 1, 1]\n"
-                + "[5, 3, 0], [5, 2, 1], [5, 1, 1]\n"
-                + "[6, 3, 1], [6, 2, 1]\n"
+                + "[5, 1, 1], [5, 3, 0], [5, 2, 1]\n"
+                + "[6, 2, 1], [6, 3, 1]\n"
                 + "[7, 3, 1], [7, 2, 2]\n"
                 + "[8, 4, 1], [8, 3, 2], [8, 2, 2]\n";
         String actual = mTree.toString();
