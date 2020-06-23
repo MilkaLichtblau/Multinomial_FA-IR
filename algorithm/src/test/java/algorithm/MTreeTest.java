@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import algorithm.MTree;
 import org.junit.Test;
 
 import algorithm.MTree.FairRankingStrategy;
@@ -21,6 +19,7 @@ import algorithm.MTree.FairRankingStrategy;
 
 public class MTreeTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testRemoveMirroredNodes() {
         int k = 9;

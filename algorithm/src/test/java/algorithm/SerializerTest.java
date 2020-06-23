@@ -39,6 +39,7 @@ public class SerializerTest {
         double[] p = {1.0/3.0,1.0/3.0,1.0/3.0};
         int k = 15;
         double alpha = 0.1;
+        @SuppressWarnings("unused")
         MTree mTree = new MTree(k,p,alpha,false);
         MTree loadedMTree = Serializer.loadMTree(k,p,alpha,false);
         assertNull(loadedMTree.getMcdfCache());
