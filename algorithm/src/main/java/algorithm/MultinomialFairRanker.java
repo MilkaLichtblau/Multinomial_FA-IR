@@ -15,8 +15,9 @@ public class MultinomialFairRanker {
     private HashMap<Integer, Integer> numberOfCandidatesInResultPerGroup;
 
     public MultinomialFairRanker(int k, double[] p, double alpha, boolean doAdjust, List<Candidate> unfairRanking) {
+        System.out.print("Started building MTree for: k="+k+", p="+Arrays.toString(p)+", alpha="+alpha);
         this.mTree = new MTree(k, p, alpha, doAdjust);
-
+        System.out.print("Finished building MTree");
         // create separate lists of candidates per group, with candidates sorted by
         // score
         this.groupLists = new HashMap<>();
