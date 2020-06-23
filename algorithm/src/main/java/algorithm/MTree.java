@@ -65,6 +65,7 @@ public class MTree implements Serializable {
             // check if Alpha Adjustment shall be used
             if (doAdjust) {
                 this.tree = this.regressionAdjustment(this.k / 2, REGRESSION_ITERATIONS);
+                System.out.print("finished adjustment");
                 this.store(); //Store Mtree and MCDF Cache to file for later use
             } else {
                 this.tree = this.buildMTree();
@@ -126,9 +127,10 @@ public class MTree implements Serializable {
             kStep += stepsize;
             alpha = tree.getAlpha();
             obs.add(kStep, alpha);
+            System.out.print("Started regression adjustment:");
             for (int i = 1; i < iterations; i++) {
+                System.out.print(".");
                 tree = new MTree(kStep, p, alpha, true);
-                System.out.println("Calculated preAdjust " + kStep);
                 alpha = tree.getAlpha();
                 obs.add(kStep, alpha);
                 if (kStep + stepsize <= maxPreAdjustK && kStep + stepsize <= kTarget) {
@@ -151,7 +153,6 @@ public class MTree implements Serializable {
             double alphaPredict = Math.max(0.0, coeff[0] + coeff[1] * kTarget + coeff[2] * (kTarget * kTarget));
             tree = new MTree(k, p, alphaPredict, false);
             double failProbPredict = tree.getFailprob();
-            System.out.println(failProbPredict);
             if (failProbPredict > originalAlpha) {
                 return postRegressionAdjustment(alphaPredict, originalAlpha, false);
             }
@@ -167,6 +168,7 @@ public class MTree implements Serializable {
         double aMin;
         double aMax;
         double aMid;
+        System.out.println("Started post-regression adjustment:");
         if (predictionIsMin) {
             aMin = alphaPredict;
             aMax = originalAlpha;
@@ -176,14 +178,17 @@ public class MTree implements Serializable {
         }
         aMid = (aMin + aMax) / 2.0;
         MTree mid = new MTree(k, p, aMid, false);
+        System.out.print(".");
         if (mid.getFailprob() == 0 || Math.abs(mid.getFailprob() - originalAlpha) <= EPS) {
             return mid.tree;
         }
         MTree max = new MTree(this.k, this.p, aMax, false);
+        System.out.print(".");
         MTree min = new MTree(k, p, aMin, false);
+        System.out.print(".");
 
         while (true) {
-            System.out.println(mid.getAlpha());
+            System.out.print(".");
             if (mid.getFailprob() == originalAlpha) {
                 this.unadjustedAlpha = originalAlpha;
                 this.alpha = mid.getAlpha();
@@ -300,7 +305,6 @@ public class MTree implements Serializable {
         tree.put(position, positionZero);
 
         while (position < this.k) {
-            System.out.println(position);
             HashSet<List<Integer>> currentLevel = tree.get(position);
             HashSet<List<Integer>> currentChildCandidates = new HashSet<>();
             for (List<Integer> node : currentLevel) {
@@ -536,11 +540,5 @@ public class MTree implements Serializable {
     public void store() {
         Serializer.storeMTree(this);
         Serializer.storeMCDFCache(this.mcdfCache);
-    }
-
-    public static void main(String[] args) {
-        double[] p = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
-        MTree adjusted = new MTree(200, p, 0.1, true);
-        System.out.println(adjusted.getFailprob());
     }
 }

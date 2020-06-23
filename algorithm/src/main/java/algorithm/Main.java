@@ -106,8 +106,9 @@ public class Main {
             MTree tree = new MTree(k, p, alpha, false);
             double failProb = tree.getFailprob();
             Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
-            System.out.println("finished writing failProbFor k = " + k);
+            System.out.print(".");
         }
+        System.out.println("Finished Fail Probability Experiment");
     }
 
     public static void runBinomialFailProbabilityExperiment(int kMax, double p, double alpha, String fileName) {
@@ -120,8 +121,9 @@ public class Main {
             RecursiveNumericFailProbabilityCalculator calculator = new RecursiveNumericFailProbabilityCalculator(k,p,alpha);
             double failProb = calculator.calculateFailProbability(new MTableGenerator(k,p,alpha,false).getMTable());
             Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
-            System.out.println("finished writing failProbFor k = " + k);
+            System.out.print(".");
         }
+        System.out.println("Finished Fail Probability Experiment");
     }
 
     public static void writeRankingsToCSV(String resultFilename) {
@@ -256,7 +258,7 @@ public class Main {
                     }
                 }
                 if(args[0].equals("runtime-cdf")){
-                    int trialsMax = 10000;
+                    int trialsMax = 1000;
                     double[] p = {0.2, 0.3, 0.5};
                     double p_bin = 0.5;
                     String fileName = args[args.length-1];
@@ -267,8 +269,8 @@ public class Main {
                         //runtime mcdf
                         int[] signatureAsArray = new int[3];
                         signatureAsArray[0] = trials;
-                        signatureAsArray[1] = (int) Math.round(trials / p[1]);
-                        signatureAsArray[2] = (int) Math.round(trials / p[2]);
+                        signatureAsArray[1] = (int) Math.round(trials / (p[1]*2));
+                        signatureAsArray[2] = (int) Math.round(trials / (p[2]*2));
                         long start = System.nanoTime();
                         double mcdf = MultinomialDist.cdf(trials, p, signatureAsArray);
                         long end = System.nanoTime();
@@ -280,7 +282,7 @@ public class Main {
                         double cdf =dist.cumulativeProbability(trials/2,trials);
                         end = System.nanoTime();
                         double timeCdf = (end - start) / 1000000000.0;
-
+                        System.out.println(trials + " stored | time mcdf: "+timeMcdf + " | time cdf: " +timeCdf);
                         String line = ""+trials+","+timeMcdf+","+timeCdf+""+'\n';
                         Main.appendStrToFile(fileName,line);
                     }
