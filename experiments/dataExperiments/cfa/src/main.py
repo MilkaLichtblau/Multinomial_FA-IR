@@ -176,6 +176,16 @@ def main():
                         '../../data/COMPAS/compas_sexRace_groups.csv',
                         'score',
                         groupNames)
+    elif sys.argv[1] == 'compas_race':
+        groupNames = {"[0]":"White",
+                      "[1]":"Non-White"}
+        rerank_with_cfa(score_stepsize,
+                        thetas,
+                        result_dir,
+                        '../../data/COMPAS/compas_race_java.csv',
+                        '../../data/COMPAS/compas_race_groups.csv',
+                        'score',
+                        groupNames)
     elif sys.argv[1] == 'compas_sexAge':
         groupNames = {"[0 0]":"Male, 25-45",
                       "[0 1]":"Male, < 25",
