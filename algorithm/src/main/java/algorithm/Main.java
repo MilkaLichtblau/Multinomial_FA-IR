@@ -277,7 +277,7 @@ public class Main {
                         //runtime cdf
                         start = System.nanoTime();
                         BinomialDistribution dist = new BinomialDistribution(trials, p_bin);
-                        double cdf =dist.cumulativeProbability(trials,trials/2);
+                        double cdf =dist.cumulativeProbability(trials/2,trials);
                         end = System.nanoTime();
                         double timeCdf = (end - start) / 1000000000.0;
 
