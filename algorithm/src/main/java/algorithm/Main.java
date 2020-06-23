@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import algorithm.MTree.FairRankingStrategy;
-import com.fairsearch.fair.lib.MTableGenerator;
-import com.fairsearch.fair.lib.RecursiveNumericFailProbabilityCalculator;
+import com.github.fairsearch.lib.MTableGenerator;
+import com.github.fairsearch.lib.RecursiveNumericFailProbabilityCalculator;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
