@@ -47,6 +47,7 @@ public class MTree implements Serializable {
     public MTree(int k, double[] p, double alpha, boolean doAdjust) {
         MTree loadedMTree = Serializer.loadMTree(k, p, alpha, doAdjust);
         if (loadedMTree != null) {
+            System.out.println("Tree was loaded from Memory");
             this.loadMTreeFromSerializedObject(loadedMTree);
         } else {
             this.k = k;
@@ -64,10 +65,11 @@ public class MTree implements Serializable {
 
             // check if Alpha Adjustment shall be used
             if (doAdjust) {
+                System.out.print(".");
                 this.tree = this.regressionAdjustment(this.k / 2, REGRESSION_ITERATIONS);
-                System.out.print("finished adjustment");
                 this.store(); //Store Mtree and MCDF Cache to file for later use
             } else {
+                System.out.print(".");
                 this.tree = this.buildMTree();
                 this.store(); //Store Mtree and MCDF Cache to file for later use
             }
@@ -124,10 +126,10 @@ public class MTree implements Serializable {
             return this.buildAdjustedMTree();
         } else {
             MTree tree = new MTree(kStep, p, alpha, true);
+            System.out.print(".");
             kStep += stepsize;
             alpha = tree.getAlpha();
             obs.add(kStep, alpha);
-            System.out.print("Started regression adjustment:");
             for (int i = 1; i < iterations; i++) {
                 System.out.print(".");
                 tree = new MTree(kStep, p, alpha, true);
