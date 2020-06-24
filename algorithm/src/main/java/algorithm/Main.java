@@ -114,10 +114,7 @@ public class Main {
     public static void runBinomialFailProbabilityExperiment(int kMax, double p, double alpha, String fileName) {
         String head = "k,failProbability" + '\n';
         Main.appendStrToFile(fileName, head);
-        for (int k = 5; k <= kMax; k += 5) {
-            if (k >= 500) {
-                k += 50;
-            }
+        for (int k = 5; k <= kMax; k += kMax/10) {
             RecursiveNumericFailProbabilityCalculator calculator = new RecursiveNumericFailProbabilityCalculator(k,p,alpha);
             double failProb = calculator.calculateFailProbability(new MTableGenerator(k,p,alpha,false).getMTable());
             Main.appendStrToFile(fileName, "" + k + "," + failProb + '\n');
