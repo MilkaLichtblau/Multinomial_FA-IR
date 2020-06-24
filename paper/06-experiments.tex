@@ -53,13 +53,29 @@ k,alphaadj,p,alphamodel
 	\vspace{-3mm}
 	\label{tbl:datasets}
 	\resizebox{1.01\columnwidth}{!}{%
-		\centering\begin{tabular}{clcccccc}\toprule
+		\centering\begin{tabular}{clcclllc}\toprule
 			&        &                         &                         & Quality   & Protected & Protected \\
-			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & group     & \% \\ \midrule
-			D1 & COMPAS \cite{angwin_2016_machine}& 18K  & 1K & $\neg$recidivism & Afr.-Am. & 51.2\% \\
-			D2 & "  & "  & " & " & male & 80.7\%\\ 
-			D3 & "  & "  & " & " & female & 19.3\%\\ 
-			D4 & Ger. credit \cite{lichman_2013_uci} & 1K   & 100   & credit rating & female & 69.0\% \\
+			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & groups     & \% \\ 
+			\midrule
+			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & PoC & 65.9\% \\
+			\midrule
+			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
+			& & & & prior arrests + & white male & 26.3\% \\
+			& & & & violent recidivism & PoC female & 11.2\% \\
+			\midrule
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & male, 25yr. < x < 45yr. & 46.1\%\\ 
+			& & & & prior arrests + & male, < 25yr. & 17.8\% \\
+			& & & & violent recidivism & male, > 45yr. & 17.1\% \\
+			& & & & & female, < 25yr. & 4.0\% \\
+			& & & & & female, < 25yr. & 3.9\% \\
+			\midrule
+			D4 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC, 25yr. < x < 45yr. & 40.0\%\\ 
+			& & & & prior arrests + & PoC, < 25yr. & 16.2\% \\
+			& & & & violent recidivism & PoC, > 45yr. & 10.8\% \\
+			& & & & & White, > 45yr. & 10.2\% \\
+			& & & & & White, < 25yr. & 5.6\% \\
+			\midrule
+			D4 & German credit \cite{lichman_2013_uci} & 1K & 500 & credit rating & female & 69.0\% \\
 			D5 & " & " & " & " & $<$ 25 yr. & 14.9\% \\
 			D6 & "  & " & " & " & $<$ 35 yr. & 54.8\% \\ 
 			D7 & SAT \cite{sat_2014}   & 1.6 M & 1.5K  & test score  & female & 53.1\%  \\ 
@@ -76,7 +92,9 @@ Table~\ref{tbl:datasets} summarizes the datasets used in our experiments.
 %
 Each dataset contains a set of people with demographic attributes, plus a quality attribute.
 %
-For each dataset, we consider a value of $k$ that is a small round number  ({\em e.g.}, 100, 1,000, or 1,500), or $k=n$ for a small dataset.
+Note that dataset D1 is the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original \algoFAIR, we experiment with the multinomial extension that we proposed in Section~\ref{sec:problem}.
+%
+For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 500, or 2,000) with $k<n$.
 %
 For the purposes of these experiments, we considered several scenarios of protected groups.
 %
@@ -90,7 +108,13 @@ We used the two publicly-available datasets used in \cite{yang2016measuring} (CO
 %
 In our experiment, we test a scenario in which we want to create a fair ranking of the top-$k$ people who are least likely to recidivate, who could be, for instance, considered for a pardon or reduced sentence.
 %
-We observe that African Americans as well as males are given a larger recidivism score than other groups; for the purposes of this experiment we select these two categories as the protected groups.
+We calculated a candidate's overall score as a weighted summation of the columns ``recidivism, violent recidivism'' and ``prior arrests'' from the original dataset.
+%
+Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``non-white'', age is either ``younger than 25, between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
+%
+We observe that non-white people, as well as males are given a larger recidivism score than other groups.
+%
+We therefore consider white, female and between 25 and 45 as the non-protected categories for our experiments.
 
 \spara{German Credit} is the Statlog German Credit Data collected by Hans Hofmann~\cite{lichman_2013_uci}.
 %
