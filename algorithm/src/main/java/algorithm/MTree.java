@@ -47,7 +47,7 @@ public class MTree implements Serializable {
     public MTree(int k, double[] p, double alpha, boolean doAdjust) {
         MTree loadedMTree = Serializer.loadMTree(k, p, alpha, doAdjust);
         if (loadedMTree != null) {
-            System.out.println("Tree was loaded from Memory");
+            System.out.println("loaded MTree for k="+loadedMTree.getK());
             this.loadMTreeFromSerializedObject(loadedMTree);
         } else {
             this.k = k;
@@ -117,14 +117,15 @@ public class MTree implements Serializable {
     }
 
     public HashMap<Integer, HashSet<List<Integer>>> regressionAdjustment(int maxPreAdjustK, int iterations) {
-        int kTarget = this.k;
-        final WeightedObservedPoints obs = new WeightedObservedPoints();
-        double originalAlpha = alpha;
+
         int kStep = this.k / 4;
         int stepsize = Math.max(maxPreAdjustK / iterations, 1);
-        if (kStep + stepsize > maxPreAdjustK || maxPreAdjustK <= iterations || kStep <= K_STEP_LOWER_BOUND) {
+        if (kStep <= K_STEP_LOWER_BOUND || maxPreAdjustK <= iterations || kStep + stepsize > maxPreAdjustK) {
             return this.buildAdjustedMTree();
         } else {
+            int kTarget = this.k;
+            final WeightedObservedPoints obs = new WeightedObservedPoints();
+            double originalAlpha = alpha;
             MTree tree = new MTree(kStep, p, alpha, true);
             System.out.print(".");
             kStep += stepsize;
@@ -230,6 +231,7 @@ public class MTree implements Serializable {
     }
 
     private HashMap<Integer, HashSet<List<Integer>>> buildAdjustedMTree() {
+        System.out.println("building adjusted mtree with binary search");
         double aMin = 0;
         double aMax = this.alpha;
         double aMid = (aMin + aMax) / 2.0;
@@ -238,7 +240,6 @@ public class MTree implements Serializable {
         if (max.getFailprob() == 0 || Math.abs(max.getFailprob() - this.alpha) <= EPS) {
             return max.tree;
         }
-
         MTree min = new MTree(k, p, aMin, false);
         MTree mid = new MTree(k, p, aMid, false);
 
@@ -305,8 +306,9 @@ public class MTree implements Serializable {
         HashSet<List<Integer>> positionZero = new HashSet<>();
         positionZero.add(root);
         tree.put(position, positionZero);
-
+        System.out.println("computing MTree for p="+Arrays.toString(this.p) + ", alpha="+this.alpha +", level of Tree: ");
         while (position < this.k) {
+            System.out.print("."+position);
             HashSet<List<Integer>> currentLevel = tree.get(position);
             HashSet<List<Integer>> currentChildCandidates = new HashSet<>();
             for (List<Integer> node : currentLevel) {
@@ -320,6 +322,7 @@ public class MTree implements Serializable {
             position++;
             tree.put(position, currentChildCandidates);
         }
+        System.out.print('\n');
         return tree;
     }
 
@@ -542,5 +545,23 @@ public class MTree implements Serializable {
     public void store() {
         Serializer.storeMTree(this);
         Serializer.storeMCDFCache(this.mcdfCache);
+    }
+
+    public static void main(String[] args){
+        double alpha = 0.1;
+        double[] p1 = {0.18,0.11,0.1,0.39,0.06,0.16};
+        double[] p2 = {0.16,0.16,0.16,0.16,0.16,0.16};
+        double[] p3 = {0.26,0.55,0.08,0.11};
+        double[] p4 = {0.25,0.25,0.25,0.25};
+        double[] p5 = {0.46,0.17,0.04,0.11,0.18,0.04};
+        ArrayList<double[]> plist = new ArrayList<>();
+        plist.add(p1);
+        plist.add(p2);
+        plist.add(p3);
+        plist.add(p4);
+        plist.add(p5);
+        for(double[] p : plist){
+            MTree tree = new MTree(30,p,alpha,true);
+        }
     }
 }

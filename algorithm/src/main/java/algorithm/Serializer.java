@@ -135,16 +135,15 @@ public class Serializer {
         String filename = Serializer.createFileNameFromParameters(k,p,alpha,isAdjusted);
         FileInputStream fileInputStream;
         ObjectInputStream objectInputStream;
-        MTree mTree;
         try {
             fileInputStream = new FileInputStream(filename);
             objectInputStream = new ObjectInputStream(fileInputStream);
-            mTree = (MTree) objectInputStream.readObject();
+            MTree mTree = (MTree) objectInputStream.readObject();
             objectInputStream.close();
         } catch (Exception e) {
             return null;
         }
-        return mTree;
+        return null;
     }
 
     public static String createMCDFCacheFileNameFromObject(MCDFCache cache){
