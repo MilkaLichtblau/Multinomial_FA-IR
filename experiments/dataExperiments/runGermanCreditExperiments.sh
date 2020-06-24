@@ -14,7 +14,7 @@ cd $PATH_TO_JAR
 
 # p matches percentages of groups in dataset (statistical parity)
 echo "Multi FAIR with p as statistical parity"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 500 0.58,0.22,0.06,0.06,0.04,0.03 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
+java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 500 0.58,0.22,0.065,0.045,0.03,0.06 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
 
 # p is equal for all
 echo "Multi FAIR with p all equal"
