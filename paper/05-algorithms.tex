@@ -20,7 +20,17 @@ As seen in table \ref{tbl:space_time} the highest computational cost of computin
 \end{itemize}
 \subsubsection{Stored MTrees}\label{subsubsec:stored-mtrees}
 \begin{itemize}
-\item 
+\item We can create an MTree with parameters $k,p_G , \alpha$ and an option to do significance adjustment for this tree. For more usability, we store already computed MTrees with the parameters $k,p_G , \alpha,$doAdjust. If doAdjust is \textit{true}, we the file holds the adjusted version of the MTree with the adjust significance $\alpha_c$. Else, we store the MTree with the significance level $\alpha$.
+\item This is convenient for the user, because they do not need to know the right adjusted significance $\alpha_c$. They can just load the MTree with the overall desired failprobability.
+\item One important feature of storing the MTrees is that we also store the failprobability of that MTree.
+\item Because we calculate the failprobability for MTrees with experimental testing, this saves a lot of computation time especially for large $k$.
+\end{itemize}
+\subsubsection{Summary}\label{subsubsec:summary}
+\begin{itemize}
+\item With the adjustments above, the method we have presented can be used in practice, despite the high computational costs.
+\item In practice, one could precompute the adjusted MTree for a specified $p_G$. After that, our method can be used efficiently.
+\item We deliver the already precomputed files of our experiments and the steps in between not only for usability but for use in practice too.
+\item Another significant improvement of the overall computational costs, would be to write a new mcdf function. This new version of a mcdf could use the way we use the function in terms of storing some repetitive computation steps.
 \end{itemize}
 \begin{table}[]
 \caption{Space and time complexity for all algorithms.
