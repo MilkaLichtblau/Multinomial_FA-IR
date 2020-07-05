@@ -2,6 +2,45 @@
 \todo{two separate algorithms for testing and ranking}
 We present the \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
 
+\subsection{Implementation details}\label{subsec:implementation-details}
+As seen in table \ref{tbl:space_time}, computing an adjusted MTree is hard. This is why our implementation aims at storing already computed MTrees and their components in order to never do the same computation twice. However, depending on the structure of $p_G$, different optimizations are applicable.
+\subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
+As seen in table \ref{tbl:space_time} the highest computational cost of computing an MTree and hence an adjusted MTree is due to the multinomial cummulative distribution function. Algorithm \ref{alg:imcdf} computes the multinomial cummulative distribution function at worst $|G|+1$ times. However, it is very likely that the same calculation will be done many times. As an example, let $[2,1]$ and $[1,2]$ be two node at position $k=3$ for which we call algorithm \ref{alg:imcdf}. The algorithm calculates the mcdf for the arguments $(4,[2,1])$ and then for $(4,[3,1])$ and $(4,[2,2])$. Then we call the algorithm for the second node which will calculate the mcdf for the following arguments: $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$. In any case, we compute the same mcdf for $(4,[2,2])$ two times. Furthermore, if $p_1 = p_2$ then the mcdf for $(4,[2,1]) = (4,[1,2])$ and  $(4,[1,3]) = (4,[3,1])$. Subsequently, we store all calculated mcdfs in a hashmap with $k$ and the minimum protected candidates of each group as the key and the corresponding mcdf as the value. In the case where $p_1 = p_2 = \cdots = p_{|G|}$, we store the mcdf for the arguments we calculated it for and then the same mcdf value for the key in which the minimum protected candidates needed at this position reversed (without calculating the actual mcdf).
+\begin{itemize}
+\item more abstract : If $p_1 = p_2 = \cdots p_{|G|}$ we can exploit a certain property of the MTree. Because the mcdf at position $k$ and successes for the protected groups $P_k = (P_1, ..., P_{|G|})$ it is that for all permutations of $P_k$, the mcdf is the same.
+\item Note that the mcdf is only dependent on $p_G$ and not on $alpha$. This is why we can store one mcdf cache file for one vector of minimum proportions.
+\item This also saves a lot of computation time during significance adjustment, because especially if the difference in $\alpha$ is small, most mcdf computations will be the same.
+
+\end{itemize}
+\subsubsection{Discarding symmetric nodes}\label{subsubsec:discarding-symmetric-nodes}
+\begin{itemize}
+\item if all minimum proportions are equal, all nodes have a \textit{mirrored} version of themselfes in the tree on the same level of the tree. (Because of the same property used above).
+\item This is why we can store only one side of the tree, without loosing any information about the full tree. An example: We calculate the children of the node $[1,1]$ and $p_1 = p_2$. If this node has children, they will be $[2,1]$ and $[1,2]$. We can now store only $[2,1]$ and proceed with this subtree only. But we still know for every child of $[2,1]$ there exists the exact mirror.
+\item This saves 50 percent of the computation time. If we calculate the MTree for the first time without an mcdf cache
+\end{itemize}
+\subsubsection{Stored MTrees}\label{subsubsec:stored-mtrees}
+\begin{itemize}
+\item 
+\end{itemize}
+\begin{table}[]
+\caption{Space and time complexity for all algorithms.
+		\label{tbl:space_time}}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity} \\ \hline
+inverseBinomialCDF & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoMtable & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoRecursive & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoBinomBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+multinomialCDF & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoImcdf & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoComputeMTree & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoMultBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoReg & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoFAIR & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\end{tabular}
+\end{table}
+
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
 
 \textbf{Algorithm \algoFAIRBF}, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem.
