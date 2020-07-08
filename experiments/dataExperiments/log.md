@@ -1,4 +1,4 @@
-# Experimental Log
+# Experimental Log Brain24
 
 | Experiment  | StartDate  | Process ID | Finished |  Results Uploaded |
 |---|---|---|---|---|
