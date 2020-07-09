@@ -324,6 +324,7 @@ public class MTree implements Serializable {
             }
             position++;
             tree.put(position, currentChildCandidates);
+            Serializer.storeMCDFCache(this.mcdfCache);
         }
         System.out.println('\n');
         return tree;
