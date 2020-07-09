@@ -306,7 +306,7 @@ public class MTree implements Serializable {
         HashSet<List<Integer>> positionZero = new HashSet<>();
         positionZero.add(root);
         tree.put(position, positionZero);
-        System.out.println("computing MTree for p="+Arrays.toString(this.p) + ", alpha="+this.alpha +", k="+this.k+" level of Tree: ");
+        System.out.println('\n'+"computing MTree for p="+Arrays.toString(this.p) + ", alpha="+this.alpha +", k="+this.k+" level of Tree: ");
         System.out.print("Currently at position: ");
         while (position < this.k) {
             System.out.print(position+" ");
