@@ -325,6 +325,7 @@ public class MTree implements Serializable {
             position++;
             tree.put(position, currentChildCandidates);
         }
+        System.out.println('\n');
         return tree;
     }
 
