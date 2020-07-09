@@ -59,7 +59,7 @@ public class MTree implements Serializable {
             if (this.mcdfCache == null) {
                 this.mcdfCache = new MCDFCache(p);
             }else{
-                System.out.println("======MCDF CACHE FROM STORAGE YAY!!!========");
+                System.out.println('\n'+"======MCDF CACHE FROM STORAGE YAY!!!========"+'\n');
             }
 
             // check if we have symmetric proportions p[] to allow later optimizations
