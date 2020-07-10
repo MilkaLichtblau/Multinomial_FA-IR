@@ -58,6 +58,8 @@ public class MTree implements Serializable {
             this.mcdfCache = Serializer.loadMCDFCache(p);
             if (this.mcdfCache == null) {
                 this.mcdfCache = new MCDFCache(p);
+            }else{
+                System.out.println('\n'+"======MCDF CACHE FROM STORAGE YAY!!!========"+'\n');
             }
 
             // check if we have symmetric proportions p[] to allow later optimizations
@@ -306,7 +308,7 @@ public class MTree implements Serializable {
         HashSet<List<Integer>> positionZero = new HashSet<>();
         positionZero.add(root);
         tree.put(position, positionZero);
-        System.out.println("computing MTree for p="+Arrays.toString(this.p) + ", alpha="+this.alpha +", k="+this.k+" level of Tree: ");
+        System.out.println('\n'+"computing MTree for p="+Arrays.toString(this.p) + ", alpha="+this.alpha +", k="+this.k+" level of Tree: ");
         System.out.print("Currently at position: ");
         while (position < this.k) {
             System.out.print(position+" ");
@@ -322,7 +324,9 @@ public class MTree implements Serializable {
             }
             position++;
             tree.put(position, currentChildCandidates);
+            Serializer.storeMCDFCache(this.mcdfCache);
         }
+        System.out.println('\n');
         return tree;
     }
 
