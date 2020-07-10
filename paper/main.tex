@@ -40,6 +40,7 @@
 % PACKAGES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{lipsum}
+\usepackage{array}
 \usepackage{paralist} % compact itemizations and enumerations
 \usepackage{subfig}% sub-figures
 \usepackage{makecell,xcolor,amsmath}
@@ -110,7 +111,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % NEW COMMANDS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ALIASES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +121,7 @@
 \newcommand{\algoFAIR}[0]{{\textsc{FA*IR}}\xspace}
 \newcommand{\algoFAIRBF}[0]{{\textsc{\textbf{FA*IR}}}\xspace}
 \newcommand{\adj}[0]{\ensuremath{\operatorname{c}}}
-\newcommand{\alphaadj}[0]{\ensuremath{\alpha_c}}
+\newcommand{\alphaadj}[0]{\ensuremath{\alpha_\textit{corr}}}
 \newcommand{\mfail}{\ensuremath{\operatorname{fail}}}
 \newcommand{\msucc}{\ensuremath{\operatorname{succ}}}
 \newcommand{\minv}{\ensuremath{m^{-1}}}
