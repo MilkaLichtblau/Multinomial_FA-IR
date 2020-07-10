@@ -1,6 +1,6 @@
 \section{Algorithm}\label{sec:algorithms}
 \todo{two separate algorithms for testing and ranking}
-We present the \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
+We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
 
 \subsection{Implementation details}\label{subsec:implementation-details}
 As seen in table \ref{tbl:space_time}, computing an adjusted MTree is hard. This is why our implementation aims at storing already computed MTrees and their components in order to never do the same computation twice. However, depending on the structure of $p_G$, different optimizations are applicable.
