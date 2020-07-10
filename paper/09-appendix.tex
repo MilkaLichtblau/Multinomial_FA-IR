@@ -138,7 +138,7 @@
 		\tcp{compute all differences between fail probability and $\alpha$}
 		\texttt{midDiff} $\leftarrow$ $|\texttt{m\_mid.getFailProb()} - \alpha|$ \\
 		\texttt{maxDiff} $\leftarrow$ $|\texttt{m\_max.getFailProb()} - \alpha|$ \\
-		\texttt{minDiff} $\leftarrow$ $|\texttt{m\_min.getFailProb()} - \alpha|$
+		\texttt{minDiff} $\leftarrow$ $|\texttt{m\_min.getFailProb()} - \alpha|$ \\
 		\tcp{case where midDiff is the the smallest difference from desired significance}
 		\If{\texttt{midDiff} $\leq \epsilon$ AND \texttt{midDiff} $\leq \texttt{maxDiff}$ AND \texttt{midDiff} $\leq \texttt{minDiff}$}{
 			\Return{\texttt{aMid, m\_mid}}
