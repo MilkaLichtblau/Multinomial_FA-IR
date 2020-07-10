@@ -13,10 +13,9 @@ Our notation is summarized on Table~\ref{tbl:notation}.
 %
 Let $[n] = \{ 1, 2, \dots, n \}$ represent a set of candidates out of which $k$ candidates will be selected; let $q_i$ for $i \in [n]$ denote the ``utility'' of candidate $i$: this can be interpreted as an overall summary of the fitness of candidate $i$ for the specific job, task, or search query, and it could be obtained by the combination of several different attributes.
 %
-If this utility is computed by a machine learning model, an effort must be done to prevent preexisting technical biases with respect to a protected group to be embodied in the model (see, e.g., \citemissing).
+If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases with respect to a protected group to be embodied in the model (see, e.g., \cite{Sweeney2013}).
 %
-We define a set of candidate groups $G = \left\{ g_0, g_1, ... \right\}$ that form a partition of $[n]$. We will consider $g_0$ as non-protected (or privileged) and all remaining groups $g_i, i>0$ as protected (or disadvantaged).
-%: \left\{g \in \mathbb{N}_0 : g=0 \leftrightarrow g \text{ is non-protected, } g > 0 \leftrightarrow g \text{ is protected} \right\} $ such that $ g_i $ represents the group of candidate $ i $.
+We define a set of candidate groups $G = \left\{ g^0, g^1, \ldots, g^j \right\}$ that form a partition of $[n]$. We will consider $g^0$ as non-protected (or privileged) and all remaining groups $g^j, j>0$ as protected (or disadvantaged).
 %
 To simplify the presentation of the algorithms, we will assume there are at least $k$ candidates in each group. % enough candidates of each group, i.e., at least $k$ of each kind.
 
@@ -105,7 +104,6 @@ Additionally, this criterion looks at the ordering in which those candidates app
 Specifically, the ranked group fairness criterion compares the number of protected elements from each group \emph{in every prefix} of the ranking, with the expected number of protected elements if they were picked at random using a stochastic process with a multinomial distribution, such as the roll of a dice.
 
 \begin{definition}[Multinomial Cumulative Distribution Function]
-	\note[ChaTo]{We need the number of groups to be defined somewhere, so the number of different events that can happen here is the number of groups. Otherwise using $k$ as the number of possible events is confusing, because we will be testing with $k$ trials, and $|G|$ possible events.}
 	\label{def:multinomialCDF}
 	% We do not need to cite this -- ChaTo
   %	Adopting the notation from~\cite{multinomcdf}

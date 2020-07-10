@@ -1,8 +1,31 @@
 \section{Algorithm}\label{sec:algorithms}
-\todo{two separate algorithms for testing and ranking}
 We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
 
-\subsection{Implementation details}\label{subsec:implementation-details}
+\subsection{Algorithm Description}\label{subsec:algorithm-description}
+
+Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings..
+%
+As input, FA*IR takes 
+the expected size $k$ of the ranking to be returned,
+the qualifications $q_i$, 
+indicator variables $g_i$ indicating if element $i$ is protected,
+the vector of minimum target proportions $p$ of protected candidates, and
+the adjusted significance level $\alphaadj$.
+
+First, the algorithm uses $q_i$ to create two priority queues with up to $k$ candidates each: $P_0$ for the non-protected candidates and $P_1$ for the protected candidates.
+%
+Next (lines \ref{alg:fair:mstart}-\ref{alg:fair:mend}), the algorithm derives a ranked group fairness table similar to Table~\ref{tbl:ranked_group_fairness_table}, i.e., for each position it computes the minimum number of protected candidates, given $p$, $k$ and $\alphaadj$.
+%
+Then, \algoFAIR greedily constructs a ranking subject to candidate qualifications, and minimum protected elements required, resembling the method by~\citet{celis2017ranking} for the case of a single protected attribute (the main difference being that we compute the table $m$, while \cite{celis2017ranking} assumes it is given).
+%
+If the previously computed table $m$ demands a protected candidate at the current position, the algorithm appends the best candidate from $P_1$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+
+\algoFAIR has running time $O(n + k \log k)$; which includes building the two $O(k)$ size priority queues from $n$ items and processing them to obtain the ranking, where we assume $k < O(n/\log n)$. 
+%
+If we already have two ranked lists for both classes of elements, \algoFAIR can avoid the first step and obtain the top-$k$ in $O(k \log k)$ time.
+%
+Our method is applicable as long as there is a protected group and there are enough candidates from that group; if there are $k$ from each group, the algorithm is guaranteed to succeed, otherwise the ``head'' of the ranking will satisfy the ranked group fairness constraint, but the ``tail'' of the ranking may not.
+
 As seen in table \ref{tbl:space_time}, computing an adjusted MTree is hard. This is why our implementation aims at storing already computed MTrees and their components in order to never do the same computation twice. However, depending on the structure of $p_G$, different optimizations are applicable.
 \subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
 As seen in table \ref{tbl:space_time} the highest computational cost of computing an MTree and hence an adjusted MTree is due to the multinomial cummulative distribution function. Algorithm \ref{alg:imcdf} computes the multinomial cummulative distribution function at worst $|G|+1$ times. However, it is very likely that the same calculation will be done many times. As an example, let $[2,1]$ and $[1,2]$ be two node at position $k=3$ for which we call algorithm \ref{alg:imcdf}. The algorithm calculates the mcdf for the arguments $(4,[2,1])$ and then for $(4,[3,1])$ and $(4,[2,2])$. Then we call the algorithm for the second node which will calculate the mcdf for the following arguments: $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$. In any case, we compute the same mcdf for $(4,[2,2])$ two times. Furthermore, if $p_1 = p_2$ then the mcdf for $(4,[2,1]) = (4,[1,2])$ and  $(4,[1,3]) = (4,[3,1])$. Subsequently, we store all calculated mcdfs in a hashmap with $k$ and the minimum protected candidates of each group as the key and the corresponding mcdf as the value. In the case where $p_1 = p_2 = \cdots = p_{|G|}$, we store the mcdf for the arguments we calculated it for and then the same mcdf value for the key in which the minimum protected candidates needed at this position reversed (without calculating the actual mcdf).
@@ -51,30 +74,9 @@ multinomialCDF & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \end{tabular}
 \end{table}
 
-\subsection{Algorithm Description}\label{subsec:algorithm-description}
 
-\textbf{Algorithm \algoFAIRBF}, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem.
-%
-As input, FA*IR takes 
-the expected size $k$ of the ranking to be returned,
-the qualifications $q_i$, 
-indicator variables $g_i$ indicating if element $i$ is protected,
-the target minimum proportion $p$ of protected candidates, and
-the adjusted significance level $\alphaadj$.
 
-First, the algorithm uses $q_i$ to create two priority queues with up to $k$ candidates each: $P_0$ for the non-protected candidates and $P_1$ for the protected candidates.
-%
-Next (lines \ref{alg:fair:mstart}-\ref{alg:fair:mend}), the algorithm derives a ranked group fairness table similar to Table~\ref{tbl:ranked_group_fairness_table}, i.e., for each position it computes the minimum number of protected candidates, given $p$, $k$ and $\alphaadj$.
-%
-Then, \algoFAIR greedily constructs a ranking subject to candidate qualifications, and minimum protected elements required, resembling the method by~\citet{celis2017ranking} for the case of a single protected attribute (the main difference being that we compute the table $m$, while \cite{celis2017ranking} assumes it is given).
-%
-If the previously computed table $m$ demands a protected candidate at the current position, the algorithm appends the best candidate from $P_1$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 
-\algoFAIR has running time $O(n + k \log k)$; which includes building the two $O(k)$ size priority queues from $n$ items and processing them to obtain the ranking, where we assume $k < O(n/\log n)$. 
-%
-If we already have two ranked lists for both classes of elements, \algoFAIR can avoid the first step and obtain the top-$k$ in $O(k \log k)$ time.
-%
-Our method is applicable as long as there is a protected group and there are enough candidates from that group; if there are $k$ from each group, the algorithm is guaranteed to succeed, otherwise the ``head'' of the ranking will satisfy the ranked group fairness constraint, but the ``tail'' of the ranking may not.
 
 \begin{algorithm}[h]
 	%\caption{Algorithm \algoFAIR, finding a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints.}
