@@ -178,7 +178,7 @@ What we must prove is that $\tau$ achieves optimal selection utility, and that i
 This is done in the following lemmas.
 
 \begin{lemma}\label{lemma:across}
-	If a ranking satisfies the in-group monotonicity constraint, then the utility loss (ordering or selection utility different from zero) can only happen across protected/non-protected groups.
+	If a ranking satisfies the in-group monotonicity constraint, then the utility loss (ordering or selection utility different from zero) can only happen across groups, but not within.
 \end{lemma}
 
 \begin{proof}
@@ -201,15 +201,17 @@ This is done in the following lemmas.
 	This is a contradiction because the selection utility was optimal. Hence, $c$ is a protected element and $d$ a non-protected element.
 \end{proof}
 
-\meike{todo from here}
 \begin{lemma}\label{lemma:number-protected-implies-selfairness} %[Elements inside/outside a ranking are determined by $\tau_p$]
-	Given two rankings $\rho, \tau$ satisfying in-group monotonicity (\ref{problem:constraint-monotonicity}), if they have the same number of protected elements $\rho_p = \tau_p$, then both rankings contain the same $k$ elements (possibly in different order), and hence both rankings have the same selection utility.
+	Given two rankings $\rho, \tau$ satisfying in-group monotonicity (\ref{problem:constraint-monotonicity}), if for each protected group they have the same number of elements, i.e. $\rho_G = \tau_G$, then both rankings contain the same $k$ elements (possibly in different order), and hence both rankings have the same selection utility.
 \end{lemma}
 
 \begin{proof}
-	Both rankings contain a prefix of size $\tau_p$ of the list of protected candidates ordered by decreasing qualifications, and a prefix of size $k - \tau_p$ of the list of non-protected candidates ordered by decreasing qualifications. 
+	Both rankings contain a prefix of size $\lVert\tau_G\rVert$ of protected candidates. 
 	%
-	Hence, $\forall i \in [n], i \in \tau \Leftrightarrow i \in \rho$, so the elements not included in the rankings are also the same elements, and the selection utility of both rankings is the same.
+	Within each protected group candidates are ordered by decreasing qualifications.
+	Also both rankings contain a prefix of size $k - \lVert\tau_G\rVert$ of non-protected candidates ordered by decreasing qualifications. 
+	%
+	Hence, $\forall c \in [n], c \in \tau \Leftrightarrow c \in \rho$, so the elements not included in the rankings are also the same elements, and the selection utility of both rankings is the same.
 \end{proof}
 
 The previous lemma means selection utility is determined by the number of protected candidates in a ranking.
@@ -219,21 +221,27 @@ The previous lemma means selection utility is determined by the number of protec
 \end{lemma}
 
 \begin{proof}
-	Let $\tau$ be the ranking produced by \algoFAIR, and $\tau^*$ be the ranking achieving the optimal selection utility. We will prove that $\tau_p = \tau^*_p$ by contradiction.
+	Let $\tau$ be the ranking produced by \algoFAIR, and $\tau^*$ be the ranking achieving the optimal selection utility while satisfying constraints~(\ref{problem:constraint-monotonicity}) and~(\ref{problem:constraint-rank}). We will prove that $\tau_G = \tau^*_G$ by contradiction.
 	%
-	Suppose $\tau_p < \tau^*_p$. Then, we could take the least qualified protected element in $\tau^*_p$ and swap it with the most qualified non-protected element in $[n] \backslash \tau^*_p$, re-ordering as needed. This would increase selection utility and still satisfy the constraints, which is a contradiction with the fact that $\tau^*_p$ achieved the optimal selection utility.
+	Suppose $\tau_g < \tau^*_g$ for any group $g \in G$. 
 	%
-	Suppose $\tau_p > \tau^*_p$. Then, at the position at which the least qualified protected element in $\tau$ is found, we could have placed a non-protected element with higher qualifications, as $\tau^*$ satisfies ranked group fairness and has less protected elements. This is a contradiction with the way in which \algoFAIR operates, as it only places a protected element with lower qualifications when needed to satisfy ranked group fairness.
+	Then, \algoFAIR could take the least qualified protected candidate from any group in $\tau^*_g$ and swap it with the most qualified non-protected candidate in $[n] \backslash \tau^*_g$, re-ordering as needed. 
 	%
-	Hence, $\tau_p = \tau^*_p$ and by Lemma~\ref{lemma:number-protected-implies-selfairness} it achieves the same selection utility.
+	This would increase selection utility and still satisfy the constraints, which is a contradiction with the fact that $\tau^* $ achieved the optimal selection utility.
+	%
+	Suppose $\tau_g > \tau^*_g$ for any group $g \in G$. Then, at the position at which the least qualified protected candidate of group $g$ in $\tau$ is found, we could have placed a non-protected element with higher qualifications, as $\tau^*$ satisfies ranked group fairness and has less protected elements. This is a contradiction with the way in which \algoFAIR operates, as it only places a protected element with lower qualifications when needed to satisfy ranked group fairness.
+	%
+	Hence, $\tau_G = \tau^*_G$ and by Lemma~\ref{lemma:number-protected-implies-selfairness} it achieves the same selection utility.
 \end{proof}
 
+\meike{todo from here}
 \begin{lemma}
 	Algorithm \algoFAIR maximizes ordering utility among rankings satisfying in-group monotonicity (\ref{problem:constraint-monotonicity}), ranked group fairness (\ref{problem:constraint-rank}), and achieving optimal selection utility (\ref{problem:optimal-sel}).
 \end{lemma}
 
+
 \begin{proof}
-	By lemmas~\ref{lemma:number-protected-implies-selfairness} and \ref{lemma:fair-optimal-selection} we know that satisfying the constraints and achieving optimal selection utility implies having a specific number of protected elements $\tau^*_p$.
+	By lemmas~\ref{lemma:number-protected-implies-selfairness} and \ref{lemma:fair-optimal-selection} we know that satisfying the constraints and achieving optimal selection utility implies having specific numbers $\tau^*_G$ of protected candidates from each group.
 	%
 	Hence, we need to show that among rankings having this number of protected elements, \algoFAIR achieves the maximum ordering utility.
 	%
