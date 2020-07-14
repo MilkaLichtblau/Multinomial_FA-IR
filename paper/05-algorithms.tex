@@ -2,27 +2,32 @@
 We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
-
-Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings..
+\note{Done}
+Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
 %
 As input, multinomial \algoFAIR takes 
 the expected size $k$ of the ranking to be returned,
 the qualifications $q_c$, 
 indicator variables $g_c$ indicating if candidate $c$ is protected,
-the vector of minimum target proportions $p$ of protected candidates, and
+the vector of minimum target proportions $p_G$, and
 the adjusted significance level $\alphaadj$.
 
 First, the algorithm uses $q_c$ to create priority queues with up to $k$ candidates each: $P_0$ for the non-protected candidates and $P_g$ for the protected candidates of group $g$.
 %
-Next (lines \ref{alg:fair:mstart}-\ref{alg:fair:mend}), the algorithm derives a ranked group fairness tree (mTree) similar to Figure~\ref{fig:mtree-asymmetric-adjusted}, i.e., for each position it computes the minimum number of protected candidates per group, given $p_G$, $k$ and $\alphaadj$.
+Next (line \ref{alg:fair:mtree}), the algorithm derives a ranked group fairness tree (mTree) similar to Figure~\ref{fig:mtree-asymmetric-adjusted}, i.e., for each position it computes the minimum number of protected candidates per group, given $p_G$, $k$ and $\alphaadj$.
 %
 Then, multinomial \algoFAIR greedily constructs a ranking subject to candidate qualifications, and minimum protected elements required.
 %
-If the previously computed mTree $MT$ demands a protected candidate from group $g$ at the current position, the algorithm appends the best candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_|G|$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+Note that the right choice of a tree node on level $i$ depends on the path chosen along the tree and therefore on its concrete parent at level $i-1$. 
 %
-In case $MT$ branches into different possibilities to satisfy ranked group fairness (see Fig.~\ref{fig:mtree-asymmetric-adjusted} for $k=4$), the algorithm chooses the branch that has a higher value for $F$, meaning it chooses the branch that has a higher probability.
+In case \texttt{mtree} branches into different possibilities to satisfy ranked group fairness (as an example see Fig.~\ref{fig:mtree-asymmetric-adjusted} for $k=4$), the algorithm chooses the branch that has a higher value for $F$, meaning it chooses the branch that has a higher probability.
 %
 If two branches are equally likely, which happens for $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
+%
+Given this the algorithm has to find the correct child $m_{G,i}$ for a given parent from the previous level (Line~\ref{alg:fair:childNode}).
+%
+If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the best candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+%
 
 \begin{algorithm}[h]
 	%\caption{Algorithm \algoFAIR, finding a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints.}
@@ -36,29 +41,32 @@ If two branches are equally likely, which happens for $p_1 = p_2 = \ldots = p_{|
 	\For{$c \leftarrow 1$ \KwTo $n$}{
 		insert $c$ with value $q_c$ in priority queue $P_{g_c}$ \\
 	}
-	\For{$i \leftarrow 1$ \KwTo $k$}{ \label{alg:fair:mstart}
-		$m(i) \leftarrow F^{-1}(\alphaadj; i, p)$ \\
-	}\label{alg:fair:mend}
+
+	$\texttt{mtree}(i) \leftarrow \texttt{\algoComputeMTree}(k, p_G, \alphaadj)$  \label{alg:fair:mtree}\\
+		
 	%\AlgComment{create fair ranking}
-	$(t_p, t_n) \leftarrow (0, 0)$ \\
-	\While{$t_p + t_n < k$}{
-		\eIf{$t_p < m[t_p + t_n + 1]$}{
-			\AlgComment{add a protected candidate}
-			$t_p \leftarrow t_p + 1$ \\ \label{alg:fair:pstart}
-			$\tau[t_p + t_n] \leftarrow \operatorname{dequeue}(P_1)$ \\  \label{alg:fair:pend}
-		}{
-			\AlgComment{add the best candidate available}
-			\eIf{$q(\operatorname{peek}(P_1)) \ge q(\operatorname{peek}(P_0))$} { \label{alg:fair:anystart}
-				%\AlgComment{best one is a protected candidate}
-				$t_p \leftarrow t_p + 1$ \\
-				$\tau[t_p + t_n] \leftarrow \operatorname{dequeue}(P_1)$ \\
-				
-			}{
-				%\AlgComment{best one is a non-protected candidate}
-				$t_n \leftarrow t_n + 1$ \\
-				$\tau[t_p + t_n] \leftarrow \operatorname{dequeue}(P_0)$ \\
-			} \label{alg:fair:anyend}
+	$(t_0, t_1, \ldots, t_{|G|}) \leftarrow (0, \ldots, 0)$ \\
+	$i \leftarrow 0 $ \\
+	\While{$i < k$}{
+		\texttt{noCandidateAdded = True} \\
+		\AlgComment{get next node in tree path}
+		$m_{G, i} = [m_1(i), \ldots, m_{|G|}(i)] \leftarrow \texttt{findNextNode(mtree, i)}$ \label{alg:fair:childNode}\\
+		\AlgComment{find which group needs a new candidate}
+		\For{\texttt{g = 1; g} $\leq$ \texttt{|G|; g++}}{
+
+			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
+				\AlgComment{add a protected candidate}
+				$t_g \leftarrow t_g + 1$ \\ 
+				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\  
+				\texttt{noCandidateAdded = False}
+			}\label{alg:fair:pend}
 		}
+		\If{\texttt{noCandidateAdded}}{ \label{alg:fair:anystart}
+			\AlgComment{no protected candidate needed: add the best available}
+			$P_g \leftarrow$ \texttt{findBestCandidateQueue()} \\
+			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
+			$t_g \leftarrow t_g + 1$ 
+		}\label{alg:fair:anyend}
 		
 	}
 	\Return{$\tau$}
@@ -95,6 +103,7 @@ If we already have ranked lists for all groups of elements, \algoFAIR can avoid 
 Our method is applicable as long as there is at least one protected group and there are enough candidates in each protected group; if there are $k$ from each group, the algorithm is guaranteed to succeed, otherwise the ``head'' of the ranking will satisfy the ranked group fairness constraint, but the ``tail'' of the ranking may not.
 
 \subsection{Algorithm Optimizations}
+\note{Done}
 Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:space_time}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
 %
 Depending on the structure of $p_G$, different levels of optimization are applicable.
@@ -159,7 +168,8 @@ The filenames contain the tree parameters and whether or not it is adjusted and 
 If any of these trees is needed at a later point in time it can be loaded from disc instead of being recomputed, be it as input for multinomial \algoFAIR or as temporary tree during a new adjusted mTree computation.
 
 \subsection{Algorithm Correctness}\label{subsec:algorithm-correctness}
-By construction, a ranking $\tau$ generated by \algoFAIR satisfies in-group monotonicity, because all candidates are selected by decreasing qualifications.
+
+By construction, a ranking $\tau$ generated by multinomial \algoFAIR satisfies in-group monotonicity, because all candidates are selected by decreasing qualifications.
 %
 It also satisfies the ranked group fairness constraint, because for every prefix of size $i$ the list, the number of protected candidates in group $g$ is at least $m_g(i)$. 
 %
