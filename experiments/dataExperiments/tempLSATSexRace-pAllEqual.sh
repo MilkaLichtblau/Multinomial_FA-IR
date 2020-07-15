@@ -16,9 +16,4 @@ cd $PATH_TO_JAR
 echo "Multi FAIR with p all equal"
 java -jar Multinomial_FA-IR.jar data $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv 2000 0.25,0.25,0.25,0.25 0.1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace
 
-#baseline
-cd $PATH_TO_CFA_ALGORITHM
-echo "Baseline with CFA theta = 0"
-python3 main.py LSAT_sexRace 0.1 0,0,0,0,0,0 $PATH_TO_LSAT_RESULTS/LSAT_sexRace_CFA_theta=0.csv
-echo "Baseline with CFA theta = 1"
-python3 main.py LSAT_sexRace 0.1 1 1,1,1,1,1,1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace_CFA_theta=1.csv
+

@@ -25,6 +25,6 @@ java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_race_java.csv 5
 cd $PATH_TO_CFA_ALGORITHM
 #baseline
 echo "Baseline with CFA theta = 0"
-python3 main.py compas_race 0.05 0,0 $PATH_TO_COMPAS_RESULTS/race/compas_race_CFA_theta=0.csv
+python3 main.py compas_race 0.1 0,0 $PATH_TO_COMPAS_RESULTS/race/compas_race_CFA_theta=0.csv
 echo "Baseline with CFA theta = 1"
-python3 main.py compas_race 0.05 1,1 $PATH_TO_COMPAS_RESULTS/race/compas_race_CFA_theta=1.csv
+python3 main.py compas_race 0.1 1,1 $PATH_TO_COMPAS_RESULTS/race/compas_race_CFA_theta=1.csv

@@ -16,9 +16,4 @@ cd $PATH_TO_JAR
 echo "Multi FAIR with p between equal and statistical parity"
 java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 500 0.37,0.19,0.12,0.12,0.104,0.096 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
 
-#baseline
-echo "Baseline with CFA theta = 0"
-cd $PATH_TO_CFA_ALGORITHM
-python3 main.py germanCredit_sexAge 0.1 0,0,0,0,0,0 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge_CFA_theta=0.csv
-echo "Baseline with CFA theta = 1"
-python3 main.py germanCredit_sexAge 0.1 1 1,1,1,1,1,1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge_CFA_theta=1.csv
+
