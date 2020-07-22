@@ -154,9 +154,17 @@ Larger values indicate a stricter adherence to the required number of protected 
 
 Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
 %
+However, we denote again that due to different manifestations of bias across groups we believe that measures of qualification are not comparable across groups of candidates.
+%
 In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity.
 %
-The qualifications may have been even proven to be biased against a protected group, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the ranked group fairness constraint.
+The qualifications may have been even proven to be biased against a protected group, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
+%
+This means that for the entire fair solution space we can guarantee maximized utility only within groups but not across. 
+%
+Nonetheless we will provide an extension of multinomial \algoFAIR that finds the one fair ranking which maximizes utility across groups.
+%
+We want to stress again that maximizing utility over the entire set of candidates comes with a change in one's believe system in which candidate utilities are indeed comparable.
 
 \spara{Ranked utility.}
 The ranked individual utility associated to a candidate $c$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
