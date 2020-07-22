@@ -6,6 +6,8 @@ Created on Jun 12, 2020
 
 import pandas as pd
 
+def ndcgLoss(colorblindRanking, fairRanking):
+    
 
 def prepareForJavaCode(data, headersToFormAGroup):
 

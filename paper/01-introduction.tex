@@ -18,8 +18,14 @@ On a ranking, the desired good for an individual is to appear in the result and 
 The ranking algorithm discriminates unfairly if this ranking decision is based fully or partially on the protected feature. This discrimination is systematic when it is embodied in the algorithm's ranking model. As shown in earlier research, a machine learning model trained on datasets incorporating \textit{preexisting bias} will embody this bias and therefore produce biased results, potentially increasing any disadvantage further, reinforcing existing bias~\cite{oneil2016weapons}.
 
 Based on this observation, in this paper we study the problem of producing a fair ranking given legally-protected attributes, i.e., a ranking in which the representation of different minority groups does not fall below their respective minimum proportions $p_G$ \emph{at any point in the ranking}, while the utility of the ranking is maintained as high as possible.
+%
+We denote however the motivating assumption of our method which is that utility measures \emph{are not comparable across groups} because said bias manifests differently for each group.
 
-We propose a post-processing method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper. We assume a ranking algorithm has given an undesirable outcome to a group of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not. Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide $p_G$ as input which can originate in a legal mandate or in voluntary commitments.
+We propose a post-processing method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper. 
+%
+We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not. 
+%
+Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide $p_G$ as input which can originate in a legal mandate or in voluntary commitments.
 %
 For instance, the US Equal Employment Opportunity Commission sets a goal of 12\% of workers with disabilities in federal agencies in the US,\footnote{US EEOC: \url{https://www1.eeoc.gov/eeoc/newsroom/release/1-3-17.cfm}, Jan 2017.}
 %
@@ -31,13 +37,13 @@ In general these measures do not mandate perfect parity, as distributions of qua
 
 \todo[ChaTo]{I think an intersectionality example is required here: some example on how in a company one could have many African American employees and many women employees, but very few African American women, which is problematic.}
 
-The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistic process (``dice rolls'' with each side $ j $ of the dice having success probability $p_j \in p_G$).
+The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $ j $ of the dice having success probability $p_j \in p_G$).
 %
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking in this test.
 
 \medskip
 %\begin{example}  % Removed to avoid numbering, as this is the only example.
-\textit{Example.} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (this data collection is reported in detail on section~\ref{concept:XING}). While analyzing  the extent to which candidates of both genders are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
+\textit{Example.} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both genders are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
 \note[Meike]{Should I include a multinomial example here?}
 \note[ChaTo]{Yes, somewhere in the intro a multinomial example is most likely needed; perhaps here or before.}
 %
@@ -96,8 +102,9 @@ We note that for simplicity, in this example we have not adjusted the significan
 \end{table}
 
 \spara{Our contributions.}
-\todo{say that this is the extension of \cite{zehlike2017fair}}
-In this paper, we define and analyze the {\sc Fair Top-$k$ Ranking problem}, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maximizes utility (selects the ``best'' candidates), subject to group fairness criteria. The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
+In this paper, we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups as an extension of~\cite{zehlike2017fair}, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maximizes utility (selects the ``best'' candidates from each group), subject to group fairness criteria. 
+%
+The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
 
 Our notion of utility assumes that we want to invite the most qualified candidates, while their qualification is equal to a relevance score calculated by a ranking algorithm.
 %
@@ -105,11 +112,23 @@ This score is assumed to be based on relevant metrics for evaluating candidates 
 %
 We note that this measurement will embody \emph{preexisting bias} (e.g. if black pilots are given less opportunities to flight they accumulate less flight hours), as well as \emph{technical bias}, as learning algorithms are known to be susceptible to direct and indirect discrimination~\cite{tuto2016,HajianFerrer12}.
 
-The utility objective is operationalized in two ways.
+This utility objective is operationalized in two ways.
 %
 First, by a criterion we call \emph{selection utility}, which prefers rankings in which every candidate included in the top-$k$ is more qualified than every candidate not included, or in which the difference in their qualifications is small.
 %
 Second, by a criterion we call \emph{ordering utility}, which prefers rankings in which for every pair of candidates included in the top-$k$, either the more qualified candidate is ranked above, or the difference in their qualifications is small.
+%
+Note however, that in a setting with multiple protected groups optimal selection and ordering utility cannot be guaranteed. 
+%
+This is due to the fact that in~\cite{zehlike2017fair} where \algoFAIR operates on only one protected group, the optimal solution for ranked group fairness and utility coincide at a single point, while the optimal solution for multinomial ranked group fairness (i.e. for more than one protected group) is a solution space rather than just a single point. 
+%
+At the same time an the optimal solution in terms of utility is still a single point within said solution space and its location depends on the candidate set at hand.
+%
+We furthermore want to stress that trying to find this optimal point that complies with multinomial ranked group fairness and maximizes utility corresponds to a worldview in which one assumes that utility measures of candidates across different groups are actually comparable. 
+%
+In this paper, we explicitly adopt a worldview in which we assume that such measures are not comparable.
+%
+However, we will break this assumption in Section~\ref{subsec:optimal-utility-extension} and provide a mechanism that from all possible rankings that satisfy ranked group fairness chooses the one that maximizes selection and ordering utility.
 
 Our definition of \emph{ranked group fairness} reflects the legal principle of group under-representation in obtaining a benefit \cite{ellis2012eu,lerner2003group}. We use the standard notion of protected groups (e.g., ``people with disabilities''); where protection emanates from a legal mandate or a voluntary commitment.
 %
@@ -121,7 +140,7 @@ We formulate a criterion applying a statistical test on the proportion of protec
 %
 We also show that the verification of the ranked group fairness criterion can be implemented efficiently.
 
-Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maximizes utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates to achieve the desired minimum proportion.
+Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maximizes utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
 We also present extensive experiments using both existing and new datasets to evaluate the performance of our approach compared to the so-called ``color-blind'' ranking with respect to both the utility of ranking and the fairness degree.
 
@@ -143,4 +162,3 @@ Section~\ref{sec:experiments} presents experimental results.
 %
 Section~\ref{sec:conclusions} presents our conclusions and future work.
 
-\note[ChaTo]{We should say here or in the related work that this paper is an extension of \cite{zehlike2017fair}}
