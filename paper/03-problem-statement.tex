@@ -84,9 +84,9 @@ We would like to obtain $\tau \in {\mathcal T}_{k,n}$ with the following objecti
 \begin{enumerate}[{Criterion} 1.]
 	\item Ranked group fairness: $\tau$ should fairly represent each protected group; \label{cond:ranking}
 
-	\item Selection utility: $\tau$ should contain the most qualified candidates; and \label{cond:selection}
+	\item Expected selection utility: $\tau$ should contain the most qualified candidates; and \label{cond:selection}
 
-	\item Ordering utility: $\tau$ should be ordered by decreasing qualifications.\label{cond:ordering}
+	\item Expected ordering utility: $\tau$ should be ordered by decreasing qualifications.\label{cond:ordering}
 \end{enumerate}
 
 We will provide a formal problem statement in \S\ref{subsec:problem-statement}, but first, we need to provide a formal definition of each of the criteria, which we do in the next sections.
@@ -136,12 +136,14 @@ The ranked group fairness criterion enforces the fair representation condition o
 
 \begin{definition}[Ranked group fairness condition]
 	\label{def:ranked-group-fairness-condition}
-	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(\alpha, k, p)$.
+	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(\alpha, k, p_G)$.
 	%
-	Function $\adj(\alpha, k, p)$ is a corrected significance to account for multiple hypotheses testing (described in section~\ref{subsec:group-fairness-correction}).
+	Function $\adj(\alpha, k, p_G)$ is a corrected significance to account for multiple hypotheses testing (described in section~\ref{subsec:group-fairness-correction}).
 \end{definition}
 
-We note that a larger $\alpha$ means a larger probability of declaring a fair ranking as unfair.
+We note that a solution space of rankings exists that satisfy this condition for a given 3-tuple $(k, p_G, \alpha)$ instead of just a single ranking as is the case when only one protected group is present.
+
+We further note that a larger $\alpha$ means a larger probability of declaring a fair ranking as unfair.
 %
 In our experiments (section~\ref{sec:experiments}), we use a relatively conservative setting of $\alpha=0.1$.
 %
@@ -154,17 +156,17 @@ Larger values indicate a stricter adherence to the required number of protected 
 
 Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
 %
-However, we denote again that due to different manifestations of bias across groups we believe that measures of qualification are not comparable across groups of candidates.
-%
 In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity.
 %
-The qualifications may have been even proven to be biased against a protected group, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
+The qualifications may have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
 %
-This means that for the entire fair solution space we can guarantee maximized utility only within groups but not across. 
+However, we denote again that due to different manifestations of bias we believe that measures of qualification are not comparable across groups of candidates.
 %
-Nonetheless we will provide an extension of multinomial \algoFAIR that finds the one fair ranking which maximizes utility across groups.
+This means that for the entire fair solution space we can guarantee maximized utility only within groups but not across and we want to stress again that maximizing utility over the entire set of candidates comes with a change in one's believe system in which candidate utilities are indeed comparable.
 %
-We want to stress again that maximizing utility over the entire set of candidates comes with a change in one's believe system in which candidate utilities are indeed comparable.
+In such a case we would question the usage of a post-processing algorithm in the first place.
+%
+However we want to operationalize the selection and ordering utility criterion from Section~\ref{subsec:preliminaries} and provide means for the user of our algorithm to estimate the loss of ranking relevance w.r.t. the colorblind ranking and hence define the following utility measures.
 
 \spara{Ranked utility.}
 The ranked individual utility associated to a candidate $c$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
@@ -186,7 +188,7 @@ The ranked individual utility associated to a candidate $c$ in a ranking $\tau$,
 
 \spara{Selection utility.}
 %
-We operationalize criterion~\ref{cond:selection} of Section~\ref{concept:criteria} by means of a \emph{selection utility} objective, which we will use to prefer rankings in which the more qualified candidates are included, and the less qualified, excluded.
+We operationalize criterion~\ref{cond:selection} by means of a \emph{selection utility} objective, which we will use to prefer rankings in which the more qualified candidates are included, and the less qualified, excluded.
 %
 \begin{definition}[Selection utility]
 	\label{def:selectionFairness}
@@ -205,7 +207,7 @@ We operationalize criterion~\ref{cond:ordering} of Section \ref{concept:criteria
 	The ordering utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in \tau} \texttt{utility}(c,\tau)\].
 \end{definition}
 
-\noindent The ordering utility of a ranking is only concerned with the candidate attaining the worst (minimum) ranked individual utility. Instead, the in-group monotonicity constraints refer to all elements, and specifies that both protected and non-protected candidates, independently, must be sorted by decreasing qualifications.
+\noindent The ordering utility of a ranking is only concerned with the candidate attaining the worst (minimum) ranked individual utility. Instead, the in-group monotonicity constraints refer to all elements, and specifies that within groups candidates must be sorted by decreasing qualifications.
 
 \begin{definition}[In-group monotonicity]
 	\label{def:inGroupMonotonicity}
@@ -233,8 +235,8 @@ The criteria we have described allow for different problem statements, depending
 	\begin{compactenum}[(i)]
 		\item \label{problem:constraint-monotonicity} satisfies the in-group monotonicity constraint;
 		\item \label{problem:constraint-rank} satisfies ranked group fairness with parameters $p_G$ and $\alpha$;
-		\item \label{problem:optimal-sel} achieves optimal selection utility subject to (\ref{problem:constraint-monotonicity}) and (\ref{problem:constraint-rank}); and
-		\item \label{problem:maximum-ord} maximizes ordering utility subject to (\ref{problem:constraint-monotonicity}), (\ref{problem:constraint-rank}), and (\ref{problem:optimal-sel}).
+		\item \label{problem:optimal-sel} achieves high selection utility subject to (\ref{problem:constraint-monotonicity}) and (\ref{problem:constraint-rank}); and
+		\item \label{problem:maximum-ord} achieves high ordering utility subject to (\ref{problem:constraint-monotonicity}), (\ref{problem:constraint-rank}), and (\ref{problem:optimal-sel}).
 	\end{compactenum}
 \end{problem*}
 
@@ -242,13 +244,20 @@ The criteria we have described allow for different problem statements, depending
 %
 Alternative problem definitions are possible with the general criteria described in Section~\ref{concept:criteria}.
 %
-For instance, instead of maximizing selection and ordering utility, we may seek to keep the utility loss bounded, e.g., producing a ranking that satisfies in-group monotonicity and ranked group fairness, and that produces an $\epsilon$-bounded loss with respect to ordering and/or selection utility.
+For instance, instead of maintaining high selection and ordering utility, we may seek to always find the one ranking $\tau^*$ from all possible rankings that satisfy ranked group fairness that maximizes selection and ordering utility. 
 %
-If the ordering does not matter, we have a {\sc Fair Top-$k$ Selection Problem}, in which we just want to maximize selection utility.
+We acknowledge that this seems to be a tempting ``optimization'' of \algoFAIR but we believe that such a strategy is not fully compliant with multinomial ranked group fairness anymore. 
 %
-Conversely, if the entire set $[n]$ must be ordered, we have a {\sc Fair Ranking Problem}, in which we just want to maximize ordering utility.
+As ranked group fairness is defined through a statistical process that corresponds to the roll of a dice, all possible ``fair'' solutions must have a chance $>0$ to be picked as the final result ranking.
 %
-If $k$ is not specified, we have a {\sc Fair Selection Problem}, which resembles a classification problem, and in which the objective might be to  maximize a combination of ranked group fairness, selection utility, and ordering utility.
+As soon as $\tau^*$ becomes the only solution the algorithm finds, we will render true ranked group fairness obsolete. 
 %
-This multi-objective problem would require a definition of how to combine the different criteria.
+Consider as a real world example again the case of different biases across groups in an intersectional setting:
 %
+Assuming we have a dataset with white, upper-class and black, lower-class people in which the utility criterion is lightly correlation with gender and strongly correlating with income class.
+%
+The protected group would be white women, black men and black women.
+%
+If we were to always choose the ranking that satisfies ranked group fairness and maximizes utility, we would \emph{always} reorder the result in favor of white women, while black men and particularly black women would fall behind.
+%
+Instead \algoFAIR should truly implement ranked group fairness in which all solutions (also those that favor blacks) have a certain chance to be accepted.
