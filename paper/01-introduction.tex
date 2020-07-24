@@ -102,9 +102,9 @@ This score is assumed to be based on relevant metrics for evaluating candidates 
 %
 We note that this measurement will embody \emph{pre-existing bias} (e.g. if black pilots are given less opportunities to flight they accumulate less flight hours), as well as \emph{technical bias}, as learning algorithms are known to be susceptible to direct and indirect discrimination~\cite{tuto2016,HajianFerrer12}.
 %
-We furthermore note that different manifestations of such bias exists for each group and is usually stronger for intersectional groups, i.e. the pre-existing bias against black women is stronger than the one for women or blacks in general.
+We furthermore note that different manifestations of such bias exists for each group and are usually stronger for intersectional groups, i.e. the pre-existing bias against black women is stronger than the one for women or blacks in general.
 
-This utility objective is operationalized in two ways.
+This utility principle is operationalized in two ways.
 %
 First, by a criterion we call \emph{selection utility}, which prefers rankings in which every candidate included in the top-$k$ is more qualified than every candidate not included, or in which the difference in their qualifications is small.
 %
@@ -130,7 +130,11 @@ We formulate a criterion by applying a statistical test on the proportion of pro
 %
 %This procedure can be seen as a form of positive action to ensure that the proportion of protected candidates in every prefix of the top-$k$ ranking is statistically indistinguishable from a policy target.
 %
-We also show that the verification of the ranked group fairness criterion can be implemented efficiently.
+We also show that the verification of the ranked group fairness criterion can be implemented efficiently by pre-computing a verification data structure that we call \emph{mTree}.
+%
+This tree contains all possibilities to create a ranking that satisfies ranked group fairness and we provide an algorithm to build and persist it.
+%
+We also provide an algorithm \algoCorrect for the mTree adjustment due to multiple dependent hypothesis testing, where we compute $\alphaadj$ such that the type-I-error is less or equal to $\alpha$ for the \emph{entire tree}.
 
 Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
@@ -139,6 +143,8 @@ We also present extensive experiments to evaluate the performance of our approac
 Summarizing, the main contributions of this paper are:
 \begin{compactenum}
 	\item the principled definition of \emph{ranked group fairness} for multiple protected groups, and the associated  {\sc Fair Top-$k$ Ranking problem};
+	\item the \algoComputeMTree algorithm to provide the mTree, a data structure that \algoFAIR needs as input
+	\item the \algoCorrect algorithm to find the adjusted mTree, which has a maximum probability for a type-1-error of $\alpha$
 	\item the \algoFAIR\ algorithm for producing a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
 \end{compactenum}
 
