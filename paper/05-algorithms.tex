@@ -73,25 +73,23 @@ If the node demands a protected candidate from group $g$ at the current position
 \end{algorithm}
 \vspace{-3mm}
 
-\subsection{Algorithm Complexity}
+\subsection{Algorithm Complexity}\label{subsec:algorithm-complexity}
 \todo{Not done yet}
-
-\begin{table}[]
+In this section, we will provide runtime and space complexities for all proposed algorithms. Table \ref{tbl:space_time} shows the asymptotic costs for each algorithm seperately. This is possible, because each step required for \algoFAIR can be executed seperately.
+\begin{table}[H]
 \caption{Space and time complexity for all algorithms.
 		\label{tbl:space_time}}
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity} \\ \hline
-inverseBinomialCDF & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoMtable & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoRecursive & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoBinomBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-multinomialCDF & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoImcdf & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoComputeMTree & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoMultBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
 \algoReg & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoFAIR & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
+\algoFAIR with precomputed MTree & $\mathcal{O}(k\log{}k)$ & $\mathcal{O}(k\log{}k)$ \\ \hline
 \end{tabular}
 \end{table}
 
