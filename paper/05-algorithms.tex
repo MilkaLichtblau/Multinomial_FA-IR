@@ -74,31 +74,70 @@ If the node demands a protected candidate from group $g$ at the current position
 \vspace{-3mm}
 
 \subsection{Algorithm Complexity}\label{subsec:algorithm-complexity}
-\todo{Not done yet}
-In this section, we will provide runtime and space complexities for all proposed algorithms. Table \ref{tbl:space_time} shows the asymptotic costs for each algorithm seperately. This is possible, because each step required for \algoFAIR can be executed seperately.
+\todo{Please review @Meike}
+\todo{Maybe we put the comments on space and time complexity in the appendix...}
+In this section, we will provide runtime and space complexities for all proposed algorithms. Table \ref{tbl:time} shows the asymptotic costs for each algorithm if there is no precomputed data available for the analyzed procedure.
+\subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
+\algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values. This leads to a time complexity of $\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$. Note that the complexity of the inverse binomial cdf is also dependent on how accurate the computation is. The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate results for future calculations.
+\subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
+The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}. Beforehand we have to calculate the MTable and the blocks $b$. This adds $\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ for the MTable and $\mathcal{O}(k)$ for the blocks. Overall we get $\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$. For the sake of readability we will write $\mathcal{O}($\algoMtable$) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$
+The space complexity in the worst case is however $\mathcal{O}(k)$ for the number maximum number of blocks plus $\mathcal{O}(k)$ for the stored probabilities at each position.
+\subsubsection{\algoBinomBinary complexity}\label{subsubsec:binom-binary-complexity}
+The binary search for $\alpha_c$ takes $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2)$ for the binary search. This is, because there exist at most $\frac{k(k-1)}{2}$ different valid MTables. For each step of the binary search we need $\mathcal{O}(\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha)))$ to compute the MTable of the new pointer as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for the fail probability of the MTable of the new pointer. Overall we get $\mathcal{O}(\log{}k^2) * (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) * (\mathcal{O}(\algoRecursive))$. The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.
+\subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
+Like the inverse binomial cdf and binomial pmf, the complexity of the multinomial pmf is dependant on $k,p_G , \alpha$ and the accuracy of the calculation. We will write $\mathcal{O}(MCDF(k,p_G,\alpha))$ as the asymptotic complexity of this function.
+Overall we get $\mathcal{O}(|G|) * \mathcal{O}(MCDF(k,p,\alpha ))$ with $|G|$ being the number of protected groups. The space complexity is $\mathcal{O}(|G|^2)$ because we store $|G|$ nodes with an array of length $|G|$.
+\subsubsection{\algoComputeMTree complexity}\label{subsubsec:mtree-complexity}
+Our algorithm \algoComputeMTree , constructs an MTree of depth $k$. In the worst case, there are $|G|$ possible children for each node in the tree resulting in $|G|^{k-1} +1$ nodes. Overall we get $\mathcal{O}(|G|^{k}) * \mathcal{O}(\algoImcdf)$ for the time complexity. We store $|G|^{k-1} +1$ nodes with arrays of length $|G|$, leading to the space complexity of $\mathcal{O}(|G|^{k})$.
+\subsubsection{\algoMultBinary complexity}\label{subsubsec:mtree-complexity}
+As in the binomial case, we are searching for $\alpha_c$ in the multinomial case with binary search too. However, because we do not have a discrete measure for different MTrees as in the binomial case, the binary search is dependant of the tolerance $\epsilon$ set beforehand as a stop criteria. Because we are searching binary on the interval $\left[0,\alpha\right[$, the resulting number of possible MTrees is $\frac{\alpha}{\epsilon}$. Thus, the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time. For each step, we calculate one MTree and its fail probability. The fail probability is computed experimentally by creating 10.000 rankings and testing them against the MTree. This process needs $\mathcal{O}(10.000 *k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them. Overall we have $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) * (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ for the time complexity. The space complexity is in $\mathcal{O}(|G|^k)$ for storing three MTrees and their fail probability.
+\subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
+The algorithm \algoReg has the same asymptotic complexity as \algoMultBinary . However, as seen in figure \ref{fig:regression_adjustment_benefits}, there is a constant and significant reduction in computation time compared to the use of \algoMultBinary only.
+\subsubsection{\algoFAIR complexity}\label{subsubsec:FAIR-complexity}
+Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted MTree of height $k$. Overall we have the cost of running \algoMultBinary once and then following one path through the MTree of height $k$. Leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$. The space complexity is that of \algoMultBinary plus $\mathcal{O}(n)$ for the candidates we want to rank + $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(|G|^k + n + k)$.
+
 \begin{table}[H]
-\caption{Space and time complexity for all algorithms.
-		\label{tbl:space_time}}
+\caption{Time complexity for all algorithms without use of precomputed results.
+		\label{tbl:time}}
+\scalebox{0.75}{
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity} \\ \hline
-\algoMtable & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoRecursive & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoBinomBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoImcdf & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoComputeMTree & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoMultBinary & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoReg & $\mathcal{O}(n\log{}n)$ & $\mathcal{O}(n\log{}n)$ \\ \hline
-\algoFAIR with precomputed MTree & $\mathcal{O}(k\log{}k)$ & $\mathcal{O}(k\log{}k)$ \\ \hline
+\textbf{Algorithm} & \textbf{Time Complexity} \\ \hline
+\algoMtable & $\mathcal{O}(k) * \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ \\ \hline
+\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ \\ \hline
+\algoBinomBinary & $\mathcal{O}(\log{}k^2) * (\mathcal{O}(\algoRecursive))$ \\ \hline
+\algoImcdf & $\mathcal{O}(|G|) * \mathcal{O}(MCDF(k,p,\alpha ))$ \\ \hline
+\algoComputeMTree & $\mathcal{O}(|G|^{k}) * \mathcal{O}(\algoImcdf)$ \\ \hline
+\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) * (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ \hline
+\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) * (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ \hline
+\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ \\ \hline
 \end{tabular}
+}
 \end{table}
-
-\algoFAIR has running time $O(n + k \log k)$; which includes building the $O(k)$ size priority queues from $n$ items and processing them to obtain the final ranking, where we assume $k < O(n/\log n)$. 
-\meike{Was soll denn $k < O(n/\log n)$ heißen? Warum ist die size der priority queues O(k) und nicht k?}
+\begin{table}[H]
+\caption{Space complexity for all algorithms without use of precomputed results.
+		\label{tbl:space}}
+\scalebox{0.75}{
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Algorithm} & \textbf{Space Complexity} \\ \hline
+\algoMtable & $\mathcal{O}(k)$ \\ \hline
+\algoRecursive & $\mathcal{O}(k)$ \\ \hline
+\algoBinomBinary & $\mathcal{O}(k)$ \\ \hline
+\algoImcdf & $\mathcal{O}(|G|^2)$ \\ \hline
+\algoComputeMTree & $\mathcal{O}(|G|^{k})$ \\ \hline
+\algoMultBinary & $\mathcal{O}(|G|^k)$ \\ \hline
+\algoReg & $\mathcal{O}(|G|^k)$ \\ \hline
+\algoFAIR & $\mathcal{O}(|G|^k + n + k)$ \\ \hline
+\end{tabular}
+}
+\end{table}
+%\algoFAIR has running time $O(n + k \log k)$; which includes building the $O(k)$ size priority queues from $n$ items and processing them to obtain the final ranking, where we assume $k < O(n/\log n)$. 
+%\meike{Was soll denn $k < O(n/\log n)$ heißen? Warum ist die size der priority queues O(k) und nicht k?}
 %
-If we already have ranked lists for all groups of elements, \algoFAIR can avoid the first step and obtain the top-$k$ in $O(k \log k)$ time.
+%If we already have ranked lists for all groups of elements, \algoFAIR can avoid the first step and obtain the top-$k$ in $O(k \log k)$ time.
 %
-Our method is applicable as long as there is at least one protected group and there are enough candidates in each protected group; if there are $k$ from each group, the algorithm is guaranteed to succeed, otherwise the ``head'' of the ranking will satisfy the ranked group fairness constraint, but the ``tail'' of the ranking may not.
+%Our method is applicable as long as there is at least one protected group and there are enough candidates in each protected group; if there are $k$ from each group, the algorithm is guaranteed to succeed, otherwise the ``head'' of the ranking will satisfy the ranked group fairness constraint, but the ``tail'' of the ranking may not.
 
 \subsection{Algorithm Optimizations}
 \note{Done}
