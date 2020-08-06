@@ -14,6 +14,6 @@ cd $PATH_TO_JAR
 
 # p is something in between
 echo "Multi FAIR with p between equal and statistical parity"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 500 0.37,0.19,0.12,0.12,0.104,0.096 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
+java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 100 0.37,0.19,0.12,0.12,0.104,0.096 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
 
 
