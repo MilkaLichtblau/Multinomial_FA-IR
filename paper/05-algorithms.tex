@@ -140,6 +140,57 @@ If any of these trees is needed at a later point in time it can be loaded from d
 
 
 \subsection{Algorithm Complexity}\label{subsec:algorithm-complexity}
+
+\begin{table}[t]
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{ll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} \\ 
+			\midrule
+			\rowcolor[HTML]{C0C0C0} 
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ \\ 
+			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ \\ 
+			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ \\ 
+			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
+			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ \\ 
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+
+\begin{table}[b]
+	\scalebox{0.75}{
+		\begin{tabular}{ll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Space Complexity} \\ 
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoMtable & $\mathcal{O}(k)$ \\ 
+			\algoRecursive & $\mathcal{O}(k)$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoBinomBinary & $\mathcal{O}(k)$ \\ 
+			\algoImcdf & $\mathcal{O}(|G|^2)$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoComputeMTree & $\mathcal{O}(|G|^{k})$ \\ 
+			\algoMultBinary & $\mathcal{O}(|G|^k)$ \\ 
+			\rowcolor[HTML]{C0C0C0}
+			\algoReg & $\mathcal{O}(|G|^k)$ \\ 
+			\algoFAIR & $\mathcal{O}(|G|^k + n + k)$ \\ 
+			\bottomrule
+		\end{tabular}
+	}
+	\caption{Space complexity for all algorithms without pre-computed results.\label{tbl:space}}
+\end{table}
+
 \todo{@Chato: Maybe we put the comments on space and time complexity in the appendix?}
 This section presents time and space complexity analyses for all proposed algorithms. 
 %
@@ -221,53 +272,6 @@ In sum we have to run \algoMultBinary once and then follow one path through the 
 %
 The space complexity is that of \algoMultBinary plus $\mathcal{O}(n)$ for the candidates we want to rank plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(|G|^k + n + k)$.
 
-\begin{table}[t]
-	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time}}
-	\vspace{-4mm}
-	\scalebox{0.75}{
-		\begin{tabular}{ll}
-			\toprule
-			\textbf{Algorithm} & \textbf{Time Complexity} \\ 
-			\midrule
-			\rowcolor[HTML]{C0C0C0} 
-			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ \\ 
-			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ \\ 
-			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ \\ 
-			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
-			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ \\ 
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
-\begin{table}[b]
-	\scalebox{0.75}{
-		\begin{tabular}{ll}
-			\toprule
-			\textbf{Algorithm} & \textbf{Space Complexity} \\ 
-			\midrule
-			\rowcolor[HTML]{C0C0C0}
-			\algoMtable & $\mathcal{O}(k)$ \\ 
-			\algoRecursive & $\mathcal{O}(k)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(k)$ \\ 
-			\algoImcdf & $\mathcal{O}(|G|^2)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoComputeMTree & $\mathcal{O}(|G|^{k})$ \\ 
-			\algoMultBinary & $\mathcal{O}(|G|^k)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoReg & $\mathcal{O}(|G|^k)$ \\ 
-			\algoFAIR & $\mathcal{O}(|G|^k + n + k)$ \\ 
-			\bottomrule
-		\end{tabular}
-	}
-	\caption{Space complexity for all algorithms without pre-computed results.\label{tbl:space}}
-\end{table}
 
 
 
