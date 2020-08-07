@@ -2,16 +2,15 @@
 
 | Experiment  | StartDate  | Process ID | Finished |  Results Uploaded | Evaluated |
 |---|---|---|---|---|---|
-| Compas Race  | 20200708  | 7576  | x  | x ||
-| Compas Age Race p=statPar|  20200708 | 8342  |   |||
-| Compas Age Race p=equal  | 20200708  |  19614 |   |||
-| Compas Sex Race p=statPar| 20200708  | 19933  |   |||
-| Compas Sex Race p=equal  | 20200708  | 20074  |   |||
-| Compas Age Sex p=statPar|  20200708 |  20432 |   |||
-| Compas Age Sex p=equal  | 20200708  |  20583 |   |||
-| German Credit Age Sex p=statPar| 20200708  | 20941  |   |||
-| German Credit Age Sex p=equal  | 20200708  |  21276 |   |||
-| German Credit Age Sex p=inbetween  | 20200708  | 21417  |   |||
-| LSAT Age Sex p=statPar| 20200708  | 22129  |   |||
-| LSAT Age Sex p=equal  | 20200708  | 22519  |   |||
+| Compas Age Race p=statPar|  20200806 | 16224  |   |||
+| Compas Age Race p=equal  | 20200806  |  15724 |   |||
+| Compas Sex Race p=statPar| 20200806  | 19442  |   |||
+| Compas Sex Race p=equal  | 20200806  | 19061  |   |||
+| Compas Age Sex p=statPar|  20200806 |  18622 |   |||
+| Compas Age Sex p=equal  | 20200806  |  16596 |   |||
+| German Credit Age Sex p=statPar| 20200806  | 20237  |   |||
+| German Credit Age Sex p=equal  | 20200806  |  19861 |   |||
+| German Credit Age Sex p=inbetween  | 20200806  | 20367  |   |||
+| LSAT Age Sex p=statPar| 20200806  | 21134  |   |||
+| LSAT Age Sex p=equal  | 20200806  | 20734  |   |||
 
