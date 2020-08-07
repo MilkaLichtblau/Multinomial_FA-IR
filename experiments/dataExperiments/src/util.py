@@ -5,9 +5,12 @@ Created on Jun 12, 2020
 '''
 
 import pandas as pd
+import sklearn
+
 
 def ndcgLoss(colorblindRanking, fairRanking):
-    
+    return 1 - sklearn.metrics.ndcg_score(colorblindRanking, fairRanking)
+
 
 def prepareForJavaCode(data, headersToFormAGroup):
 
