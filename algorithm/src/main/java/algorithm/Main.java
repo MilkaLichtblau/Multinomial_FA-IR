@@ -16,30 +16,6 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
 public class Main {
-    private static ArrayList<String> columnHeaders;
-    private static List<Candidate> unfairRanking;
-    private static List<Candidate> fairRanking;
-
-    public static void prepareDataExperiments(String filename, String separator, boolean hasHeaders) throws IOException {
-        unfairRanking = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        List<Double[]> lines = new ArrayList<Double[]>();
-        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            String[] cells = line.split(separator);
-            if (hasHeaders) {
-                //first line are column headers
-                columnHeaders = new ArrayList<>(Arrays.asList(cells));
-                hasHeaders = false;
-                continue;
-            }
-            int group = Integer.parseInt(cells[columnHeaders.indexOf("group")]);
-            Double score = Double.parseDouble(cells[columnHeaders.indexOf("score")]);
-            Candidate candidate = new Candidate(score, group);
-            unfairRanking.add(candidate);
-        }
-        assert columnHeaders.size() == lines.size();
-        reader.close();
-    }
 
     private static void parseParametersForMultinomialExperiment(String[] args) {
         int kMax = Integer.parseInt(args[1]);
@@ -84,6 +60,7 @@ public class Main {
         }
     }
 
+    @Deprecated
     public static void appendStrToFile(String fileName, String str) {
         try {
             // Open given file in append mode.
@@ -121,21 +98,6 @@ public class Main {
             System.out.print(".");
         }
         System.out.println("Finished Fail Probability Experiment");
-    }
-
-    public static void writeRankingsToCSV(String resultFilename) {
-        //write headers
-        String fairResultFilename = resultFilename + "_fair.csv";
-        Main.appendStrToFile(fairResultFilename, "uuid, score, group\n");
-        for (Candidate candidate : fairRanking) {
-            Main.appendStrToFile(fairResultFilename, candidate.toString());
-        }
-
-        String unfairResultFilename = resultFilename + "_unfair.csv";
-        Main.appendStrToFile(unfairResultFilename, "uuid, score, group\n");
-        for (Candidate candidate : unfairRanking) {
-            Main.appendStrToFile(unfairResultFilename, candidate.toString());
-        }
     }
 
     private static void moveMTreeStorageFilesToArchive() throws IOException {
@@ -326,10 +288,10 @@ public class Main {
                     double alpha = Double.parseDouble(args[4]);
                     String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p) + "_alpha=" + alpha;
 
-                    Main.prepareDataExperiments(datafile, ",", true);
-                    MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
-                    Main.fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
-                    Main.writeRankingsToCSV(resultFilename);
+                    DataExperimentHandler handler = new DataExperimentHandler(); 
+                    handler.prepareDataExperiment(datafile, k, ",", true);
+                    handler.runDataExperiment(k, p, alpha);
+                    handler.writeRankingsToCSV(resultFilename);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
