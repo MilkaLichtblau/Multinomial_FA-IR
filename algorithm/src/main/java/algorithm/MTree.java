@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static algorithm.Serializer.*;
+
 public class MTree implements Serializable {
 
     public enum FairRankingStrategy {
@@ -55,7 +57,7 @@ public class MTree implements Serializable {
             this.alpha = alpha;
             this.unadjustedAlpha = alpha;
             this.doAdjust = doAdjust;
-            this.mcdfCache = Serializer.loadMCDFCache(p);
+            this.mcdfCache = loadMCDFCache(p);
             if (this.mcdfCache == null) {
                 this.mcdfCache = new MCDFCache(p);
             }else{
@@ -112,7 +114,7 @@ public class MTree implements Serializable {
         this.isMinimumProportionsSymmetric = loadedMTree.isMinimumProportionsSymmetric();
         this.failProbabilityEstimator = loadedMTree.failProbabilityEstimator;
         this.tree = loadedMTree.getTree();
-        this.mcdfCache = Serializer.loadMCDFCache(p);
+        this.mcdfCache = loadMCDFCache(p);
         if (this.mcdfCache == null) {
             this.mcdfCache = new MCDFCache(p);
         }
@@ -324,7 +326,7 @@ public class MTree implements Serializable {
             }
             position++;
             tree.put(position, currentChildCandidates);
-            Serializer.storeMCDFCache(this.mcdfCache);
+            storeMCDFCache(this.mcdfCache);
         }
         System.out.println('\n');
         return tree;
@@ -548,7 +550,7 @@ public class MTree implements Serializable {
 
     public void store() {
         Serializer.storeMTree(this);
-        Serializer.storeMCDFCache(this.mcdfCache);
+        storeMCDFCache(this.mcdfCache);
     }
 
     public static void main(String[] args){

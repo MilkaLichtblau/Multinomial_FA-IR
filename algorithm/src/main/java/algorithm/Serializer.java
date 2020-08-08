@@ -140,10 +140,10 @@ public class Serializer {
             objectInputStream = new ObjectInputStream(fileInputStream);
             MTree mTree = (MTree) objectInputStream.readObject();
             objectInputStream.close();
+            return mTree;
         } catch (Exception e) {
             return null;
         }
-        return null;
     }
 
     public static String createMCDFCacheFileNameFromObject(MCDFCache cache){
