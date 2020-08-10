@@ -63,7 +63,6 @@ public class Serializer {
                 }
                 return true;
             }
-
         }
         return false;
     }
