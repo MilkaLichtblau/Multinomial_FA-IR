@@ -27,7 +27,7 @@ public class MultinomialFairRanker {
             for (Candidate candidate : unfairRanking) {
                 if (candidate.getGroup() == groupID) {
                     //create candidate copy to keep @unfairRanking as is
-                    groupList.add(new Candidate(candidate));
+                    groupList.add(candidate);
                 }
             }
             Collections.sort(groupList);
