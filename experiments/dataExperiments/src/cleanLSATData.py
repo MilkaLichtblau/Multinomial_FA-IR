@@ -15,7 +15,7 @@ höchste ID: 27476
 
 '''
 import pandas as pd
-from util import prepareForJavaCode
+from src.util import prepareForJavaCode
 
 
 def main():

@@ -5,7 +5,7 @@ Created on May 19, 2020
 '''
 import pandas as pd
 import numpy as np
-from util import prepareForJavaCode
+from src.util import prepareForJavaCode
 
 
 def main():
