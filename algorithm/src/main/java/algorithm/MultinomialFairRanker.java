@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import algorithm.MTree.FairRankingStrategy;
 
@@ -25,7 +26,8 @@ public class MultinomialFairRanker {
             List<Candidate> groupList = new ArrayList<>();
             for (Candidate candidate : unfairRanking) {
                 if (candidate.getGroup() == groupID) {
-                    groupList.add(candidate);
+                    //create candidate copy to keep @unfairRanking as is
+                    groupList.add(new Candidate(candidate));
                 }
             }
             Collections.sort(groupList);
@@ -101,6 +103,13 @@ public class MultinomialFairRanker {
                     }
                     if (bestCandidate.getScore() < currentGroupsBestScore) {
                         bestCandidate = groupLists.get(groupID).get(0);
+                    }
+                    if (bestCandidate.getScore() == currentGroupsBestScore) {
+                        // if the two candidates have the same score, pick one of them at random 
+                        // to avoid preference of lower groupIDs
+                        if (new Random().nextBoolean()) {
+                            bestCandidate = groupLists.get(groupID).get(0);
+                        }
                     }
                 }
                 result.set(k, bestCandidate);
