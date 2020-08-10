@@ -16,11 +16,6 @@ public class DataExperimentHandler {
     private ArrayList<String> columnHeaders;
     private List<Candidate> unfairRanking;
     private List<Candidate> fairRanking;
-    private String resultFilename;
-    
-    public DataExperimentHandler(String resultFilename) {
-        this.resultFilename = resultFilename;
-    }
     
     public void prepareDataExperiment(String filename, int k, String separator, boolean hasHeaders) throws IOException {
         unfairRanking = new ArrayList<>();
@@ -41,9 +36,29 @@ public class DataExperimentHandler {
         }
         assert columnHeaders.size() == lines.size();
         reader.close();
-
-        //write ranking to CSV for later evaluation
-        String unfairResultFilename = this.resultFilename + "_unfair.csv";
+    }
+    
+    public void runDataExperiment(int k, double[] p, double alpha) {
+        MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
+        fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
+    }
+        
+    public void writeRankingsToCSVs(String resultFilename ) {
+        //write fair ranking to disc
+        String fairResultFilename = resultFilename + "_fair.csv";
+        try {
+            //write headers to new file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fairResultFilename));
+            writer.write("uuid, score, group\n");
+            writer.close();
+            for (Candidate candidate : fairRanking) {
+                appendStrToFile(fairResultFilename, candidate.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        String unfairResultFilename = resultFilename + "_unfair.csv";
         try {
             //write headers to new file
             BufferedWriter writer = new BufferedWriter(new FileWriter(unfairResultFilename));
@@ -55,19 +70,18 @@ public class DataExperimentHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    public void runDataExperiment(int k, double[] p, double alpha) {
-        MultinomialFairRanker ranker = new MultinomialFairRanker(k, p, alpha, true, unfairRanking);
-        fairRanking = ranker.buildFairRanking(FairRankingStrategy.MOST_LIKELY, k);
-        String fairResultFilename = resultFilename + "_fair.csv";
+
+        //write remaining ranking to disc, such that we can evaluate this later
+        String remainingsFilename = resultFilename + "_remaining.csv";
+        List<Candidate> remaining = new ArrayList<>(unfairRanking);
+        remaining.removeAll(fairRanking);
         try {
             //write headers to new file
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fairResultFilename));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(remainingsFilename));
             writer.write("uuid, score, group\n");
             writer.close();
-            for (Candidate candidate : fairRanking) {
-                appendStrToFile(fairResultFilename, candidate.toString());
+            for (Candidate candidate : remaining) {
+                appendStrToFile(remainingsFilename, candidate.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();

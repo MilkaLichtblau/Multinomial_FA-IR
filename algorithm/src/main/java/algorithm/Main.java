@@ -299,9 +299,10 @@ public class Main {
                     double alpha = Double.parseDouble(args[4]);
                     String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p) + "_alpha=" + alpha;
 
-                    DataExperimentHandler handler = new DataExperimentHandler(resultFilename); 
+                    DataExperimentHandler handler = new DataExperimentHandler(); 
                     handler.prepareDataExperiment(datafile, k, ",", true);
                     handler.runDataExperiment(k, p, alpha);
+                    handler.writeRankingsToCSVs(resultFilename);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
