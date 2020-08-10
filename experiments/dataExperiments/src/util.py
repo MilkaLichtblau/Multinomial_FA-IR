@@ -12,6 +12,12 @@ def ndcgLoss(colorblindRanking, fairRanking):
     return 1 - sklearn.metrics.ndcg_score(colorblindRanking, fairRanking)
 
 
+def selectionUtilityLoss(firstExcluded, fairRanking, k):
+    # find the worst candidate that is ranked above the best one excluded from the fair ranking
+    worstAbove = fairRanking.score.min()
+    return firstExcluded["score"] - worstAbove["score"]
+
+
 def prepareForJavaCode(data, headersToFormAGroup):
 
     numberOfGroups = 1
