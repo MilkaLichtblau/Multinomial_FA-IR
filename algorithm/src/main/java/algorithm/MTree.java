@@ -49,7 +49,7 @@ public class MTree implements Serializable {
     public MTree(int k, double[] p, double alpha, boolean doAdjust) {
         MTree loadedMTree = Serializer.loadMTree(k, p, alpha, doAdjust);
         if (loadedMTree != null) {
-            System.out.println("loaded MTree for k="+loadedMTree.getK());
+            System.out.println("\nloaded MTree for k="+loadedMTree.getK());
             this.loadMTreeFromSerializedObject(loadedMTree);
         } else {
             this.k = k;
