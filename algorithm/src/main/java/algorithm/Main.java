@@ -1,6 +1,10 @@
 package algorithm;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.file.Files;
@@ -8,11 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import algorithm.MTree.FairRankingStrategy;
+
+import org.apache.commons.math3.distribution.BinomialDistribution;
+
 import com.github.fairsearch.lib.MTableGenerator;
 import com.github.fairsearch.lib.RecursiveNumericFailProbabilityCalculator;
-import org.apache.commons.math3.distribution.BinomialDistribution;
+
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
 public class Main {
@@ -196,18 +201,21 @@ public class Main {
                     for (int k = 5; k <= kMax; k += 5) {
                         //runtime symmetric
                         long start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         MTree symmetricTree = new MTree(k, pSym, alpha, false, false, false);
                         long end = System.nanoTime();
                         double timeSymmetricTree = (end - start) / 1000000000.0;
 
                         //runtime asymmetric
                         start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         MTree asymmetricTree = new MTree(k, pASym, alpha, false, false, false);
                         end = System.nanoTime();
                         double timeAsymmetricTree = (end - start) / 1000000000.0;
 
                         //runtime mtable
                         start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         MTableGenerator mtableGenerator = new MTableGenerator(k, p, alpha, false);
                         end = System.nanoTime();
                         double timeMtable = (end - start) / 1000000000.0;
@@ -231,6 +239,7 @@ public class Main {
                         signatureAsArray[1] = (int) Math.round(trials / (p[1]*2));
                         signatureAsArray[2] = (int) Math.round(trials / (p[2]*2));
                         long start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         double mcdf = MultinomialDist.cdf(trials, p, signatureAsArray);
                         long end = System.nanoTime();
                         double timeMcdf = (end - start) / 1000000000.0;
@@ -238,6 +247,7 @@ public class Main {
                         //runtime cdf
                         start = System.nanoTime();
                         BinomialDistribution dist = new BinomialDistribution(trials, p_bin);
+                        @SuppressWarnings("unused")
                         double cdf =dist.cumulativeProbability(trials/2,trials);
                         end = System.nanoTime();
                         double timeCdf = (end - start) / 1000000000.0;
@@ -253,12 +263,12 @@ public class Main {
                     int kMax = 200;
                     double[] p = {1.0/3.0, 1.0/3.0, 1.0/3.0};
                     double alpha = 0.1;
-                    double p_bin = 0.5;
                     String fileName = args[args.length-1];
                     String head = "k, time for regression adjustment, time for binary search adjustment" +'\n';
                     Main.appendStrToFile(fileName, head);
                     for(int k=10; k<=kMax; k+=10){
                         long start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         MTree mTree = new MTree(k,p,alpha,true,false,true);
                         long end = System.nanoTime();
                         double timeRegression = (end - start) / 1000000000.0;
@@ -267,6 +277,7 @@ public class Main {
                         moveMTreeStorageFilesToArchive();
 
                         start = System.nanoTime();
+                        @SuppressWarnings("unused")
                         MTree mTree2 = new MTree(k,p,alpha,true,false,false);
                         end = System.nanoTime();
                         double timeBinary = (end - start) / 1000000000.0;
