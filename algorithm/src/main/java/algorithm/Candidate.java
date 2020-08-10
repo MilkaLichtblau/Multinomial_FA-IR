@@ -15,6 +15,18 @@ public class Candidate implements Comparable<Candidate> {
         this.group = group;
     }
 
+    private Candidate(UUID uuid, Double score, Double originalScore, int group) {
+        this.uuid = uuid;
+        this.score = score;
+        this.originalScore = originalScore;
+        this.group = group;
+    }
+
+    public Candidate(Candidate candidate) {
+        this(candidate.getUuid(), candidate.getScore(), candidate.getOriginalScore(), candidate.getGroup());
+    }
+    
+
     public void setScore(Double score) {
         this.score = score;
     }
