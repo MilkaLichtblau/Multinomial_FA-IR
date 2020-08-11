@@ -19,6 +19,7 @@ def main():
         allFairRankingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_fair.csv")
         allUnfairRankingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_unfair.csv")
         allRemainingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_remaining.csv")
+        # get all files with corresponding k
         for fairRankingFilename in allFairRankingFilenames:
             fairRanking = pd.read_csv(fairRankingFilename, header=0, skipinitialspace=True)
 
