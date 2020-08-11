@@ -25,10 +25,11 @@ def main():
 
             # find corresponding colorblind ranking and remainings
             pString = fairRankingFilename.split(sep="_")[3]
-            colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames if pString in string][0],
+            kString = fairRankingFilename.split(sep="_")[2]
+            colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames if ((pString in string) and (kString in string))][0],
                                             header=0,
                                             skipinitialspace=True)
-            remainingRanking = pd.read_csv([string for string in allRemainingFilenames if pString in string][0],
+            remainingRanking = pd.read_csv([string for string in allRemainingFilenames if ((pString in string) and (kString in string))][0],
                                            header=0,
                                            skipinitialspace=True)
 
