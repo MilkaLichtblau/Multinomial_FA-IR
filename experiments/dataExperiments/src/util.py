@@ -5,11 +5,13 @@ Created on Jun 12, 2020
 '''
 
 import pandas as pd
-import sklearn
+import sklearn.metrics
 
 
-def ndcgLoss(colorblindRanking, fairRanking):
-    return 1 - sklearn.metrics.ndcg_score(colorblindRanking, fairRanking)
+def exposureGain(colorblindRanking, fairRanking, result):
+    for groupName in result["group"]:
+        print()
+    return result
 
 
 def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
@@ -26,8 +28,9 @@ def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
     return result
 
 
-def orderingUtilityLossPerGroup(fairRanking, result):
+def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
     result["orderUtilLoss"] = 0.0
+    result["maxRankDrop"] = 0
     for groupName in result["group"]:
         allCandidatesInGroup = fairRanking.loc[fairRanking["group"] == groupName]
         allOthers = fairRanking.loc[fairRanking["group"] != groupName]
@@ -35,9 +38,11 @@ def orderingUtilityLossPerGroup(fairRanking, result):
             allOthersAbove = allOthers.loc[0:position]
             worstScoreAbove = allOthersAbove.score.min()
             orderUtilLoss = max(0, candidate.score - worstScoreAbove)
-            currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "selectUtilLoss"]
+            currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"]
             if orderUtilLoss > currentMaxLossPerGroup:
-                result.at[result[result["group"] == groupName].index[0], "selectUtilLoss"] = orderUtilLoss
+                originalPosition = int(colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0])
+                result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = position - originalPosition
+                result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
     return result
 
 

@@ -6,6 +6,7 @@ Created on Jul 15, 2020
 
 import pandas as pd
 import glob
+import sklearn.metrics
 from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup
 
 COMPAS_RANKINGS_DIR = "../results/COMPAS/rankings/"
@@ -34,7 +35,8 @@ def main():
             print(fairRanking.columns)
             result["group"] = fairRanking['group'].unique()
             result = selectionUtilityLossPerGroup(remainingRanking, fairRanking, result)
-            result = orderingUtilityLossPerGroup(fairRanking, result)
+            result = orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result)
+            result["ndcgLoss"] = 1 - sklearn.metrics.ndcg_score(colorblindRanking.head(len(fairRanking)), fairRanking)
 
     thetaZeroRanking = pd.read_csv(COMPAS_RANKINGS_DIR + "race/compas_race_CFA_theta=0.csv", header=0)
     thetaOneRanking = pd.read_csv(COMPAS_RANKINGS_DIR + "race/compas_race_CFA_theta=1.csv", header=0)
