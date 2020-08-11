@@ -9,6 +9,6 @@ PATH_TO_GERMAN_CREDIT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/Germ
 #baseline
 echo "Baseline with CFA theta = 0"
 cd $PATH_TO_CFA_ALGORITHM
-python3 main.py germanCredit_sexAge 0.1 0,0,0,0,0,0 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge_CFA_theta=0.csv
+python3 main.py germanCredit_sexAge 0.1 0.5,0.5,0.5,0.5,0.5,0.5 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge_CFA_theta=05.csv
 echo "Baseline with CFA theta = 1"
 python3 main.py germanCredit_sexAge 0.1 1 1,1,1,1,1,1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge_CFA_theta=1.csv
