@@ -39,6 +39,12 @@ def main():
             thetaHalfRanking = pd.read_csv(CFAHalfFilename, header=0)
             thetaOneRanking = pd.read_csv(CFAOneFilename, header=0)
 
+            thetaHalfSorted = thetaHalfRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
+            thetaHalfSorted = thetaHalfSorted.reset_index(drop=True)
+
+            thetaOneSorted = thetaOneRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
+            thetaOneSorted = thetaOneSorted.reset_index(drop=True)
+
             # eval for Multinomial FA*IR
             multi_fair_result = pd.DataFrame()
             multi_fair_result["group"] = fairRanking['group'].unique()
@@ -51,24 +57,24 @@ def main():
 
             # eval for CFA algorithm with theta=0.5
             kay = len(fairRanking)
-            n = len(thetaHalfRanking) - kay
+            n = len(thetaHalfSorted) - kay
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
-            cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfRanking.tail(n), thetaHalfRanking.head(kay), cfaHalf_result)
-            cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfRanking.head(kay), cfaHalf_result)
+            cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(n), thetaHalfSorted.head(kay), cfaHalf_result)
+            cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                thetaHalfRanking.head(kay)["score"].to_numpy(),
+                                                thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
             cfaHalf_result["exposureGain"] = 0.0
 
             # eval for CFA algorithm with theta=1
-            n = len(thetaOneRanking) - kay
+            n = len(thetaOneSorted) - kay
             cfaOne_result = pd.DataFrame()
             cfaOne_result["group"] = fairRanking['group'].unique()
-            cfaOne_result = selectionUtilityLossPerGroup(thetaOneRanking.tail(n), thetaOneRanking.head(kay), cfaOne_result)
-            cfaOne_result = orderingUtilityLossPerGroup(colorblindRanking, thetaOneRanking.head(kay), cfaOne_result)
+            cfaOne_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(n), thetaOneSorted.head(kay), cfaOne_result)
+            cfaOne_result = orderingUtilityLossPerGroup(colorblindRanking, thetaOneSorted.head(kay), cfaOne_result)
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                thetaOneRanking.head(kay)["score"].to_numpy(),
+                                                thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
             cfaOne_result["exposureGain"] = 0.0
 
