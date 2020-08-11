@@ -12,10 +12,33 @@ def ndcgLoss(colorblindRanking, fairRanking):
     return 1 - sklearn.metrics.ndcg_score(colorblindRanking, fairRanking)
 
 
-def selectionUtilityLoss(firstExcluded, fairRanking, k):
-    # find the worst candidate that is ranked above the best one excluded from the fair ranking
-    worstAbove = fairRanking.score.min()
-    return firstExcluded["score"] - worstAbove["score"]
+def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
+    # add column to result frame
+    result["selectUtilLoss"] = 0.0
+    # do evaluation for each group separately
+    for groupName in result["group"]:
+        allExcludedCandidatesInGroup = remainingRanking.loc[remainingRanking["group"] == groupName]
+        allIncludedCandidatesFromOtherGroups = fairRanking.loc[fairRanking["group"] != groupName]
+        firstExcludedInGroup = allExcludedCandidatesInGroup.score.max()
+        worstAbove = allIncludedCandidatesFromOtherGroups.score.min()
+        selectUtilLoss = max(0, firstExcludedInGroup - worstAbove)
+        result.at[result[result["group"] == groupName].index[0], "selectUtilLoss"] = selectUtilLoss
+    return result
+
+
+def orderingUtilityLossPerGroup(fairRanking, result):
+    result["orderUtilLoss"] = 0.0
+    for groupName in result["group"]:
+        allCandidatesInGroup = fairRanking.loc[fairRanking["group"] == groupName]
+        allOthers = fairRanking.loc[fairRanking["group"] != groupName]
+        for position, candidate in allCandidatesInGroup.iterrows():
+            allOthersAbove = allOthers.loc[0:position]
+            worstScoreAbove = allOthersAbove.score.min()
+            orderUtilLoss = max(0, candidate.score - worstScoreAbove)
+            currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "selectUtilLoss"]
+            if orderUtilLoss > currentMaxLossPerGroup:
+                result.at[result[result["group"] == groupName].index[0], "selectUtilLoss"] = orderUtilLoss
+    return result
 
 
 def prepareForJavaCode(data, headersToFormAGroup):
