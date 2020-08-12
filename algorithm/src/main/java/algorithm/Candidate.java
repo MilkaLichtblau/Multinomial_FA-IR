@@ -8,8 +8,8 @@ public class Candidate implements Comparable<Candidate> {
     private Double originalScore;
     private int group;
 
-    public Candidate(Double score, int group) {
-        this.uuid = UUID.randomUUID();
+    public Candidate(Double score, int group, UUID uuid) {
+        this.uuid = uuid;
         this.score = score;
         this.originalScore = score;
         this.group = group;

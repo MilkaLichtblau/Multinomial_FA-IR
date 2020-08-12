@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import algorithm.MTree.FairRankingStrategy;
 
@@ -31,7 +32,8 @@ public class DataExperimentHandler {
             }
             int group = Integer.parseInt(cells[columnHeaders.indexOf("group")]);
             Double score = Double.parseDouble(cells[columnHeaders.indexOf("score")]);
-            Candidate candidate = new Candidate(score, group);
+            UUID uuid = UUID.fromString(cells[columnHeaders.indexOf("uuid")]);
+            Candidate candidate = new Candidate(score, group, uuid);
             unfairRanking.add(candidate);
         }
         assert columnHeaders.size() == lines.size();
