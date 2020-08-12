@@ -3,6 +3,7 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -27,11 +28,9 @@ public class MultinomialFairRanker {
             List<Candidate> groupList = new ArrayList<>();
             for (Candidate candidate : unfairRanking) {
                 if (candidate.getGroup() == groupID) {
-                    //create candidate copy to keep @unfairRanking as is
                     groupList.add(candidate);
                 }
             }
-            Collections.sort(groupList);
             this.groupLists.put(groupID, groupList);
         }
 

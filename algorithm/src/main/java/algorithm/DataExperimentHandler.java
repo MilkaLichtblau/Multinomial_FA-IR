@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +37,6 @@ public class DataExperimentHandler {
             Candidate candidate = new Candidate(score, group, uuid);
             unfairRanking.add(candidate);
         }
-        Collections.sort(unfairRanking);
-        System.out.println("peng");
         reader.close();
     }
     
