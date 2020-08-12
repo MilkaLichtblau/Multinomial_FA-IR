@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import algorithm.MTree.FairRankingStrategy;
 
@@ -90,7 +91,7 @@ public class MultinomialFairRanker {
             if (!candidateAdded) {
                 // if ranked group fairness condition is met, add the candidate with the highest
                 // score
-                Candidate bestCandidate = new Candidate(0.0, 0);
+                Candidate bestCandidate = new Candidate(0.0, 0, UUID.randomUUID());
                 for (int groupID = 0; groupID < mNode.size(); groupID++) {
                     double currentGroupsBestScore = 0.0;
                     try {

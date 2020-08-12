@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,6 @@ public class DataExperimentHandler {
     public void prepareDataExperiment(String filename, int k, String separator, boolean hasHeaders) throws IOException {
         unfairRanking = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new FileReader(filename));
-        List<Double[]> lines = new ArrayList<Double[]>();
         for (String line = reader.readLine(); line != null; line = reader.readLine()) {
             String[] cells = line.split(separator);
             if (hasHeaders) {
@@ -36,7 +36,8 @@ public class DataExperimentHandler {
             Candidate candidate = new Candidate(score, group, uuid);
             unfairRanking.add(candidate);
         }
-        assert columnHeaders.size() == lines.size();
+        Collections.sort(unfairRanking);
+        System.out.println("peng");
         reader.close();
     }
     
