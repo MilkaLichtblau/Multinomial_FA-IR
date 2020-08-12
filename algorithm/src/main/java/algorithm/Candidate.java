@@ -37,7 +37,12 @@ public class Candidate implements Comparable<Candidate> {
     
     @Override
     public int compareTo(Candidate cand) {
-        return cand.getScore().compareTo(this.score);
+        int compareResult = cand.getScore().compareTo(this.score);
+        if (compareResult == 0) {
+            return cand.getUuid().compareTo(this.uuid);
+        } else {
+            return compareResult;
+        }
     }
     
     public String toString() {
