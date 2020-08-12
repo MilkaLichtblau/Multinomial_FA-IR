@@ -5,8 +5,8 @@ Created on Jun 12, 2020
 '''
 
 import pandas as pd
-from sklearn.metrics._ranking import dcg_score
-from math import log2
+import numpy as np
+import uuid
 
 
 def dcg_score(y_true, y_score, k=10, gains="exponential"):
@@ -108,6 +108,7 @@ def prepareForJavaCode(data, headersToFormAGroup):
     result = data.filter(headersToFormAGroup, axis=1)
     result["score"] = data["score"]
     result["group"] = 0
+    result["uuid"] = [uuid.uuid4() for _ in range(len(data.index))]
 
     def setGroupID(x, groupId):
         x["group"] = groupId
@@ -128,7 +129,7 @@ def prepareForJavaCode(data, headersToFormAGroup):
             groupID += 1
 
     result = result.drop(columns=headersToFormAGroup)
-    result.sort_values(by=["score"], ascending=False, inplace=True)
+    result.sort_values(by=["score", "uuid"], ascending=[False, True], inplace=True)
 
     docString = docString + "\n\n" + str(result["group"].value_counts(normalize=True))
 

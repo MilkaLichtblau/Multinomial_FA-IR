@@ -56,7 +56,7 @@ def main():
 
     data.to_csv("../data/COMPAS/compas_sexAgeRace.csv", header=True, index=False)
 
-    # we need the groups as extra dataframe for the baselin
+    # we need the groups as extra dataframe for the baseline
     resultData, groups, docString = prepareForJavaCode(data, ["sex"])
     resultData.to_csv("../data/COMPAS/compas_sex_java.csv", header=True, index=False)
     groups.to_csv("../data/COMPAS/compas_sex_groups.csv", header=True, index=False)
