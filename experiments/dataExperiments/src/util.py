@@ -61,10 +61,25 @@ def ndcg_score(y_true, y_score, k=10, gains="exponential"):
     return actual / best
 
 
-def exposureGain(colorblindRanking, fairRanking, result):
+def averageGroupExposureGain(colorblindRanking, fairRanking, result):
+    result["expGain"] = 0.0
     for groupName in result["group"]:
-        print()
+        allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
+        allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
+        groupBias_fairRanking = positionBias(allCandidatesInGroup_fairRanking)
+        groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
+        expGain = groupBias_fairRanking - groupBias_colorblind
+        result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
+
+
+def positionBias(ranking):
+    totalPositionBias = 0.0
+    for position, _ in ranking.iterrows():
+        totalPositionBias = totalPositionBias + 0.5 ** position
+
+    # normalize by ranking size
+    return totalPositionBias / len(ranking)
 
 
 def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
@@ -90,10 +105,10 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
         for position, candidate in allCandidatesInGroup.iterrows():
             allOthersAbove = allOthers.loc[0:position]
             worstScoreAbove = allOthersAbove.score.min()
-            orderUtilLoss = max(0, candidate.score - worstScoreAbove)
+            orderUtilLoss = max(0.0, candidate.score - worstScoreAbove)
             currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"]
             if orderUtilLoss > currentMaxLossPerGroup:
-                originalPosition = int(colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0])
+                originalPosition = colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0]
                 result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = position - originalPosition
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
     return result
