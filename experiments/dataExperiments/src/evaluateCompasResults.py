@@ -6,21 +6,28 @@ Created on Jul 15, 2020
 
 import pandas as pd
 import glob
-import sklearn.metrics
-from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, ndcgLoss, ndcg_score
-
-COMPAS_RANKINGS_DIR = "../results/COMPAS/rankings/"
-EXPERIMENT_NAMES = ["race", "ageRace", "sexAge", "sexRace"]
+from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, ndcg_score, \
+    averageGroupExposureGain
 
 
 def main():
+    # evaluate compas
+    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
 
-    for experiment in EXPERIMENT_NAMES:
-        allFairRankingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_fair.csv")
-        allUnfairRankingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_unfair.csv")
-        allRemainingFilenames = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_remaining.csv")
-        CFAHalfFilename = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_theta=05.csv")
-        CFAOneFilename = glob.glob(COMPAS_RANKINGS_DIR + experiment + "/" + "*_theta=1.csv")
+    # evaluate German credit
+    evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
+
+    # evaluate LSAT
+    evaluate("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
+
+
+def evaluate(rankingsDir, evalDir, experimentNames):
+    for experiment in experimentNames:
+        allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_fair.csv")
+        allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
+        allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_remaining.csv")
+        CFAHalfFilename = glob.glob(rankingsDir + experiment + "/" + "*_theta=05.csv")[0]
+        CFAOneFilename = glob.glob(rankingsDir + experiment + "/" + "*_theta=1.csv")[0]
         # get all files with corresponding k
         for fairRankingFilename in allFairRankingFilenames:
             fairRanking = pd.read_csv(fairRankingFilename, header=0, skipinitialspace=True)
@@ -53,7 +60,8 @@ def main():
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 fairRanking["score"].to_numpy(),
                                                 k=len(fairRanking))
-            multi_fair_result["exposureGain"] = 0.0
+            multi_fair_result = averageGroupExposureGain(colorblindRanking, fairRanking, multi_fair_result)
+            multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
             # eval for CFA algorithm with theta=0.5
             kay = len(fairRanking)
@@ -65,7 +73,8 @@ def main():
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
-            cfaHalf_result["exposureGain"] = 0.0
+            cfaHalf_result = averageGroupExposureGain(colorblindRanking, fairRanking, cfaHalf_result)
+            cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
             n = len(thetaOneSorted) - kay
@@ -76,7 +85,8 @@ def main():
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
-            cfaOne_result["exposureGain"] = 0.0
+            cfaOne_result = averageGroupExposureGain(colorblindRanking, fairRanking, cfaOne_result)
+            cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaOneResult.csv")
 
 
 if __name__ == '__main__':
