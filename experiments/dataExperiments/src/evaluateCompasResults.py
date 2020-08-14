@@ -12,17 +12,21 @@ from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, 
 
 def main():
     # evaluate compas
-    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
-
-    # evaluate German credit
-    evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
+#     print("Evaluation for COMPAS experiments")
+#     evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
+#
+#     # evaluate German credit
+#     print("Evaluation for GermanCredit experiments")
+#     evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
 
     # evaluate LSAT
+    print("Evaluation for LSAT experiments")
     evaluate("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
 
 
 def evaluate(rankingsDir, evalDir, experimentNames):
     for experiment in experimentNames:
+        print(experiment)
         allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_fair.csv")
         allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
         allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_remaining.csv")
@@ -35,6 +39,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             # find corresponding colorblind ranking and remainings
             pString = fairRankingFilename.split(sep="_")[3]
             kString = fairRankingFilename.split(sep="_")[2]
+            print(kString, pString)
             colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames if ((pString in string) and (kString in string))][0],
                                             header=0,
                                             skipinitialspace=True)

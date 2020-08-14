@@ -99,6 +99,8 @@ def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
 def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
     result["orderUtilLoss"] = 0.0
     result["maxRankDrop"] = 0
+    print(len(fairRanking), len(colorblindRanking))
+    print(fairRanking["uuid"].isin(colorblindRanking["uuid"]).all())
     for groupName in result["group"]:
         allCandidatesInGroup = fairRanking.loc[fairRanking["group"] == groupName]
         allOthers = fairRanking.loc[fairRanking["group"] != groupName]
@@ -108,6 +110,7 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
             orderUtilLoss = max(0.0, candidate.score - worstScoreAbove)
             currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"]
             if orderUtilLoss > currentMaxLossPerGroup:
+                print(candidate.uuid)
                 originalPosition = colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0]
                 result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = position - originalPosition
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
