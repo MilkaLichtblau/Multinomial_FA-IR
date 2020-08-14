@@ -1,25 +1,46 @@
 \section{Conclusions}\label{sec:conclusions}
-\begin{itemize}
-	
-	\item Another significant improvement of the overall computational costs, would be to write a new mcdf function. This new version of a mcdf could use the way we use the function in terms of storing some repetitive computation steps.
-\end{itemize}
 
-The method we have presented can generate a ranking with a guaranteed ranked group fairness, and as we have observed, does not introduce a large utility loss.
+The method we have presented can generate a ranking with a guaranteed ranked group fairness, and as we have observed, does not introduce a large utility loss in general .
 %
-Compared to the baseline of~\citet{Feldman2015}, in general we introduce the same or less utility loss. We also do not assume that the distributions of qualifications in the protected and non-protected groups have a similar shape.
+Especially when groups largely have the same utility score in the top positions (as is the case in the COMPAS experiments) no ranking utility at all is lost in terms of NDCG. 
 %
-More importantly, we can directly control through a parameter $p$ the trade-off between fairness and utility.
+In this case \algoFAIR only benefits the protected groups without skewing the ranking result.
+%
+Additionally the user can control the degree of fairness that is obtained in the result by setting $p_G$ to a value that is appropriate for the situation at hand.
+%
+\meike{Compared to the baseline of~\citet{zehlike2020matching}, in general we introduce the same or less utility loss.} 
+%
+More importantly, we can transparently control through a parameter vector $p_G$ the trade-off between fairness and utility, instead of having a less intuitive fairness parameter $\theta$ that operates on the barycenter of the group distributions.
 
 \spara{Future work.}
-For simplicity, we have considered a situation where people belong to a protected or a non-protected group, and leave the case of multiple protected groups or combinations of protected attributes for future work; we plan to adapt methods based on linear programming to achieve this~\cite{celis2017ranking}.
-%
-We are also experimenting with the related problems we considered in \S\ref{concept:related-problems}, including directly bounding the maximum utility loss (ordering or selection), while maximizing ranked group fairness, or weighing the three criteria.
 
-One of the main challenges is to create an in-processing ranking method instead of a post-processing one. However, we must also be cautious as results by \citet{kleinberg2016inherent} stating that one cannot have a predictor of risk that is well calibrated and satisfies statistical parity requirements, may imply that having a fair ranking by construction is not possible. We should also consider explainable discrimination~\cite{vzliobaite2011handling}, \todo{reference broken?}or even try to show a causal relation between protected attributes and qualification scores.
+Currently an important challenge is the algorithmic complexity of calculating the mTree for a particular configuration of $p_G$ and $\alpha$.
+%
+Though we already implemented improvements to speed things up the calculation of an adjusted mTree of length $k=100$ for one configuration with six groups takes several weeks.
+%
+Of course this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration this calculation times are currently unavoidable.
+%
+A significant speed-up could be achieved by programming a customized mcdf-function which can store the results of repetitive computation steps. 
+%
+This is however very memory-intensive and the algorithm then needs to run on large computer clusters.
+%
+Additionally one could provide an additional program that fills the MCDF Cache with various configurations of $p_G$ and $\alpha$.
+%
+This calculation can continuously run as a separate process on a server which then provides the obtained caches to users who want to compute new mTrees.
+
+One of the main challenges for fair ranking algorithms in general is that there is not yet any empirical evidence that re-ordering items actually helps to overcome the bias in click-probability across groups.
+%
+Very recent research \meike{cite Tom's project with Hima} suggests that there are several settings in which optimizing for exposure equity (as done by~\cite{biega2018equity, singh2019policy}) shows no effect on user biases in click through rates. 
+%
+Indeed early research indicates that when a protected group, such as women, receive equity of exposure in a ranking, the users searching for e.g. experts in certain domains still prefer men even when they are ranked to lower positions by a fairness algorithm.
+%
+A method that can increase the visibility beyond equity of exposure is needed to compensate for such persistent biases, such as \algoFAIR.
+%
+However further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
 
 Experimentally, there are several directions. For instance, we have used real datasets that exhibit some differences among protected and non-protected groups; experiments with synthetic datasets would allow to test with more extreme differences that are more rarely found in real data.
 %
 Further experimental work may be done to measure robustness to noise in qualifications, and later to evaluate the impact of this in a real application.
 
 \spara{Reproducibility.}
-All the code and data used on this paper is available online at \url{https://github.com/MilkaLichtblau/FA-IR_Ranking}.
+All the code and data used of this paper is available online at \url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}.
