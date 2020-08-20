@@ -5,7 +5,30 @@ Created on May 19, 2020
 '''
 import pandas as pd
 import numpy as np
-from src.util import prepareForJavaCode
+from src.util import *
+
+
+def makeWorstThreeGroupsProtected(data, docString):
+    groupExposureFrame = pd.DataFrame(columns=["group"])
+    groupExposureFrame["group"] = data["group"].unique()
+    groupExposureFrame = averageGroupExposure(data, groupExposureFrame)
+    groupExposureFrame.sort_values(by=["exposure"], ascending=False, inplace=True)
+    nonProtectedGroups = groupExposureFrame.head(len(groupExposureFrame.group) - 3)["group"]
+    docString = docString + "\n\nExposure Per Groups\n" + str(groupExposureFrame)
+    docString = docString + "\n\nFollowing groups were set to be non-protected: " + str(nonProtectedGroups.values)
+    npIndex = data[data["group"].isin(nonProtectedGroups)].index
+    data.loc[npIndex, "group"] = 0
+
+    worstThreeGroups = groupExposureFrame.tail(3)["group"]
+    newGroupName = 1
+    docString = docString + "\n\nRenamed the following groups: "
+    for groupName in worstThreeGroups:
+        groupIndex = data.loc[data["group"] == groupName].index
+        data.loc[groupIndex, "group"] = newGroupName
+        docString = docString + "\n" + str(groupName) + " --> " + str(newGroupName)
+        newGroupName += 1
+
+    return data, pd.DataFrame({"group": data["group"].unique()}), docString
 
 
 def main():
@@ -21,11 +44,11 @@ def main():
     # drop irrelevant columns
     keep_cols = ["sex", "age_cat", "race", "decile_score", "v_decile_score", "priors_count"]
     data = data[keep_cols]
-    data["sex"] = data["sex"].replace({"Male":0,
-                                       "Female":1})
+    data["sex"] = data["sex"].replace({"Male":1,
+                                       "Female":0})
     data["age_cat"] = data["age_cat"].replace({"Less than 25":1,
-                                               "25 - 45":0,
-                                               "Greater than 45":2})
+                                               "25 - 45":2,
+                                               "Greater than 45":0})
     data["race"] = data["race"].replace({"Caucasian":0,
                                          "African-American":1,
                                          "Hispanic":1,
@@ -91,6 +114,13 @@ def main():
     resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
     groups.to_csv("../data/COMPAS/compas_ageRace_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
+        text_file.write(docString)
+
+    resultData, _, docString = prepareForJavaCode(data, ["age_cat", "race", "sex"])
+    resultData, groups, docString = makeWorstThreeGroupsProtected(resultData, docString)
+    resultData.to_csv("../data/COMPAS/compas_worstThreeGroups_java.csv", header=True, index=False)
+    groups.to_csv("../data/COMPAS/compas_worstThreeGroups_groups.csv", header=True, index=False)
+    with open("../data/COMPAS/compas_worstThreeGroups_doc.txt", "w") as text_file:
         text_file.write(docString)
 
 
