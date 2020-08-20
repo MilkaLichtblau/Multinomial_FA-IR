@@ -297,7 +297,7 @@ public class Main {
                             .mapToDouble(Double::parseDouble)
                             .toArray();
                     double alpha = Double.parseDouble(args[4]);
-                    String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p) + "_alpha=" + alpha;
+                    String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p).replaceAll("\\s+", "") + "_alpha=" + alpha;
 
                     DataExperimentHandler handler = new DataExperimentHandler(); 
                     handler.prepareDataExperiment(datafile, k, ",", true);
