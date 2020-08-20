@@ -303,6 +303,7 @@ public class Main {
                     handler.prepareDataExperiment(datafile, k, ",", true);
                     handler.runDataExperiment(k, p, alpha);
                     handler.writeRankingsToCSVs(resultFilename);
+                    
                 }
             } catch (IOException e) {
                 e.printStackTrace();

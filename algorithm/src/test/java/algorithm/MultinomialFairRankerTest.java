@@ -5,6 +5,7 @@ import static org.junit.Assert.assertArrayEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,21 +41,21 @@ public class MultinomialFairRankerTest {
     private List<Candidate> unfairRanking;
 
     // group 0
-    private Candidate candidate_11_0 = new Candidate(11.0, 0);
-    private Candidate candidate_10_0 = new Candidate(10.0, 0);
-    private Candidate candidate_09_0 = new Candidate(9.0, 0);
-    private Candidate candidate_08_0 = new Candidate(8.0, 0);
-    private Candidate candidate_07_0 = new Candidate(7.0, 0);
+    private Candidate candidate_11_0 = new Candidate(11.0, 0, UUID.randomUUID());
+    private Candidate candidate_10_0 = new Candidate(10.0, 0, UUID.randomUUID());
+    private Candidate candidate_09_0 = new Candidate(9.0, 0, UUID.randomUUID());
+    private Candidate candidate_08_0 = new Candidate(8.0, 0, UUID.randomUUID());
+    private Candidate candidate_07_0 = new Candidate(7.0, 0, UUID.randomUUID());
 
     // group 1
-    private Candidate candidate_06_1 = new Candidate(6.0, 1);
-    private Candidate candidate_05_1 = new Candidate(5.0, 1);
-    private Candidate candidate_04_1 = new Candidate(4.0, 1);
+    private Candidate candidate_06_1 = new Candidate(6.0, 1, UUID.randomUUID());
+    private Candidate candidate_05_1 = new Candidate(5.0, 1, UUID.randomUUID());
+    private Candidate candidate_04_1 = new Candidate(4.0, 1, UUID.randomUUID());
 
     // group 2
-    private Candidate candidate_03_2 = new Candidate(3.0, 2);
-    private Candidate candidate_02_2 = new Candidate(2.0, 2);
-    private Candidate candidate_01_2 = new Candidate(1.0, 2);
+    private Candidate candidate_03_2 = new Candidate(3.0, 2, UUID.randomUUID());
+    private Candidate candidate_02_2 = new Candidate(2.0, 2, UUID.randomUUID());
+    private Candidate candidate_01_2 = new Candidate(1.0, 2, UUID.randomUUID());
 
     @Before
     public void setup() {

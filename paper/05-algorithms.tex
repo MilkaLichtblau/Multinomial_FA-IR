@@ -1,5 +1,5 @@
 \section{Algorithm}\label{sec:algorithms}
-We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and prove it is correct (\S\ref{subsec:algorithm-correctness}).
+We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and elaborate its complexity~(\S\ref{subsec:algorithm-complexity}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
 \note{Done}
@@ -74,6 +74,7 @@ If the node demands a protected candidate from group $g$ at the current position
 \vspace{-3mm}
 
 \subsection{Algorithm Optimizations}
+\label{subsec:algorithm-optimization}
 \note{Done}
 Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:space_time}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
 %

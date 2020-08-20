@@ -8,8 +8,8 @@ public class Candidate implements Comparable<Candidate> {
     private Double originalScore;
     private int group;
 
-    public Candidate(Double score, int group) {
-        this.uuid = UUID.randomUUID();
+    public Candidate(Double score, int group, UUID uuid) {
+        this.uuid = uuid;
         this.score = score;
         this.originalScore = score;
         this.group = group;
@@ -37,7 +37,14 @@ public class Candidate implements Comparable<Candidate> {
     
     @Override
     public int compareTo(Candidate cand) {
-        return cand.getScore().compareTo(this.score);
+        // sort scores in descending order
+        int compareResult = cand.getScore().compareTo(this.score);
+        if (compareResult == 0) {
+            // second level sort uuid in ascending order
+            return this.uuid.compareTo(cand.getUuid());
+        } else {
+            return compareResult;
+        }
     }
     
     public String toString() {

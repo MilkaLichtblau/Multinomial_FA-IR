@@ -210,7 +210,7 @@ def main():
                         result_dir,
                         '../../data/LSAT/LSAT_sexRace_java.csv',
                         '../../data/LSAT/LSAT_sexRace_groups.csv',
-                        'LSAT',
+                        'score',
                         groupNames)
     elif sys.argv[1] == 'germanCredit_sexAge':
         groupNames = {"[0 0]":"Male, middle age",
