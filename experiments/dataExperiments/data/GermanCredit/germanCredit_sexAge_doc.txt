@@ -7,6 +7,7 @@
 (1, 1) --> 5
 
 
+Percentages of Groups
 0    0.582583
 1    0.217217
 2    0.063063
@@ -14,3 +15,12 @@
 3    0.044044
 4    0.032032
 Name: group, dtype: float64
+
+Exposure Per Groups
+   group  exposure
+1      2  0.134205
+3      3  0.128572
+2      0  0.123032
+0      1  0.121665
+4      4  0.121225
+5      5  0.114657
