@@ -155,32 +155,62 @@ We show that large increases in average group exposure can be achieved with rela
 \subsection{Results}\label{sec:experiments-results}
 %
 \begin{table}[t]
-	\caption{Experimental results, highlighting in boldface the best non-color-blind result. Both FA*IR and the baseline from \citeauthor{Feldman2015} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}
+	\caption{Experimental results, highlighting in boldface the best non-color-blind result. 
+		%
+		All measures are present per group except for the loss of NDCG which is calculated for the entire ranking. 
+		%
+		With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
+		%
+		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		\meike{Both FA*IR and the baseline from \citeauthor{zehlike2020matching} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}}
 	\vspace{-3mm}
 	\label{tbl:results}
 	\resizebox{1.02\columnwidth}{!}{%
 		\centering\begin{tabular}{llcccccc}\toprule
-			&        & Exposure &   NDCG    & Ordering     & Rank & Selection \\
-			& Method & gain per group  & loss  & utility loss & drop & utility loss \\ \midrule
-			D1  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			&        & Exposure &   total    & Ordering     & Rank & Selection \\
+			& Method & gain  & NDCG loss  & utility loss & drop & utility loss \\ \midrule
+			D1, k=1500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			D1, k=1500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D2 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR p=0.8 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			age& \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			D2, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D3 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR p=0.2 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			D2, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
+			
+			D3, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR  $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
 			age, sex, race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D4  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			German credit, & \algoFAIR p=0.7 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, age & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			D3, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR  $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age, sex, race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D5  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			LSAT,& \algoFAIR p=0.2 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, race & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\			
+			D4, k=100  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			German credit, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			
+			D4, k=100  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			German credit, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
+			
+			D5, k=500  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			LSAT,& \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\ \midrule
+			
+			D5, k=500  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			LSAT,& \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\			
 			\bottomrule
 		\end{tabular}
 	}
