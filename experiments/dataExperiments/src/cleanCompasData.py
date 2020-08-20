@@ -14,7 +14,6 @@ def makeWorstThreeGroupsProtected(data, docString):
     groupExposureFrame = averageGroupExposure(data, groupExposureFrame)
     groupExposureFrame.sort_values(by=["exposure"], ascending=False, inplace=True)
     nonProtectedGroups = groupExposureFrame.head(len(groupExposureFrame.group) - 3)["group"]
-    docString = docString + "\n\nExposure Per Groups\n" + str(groupExposureFrame)
     docString = docString + "\n\nFollowing groups were set to be non-protected: " + str(nonProtectedGroups.values)
     npIndex = data[data["group"].isin(nonProtectedGroups)].index
     data.loc[npIndex, "group"] = 0

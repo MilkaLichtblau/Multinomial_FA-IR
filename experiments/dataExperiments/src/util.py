@@ -231,4 +231,11 @@ def prepareForJavaCode(data, headersToFormAGroup):
     result = result.reset_index(drop=True)
     docString = docString + "\n\nPercentages of Groups\n" + str(result["group"].value_counts(normalize=True))
 
+    # write exposure per group in docString to decide who should be protected
+    groupExposureFrame = pd.DataFrame(columns=["group"])
+    groupExposureFrame["group"] = data["group"].unique()
+    groupExposureFrame = averageGroupExposure(data, groupExposureFrame)
+    groupExposureFrame.sort_values(by=["exposure"], ascending=False, inplace=True)
+    docString = docString + "\n\nExposure Per Groups\n" + str(groupExposureFrame)
+
     return result, pd.DataFrame({"group": result["group"].unique()}), docString
