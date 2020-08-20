@@ -117,7 +117,7 @@ This is normalized so that the maximum value is $1.0$.
 %
 In rankings their exposure to the user is critical for ranked candidates to benefit from the system and if a group of candidates is systematically ranked low, it can be considered as biased~\cite{friedman1996bias}. 
 %
-We model position bias $v$ by means of a geometric progression of the form $v(k) = \frac{1}{2}^{(k-1)}$. 
+We model position bias $v$ by means of a geometric progression of the form $v(k) = \frac{1}{\log_2(i+1)}$. 
 %
 Thus the first position has a bias $v(1)=1$, which then decreases geometrically.
 %
