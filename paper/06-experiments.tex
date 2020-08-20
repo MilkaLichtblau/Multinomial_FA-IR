@@ -10,21 +10,17 @@
 			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & < 25yr. & 21.8\% \\
 			& & & & & 25yr. < x < 45yr. & 57.2\% \\
 			\midrule
-			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
-			& & & & prior arrests + & white male & 26.3\% \\
-			& & & & violent recidivism & PoC female & 11.2\% \\
-			\midrule
-			D4 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
 			& & & & prior arrests + & white female, < 25yr. & 1.2\% \\
 			& & & & violent recidivism & PoC male, < 25yr. & 13.4\% \\
 			\midrule
-			D5 & German credit \cite{lichman_2013_uci} & 100 & 500 & credit rating & female, non-prot. age & 21.7\% \\
+			D4 & German credit \cite{lichman_2013_uci} & 1000 & 100 & credit rating & female, non-prot. age & 21.7\% \\
 			& & & & & male, oldest 10\% & 6.3\% \\
 			& & & & & female, youngest 10\% & 6.1\% \\
 			& & & & & male, youngest 10\% & 4.4\% \\
 			& & & & & female, oldest 10\% & 3.2\% \\
 			\midrule
-			D6 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
+			D5 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
 			& & & & & PoC, female & 8.4\% \\
 			& & & & & PoC, male & 7.6\% \\
 			\bottomrule
@@ -162,47 +158,29 @@ We show that large increases in average group exposure can be achieved with rela
 	\caption{Experimental results, highlighting in boldface the best non-color-blind result. Both FA*IR and the baseline from \citeauthor{Feldman2015} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}
 	\vspace{-3mm}
 	\label{tbl:results}
-	\resizebox{1.01\columnwidth}{!}{%
+	\resizebox{1.02\columnwidth}{!}{%
 		\centering\begin{tabular}{llcccccc}\toprule
-			&        & \% Prot. &       & Ordering     & Rank & Selection \\
-			& Method & output   & NDCG  & utility loss & drop & utility loss \\ \midrule
-			D1 (51.2\%) & Color-blind & 25\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.5 & 46\% & \textbf{0.9858} & \textbf{0.2026} & \textbf{319} & \textbf{0.1087} \\
-			race$=$Afr.-Am. & \citeauthor{Feldman2015} & 51\% & 0.9779 & 0.2281 & 393 & 0.1301 \\ \midrule
+			&        & Exposure &   NDCG    & Ordering     & Rank & Selection \\
+			& Method & gain per group  & loss  & utility loss & drop & utility loss \\ \midrule
+			D1  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D2 (80.7\%) & Color-blind & 73\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.8 & 77\% & \textbf{1.0000} & \textbf{0.1194} & \textbf{161} & \textbf{0.0320} \\
-			gender$=$male & \citeauthor{Feldman2015} & 81\% & 0.9973 & 0.2090 & 294 & 0.0533 \\ \midrule
+			D2 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR p=0.8 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age& \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D3 (19.3\%) & Color-blind & 28\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.2 & 28\% & \textbf{0.9999} & \textbf{0.2239} & \textbf{1} & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 19\% & 0.9972 & 0.3028 & 278 & 0.0533 \\ \midrule
+			D3 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR p=0.2 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age, sex, race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D4 (69.0\%) & Color-blind & 74\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred, & FA*IR p=0.7 & 74\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0} & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 69\% & 0.9988 & 0.1197 & 8 & 0.0224 \\ \midrule
+			D4  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			German credit, & \algoFAIR p=0.7 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, age & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D5 (14.9\%) & Color-blind & 9\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred,& FA*IR p=0.2 & 15\% & \textbf{0.9983} & \textbf{0.0436} & \textbf{7} & \textbf{0.0462} \\
-			age $<$ 25 & \citeauthor{Feldman2015} & 15\% & 0.9952 & 0.1656 & 8 & \textbf{0.0462} \\ \midrule
-			
-			D6 (54.8\%) & Color-blind & 24\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred, & FA*IR p=0.6 & 50\% & \textbf{0.9913} & \textbf{0.1137} & \textbf{30} & \textbf{0.0593} \\
-			age $<$ 35 & \citeauthor{Feldman2015} & 55\% & 0.9853 & 0.2123 & 36 & 0.0633 \\ \midrule
-			
-			D7 (53.1\%) & Color-blind    & 49\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			SAT, 	    & FA*IR p=0.6    & 57\% & \textbf{0.9996} & \textbf{0.0167} & 365 & 0.0083 \\ 
-			gender$=$female & \citeauthor{Feldman2015} & 56\% & \textbf{0.9996} & \textbf{0.0167} & \textbf{241} & \textbf{0.0042} \\ \midrule
-			
-			D8a (27.5\%)  & Color-blind    & 28\% & 1.0000 		& 0.0000 	& 0  & 0.0000 \\
-			Economist,     & FA*IR p=0.3    & 28\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 28\% & 0.9935 		& 0.6109 	& 5 & \textbf{0.0000} \\ \midrule
-			D8b (42.5\%)  & Color-blind    & 43\% & 1.0000 		& 0.0000 	& 0           & 0.0000 \\
-			Mkt. Analyst,  & FA*IR p=0.4    & 43\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$male & \citeauthor{Feldman2015} & 43\% & 0.9422 		& 1.0000 	& 5 & \textbf{0.0000} \\ \midrule
-			D8c (29.7\%)  & Color-blind    & 30\% & 1.0000 		& 0.0000 	& 0           & 0.0000 \\
-			Copywriter,    & FA*IR p=0.3    & 30\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 30\% & 0.9782 & 0.4468 & 10 & \textbf{0.0000} \\
+			D5  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			LSAT,& \algoFAIR p=0.2 &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, race & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\			
 			\bottomrule
 		\end{tabular}
 	}
