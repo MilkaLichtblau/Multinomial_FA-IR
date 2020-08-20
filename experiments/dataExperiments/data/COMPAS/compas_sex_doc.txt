@@ -1,8 +1,9 @@
 ['sex']
-0 --> 0
 1 --> 1
+0 --> 0
 
 
-0    0.809624
-1    0.190376
+Percentages of Groups
+1    0.809624
+0    0.190376
 Name: group, dtype: float64

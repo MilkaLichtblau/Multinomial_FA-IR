@@ -3,6 +3,7 @@
 0 --> 0
 
 
+Percentages of Groups
 1    0.659268
 0    0.340732
 Name: group, dtype: float64
