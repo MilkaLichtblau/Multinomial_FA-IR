@@ -1,6 +1,5 @@
 %
 \begin{table}[h]
-	\label{tbl:datasets}
 	\resizebox{1.01\columnwidth}{!}{%
 		\centering\begin{tabular}{clcclllc}\toprule
 			&        &                         &                         & Quality   & Protected & Protected \\
@@ -8,27 +7,30 @@
 			\midrule
 			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & PoC & 65.9\% \\
 			\midrule
-			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
+			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & < 25yr. & 21.8\% \\
+			& & & & & 25yr. < x < 45yr. & 57.2\% \\
+			\midrule
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
 			& & & & prior arrests + & white male & 26.3\% \\
 			& & & & violent recidivism & PoC female & 11.2\% \\
 			\midrule
-			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
+			D4 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
 			& & & & prior arrests + & white female, < 25yr. & 1.2\% \\
 			& & & & violent recidivism & PoC male, < 25yr. & 13.4\% \\
 			\midrule
-			D4 & German credit \cite{lichman_2013_uci} & 100 & 500 & credit rating & female, non-prot. age & 21.7\% \\
+			D5 & German credit \cite{lichman_2013_uci} & 100 & 500 & credit rating & female, non-prot. age & 21.7\% \\
 			& & & & & male, oldest 10\% & 6.3\% \\
 			& & & & & female, youngest 10\% & 6.1\% \\
 			& & & & & male, youngest 10\% & 4.4\% \\
 			& & & & & female, oldest 10\% & 3.2\% \\
 			\midrule
-			D5 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
+			D6 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
 			& & & & & PoC, female & 8.4\% \\
 			& & & & & PoC, male & 7.6\% \\
 			\bottomrule
 		\end{tabular}
 	}
-	\caption{Datasets and experimental settings.}
+	\caption{Datasets and experimental settings.	\label{tbl:datasets}}
 	\vspace{-3mm}
 \end{table}
 %
@@ -39,24 +41,26 @@
 In this section, we consider several public datasets for evaluating the multinomial \algoFAIR algorithm (datasets in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}).
 
 \begin{figure}[t]
+	\vspace{-8mm}
 	\centering
 	\subfloat%
 	[Score distribution of male and female candidates in the COMPAS dataset.
 	\label{fig:dataset:compas:sex}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_sex_kde.png}}\hfill
 	\subfloat
-	[Score distribution of white and non-white candidates in the COMPAS dataset.
+	[Score distribution of white and non-white candidates in the COMPAS dataset. Experiment D1.
 	\label{fig:dataset:compas:race}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
 	\subfloat
-	[Score distribution by age in the COMPAS dataset. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data.
+	[Score distribution by age in the COMPAS dataset. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data. Experiment D2.
 	\label{fig:dataset:compas:age}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_age_kde.png}}\hfill
 	\subfloat
-	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young non-white males, young non-white females and young white females, which are the three groups with lowest average exposure in the colorblind ranking.
+	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young non-white males, young non-white females and young white females, which are the three groups with lowest average exposure in the colorblind ranking. Experiment D3.
 	\label{fig:dataset:compas:worstThree}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_worstThreeGroups_kde.png}}\hfill
-	\caption{}
+	\vspace{-3mm}
+	\caption{Distribution of COMPAS scores in different experimental settings. The first three figures show distributions separately by each of the three protected categories. The fourth figure shows the distribution for dataset D3}
 	\label{fig:dataset:compas}
 	\vspace{-3mm}
 \end{figure}
@@ -146,12 +150,11 @@ In rankings their exposure to the user is critical for ranked candidates to bene
 %
 We model position bias $v$ by means of a geometric progression of the form $v(k) = \frac{1}{\log_2(i+1)}$. 
 %
-Thus the first position has a bias $v(1)=1$, which then decreases geometrically.
+Thus the first position has a bias $v(1)=1$, which then decreases logarithmically.
 %
 Higher position bias translates into more exposure and hence more visibility.
 %
 We show that large increases in average group exposure can be achieved with relatively small losses in ordering utility and NDCG.
-
 
 \subsection{Results}\label{sec:experiments-results}
 %
