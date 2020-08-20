@@ -4,11 +4,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Serializer {
+
+    public static final int MAX_FILE_SIZE_IN_MB = 50;
 
     public static boolean checkIfMCDFFileExists(MCDFCache cache){
         String filename = createMCDFCacheFileNameFromObject(cache);
@@ -18,6 +18,7 @@ public class Serializer {
 
     public static List<File> getListOfMCDFFileParts(String fileName){
         fileName = new File(fileName).getName();
+        fileName = fileName.substring(0,fileName.length()-4);
         Path currentRelativePath = Paths.get("");
         StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
         stringBuilder.append(File.separator);
@@ -39,6 +40,8 @@ public class Serializer {
     }
 
     public static List<File> getListOfMTreeFileParts(String fileName){
+        fileName = new File(fileName).getName();
+        fileName = fileName.substring(0,fileName.length()-4);
         Path currentRelativePath = Paths.get("");
         StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
         stringBuilder.append(File.separator);
@@ -59,11 +62,13 @@ public class Serializer {
         return listOfFileParts;
     }
 
-    public static File mergeFile(List<File> fileParts) throws IOException {
+    public static File mergeFile(List<File> fileParts, String folder) throws IOException {
         Path currentRelativePath = Paths.get("");
         StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
         stringBuilder.append(File.separator);
         stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append(folder);
         stringBuilder.append(File.separator);
         String referenceFileName = fileParts.get(0).getName();
         if(Character.isDigit(referenceFileName.charAt(referenceFileName.length()-1))){
@@ -82,9 +87,9 @@ public class Serializer {
     }
 
     public static void splitFile(File f) throws IOException {
-        int partCounter = 1;
+        int partCounter = 2;
 
-        int sizeOfFiles = 1024 * 1024 * 50;// 50MB
+        int sizeOfFiles = 1024 * 1024 * MAX_FILE_SIZE_IN_MB;// MB
         byte[] buffer = new byte[sizeOfFiles];
 
         String fileName = f.getName();
@@ -175,6 +180,35 @@ public class Serializer {
         return true;
     }
 
+    public static void splitMTreeFilesInStorage(){
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mtree");
+        stringBuilder.append(File.separator);
+        File dir = new File(stringBuilder.toString());
+        File[] directoryListing = dir.listFiles();
+        for(File f : directoryListing){
+            if((f.length() / (1024 * 1024) >MAX_FILE_SIZE_IN_MB) && Character.isLetter(f.getName().charAt(f.getName().length()-1))){
+                String name = f.getName();
+                String[] params  = name.split("_");
+                int k = Integer.valueOf(params[0]);
+                boolean isAdjusted = Boolean.valueOf(params[params.length-1].substring(0,params[params.length-1].length()-6));
+                double alpha = Double.valueOf(params[params.length-2]);
+                double[] p = new double[params.length-3];
+                for(int i=0; i<params.length-3; i++){
+                    p[i] = Double.valueOf(params[i+1]);
+                }
+                MTree tree = loadMTree(k,p,alpha,isAdjusted);
+                splitStoreMTree(tree);
+                f.delete();
+            }
+        }
+    }
+
+
     public static void splitMCDFCacheFilesInStorage(){
         Path currentRelativePath = Paths.get("");
         StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
@@ -186,7 +220,8 @@ public class Serializer {
         File dir = new File(stringBuilder.toString());
         File[] directoryListing = dir.listFiles();
         for(File f : directoryListing){
-            if((f.length() / (1024 * 1024) >50) && Character.isLetter(f.getName().charAt(f.getName().length()-1))){
+            if((f.length() / (1024 * 1024) >MAX_FILE_SIZE_IN_MB) && Character.isLetter(f.getName().charAt(f.getName().length()-1))){
+                System.out.println("Splitting "+f.getName());
                 String name = f.getName();
                 String[] ps  = name.split("_");
                 double[] p = new double[ps.length];
@@ -196,6 +231,7 @@ public class Serializer {
                 }
                 MCDFCache cache = loadMCDFCache(p);
                 splitStoreMCDFCache(cache);
+                f.delete();
             }
         }
     }
@@ -203,7 +239,7 @@ public class Serializer {
     public static void storeMTree(MTree mTree) {
         FileOutputStream fOutputStream;
         ObjectOutputStream OOutputStream;
-        String filename = createFileNameFromMTree(mTree);
+        String filename = createMTreeFileNameFromObject(mTree);
         try {
             fOutputStream = new FileOutputStream(filename);
             OOutputStream = new ObjectOutputStream(fOutputStream);
@@ -245,19 +281,37 @@ public class Serializer {
         }
     }
 
+    public static void splitStoreMTree(MTree tree){
+        FileOutputStream fOutputStream;
+        ObjectOutputStream OOutputStream;
+        String filename = createMTreeFileNameFromObject(tree);
+        try {
+            fOutputStream = new FileOutputStream(filename);
+            OOutputStream = new ObjectOutputStream(fOutputStream);
+            OOutputStream.writeObject(tree);
+            File bigFile = new File (filename);
+            splitFile(bigFile);
+            bigFile.delete();
+            OOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static MCDFCache loadMCDFCache(double[] p){
         String filename = createMCDFCacheFileNameFromProportions(p);
         FileInputStream fileInputStream;
         ObjectInputStream objectInputStream;
         MCDFCache cache;
-        List<File> files = getListOfMCDFFileParts(filename);
+        //List<File> files = getListOfMCDFFileParts(filename);
         try {
-            File file = mergeFile(files);
+            //File file = mergeFile(files);
+            File file = new File(filename);
             fileInputStream = new FileInputStream(file);
             objectInputStream = new ObjectInputStream(fileInputStream);
             cache = (MCDFCache) objectInputStream.readObject();
             objectInputStream.close();
-            file.delete();
+            //file.delete();
         } catch (Exception e) {
             return null;
         }
@@ -268,14 +322,12 @@ public class Serializer {
         String filename = createFileNameFromParameters(k,p,alpha,isAdjusted);
         FileInputStream fileInputStream;
         ObjectInputStream objectInputStream;
-        List<File> files = getListOfMTreeFileParts(filename);
         try {
-            File file = mergeFile(files);
+            File file = new File(filename);
             fileInputStream = new FileInputStream(file);
             objectInputStream = new ObjectInputStream(fileInputStream);
             MTree mTree = (MTree) objectInputStream.readObject();
             objectInputStream.close();
-            file.delete();
             return mTree;
         } catch (Exception e) {
             return null;
@@ -339,7 +391,7 @@ public class Serializer {
         return stringBuilder.toString();
     }
 
-    private static String createFileNameFromMTree(MTree mTree) {
+    private static String createMTreeFileNameFromObject(MTree mTree) {
         Path currentRelativePath = Paths.get("");
         int k = mTree.getK();
         double[] p = mTree.getP();
@@ -364,4 +416,73 @@ public class Serializer {
         return stringBuilder.toString();
     }
 
+    public static void mergeMCDFCacheFilesInStorage(){
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mcdfcache");
+        stringBuilder.append(File.separator);
+        File dir = new File(stringBuilder.toString());
+        File[] directoryListing = dir.listFiles();
+        HashMap<String,Boolean> alreadyMerged = new HashMap<>();
+        for(File f : directoryListing) {
+            if(!Character.isDigit(f.getName().charAt(f.getName().length()-1))){
+                continue;
+            }
+            if(alreadyMerged.get(f.getName().substring(0,f.getName().length()-4)) != null){
+                continue;
+            }
+            String filename = f.getName();
+            System.out.println("Merging "+f.getName());
+            List<File> files = getListOfMCDFFileParts(filename);
+            try {
+                mergeFile(files, "mcdfcache");
+                //merged.createNewFile();
+                for(File fPart : files){
+                    if(Character.isDigit(fPart.getName().charAt(fPart.getName().length()-1))){
+                        alreadyMerged.put(fPart.getName().substring(0,fPart.getName().length()-4),true);
+                        fPart.delete();
+                    }
+                }
+
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public static void mergeMTreeFilesInStorage(){
+        Path currentRelativePath = Paths.get("");
+        StringBuilder stringBuilder = new StringBuilder(currentRelativePath.toAbsolutePath().toString());
+        stringBuilder.append(File.separator);
+        stringBuilder.append("storage");
+        stringBuilder.append(File.separator);
+        stringBuilder.append("mtree");
+        stringBuilder.append(File.separator);
+        File dir = new File(stringBuilder.toString());
+        File[] directoryListing = dir.listFiles();
+        HashMap<String,Boolean> alreadyMerged = new HashMap<>();
+        for(File f : directoryListing) {
+            if(!Character.isDigit(f.getName().charAt(f.getName().length()-1))){
+                continue;
+            }
+            if(alreadyMerged.get(f.getName().substring(0,f.getName().length()-4)) != null){
+                continue;
+            }
+            String filename = f.getName();
+            System.out.println("Merging "+f.getName());
+            List<File> files = getListOfMTreeFileParts(filename);
+            try {
+                mergeFile(files, "mtree");
+                for(File fPart : files){
+                    if(Character.isDigit(fPart.getName().charAt(fPart.getName().length()-1))){
+                        alreadyMerged.put(fPart.getName().substring(0,fPart.getName().length()-4),true);
+                        fPart.delete();
+                    }
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
 }

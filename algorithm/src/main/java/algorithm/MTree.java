@@ -553,21 +553,5 @@ public class MTree implements Serializable {
         storeMCDFCache(this.mcdfCache);
     }
 
-    public static void main(String[] args){
-        double alpha = 0.1;
-        double[] p1 = {0.18,0.11,0.1,0.39,0.06,0.16};
-        double[] p3 = {0.26,0.55,0.08,0.11};
-        double[] p4 = {0.25,0.25,0.25,0.25};
-        double[] p5 = {0.46,0.17,0.04,0.11,0.18,0.04};
-        ArrayList<double[]> plist = new ArrayList<>();
-        plist.add(p1);
-        plist.add(p3);
-        plist.add(p4);
-        plist.add(p5);
-        for(int k = 20; k<=500; k+=5) {
-            for (double[] p : plist) {
-                MTree tree = new MTree(k, p, alpha, false);
-            }
-        }
-    }
+
 }
