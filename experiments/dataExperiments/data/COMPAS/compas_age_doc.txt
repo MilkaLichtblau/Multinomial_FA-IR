@@ -1,10 +1,11 @@
 ['age_cat']
-2 --> 1
 0 --> 0
+2 --> 1
 1 --> 2
 
 
-0    0.572262
+Percentages of Groups
+1    0.572262
 2    0.218244
-1    0.209494
+0    0.209494
 Name: group, dtype: float64

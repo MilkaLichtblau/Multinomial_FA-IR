@@ -7,8 +7,13 @@ Created on Jun 12, 2020
 import pandas as pd
 import numpy as np
 import uuid
+import math
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from _operator import pos
 
 
+################### EVALUATION ####################################
 def dcg_score(y_true, y_score, k=10, gains="exponential"):
     """Discounted cumulative gain (DCG) at rank k
     Parameters
@@ -61,14 +66,25 @@ def ndcg_score(y_true, y_score, k=10, gains="exponential"):
     return actual / best
 
 
+def averageGroupExposure(ranking, result):
+    result["exposure"] = 0.0
+    totalExposure = positionBias(ranking)
+    for groupName in result["group"]:
+        allCandidatesInGroup = ranking.loc[ranking["group"] == groupName]
+        groupBias = positionBias(allCandidatesInGroup) / totalExposure
+        result.at[result[result["group"] == groupName].index[0], "exposure"] = groupBias
+    return result
+
+
 def averageGroupExposureGain(colorblindRanking, fairRanking, result):
     result["expGain"] = 0.0
+    totalExposure = positionBias(colorblindRanking)
     for groupName in result["group"]:
         allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
         allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
         groupBias_fairRanking = positionBias(allCandidatesInGroup_fairRanking)
         groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
-        expGain = groupBias_fairRanking - groupBias_colorblind
+        expGain = groupBias_fairRanking / totalExposure - groupBias_colorblind / totalExposure
         result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
 
@@ -76,7 +92,9 @@ def averageGroupExposureGain(colorblindRanking, fairRanking, result):
 def positionBias(ranking):
     totalPositionBias = 0.0
     for position, _ in ranking.iterrows():
-        totalPositionBias = totalPositionBias + 0.5 ** position
+        if math.log2(position + 2) == 0.0:
+            print(position)
+        totalPositionBias = totalPositionBias + 1 / (math.log2(position + 2))
 
     # normalize by ranking size
     return totalPositionBias / len(ranking)
@@ -116,9 +134,60 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
     return result
 
+############################# VISUALISATION #############################################
 
+
+def plotKDEPerGroup(data, score_attr, filename, colNames=None):
+
+    mpl.rcParams.update({'font.size': 24, 'lines.linewidth': 3, 'lines.markersize': 15, 'font.family':'Times New Roman'})
+    # avoid type 3 (i.e. bitmap) fonts in figures
+    mpl.rcParams['ps.useafm'] = True
+    mpl.rcParams['pdf.use14corefonts'] = True
+    mpl.rcParams['text.usetex'] = True
+
+    scoresPerGroup = getScoresByGroup(data)
+    if colNames is not None:
+        scoresPerGroup = scoresPerGroup.rename(colNames, axis='columns')
+    scoresPerGroup.plot.kde()
+    score_attr = score_attr.replace('_', '\_')
+
+    plt.xlabel(score_attr)
+#     plt.legend(bbox_to_anchor=(1.1, 1.05), prop={'size': 25})
+    plt.legend(bbox_to_anchor=(0, 0, 1, 1), prop={'size': 20})
+    plt.savefig(filename, dpi=100, bbox_inches='tight')
+
+
+def getScoresByGroup(data):
+    """
+    takes a dataset with one data point per row
+    each data point has a qualifying as well as >= 1 sensitive attribute column
+    takes all values from column qual_attr and resorts data such that result contains all scores from
+    qual_attr in one column per group of sensitive attributes.
+
+    Arguments:
+        dataset {[dataframe]} -- raw data with one data point per row
+        scoreColName {[string]} -- name of column that contains scores
+
+    Returns:
+        [dataframe] -- group labels as column names and scores as column values,
+                       columns can contain NaNs if group sizes are not equal
+    """
+
+    result = pd.DataFrame(dtype=float)
+    # select all rows that belong to one group
+    for group in data["group"].unique():
+        colName = str(group)
+        copy = data.copy()
+        copy = copy.loc[(copy["group"] == group)]
+        resultCol = pd.DataFrame(data=copy["score"].values, columns=[colName])
+        # needs concat to avoid data loss in case new resultCol is longer than already existing result
+        # dataframe
+        result = pd.concat([result, resultCol], axis=1)
+    return result
+
+
+############################# DATA CLEANING #############################################
 def prepareForJavaCode(data, headersToFormAGroup):
-
     numberOfGroups = 1
     for header in headersToFormAGroup:
         numberOfGroups = numberOfGroups * len(data[header].unique())
@@ -128,9 +197,9 @@ def prepareForJavaCode(data, headersToFormAGroup):
     result["group"] = 0
     result["uuid"] = [uuid.uuid4() for _ in range(len(data.index))]
 
-    def setGroupID(x, groupId):
-        x["group"] = groupId
-        return x
+#     def setGroupID(x, groupId):
+#         x["group"] = groupId
+#         return x
 
     grouped = result.groupby(list(headersToFormAGroup), as_index=False, sort=False)
     groupID = 1
@@ -148,7 +217,14 @@ def prepareForJavaCode(data, headersToFormAGroup):
 
     result = result.drop(columns=headersToFormAGroup)
     result.sort_values(by=["score", "uuid"], ascending=[False, True], inplace=True)
+    result = result.reset_index(drop=True)
+    docString = docString + "\n\nPercentages of Groups\n" + str(result["group"].value_counts(normalize=True))
 
-    docString = docString + "\n\n" + str(result["group"].value_counts(normalize=True))
+    # write exposure per group in docString to decide who should be protected
+    groupExposureFrame = pd.DataFrame(columns=["group"])
+    groupExposureFrame["group"] = result["group"].unique()
+    groupExposureFrame = averageGroupExposure(result, groupExposureFrame)
+    groupExposureFrame.sort_values(by=["exposure"], ascending=False, inplace=True)
+    docString = docString + "\n\nExposure Per Groups\n" + str(groupExposureFrame)
 
     return result, pd.DataFrame({"group": result["group"].unique()}), docString

@@ -1,50 +1,65 @@
+%
+\begin{table}[h]
+	\resizebox{1.01\columnwidth}{!}{%
+		\centering\begin{tabular}{clcclllc}\toprule
+			&        &                         &                         & Quality   & Protected & Protected \\
+			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & groups     & \% \\ 
+			\midrule
+			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & PoC & 65.9\% \\
+			\midrule
+			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & < 25yr. & 21.8\% \\
+			& & & & & 25yr. < x < 45yr. & 57.2\% \\
+			\midrule
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
+			& & & & prior arrests + & white female, < 25yr. & 1.2\% \\
+			& & & & violent recidivism & PoC male, < 25yr. & 13.4\% \\
+			\midrule
+			D4 & German credit \cite{lichman_2013_uci} & 1000 & 100 & credit rating & female, non-prot. age & 21.7\% \\
+			& & & & & male, oldest 10\% & 6.3\% \\
+			& & & & & female, youngest 10\% & 6.1\% \\
+			& & & & & male, youngest 10\% & 4.4\% \\
+			& & & & & female, oldest 10\% & 3.2\% \\
+			\midrule
+			D5 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
+			& & & & & PoC, female & 8.4\% \\
+			& & & & & PoC, male & 7.6\% \\
+			\bottomrule
+		\end{tabular}
+	}
+	\caption{Datasets and experimental settings.	\label{tbl:datasets}}
+	\vspace{-3mm}
+\end{table}
+%
 \section{Experiments}\label{sec:experiments}
 %\todo{Are we still doing this experiment to verify algorithm correctness?}
 %In the first part of our experiments we create synthetic datasets to demonstrate the correctness of the adjustment done by Algorithm \algoCorrect (\S\ref{subsubsec:JuliaExperimentalVerification}).
 %
 In this section, we consider several public datasets for evaluating the multinomial \algoFAIR algorithm (datasets in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}).
 
-\begin{table}[t]
-	\caption{Datasets and experimental settings.}
+\begin{figure}[t]
+	\vspace{-8mm}
+	\centering
+	\subfloat%
+	[Score distribution of male and female candidates in the COMPAS dataset.
+	\label{fig:dataset:compas:sex}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_sex_kde.png}}\hfill
+	\subfloat
+	[Score distribution of white and non-white candidates in the COMPAS dataset. Experiment D1.
+	\label{fig:dataset:compas:race}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
+	\subfloat
+	[Score distribution by age in the COMPAS dataset. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data. Experiment D2.
+	\label{fig:dataset:compas:age}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_age_kde.png}}\hfill
+	\subfloat
+	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young non-white males, young non-white females and young white females, which are the three groups with lowest average exposure in the colorblind ranking. Experiment D3.
+	\label{fig:dataset:compas:worstThree}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_worstThreeGroups_kde.png}}\hfill
 	\vspace{-3mm}
-	\label{tbl:datasets}
-	\resizebox{1.01\columnwidth}{!}{%
-		\centering\begin{tabular}{clcclllc}\toprule
-			&        &                         &                         & Quality   & Protected & Protected \\
-			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & groups     & \% \\ 
-			\midrule
-			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & PoC & 65.9\% \\
-			\midrule
-			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
-			& & & & prior arrests + & white male & 26.3\% \\
-			& & & & violent recidivism & PoC female & 11.2\% \\
-			\midrule
-			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & male, 25yr. < x < 45yr. & 46.1\%\\ 
-			& & & & prior arrests + & male, < 25yr. & 17.8\% \\
-			& & & & violent recidivism & male, > 45yr. & 17.1\% \\
-			& & & & & female, < 25yr. & 4.0\% \\
-			& & & & & female, < 25yr. & 3.9\% \\
-			\midrule
-			D4 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC, 25yr. < x < 45yr. & 40.0\%\\ 
-			& & & & prior arrests + & PoC, < 25yr. & 16.2\% \\
-			& & & & violent recidivism & PoC, > 45yr. & 10.8\% \\
-			& & & & & White, > 45yr. & 10.2\% \\
-			& & & & & White, < 25yr. & 5.6\% \\
-			\midrule
-			D5 & German credit \cite{lichman_2013_uci} & 1K & 500 & credit rating & female, non-prot. age & 21.7\% \\
-			& & & & & male, oldest 10\% & 6.3\% \\
-			& & & & & female, youngest 10\% & 6.1\% \\
-			& & & & & male, youngest 10\% & 4.4\% \\
-			& & & & & female, oldest 10\% & 3.2\% \\
-			\midrule
-			D6 & LSAT \cite{wightman1998lsac}  & 21K & 2K  & LSAT score  & White, female & 35.3\%  \\ 
-			& & & & & PoC, female & 8.4\% \\
-			& & & & & PoC, male & 7.6\% \\
-			\bottomrule
-		\end{tabular}
-	}
+	\caption{Distribution of COMPAS scores in different experimental settings. The first three figures show distributions separately by each of the three protected categories. The fourth figure shows the distribution for dataset D3}
+	\label{fig:dataset:compas}
 	\vspace{-3mm}
-\end{table}
+\end{figure}
 
 \subsection{Datasets}\label{sec:experiments-datasets}
 
@@ -54,7 +69,7 @@ Each dataset contains a set of people with demographic attributes, plus a qualit
 %
 Note that dataset D1 is the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
 %
-For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 500, or 2,000) with $k<n$.
+For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 100, or 500) with $k<n$.
 %
 For the purposes of these experiments, we considered several scenarios of protected groups.
 %
@@ -72,9 +87,21 @@ We calculated a candidate's overall score as a weighted summation of the columns
 %
 Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``non-white'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
-We observe that non-white people, as well as males are given a larger recidivism score than other groups.
+We observe in Figure~\ref{fig:dataset:compas} that non-white people (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
 %
-We therefore consider white, female and between 25 and 45 as the \emph{non-protected} categories for our experiments.
+However we see in Figure~\ref{fig:dataset:compas:age} that the protected attribute ``age'' has the strongest impact on recidivism risk. 
+%
+Apparently the questionnaire imposes a strong bias against younger people.
+%
+We therefore consider white, female and older than 45 as the \emph{non-protected} categories for our experiments.
+%
+In dataset D3 we divided the candidates into 12 different groups that we constructed from the Cartesian product of all three protected categories ``age, race'' and ``sex''. 
+%
+Then we calculated the average group exposure for each group and declared those three groups as protected that were placed lowest in the colorblind ranking.
+%
+These are young non-white females, young white females and young non-white males.
+%
+Interestingly, despite the fact that females have higher scores on average, two of the three groups with lowest exposure values are female (Figure~\ref{fig:dataset:compas:worstThree}).
 
 \spara{German Credit} is the Statlog German Credit Data collected by Hans Hofmann~\cite{lichman_2013_uci}.
 %
@@ -117,62 +144,73 @@ This is normalized so that the maximum value is $1.0$.
 %
 In rankings their exposure to the user is critical for ranked candidates to benefit from the system and if a group of candidates is systematically ranked low, it can be considered as biased~\cite{friedman1996bias}. 
 %
-We model position bias $v$ by means of a geometric progression of the form $v(k) = \frac{1}{2}^{(k-1)}$. 
+We model position bias $v$ by means of a logarithmic progression of the form $v(k) = \frac{1}{\log_2(i+1)}$. 
 %
-Thus the first position has a bias $v(1)=1$, which then decreases geometrically.
+Thus the first position has a bias $v(1)=1$, which then decreases logarithmically.
 %
 Higher position bias translates into more exposure and hence more visibility.
 %
 We show that large increases in average group exposure can be achieved with relatively small losses in ordering utility and NDCG.
 
-
 \subsection{Results}\label{sec:experiments-results}
 %
 \begin{table}[t]
-	\caption{Experimental results, highlighting in boldface the best non-color-blind result. Both FA*IR and the baseline from \citeauthor{Feldman2015} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}
+	\caption{Experimental results, highlighting in boldface the best non-color-blind result. 
+		%
+		All measures are present per group except for the loss of NDCG which is calculated for the entire ranking. 
+		%
+		With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
+		%
+		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		\meike{Both FA*IR and the baseline from \citeauthor{zehlike2020matching} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}}
 	\vspace{-3mm}
 	\label{tbl:results}
-	\resizebox{1.01\columnwidth}{!}{%
+	\resizebox{1.02\columnwidth}{!}{%
 		\centering\begin{tabular}{llcccccc}\toprule
-			&        & \% Prot. &       & Ordering     & Rank & Selection \\
-			& Method & output   & NDCG  & utility loss & drop & utility loss \\ \midrule
-			D1 (51.2\%) & Color-blind & 25\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.5 & 46\% & \textbf{0.9858} & \textbf{0.2026} & \textbf{319} & \textbf{0.1087} \\
-			race$=$Afr.-Am. & \citeauthor{Feldman2015} & 51\% & 0.9779 & 0.2281 & 393 & 0.1301 \\ \midrule
+			&        & Exposure &   total    & Ordering     & Rank & Selection \\
+			& Method & gain  & NDCG loss  & utility loss & drop & utility loss \\ \midrule
+			D1, k=1500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			D1, k=1500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D2 (80.7\%) & Color-blind & 73\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.8 & 77\% & \textbf{1.0000} & \textbf{0.1194} & \textbf{161} & \textbf{0.0320} \\
-			gender$=$male & \citeauthor{Feldman2015} & 81\% & 0.9973 & 0.2090 & 294 & 0.0533 \\ \midrule
+			D2, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D3 (19.3\%) & Color-blind & 28\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & FA*IR p=0.2 & 28\% & \textbf{0.9999} & \textbf{0.2239} & \textbf{1} & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 19\% & 0.9972 & 0.3028 & 278 & 0.0533 \\ \midrule
+			D2, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D4 (69.0\%) & Color-blind & 74\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred, & FA*IR p=0.7 & 74\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0} & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 69\% & 0.9988 & 0.1197 & 8 & 0.0224 \\ \midrule
+			D3, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR  $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age, sex, race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D5 (14.9\%) & Color-blind & 9\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred,& FA*IR p=0.2 & 15\% & \textbf{0.9983} & \textbf{0.0436} & \textbf{7} & \textbf{0.0462} \\
-			age $<$ 25 & \citeauthor{Feldman2015} & 15\% & 0.9952 & 0.1656 & 8 & \textbf{0.0462} \\ \midrule
+			D3, k=500 & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			COMPAS, & \algoFAIR  $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			age, sex, race & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D6 (54.8\%) & Color-blind & 24\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			Ger. cred, & FA*IR p=0.6 & 50\% & \textbf{0.9913} & \textbf{0.1137} & \textbf{30} & \textbf{0.0593} \\
-			age $<$ 35 & \citeauthor{Feldman2015} & 55\% & 0.9853 & 0.2123 & 36 & 0.0633 \\ \midrule
+			D4, k=100  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			German credit, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
 			
-			D7 (53.1\%) & Color-blind    & 49\% & 1.0000 & 0.0000 & 0 & 0.0000 \\
-			SAT, 	    & FA*IR p=0.6    & 57\% & \textbf{0.9996} & \textbf{0.0167} & 365 & 0.0083 \\ 
-			gender$=$female & \citeauthor{Feldman2015} & 56\% & \textbf{0.9996} & \textbf{0.0167} & \textbf{241} & \textbf{0.0042} \\ \midrule
+			D4, k=100  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			German credit, & \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			\midrule
 			
-			D8a (27.5\%)  & Color-blind    & 28\% & 1.0000 		& 0.0000 	& 0  & 0.0000 \\
-			Economist,     & FA*IR p=0.3    & 28\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 28\% & 0.9935 		& 0.6109 	& 5 & \textbf{0.0000} \\ \midrule
-			D8b (42.5\%)  & Color-blind    & 43\% & 1.0000 		& 0.0000 	& 0           & 0.0000 \\
-			Mkt. Analyst,  & FA*IR p=0.4    & 43\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$male & \citeauthor{Feldman2015} & 43\% & 0.9422 		& 1.0000 	& 5 & \textbf{0.0000} \\ \midrule
-			D8c (29.7\%)  & Color-blind    & 30\% & 1.0000 		& 0.0000 	& 0           & 0.0000 \\
-			Copywriter,    & FA*IR p=0.3    & 30\% & \textbf{1.0000} & \textbf{0.0000} & \textbf{0}  & \textbf{0.0000} \\
-			gender$=$female & \citeauthor{Feldman2015} & 30\% & 0.9782 & 0.4468 & 10 & \textbf{0.0000} \\
+			D5, k=500  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			LSAT,& \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\ \midrule
+			
+			D5, k=500  & Colorblind & 0.0 & 1.0000 & 0.0000 & 0 & 0.0000 \\
+			LSAT,& \algoFAIR $p_{\text{equal}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\			
 			\bottomrule
 		\end{tabular}
 	}
