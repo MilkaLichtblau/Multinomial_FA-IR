@@ -13,7 +13,7 @@ from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, 
 def main():
     # evaluate compas
     print("Evaluation for COMPAS experiments")
-    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
+    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "age", "worstThree"])
 
     # evaluate German credit
     print("Evaluation for GermanCredit experiments")

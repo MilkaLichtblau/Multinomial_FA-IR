@@ -10,6 +10,7 @@ import uuid
 import math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from _operator import pos
 
 
 ################### EVALUATION ####################################
@@ -67,21 +68,23 @@ def ndcg_score(y_true, y_score, k=10, gains="exponential"):
 
 def averageGroupExposure(ranking, result):
     result["exposure"] = 0.0
+    totalExposure = positionBias(ranking)
     for groupName in result["group"]:
         allCandidatesInGroup = ranking.loc[ranking["group"] == groupName]
-        groupBias = positionBias(allCandidatesInGroup)
+        groupBias = positionBias(allCandidatesInGroup) / totalExposure
         result.at[result[result["group"] == groupName].index[0], "exposure"] = groupBias
     return result
 
 
 def averageGroupExposureGain(colorblindRanking, fairRanking, result):
     result["expGain"] = 0.0
+    totalExposure = positionBias(colorblindRanking)
     for groupName in result["group"]:
         allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
         allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
         groupBias_fairRanking = positionBias(allCandidatesInGroup_fairRanking)
         groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
-        expGain = groupBias_fairRanking - groupBias_colorblind
+        expGain = groupBias_fairRanking / totalExposure - groupBias_colorblind / totalExposure
         result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
 
