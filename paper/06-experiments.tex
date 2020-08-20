@@ -1,50 +1,65 @@
-\section{Experiments}\label{sec:experiments}
-%\todo{Are we still doing this experiment to verify algorithm correctness?}
-%In the first part of our experiments we create synthetic datasets to demonstrate the correctness of the adjustment done by Algorithm \algoCorrect (\S\ref{subsubsec:JuliaExperimentalVerification}).
 %
-In this section, we consider several public datasets for evaluating the multinomial \algoFAIR algorithm (datasets in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}).
-
-\begin{table}[t]
-	\caption{Datasets and experimental settings.}
-	\vspace{-3mm}
+\begin{table}[h]
 	\label{tbl:datasets}
 	\resizebox{1.01\columnwidth}{!}{%
 		\centering\begin{tabular}{clcclllc}\toprule
 			&        &                         &                         & Quality   & Protected & Protected \\
 			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & groups     & \% \\ 
 			\midrule
-			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & PoC & 65.9\% \\
+			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & PoC & 65.9\% \\
 			\midrule
 			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC male & 54.7\%\\ 
 			& & & & prior arrests + & white male & 26.3\% \\
 			& & & & violent recidivism & PoC female & 11.2\% \\
 			\midrule
-			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & male, 25yr. < x < 45yr. & 46.1\%\\ 
-			& & & & prior arrests + & male, < 25yr. & 17.8\% \\
-			& & & & violent recidivism & male, > 45yr. & 17.1\% \\
-			& & & & & female, < 25yr. & 4.0\% \\
-			& & & & & female, < 25yr. & 3.9\% \\
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC female, < 25yr. & 2.8\%\\ 
+			& & & & prior arrests + & white female, < 25yr. & 1.2\% \\
+			& & & & violent recidivism & PoC male, < 25yr. & 13.4\% \\
 			\midrule
-			D4 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & recidivism + & PoC, 25yr. < x < 45yr. & 40.0\%\\ 
-			& & & & prior arrests + & PoC, < 25yr. & 16.2\% \\
-			& & & & violent recidivism & PoC, > 45yr. & 10.8\% \\
-			& & & & & White, > 45yr. & 10.2\% \\
-			& & & & & White, < 25yr. & 5.6\% \\
-			\midrule
-			D5 & German credit \cite{lichman_2013_uci} & 1K & 500 & credit rating & female, non-prot. age & 21.7\% \\
+			D4 & German credit \cite{lichman_2013_uci} & 100 & 500 & credit rating & female, non-prot. age & 21.7\% \\
 			& & & & & male, oldest 10\% & 6.3\% \\
 			& & & & & female, youngest 10\% & 6.1\% \\
 			& & & & & male, youngest 10\% & 4.4\% \\
 			& & & & & female, oldest 10\% & 3.2\% \\
 			\midrule
-			D6 & LSAT \cite{wightman1998lsac}  & 21K & 2K  & LSAT score  & White, female & 35.3\%  \\ 
+			D5 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
 			& & & & & PoC, female & 8.4\% \\
 			& & & & & PoC, male & 7.6\% \\
 			\bottomrule
 		\end{tabular}
 	}
+	\caption{Datasets and experimental settings.}
 	\vspace{-3mm}
 \end{table}
+%
+\section{Experiments}\label{sec:experiments}
+%\todo{Are we still doing this experiment to verify algorithm correctness?}
+%In the first part of our experiments we create synthetic datasets to demonstrate the correctness of the adjustment done by Algorithm \algoCorrect (\S\ref{subsubsec:JuliaExperimentalVerification}).
+%
+In this section, we consider several public datasets for evaluating the multinomial \algoFAIR algorithm (datasets in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}).
+
+\begin{figure}[t]
+	\centering
+	\subfloat%
+	[Score distribution of male and female candidates in the COMPAS dataset.
+	\label{fig:dataset:compas:sex}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_sex_kde.png}}\hfill
+	\subfloat
+	[Score distribution of white and non-white candidates in the COMPAS dataset.
+	\label{fig:dataset:compas:race}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
+	\subfloat
+	[Score distribution by age in the COMPAS dataset. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data.
+	\label{fig:dataset:compas:age}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_age_kde.png}}\hfill
+	\subfloat
+	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young non-white males, young non-white females and young white females, which are the three groups with lowest average exposure in the colorblind ranking.
+	\label{fig:dataset:compas:worstThree}]
+	{\includegraphics[width=.48\textwidth]{pics/compas_worstThreeGroups_kde.png}}\hfill
+	\caption{}
+	\label{fig:dataset:compas}
+	\vspace{-3mm}
+\end{figure}
 
 \subsection{Datasets}\label{sec:experiments-datasets}
 
@@ -54,7 +69,7 @@ Each dataset contains a set of people with demographic attributes, plus a qualit
 %
 Note that dataset D1 is the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
 %
-For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 500, or 2,000) with $k<n$.
+For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 100, or 500) with $k<n$.
 %
 For the purposes of these experiments, we considered several scenarios of protected groups.
 %
@@ -72,9 +87,21 @@ We calculated a candidate's overall score as a weighted summation of the columns
 %
 Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``non-white'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
-We observe that non-white people, as well as males are given a larger recidivism score than other groups.
+We observe in Figure~\ref{fig:dataset:compas} that non-white people (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
 %
-We therefore consider white, female and between 25 and 45 as the \emph{non-protected} categories for our experiments.
+However we see in Figure~\ref{fig:dataset:compas:age} that the protected attribute ``age'' has the strongest impact on recidivism risk. 
+%
+Apparently the questionnaire imposes a strong bias against younger people.
+%
+We therefore consider white, female and older than 45 as the \emph{non-protected} categories for our experiments.
+%
+In dataset D3 we divided the candidates into 12 different groups that we constructed from the Cartesian product of all three protected categories ``age, race'' and ``sex''. 
+%
+Then we calculated the average group exposure for each group and declared those three groups as protected that were placed lowest in the colorblind ranking.
+%
+These are young non-white females, young white females and young non-white males.
+%
+Interestingly, despite the fact that females have higher scores on average, two of the three groups with lowest exposure values are female (Figure~\ref{fig:dataset:compas:worstThree}).
 
 \spara{German Credit} is the Statlog German Credit Data collected by Hans Hofmann~\cite{lichman_2013_uci}.
 %

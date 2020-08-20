@@ -131,22 +131,7 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
     return result
 
-
 ############################# VISUALISATION #############################################
-def plott(data, groups, filename, xLabel="", yLabel=""):
-    mpl.rcParams.update({'font.size': 24, 'lines.linewidth': 3,
-                         'lines.markersize': 15, 'font.family': 'Times New Roman'})
-    # avoid type 3 (i.e. bitmap) fonts in figures
-    mpl.rcParams['ps.useafm'] = True
-    mpl.rcParams['pdf.use14corefonts'] = True
-    mpl.rcParams['text.usetex'] = True
-
-    ax = data.plot(kind='line', use_index=False)
-    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.,
-              labels=groups)
-    ax.set_xlabel(xLabel)
-    ax.set_ylabel(yLabel)
-    plt.savefig(filename, dpi=100, bbox_inches='tight')
 
 
 def plotKDEPerGroup(data, score_attr, filename, colNames=None):
@@ -164,7 +149,8 @@ def plotKDEPerGroup(data, score_attr, filename, colNames=None):
     score_attr = score_attr.replace('_', '\_')
 
     plt.xlabel(score_attr)
-    plt.legend(bbox_to_anchor=(1.1, 1.05))
+#     plt.legend(bbox_to_anchor=(1.1, 1.05), prop={'size': 25})
+    plt.legend(bbox_to_anchor=(0, 0, 1, 1), prop={'size': 20})
     plt.savefig(filename, dpi=100, bbox_inches='tight')
 
 
@@ -233,8 +219,8 @@ def prepareForJavaCode(data, headersToFormAGroup):
 
     # write exposure per group in docString to decide who should be protected
     groupExposureFrame = pd.DataFrame(columns=["group"])
-    groupExposureFrame["group"] = data["group"].unique()
-    groupExposureFrame = averageGroupExposure(data, groupExposureFrame)
+    groupExposureFrame["group"] = result["group"].unique()
+    groupExposureFrame = averageGroupExposure(result, groupExposureFrame)
     groupExposureFrame.sort_values(by=["exposure"], ascending=False, inplace=True)
     docString = docString + "\n\nExposure Per Groups\n" + str(groupExposureFrame)
 
