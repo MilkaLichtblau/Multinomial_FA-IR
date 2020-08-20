@@ -12,12 +12,12 @@ from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, 
 
 def main():
     # evaluate compas
-#     print("Evaluation for COMPAS experiments")
-#     evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
-#
-#     # evaluate German credit
-#     print("Evaluation for GermanCredit experiments")
-#     evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
+    print("Evaluation for COMPAS experiments")
+    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "ageRace", "sexAge", "sexRace"])
+
+    # evaluate German credit
+    print("Evaluation for GermanCredit experiments")
+    evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
 
     # evaluate LSAT
     print("Evaluation for LSAT experiments")
