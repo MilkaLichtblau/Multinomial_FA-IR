@@ -200,7 +200,7 @@ Table~\ref{tbl:time} shows the asymptotic costs for each algorithm without any p
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
 \algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values. 
 %
-This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$. \meike{you should give an estimate on how large it is. At least say if it is polynomial or exponential or whatever}
+This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$.  Assuming a constant time for the calculation of the binomial probability mass function, the time complexity of the implementation for the inverse binomial cdf which we used is in $\mathcal{O}(i^2)$ where $i$ is the position we calculate the inverse binomial cdf for.
 %
 Note that the complexity of the inverse binomial cdf is dependent on how accurate the computation is. 
 %
@@ -227,9 +227,9 @@ Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j)
 The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.
 %
 \subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
-As for its binomial pendant the complexity of the multinomial pmf is dependant on $k,p_G , \alpha$ and the desired accuracy of the calculation. 
+As for its binomial pendant the complexity of the multinomial cdf is dependant on $i$ the current position or \textit{number of trials},$|G|$ the number of protected groups and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$, formerly known as \textit{number of successes}.
 %
-We will write $\mathcal{O}(MCDF(k,p_G,\alpha))$ as the asymptotic complexity of this function. \meike{you should give an estimate on how large it is. At least say if it is polynomial or exponential or whatever}
+We will write $\mathcal{O}(MCDF(i,p_G,\alpha))$ as the asymptotic complexity of this function. In the library we used for our implementation, the time complexity to calculate the multinomial cdf at position $i$ is in $\mathcal{O}(i^{|G|})$. Thus the most expensive position to calculate the multinomial cdf for is $k$.
 %
 For the overall time complexity we get $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ with $|G|$ being the number of protected groups. 
 %

@@ -178,6 +178,16 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         if (Serializer.checkIfStorageDirectoriesExist()) {
             try {
+                if(args[0].equals("merge")){
+                    Serializer.mergeMCDFCacheFilesInStorage();
+                    Serializer.mergeMTreeFilesInStorage();
+                    System.out.println("Finished merging storage files.");
+                }
+                if(args[0].equals("split")){
+                    Serializer.splitMCDFCacheFilesInStorage();
+                    Serializer.splitMTreeFilesInStorage();
+                    System.out.println("Finished splitting storage files.");
+                }
                 if (args[0].equals("failprob-multinomial")) {
                     parseParametersForMultinomialExperiment(args);
                 }
@@ -299,7 +309,7 @@ public class Main {
                     double alpha = Double.parseDouble(args[4]);
                     String resultFilename = args[5] + "_k=" + k + "_p=" + Arrays.toString(p).replaceAll("\\s+", "") + "_alpha=" + alpha;
 
-                    DataExperimentHandler handler = new DataExperimentHandler(); 
+                    DataExperimentHandler handler = new DataExperimentHandler();
                     handler.prepareDataExperiment(datafile, k, ",", true);
                     handler.runDataExperiment(k, p, alpha);
                     handler.writeRankingsToCSVs(resultFilename);

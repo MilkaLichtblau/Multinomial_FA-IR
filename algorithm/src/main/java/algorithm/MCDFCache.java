@@ -2,8 +2,14 @@ package algorithm;
 
 import umontreal.ssj.probdistmulti.MultinomialDist;
 
+import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+
+import static algorithm.Serializer.loadMCDFCache;
+import static algorithm.Serializer.storeMCDFCache;
 
 public class MCDFCache implements Serializable {
 
@@ -82,4 +88,5 @@ public class MCDFCache implements Serializable {
         result = 31 * result + Arrays.hashCode(getP());
         return result;
     }
+
 }
