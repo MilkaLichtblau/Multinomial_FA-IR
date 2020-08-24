@@ -63,10 +63,17 @@ def visualizeOrigLSATData():
     plotKDEPerGroup(data, "LSAT Score\n(higher is better)", "../data/LSAT/LSAT_sexRace_kde.png", colNames=labels)
 
 
+def plotThreeDFigure():
+    # wait for evaluation to be done
+    print("wait for evaluation to be done")
+
+
 def main():
     visualizeOrigCompasData()
     visualizeOrigGermanCreditData()
     visualizeOrigLSATData()
+
+    plotThreeDFigure()
 
 
 if __name__ == '__main__':
