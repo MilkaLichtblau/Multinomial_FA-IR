@@ -53,7 +53,7 @@ public class Main {
         for (int i = 0; i < p.length; i++) {
             p[i] = pList.get(i);
         }
-        if (args[0].equals("failprob")) {
+        if (args[0].equals("failprob-multinomial")) {
             double alpha = Double.parseDouble(args[args.length - 2]);
             String fileName = args[args.length - 1];
             runMultinomialFailProbabilityExperiment(kMax, p, alpha, fileName);

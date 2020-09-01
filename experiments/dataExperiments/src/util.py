@@ -10,7 +10,6 @@ import uuid
 import math
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from _operator import pos
 
 
 ################### EVALUATION ####################################
