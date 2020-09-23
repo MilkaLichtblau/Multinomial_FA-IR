@@ -12,6 +12,5 @@ cd $PATH_TO_FAIR_JAR
 echo "Multi FAIR with p1=0.7"
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.2,0.7,0.1 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.1,0.7,0.2 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
-java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.0,0.7,0.3 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 
 

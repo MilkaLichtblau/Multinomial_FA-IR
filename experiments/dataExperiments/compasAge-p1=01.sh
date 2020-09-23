@@ -17,6 +17,5 @@ java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 10
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.3,0.1,0.6 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.2,0.1,0.7 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.1,0.1,0.8 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
-java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.0,0.1,0.9 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 
 
