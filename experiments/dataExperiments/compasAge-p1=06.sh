@@ -9,7 +9,10 @@ PATH_TO_COMPAS_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/COMPAS/rank
 cd $PATH_TO_FAIR_JAR
 
 # p is all the same
-echo "Multi FAIR with p1=0.6 and p2=0.1"
+echo "Multi FAIR with p1=0.6"
 java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.3,0.6,0.1 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
+java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.2,0.6,0.2 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
+java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.1,0.6,0.3 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
+java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_age_java.csv 100 0.0,0.6,0.4 0.1 $PATH_TO_COMPAS_RESULTS/age/compas_age
 
 

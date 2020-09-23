@@ -42,6 +42,7 @@ samplebody*
 bin/
 gen/
 build/
+.~lock*
 
 # local configuration file (for Android sdk path, etc)
 local.properties

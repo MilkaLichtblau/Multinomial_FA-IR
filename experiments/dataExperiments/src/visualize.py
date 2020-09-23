@@ -9,6 +9,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import glob
+from reportlab.lib.normalDate import ND
 
 
 def visualizeOrigCompasData():
@@ -67,23 +69,37 @@ def visualizeOrigLSATData():
 
 
 def plotThreeDFigure():
+    allEvalFilenames = glob.glob("../results/COMPAS/evalAndPlots/age/k=100" + "*_multiFairResult.csv")
+    data = []
+    for filename in allEvalFilenames:
+        evalData = pd.read_csv(filename, header=0, skipinitialspace=True)
+        pString = filename.split(sep="_")[1]
+        minProp1Val = float(pString.split(sep=",")[1])
+        minProp2String = pString.split(sep=",")[2]
+        minProp2Val = float(minProp2String[:-1])
+        minExpGainVal = evalData["expGain"].min()
+        ndcgLossVal = evalData["ndcgLoss"].min()
+        tempDict = dict(minProp1=minProp1Val, minProp2=minProp2Val, minExpGain=minExpGainVal, ndcgLoss=ndcgLossVal)
+        data.append(tempDict)
+
+    dataToPlot = pd.DataFrame(data, columns=["minProp1", "minProp2", "minExpGain", "ndcgLoss"])
+    dataToPlot.sort_values("minProp1", inplace=True)
+    print(dataToPlot)
 
     fig = plt.figure()
     ax1 = fig.add_subplot(111, projection='3d')
 
-    xpos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    ypos = [2, 3, 4, 5, 1, 6, 2, 1, 7, 2]
+    xpos = dataToPlot["minProp1"].values
+    ypos = dataToPlot["minProp1"].values
     num_elements = len(xpos)
-    zpos = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    dx = np.ones(10)
-    dy = np.ones(10)
-    dz = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    zpos = [0, 0, 0, 0, 0, 0]
+    dx = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    dy = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+    dz = np.ones(6)  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color='#00ceaa')
     plt.show()
     # wait for evaluation to be done
-    data = pd.read_csv("../results/COMPAS/rankings/age/compas_age_k=100_p=[0.3,0.1,0.6]_alpha=0.1_fair.csv")
-    print("wait for evaluation to be done")
 
 
 def main():

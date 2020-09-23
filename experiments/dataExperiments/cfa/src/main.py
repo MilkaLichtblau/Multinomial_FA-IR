@@ -150,30 +150,15 @@ def main():
     score_stepsize = float(sys.argv[2])
     thetas = parseThetas(sys.argv[3])
     result_dir = sys.argv[4]
-    if sys.argv[1] == 'compas_ageRace':
-        groupNames = {"[0 0]":"White, 25-45",
-                      "[0 1]":"White, < 25",
-                      "[0 2]":"White, > 45",
-                      "[1 0]":"Non-White, 25-45",
-                      "[1 1]":"Non-White, < 25",
-                      "[1 2]":"Non-White, > 45"}
+    if sys.argv[1] == 'compas_age':
+        groupNames = {"[0]":"White, ",
+                      "[1]":"White, < 25",
+                      "[2]":"White, 25-45"}
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/COMPAS/compas_ageRace_java.csv',
-                        '../../data/COMPAS/compas_ageRace_groups.csv',
-                        'score',
-                        groupNames)
-    elif sys.argv[1] == 'compas_sexRace':
-        groupNames = {"[0 0]":"Male, White",
-                      "[1 0]":"Female, White",
-                      "[0 1]":"Male, Non-White",
-                      "[1 1]":"Female, Non-White"}
-        rerank_with_cfa(score_stepsize,
-                        thetas,
-                        result_dir,
-                        '../../data/COMPAS/compas_sexRace_java.csv',
-                        '../../data/COMPAS/compas_sexRace_groups.csv',
+                        '../../data/COMPAS/compas_age_java.csv',
+                        '../../data/COMPAS/compas_age_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'compas_race':
@@ -186,18 +171,16 @@ def main():
                         '../../data/COMPAS/compas_race_groups.csv',
                         'score',
                         groupNames)
-    elif sys.argv[1] == 'compas_sexAge':
-        groupNames = {"[0 0]":"Male, 25-45",
-                      "[0 1]":"Male, < 25",
-                      "[0 2]":"Male, > 45",
-                      "[1 0]":"Female, 25-45",
-                      "[1 1]":"Female, < 25",
-                      "[1 2]":"Female, > 45"}
+    elif sys.argv[1] == 'compas_worstThreeGroups':
+        groupNames = {"[0]":"Others",
+                      "[1]":"PoC male < 25yr",
+                      "[2]":"White male < 25yr",
+                      "[3]":"PoC female < 25yr"}
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/COMPAS/compas_sexAge_java.csv',
-                        '../../data/COMPAS/compas_sexAge_groups.csv',
+                        '../../data/COMPAS/compas_worstThreeGroups_java.csv',
+                        '../../data/COMPAS/compas_worstThreeGroups_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'LSAT_sexRace':
@@ -227,7 +210,7 @@ def main():
                         'score',
                         groupNames)
     else:
-        print("unknown command line option.")
+        print("CFA: unknown command line option.")
 
 
 if __name__ == '__main__':
