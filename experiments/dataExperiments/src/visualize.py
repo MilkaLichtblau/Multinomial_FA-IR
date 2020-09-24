@@ -5,12 +5,13 @@ Created on Aug 20, 2020
 '''
 
 from src.util import plotKDEPerGroup
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib import cm
+from matplotlib.colors import Normalize
 import numpy as np
 import pandas as pd
 import glob
-from reportlab.lib.normalDate import ND
 
 
 def visualizeOrigCompasData():
@@ -69,6 +70,12 @@ def visualizeOrigLSATData():
 
 
 def plotThreeDFigure():
+    mpl.rcParams.update({'font.size': 24, 'lines.linewidth': 3, 'lines.markersize': 15, 'font.family':'Times New Roman'})
+    # avoid type 3 (i.e. bitmap) fonts in figures
+    mpl.rcParams['ps.useafm'] = True
+    mpl.rcParams['pdf.use14corefonts'] = True
+    mpl.rcParams['text.usetex'] = True
+
     allEvalFilenames = glob.glob("../results/COMPAS/evalAndPlots/age/k=100" + "*_multiFairResult.csv")
     data = []
     for filename in allEvalFilenames:
@@ -77,27 +84,44 @@ def plotThreeDFigure():
         minProp1Val = float(pString.split(sep=",")[1])
         minProp2String = pString.split(sep=",")[2]
         minProp2Val = float(minProp2String[:-1])
-        minExpGainVal = evalData["expGain"].min()
+        expGainValGroup1 = evalData.loc[evalData["group"] == 1, "expGain"].iloc[0]
+        expGainValGroup2 = evalData.loc[evalData["group"] == 2, "expGain"].iloc[0]
         ndcgLossVal = evalData["ndcgLoss"].min()
-        tempDict = dict(minProp1=minProp1Val, minProp2=minProp2Val, minExpGain=minExpGainVal, ndcgLoss=ndcgLossVal)
+        tempDict = dict(minProp1=minProp1Val, minProp2=minProp2Val, expGainGroup1=expGainValGroup1, expGainGroup2=expGainValGroup2, ndcgLoss=ndcgLossVal)
         data.append(tempDict)
 
-    dataToPlot = pd.DataFrame(data, columns=["minProp1", "minProp2", "minExpGain", "ndcgLoss"])
-    dataToPlot.sort_values("minProp1", inplace=True)
+    dataToPlot = pd.DataFrame(data, columns=["minProp1", "minProp2", "expGainGroup1", "expGainGroup2", "ndcgLoss"])
+    dataToPlot.sort_values(["minProp1", "minProp2"], inplace=True)
     print(dataToPlot)
 
     fig = plt.figure()
     ax1 = fig.add_subplot(111, projection='3d')
 
     xpos = dataToPlot["minProp1"].values
-    ypos = dataToPlot["minProp1"].values
+    ypos = dataToPlot["minProp2"].values
     num_elements = len(xpos)
-    zpos = [0, 0, 0, 0, 0, 0]
-    dx = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-    dy = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
-    dz = np.ones(6)  # [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    zpos = np.zeros(num_elements)  # np.full((1, num_elements), dataToPlot["expGainGroup2"].min())[0]
+    dx = np.full((1, num_elements), 0.1)[0]
+    dy = np.full((1, num_elements), 0.1)[0]
+    dz = dataToPlot["expGainGroup2"].values
 
-    ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color='#00ceaa')
+    cmap = cm.get_cmap('coolwarm')
+    norm = Normalize(vmin=min(dz), vmax=max(dz))
+    colors = cmap(norm(dz))
+
+    ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors)
+
+    # axis labels
+    ax1.set_xlabel('p\_1', labelpad=15)
+    ax1.set_ylabel('p\_2', labelpad=15)
+    ax1.set_zlabel('Exposure Gain', labelpad=10)
+    ax1.invert_xaxis()
+
+    # colorbar
+    sc = cm.ScalarMappable(cmap=cmap, norm=norm)
+    sc.set_array([])
+    plt.colorbar(sc, pad=0.2)
+
     plt.show()
     # wait for evaluation to be done
 
