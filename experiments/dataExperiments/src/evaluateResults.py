@@ -6,14 +6,14 @@ Created on Jul 15, 2020
 
 import pandas as pd
 import glob
-from src.util import selectionUtilityLossPerGroup, orderingUtilityLossPerGroup, ndcg_score, \
-    averageGroupExposureGain
+# from sklearn.metrics import ndcg_score
+from src.util import selectionUtilityLossPerGroup, ndcg_score, orderingUtilityLossPerGroup, averageGroupExposureGain
 
 
 def main():
     # evaluate compas
     print("Evaluation for COMPAS experiments")
-    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["race" , "age", "worstThree"])
+    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
 
     # evaluate German credit
     print("Evaluation for GermanCredit experiments")
@@ -58,6 +58,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             thetaOneSorted = thetaOneSorted.reset_index(drop=True)
 
             # eval for Multinomial FA*IR
+            kay = len(fairRanking)
             multi_fair_result = pd.DataFrame()
             multi_fair_result["group"] = fairRanking['group'].unique()
             multi_fair_result = selectionUtilityLossPerGroup(remainingRanking, fairRanking, multi_fair_result)
@@ -65,11 +66,10 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 fairRanking["score"].to_numpy(),
                                                 k=len(fairRanking))
-            multi_fair_result = averageGroupExposureGain(colorblindRanking, fairRanking, multi_fair_result)
+            multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
             # eval for CFA algorithm with theta=0.5
-            kay = len(fairRanking)
             n = len(thetaHalfSorted) - kay
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
@@ -78,7 +78,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
-            cfaHalf_result = averageGroupExposureGain(colorblindRanking, fairRanking, cfaHalf_result)
+            cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, cfaHalf_result)
             cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
@@ -90,7 +90,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
-            cfaOne_result = averageGroupExposureGain(colorblindRanking, fairRanking, cfaOne_result)
+            cfaOne_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, cfaOne_result)
             cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaOneResult.csv")
 
 

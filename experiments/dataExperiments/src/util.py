@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 ################### EVALUATION ####################################
-def dcg_score(y_true, y_score, k=10, gains="exponential"):
+def dcg_score(y_score, gains="exponential"):
     """Discounted cumulative gain (DCG) at rank k
     Parameters
     ----------
@@ -29,22 +29,19 @@ def dcg_score(y_true, y_score, k=10, gains="exponential"):
     -------
     DCG @k : float
     """
-    order = np.argsort(y_score)[::-1]
-    y_true = np.take(y_true, order[:k])
-
     if gains == "exponential":
-        gains = 2 ** y_true - 1
+        gains = 2 ** y_score - 1
     elif gains == "linear":
-        gains = y_true
+        gains = y_score
     else:
         raise ValueError("Invalid gains option.")
 
     # highest rank is 1 so +2 instead of +1
-    discounts = np.log2(np.arange(len(y_true)) + 2)
+    discounts = np.log2(np.arange(len(y_score)) + 2)
     return np.sum(gains / discounts)
 
 
-def ndcg_score(y_true, y_score, k=10, gains="exponential"):
+def ndcg_score(y_true, y_score, k=10, gains="linear"):
     """Normalized discounted cumulative gain (NDCG) at rank k
     Parameters
     ----------
@@ -55,13 +52,13 @@ def ndcg_score(y_true, y_score, k=10, gains="exponential"):
     k : int
         Rank.
     gains : str
-        Whether gains should be "exponential" (default) or "linear".
+        Whether gains should be "exponential" or "linear" (default).
     Returns
     -------
     NDCG @k : float
     """
-    best = dcg_score(y_true, y_true, k, gains)
-    actual = dcg_score(y_true, y_score, k, gains)
+    best = dcg_score(y_true[:k], gains)
+    actual = dcg_score(y_score[:k], gains)
     return actual / best
 
 
@@ -82,20 +79,28 @@ def averageGroupExposureGain(colorblindRanking, fairRanking, result):
         allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
         allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
         groupBias_fairRanking = positionBias(allCandidatesInGroup_fairRanking)
+        if groupBias_fairRanking == 0:
+            print("group " + str(groupName) + " did not appear in the top-k in fair ranking")
         groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
+        if groupBias_colorblind == 0:
+            print("group " + str(groupName) + " did not appear in the top-k in colorblind ranking")
         expGain = groupBias_fairRanking / totalExposure - groupBias_colorblind / totalExposure
         result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
 
 
 def positionBias(ranking):
+    if ranking.empty:
+        # this case can happen if a group was not appearing in the top-k at all before reranking with FA*IR
+        # we assign zero then
+        return 0
     totalPositionBias = 0.0
     for position, _ in ranking.iterrows():
         if math.log2(position + 2) == 0.0:
             print(position)
-        totalPositionBias = totalPositionBias + 1 / (math.log2(position + 2))
+        totalPositionBias = totalPositionBias + (1 / (math.log2(position + 2)))
 
-    # normalize by ranking size
+    # normalize by ranking size, otherwise large groups receive more exposure
     return totalPositionBias / len(ranking)
 
 
@@ -116,8 +121,6 @@ def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
 def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
     result["orderUtilLoss"] = 0.0
     result["maxRankDrop"] = 0
-    print(len(fairRanking), len(colorblindRanking))
-    print(fairRanking["uuid"].isin(colorblindRanking["uuid"]).all())
     for groupName in result["group"]:
         allCandidatesInGroup = fairRanking.loc[fairRanking["group"] == groupName]
         allOthers = fairRanking.loc[fairRanking["group"] != groupName]
@@ -127,7 +130,6 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
             orderUtilLoss = max(0.0, candidate.score - worstScoreAbove)
             currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"]
             if orderUtilLoss > currentMaxLossPerGroup:
-                print(candidate.uuid)
                 originalPosition = colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0]
                 result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = position - originalPosition
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
