@@ -69,14 +69,38 @@ def visualizeOrigLSATData():
     plotKDEPerGroup(data, "LSAT Score\n(higher is better)", "../data/LSAT/LSAT_sexRace_kde.png", colNames=labels)
 
 
-def plotThreeDFigure():
-    mpl.rcParams.update({'font.size': 24, 'lines.linewidth': 3, 'lines.markersize': 15, 'font.family':'Times New Roman'})
-    # avoid type 3 (i.e. bitmap) fonts in figures
+def plot3DFigure(xPos, yPos, zHeight, zLabel, filename):
+    mpl.rcParams.update({'font.size':24, 'lines.linewidth':3, 'lines.markersize':15, 'font.family':'Times New Roman'})  # avoid type 3 (i.e. bitmap) fonts in figures
     mpl.rcParams['ps.useafm'] = True
     mpl.rcParams['pdf.use14corefonts'] = True
     mpl.rcParams['text.usetex'] = True
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111, projection='3d')
+    xpos = xPos
+    ypos = yPos
+    num_elements = len(xpos)
+    zpos = np.zeros(num_elements)  # np.full((1, num_elements), dataToPlot["expGainGroup2"].min())[0]
+    dx = np.full((1, num_elements), 0.1)[0]
+    dy = np.full((1, num_elements), 0.1)[0]
+    dz = zHeight
+    cmap = cm.get_cmap('coolwarm')
+    norm = Normalize(vmin=min(dz), vmax=max(dz))
+    colors = cmap(norm(dz))
+    ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors)
+# axis labels
+    ax1.set_xlabel('p\_1', labelpad=15)
+    ax1.set_ylabel('p\_2', labelpad=15)
+    ax1.set_zlabel(zLabel, labelpad=10)
+    ax1.invert_xaxis()
+# colorbar
+    sc = cm.ScalarMappable(cmap=cmap, norm=norm)
+    sc.set_array([])
+    plt.colorbar(sc, pad=0.2)
+    plt.savefig(filename, dpi=100, bbox_inches='tight')
 
-    allEvalFilenames = glob.glob("../results/COMPAS/evalAndPlots/age/k=100" + "*_multiFairResult.csv")
+
+def prepare3DFigure(filenamePattern, kString):
+    allEvalFilenames = glob.glob(filenamePattern)
     data = []
     for filename in allEvalFilenames:
         evalData = pd.read_csv(filename, header=0, skipinitialspace=True)
@@ -94,44 +118,34 @@ def plotThreeDFigure():
     dataToPlot.sort_values(["minProp1", "minProp2"], inplace=True)
     print(dataToPlot)
 
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111, projection='3d')
+    plot3DFigure(dataToPlot["minProp1"].values,
+                 dataToPlot["minProp2"].values,
+                 dataToPlot["expGainGroup1"].values,
+                 "Exposure Gain",
+                 "../results/COMPAS/evalAndPlots/age/" + kString + "-barplot-expGainGroup1.png")
 
-    xpos = dataToPlot["minProp1"].values
-    ypos = dataToPlot["minProp2"].values
-    num_elements = len(xpos)
-    zpos = np.zeros(num_elements)  # np.full((1, num_elements), dataToPlot["expGainGroup2"].min())[0]
-    dx = np.full((1, num_elements), 0.1)[0]
-    dy = np.full((1, num_elements), 0.1)[0]
-    dz = dataToPlot["expGainGroup2"].values
+    plot3DFigure(dataToPlot["minProp1"].values,
+                 dataToPlot["minProp2"].values,
+                 dataToPlot["expGainGroup2"].values,
+                 "Exposure Gain",
+                 "../results/COMPAS/evalAndPlots/age/" + kString + "-barplot-expGainGroup2.png")
 
-    cmap = cm.get_cmap('coolwarm')
-    norm = Normalize(vmin=min(dz), vmax=max(dz))
-    colors = cmap(norm(dz))
-
-    ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors)
-
-    # axis labels
-    ax1.set_xlabel('p\_1', labelpad=15)
-    ax1.set_ylabel('p\_2', labelpad=15)
-    ax1.set_zlabel('Exposure Gain', labelpad=10)
-    ax1.invert_xaxis()
-
-    # colorbar
-    sc = cm.ScalarMappable(cmap=cmap, norm=norm)
-    sc.set_array([])
-    plt.colorbar(sc, pad=0.2)
-
-    plt.show()
-    # wait for evaluation to be done
+    plot3DFigure(dataToPlot["minProp1"].values,
+                 dataToPlot["minProp2"].values,
+                 dataToPlot["ndcgLoss"].values,
+                 "NDCG loss",
+                 "../results/COMPAS/evalAndPlots/age/" + kString + "-barplot-ndcgLoss.png")
 
 
 def main():
 #     visualizeOrigCompasData()
 #     visualizeOrigGermanCreditData()
 #     visualizeOrigLSATData()
+    kString = "k=100"
+    prepare3DFigure("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
 
-    plotThreeDFigure()
+    kString = "k=200"
+    prepare3DFigure("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
 
 
 if __name__ == '__main__':
