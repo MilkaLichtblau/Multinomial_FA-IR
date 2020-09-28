@@ -72,6 +72,11 @@ def main():
 
     # higher scores should be better scores
     data["score"] = data["score"].max() - data["score"]
+
+    # add some random noise to break ties
+    noise = np.random.normal(0, 0.000001, data.shape[0])
+    data["score"] = data["score"] + noise
+
     # drop these columns
     data = data.drop(columns=['decile_score', 'v_decile_score', 'priors_count'])
     data.sort_values(by=["score"], ascending=False, inplace=True)
@@ -97,23 +102,23 @@ def main():
     with open("../data/COMPAS/compas_age_doc.txt", "w") as text_file:
         text_file.write(docString)
 
-    resultData, groups, docString = prepareForJavaCode(data, ["sex", "race"])
-    resultData.to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
-    groups.to_csv("../data/COMPAS/compas_sexRace_groups.csv", header=True, index=False)
-    with open("../data/COMPAS/compas_sexRace_doc.txt", "w") as text_file:
-        text_file.write(docString)
-
-    resultData, groups, docString = prepareForJavaCode(data, ["sex", "age_cat"])
-    resultData.to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
-    groups.to_csv("../data/COMPAS/compas_sexAge_groups.csv", header=True, index=False)
-    with open("../data/COMPAS/compas_sexAge_doc.txt", "w") as text_file:
-        text_file.write(docString)
-
-    resultData, groups, docString = prepareForJavaCode(data, ["age_cat", "race"])
-    resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
-    groups.to_csv("../data/COMPAS/compas_ageRace_groups.csv", header=True, index=False)
-    with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
-        text_file.write(docString)
+#     resultData, groups, docString = prepareForJavaCode(data, ["sex", "race"])
+#     resultData.to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
+#     groups.to_csv("../data/COMPAS/compas_sexRace_groups.csv", header=True, index=False)
+#     with open("../data/COMPAS/compas_sexRace_doc.txt", "w") as text_file:
+#         text_file.write(docString)
+#
+#     resultData, groups, docString = prepareForJavaCode(data, ["sex", "age_cat"])
+#     resultData.to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
+#     groups.to_csv("../data/COMPAS/compas_sexAge_groups.csv", header=True, index=False)
+#     with open("../data/COMPAS/compas_sexAge_doc.txt", "w") as text_file:
+#         text_file.write(docString)
+#
+#     resultData, groups, docString = prepareForJavaCode(data, ["age_cat", "race"])
+#     resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
+#     groups.to_csv("../data/COMPAS/compas_ageRace_groups.csv", header=True, index=False)
+#     with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
+#         text_file.write(docString)
 
     resultData, _, docString = prepareForJavaCode(data, ["age_cat", "race", "sex"])
     resultData, groups, docString = makeWorstThreeGroupsProtected(resultData, docString)
