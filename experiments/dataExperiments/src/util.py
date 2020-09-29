@@ -74,7 +74,6 @@ def averageGroupExposure(ranking, result):
 
 def averageGroupExposureGain(colorblindRanking, fairRanking, result):
     result["expGain"] = 0.0
-    totalExposure = positionBias(colorblindRanking)
     for groupName in result["group"]:
         allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
         allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
@@ -84,7 +83,7 @@ def averageGroupExposureGain(colorblindRanking, fairRanking, result):
         groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
         if groupBias_colorblind == 0:
             print("group " + str(groupName) + " did not appear in the top-k in colorblind ranking")
-        expGain = groupBias_fairRanking / totalExposure - groupBias_colorblind / totalExposure
+        expGain = groupBias_fairRanking - groupBias_colorblind
         result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
 
@@ -100,8 +99,7 @@ def positionBias(ranking):
             print(position)
         totalPositionBias = totalPositionBias + (1 / (math.log2(position + 2)))
 
-    # normalize by ranking size, otherwise large groups receive more exposure
-    return totalPositionBias / len(ranking)
+    return totalPositionBias
 
 
 def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
