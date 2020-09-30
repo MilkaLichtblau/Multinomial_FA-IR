@@ -88,8 +88,8 @@ def plot3DFigure(xPos, yPos, zHeight, zLabel, filename):
     colors = cmap(norm(dz))
     ax1.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors)
 # axis labels
-    ax1.set_xlabel('p\_1', labelpad=15)
-    ax1.set_ylabel('p\_2', labelpad=15)
+    ax1.set_xlabel('$p_1$', labelpad=15)
+    ax1.set_ylabel('$p_2$', labelpad=15)
     ax1.set_zlabel(zLabel, labelpad=10)
     ax1.invert_xaxis()
 # colorbar
@@ -110,17 +110,26 @@ def prepareAndSaveFigures(filenamePattern, kString):
         minProp2Val = float(minProp2String[:-1])
         expGainValGroup1 = evalData.loc[evalData["group"] == 1, "expGain"].iloc[0]
         expGainValGroup2 = evalData.loc[evalData["group"] == 2, "expGain"].iloc[0]
+        expGainGroupNPVal = evalData.loc[evalData["group"] == 0, "expGain"].iloc[0]
         ndcgLossVal = evalData["ndcgLoss"].min()
-        tempDict = dict(minProp1=minProp1Val, minProp2=minProp2Val, expGainGroup1=expGainValGroup1, expGainGroup2=expGainValGroup2, ndcgLoss=ndcgLossVal)
+        tempDict = dict(minProp1=minProp1Val,
+                        minProp2=minProp2Val,
+                        expGainGroupNP=expGainGroupNPVal,
+                        expGainGroup1=expGainValGroup1,
+                        expGainGroup2=expGainValGroup2,
+                        ndcgLoss=ndcgLossVal)
         data.append(tempDict)
 
-    dataToPlot = pd.DataFrame(data, columns=["minProp1", "minProp2", "expGainGroup1", "expGainGroup2", "ndcgLoss"])
+    dataToPlot = pd.DataFrame(data, columns=["minProp1", "minProp2", "expGainGroupNP", "expGainGroup1", "expGainGroup2", "ndcgLoss"])
     dataToPlot.sort_values(["minProp1", "minProp2"], inplace=True)
     # normalize exposure data
-    minGain = dataToPlot[["expGainGroup1", "expGainGroup2"]].min().min()
-    maxGain = dataToPlot[["expGainGroup1", "expGainGroup2"]].max().max()
-    dataToPlot["expGainGroup1"] = (dataToPlot["expGainGroup1"] - minGain) / (maxGain - minGain)
-    dataToPlot["expGainGroup2"] = (dataToPlot["expGainGroup2"] - minGain) / (maxGain - minGain)
+#     minGain = dataToPlot[["expGainGroup1", "expGainGroup2"]].min().min()
+    maxGain = dataToPlot[["expGainGroup1", "expGainGroup2", "expGainGroupNP"]].max().max()
+#     dataToPlot["expGainGroup1"] = (dataToPlot["expGainGroup1"] - minGain) / (maxGain - minGain)
+#     dataToPlot["expGainGroup2"] = (dataToPlot["expGainGroup2"] - minGain) / (maxGain - minGain)
+    dataToPlot["expGainGroup1"] = dataToPlot["expGainGroup1"] / maxGain
+    dataToPlot["expGainGroup2"] = dataToPlot["expGainGroup2"] / maxGain
+    dataToPlot["expGainGroupNP"] = dataToPlot["expGainGroupNP"] / maxGain
 
     plot3DFigure(dataToPlot["minProp1"].values,
                  dataToPlot["minProp2"].values,
@@ -140,6 +149,11 @@ def prepareAndSaveFigures(filenamePattern, kString):
                  "NDCG loss",
                  "../results/COMPAS/evalAndPlots/age/" + kString + "-barplot-ndcgLoss.png")
 
+    plotHeatmap(dataToPlot,
+                "expGainGroupNP",
+                "Exposure Gain",
+                 "../results/COMPAS/evalAndPlots/age/" + kString + "-heatmap-expGainGroupNP.png",
+                 valfmt="{x:.3f}")
     plotHeatmap(dataToPlot,
                 "expGainGroup1",
                 "Exposure Gain",
@@ -170,11 +184,11 @@ def plotHeatmap(dataToPlot, heatmapValueStr, cbarlabel, filename, **annotationKW
             else:
                 heatmapFrame.at[rowName, colName] = val[0]
 
-    fig = plt.figure(figsize=(16, 16))
+    fig = plt.figure(figsize=(11, 11))
     ax = fig.add_subplot(111)
-    im, _ = heatmap(heatmapFrame, heatmapFrame.index, heatmapFrame.columns, ax=ax,
-                    cmap="coolwarm", cbarlabel=cbarlabel, vmin=0, vmax=1)
-    annotate_heatmap(im, thresholds=[0.15, 0.85], **annotationKW)
+    im = heatmap(heatmapFrame, heatmapFrame.index, heatmapFrame.columns, ax=ax,
+                    cmap="coolwarm", cbarlabel=cbarlabel, vmin=-1, vmax=1)
+    annotate_heatmap(im, thresholds=[-0.8, 0.8], **annotationKW)
     plt.savefig(filename, dpi=100, bbox_inches='tight')
 
 
@@ -218,8 +232,8 @@ def heatmap(data, row_labels, col_labels, ax=None,
     im = ax.imshow(data, **kwargs)
 
     # Create colorbar
-    cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
-    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+#     cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+#     cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
 
     # We want to show all ticks...
     ax.set_xticks(np.arange(data.shape[1]))
@@ -247,10 +261,10 @@ def heatmap(data, row_labels, col_labels, ax=None,
 
     ax.invert_yaxis()
 
-    ax.set_xlabel('p\_{1}', labelpad=15)
-    ax.set_ylabel('p\_{2}', labelpad=15)
+    ax.set_xlabel('$p_{1}$', labelpad=15)
+    ax.set_ylabel('$p_{2}$', labelpad=15)
 
-    return im, cbar
+    return im  # , cbar
 
 
 def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
