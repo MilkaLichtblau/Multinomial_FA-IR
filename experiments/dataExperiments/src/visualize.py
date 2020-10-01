@@ -69,13 +69,34 @@ def visualizeOrigLSATData():
     plotKDEPerGroup(data, "LSAT Score\n(higher is better)", "../data/LSAT/LSAT_sexRace_kde.png", colNames=labels)
 
 
+def plotFailProbs(dataFilename, plotFilename):
+    mpl.rcParams.update({'font.size':24, 'lines.linewidth':3, 'lines.markersize':15, 'font.family':'Times New Roman'})  # avoid type 3 (i.e. bitmap) fonts in figures
+    mpl.rcParams['ps.useafm'] = True
+    mpl.rcParams['pdf.use14corefonts'] = True
+    mpl.rcParams['text.usetex'] = True
+    failProbData = pd.read_csv(dataFilename, header=0, skipinitialspace=True)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(failProbData["k"], failProbData["failProbability"])
+    ax.set_xscale("log")
+    ax.set_xlim(0, 5000)
+    ax.set_xticks([5, 50, 500, 5000])
+    ax.get_xaxis().set_major_formatter(mpl.ticker.ScalarFormatter())
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("k")
+    ax.set_ylabel("prob. rejection")
+
+    plt.savefig(plotFilename, dpi=100, bbox_inches='tight')
+
+
 def plot3DFigure(xPos, yPos, zHeight, zLabel, filename):
     mpl.rcParams.update({'font.size':24, 'lines.linewidth':3, 'lines.markersize':15, 'font.family':'Times New Roman'})  # avoid type 3 (i.e. bitmap) fonts in figures
     mpl.rcParams['ps.useafm'] = True
     mpl.rcParams['pdf.use14corefonts'] = True
     mpl.rcParams['text.usetex'] = True
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111, projection='3d')
+    plt = plt.figure()
+    ax1 = plt.add_subplot(111, projection='3d')
     xpos = xPos
     ypos = yPos
     num_elements = len(xpos)
@@ -184,8 +205,8 @@ def plotHeatmap(dataToPlot, heatmapValueStr, cbarlabel, filename, **annotationKW
             else:
                 heatmapFrame.at[rowName, colName] = val[0]
 
-    fig = plt.figure(figsize=(11, 11))
-    ax = fig.add_subplot(111)
+    plt = plt.figure(figsize=(11, 11))
+    ax = plt.add_subplot(111)
     im = heatmap(heatmapFrame, heatmapFrame.index, heatmapFrame.columns, ax=ax,
                     cmap="coolwarm", cbarlabel=cbarlabel, vmin=-1, vmax=1)
     annotate_heatmap(im, thresholds=[-0.8, 0.8], **annotationKW)
@@ -330,8 +351,10 @@ def main():
 #     visualizeOrigGermanCreditData()
 #     visualizeOrigLSATData()
 
-    kString = "k=200"
-    prepareAndSaveFigures("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
+#     kString = "k=200"
+#     prepareAndSaveFigures("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
+    plotFailProbs("../../FailProbabilityExperiments/k=5000p=05Binomial.csv", "../../FailProbabilityExperiments/failProbPlotBinom.png")
+    plotFailProbs("../../FailProbabilityExperiments/FailProbK=5000p=[03,03]Multinomial.csv", "../../FailProbabilityExperiments/failProbPlotMultinom.png")
 
 
 if __name__ == '__main__':
