@@ -65,15 +65,15 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result = orderingUtilityLossPerGroup(colorblindRanking, fairRanking, multi_fair_result)
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 fairRanking["score"].to_numpy(),
-                                                k=len(fairRanking))
+                                                k=kay)
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
             # eval for CFA algorithm with theta=0.5
-            n = len(thetaHalfSorted) - kay
+            tailLength = len(thetaHalfSorted) - kay
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
-            cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(n), thetaHalfSorted.head(kay), cfaHalf_result)
+            cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(tailLength), thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result = orderingUtilityLossPerGroup(thetaHalfSorted.head(kay), colorblindRanking, cfaHalf_result)
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaHalfSorted.head(kay)["score"].to_numpy(),
@@ -82,10 +82,10 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
-            n = len(thetaOneSorted) - kay
+            tailLength = len(thetaOneSorted) - kay
             cfaOne_result = pd.DataFrame()
             cfaOne_result["group"] = fairRanking['group'].unique()
-            cfaOne_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(n), thetaOneSorted.head(kay), cfaOne_result)
+            cfaOne_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(tailLength), thetaOneSorted.head(kay), cfaOne_result)
             cfaOne_result = orderingUtilityLossPerGroup(thetaOneSorted.head(kay), colorblindRanking, cfaOne_result)
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
