@@ -64,10 +64,10 @@ def ndcg_score(y_true, y_score, k=10, gains="linear"):
 
 def averageGroupExposure(ranking, result):
     result["exposure"] = 0.0
-    totalExposure = positionBias(ranking)
     for groupName in result["group"]:
         allCandidatesInGroup = ranking.loc[ranking["group"] == groupName]
-        groupBias = positionBias(allCandidatesInGroup) / totalExposure
+        # normalize avg group exposure by group size, such that they are comparable
+        groupBias = positionBias(allCandidatesInGroup) / allCandidatesInGroup.shape[0]
         result.at[result[result["group"] == groupName].index[0], "exposure"] = groupBias
     return result
 
