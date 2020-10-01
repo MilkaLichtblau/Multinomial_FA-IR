@@ -353,7 +353,7 @@ def main():
 
 #     kString = "k=200"
 #     prepareAndSaveFigures("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
-    plotFailProbs("../../FailProbabilityExperiments/k=5000p=05Binomial.csv", "../../FailProbabilityExperiments/failProbPlotBinom.png")
+    plotFailProbs("../../FailProbabilityExperiments/FailProbK=5000p=[05]Binomial.csv", "../../FailProbabilityExperiments/failProbPlotBinom.png")
     plotFailProbs("../../FailProbabilityExperiments/FailProbK=5000p=[03,03]Multinomial.csv", "../../FailProbabilityExperiments/failProbPlotMultinom.png")
 
 
