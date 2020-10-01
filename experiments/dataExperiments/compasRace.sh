@@ -18,7 +18,7 @@ cd $PATH_TO_FAIR_JAR
 
 # p is same percentages as in dataset
 echo "Multi FAIR with p as statistical parity"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_race_java.csv $K 0.66,0.34 0.1 $PATH_TO_COMPAS_RESULTS/race/compas_race
+java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_race_java.csv $K 0.34,0.66 0.1 $PATH_TO_COMPAS_RESULTS/race/compas_race
 
 # p is all the same
 echo "Multi FAIR with p all equal"

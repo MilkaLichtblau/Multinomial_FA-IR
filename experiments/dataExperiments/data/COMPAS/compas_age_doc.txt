@@ -1,6 +1,6 @@
 ['age_cat']
-0 --> 0
 2 --> 1
+0 --> 0
 1 --> 2
 
 
@@ -12,6 +12,6 @@ Name: group, dtype: float64
 
 Exposure Per Groups
    group  exposure
-0      0  1.138830
-1      1  0.987821
-2      2  0.898671
+1      0  0.103554
+0      1  0.091466
+2      2  0.082765
