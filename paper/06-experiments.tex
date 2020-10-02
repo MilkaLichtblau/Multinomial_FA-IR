@@ -85,6 +85,8 @@ In our experiment, we test a scenario in which we want to create a fair ranking 
 %
 We calculated a candidate's overall score as a weighted summation of the columns ``recidivism, violent recidivism'' and ``prior arrests'' from the original dataset.
 %
+To break ties we added normally distributed random noise with $\mu=0, \sigma=0.00001$ to the score of each candidate.
+%
 Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``non-white'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
 We observe in Figure~\ref{fig:dataset:compas} that non-white people (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
@@ -178,61 +180,48 @@ We show that large increases in average group exposure can be achieved with rela
 \begin{table}[t]
 	\caption{Experimental results, highlighting in boldface the best non-color-blind result. 
 		%
-		All measures are present per group except for the loss of NDCG which is calculated for the entire ranking. 
+		Colorblind results are not shown because they are always zero.
+		%
+		All measures are present per group except for the loss of NDCG which is calculated for the entire ranking and groups are ordered the same way as in Table~\ref{tbl:datasets}.
+		%
+		The first value is always for the non-protected group.
 		%
 		With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
 		%
 		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		%
 		\meike{Both FA*IR and the baseline from \citeauthor{zehlike2020matching} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}}
 	\vspace{-3mm}
 	\label{tbl:results}
 	\resizebox{1.02\columnwidth}{!}{%
 		\centering\begin{tabular}{llcccccc}\toprule
 			&        & Exposure &   total    & Ordering     & Rank & Selection \\
-			& Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\ \midrule
-			D1, k=1500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
+			& Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\  
+			\midrule
+			D1, k=1500 & \algoFAIR $p_{\text{eq}}$ & 0.27 & $1.915\cdot10^{-7}$ & 0.0066 & 15 & 0.0000 \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ & 19.16 & 0.0039 & 0.0687 & 387 & 0.0621 \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
+			\midrule 
 			
-			D1, k=1500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			race (1 prot.) & &  &  &  &  &  \\ \midrule
+			D2, k=500 & \algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, 20.87]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[181, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75,14.11]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} & $[]$ &  & $[]$ & $[]$ & $[]$ \\ %\cline{2-7} 
 			\midrule
 			
-			D2, k=500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[6.6,14.1]$ & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			age (2 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
-			
-			D2, k=500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			age (2 prot.) &  &  &  &  &  &  \\ \midrule
-			\midrule
-			
-			D3, k=500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
+			D3, k=500 & \algoFAIR  $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
 			COMPAS, three & \algoFAIR  $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			worst off (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
-			
-			D3, k=500 & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			COMPAS, three & \algoFAIR  $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			worst off (3 prot.) &  &  &  &  &  &  \\ \midrule
+			worst off (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
 			\midrule
 			
-			D4, k=100  & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
+			D4, k=100 & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
 			German credit, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ \midrule
-			
-			D4, k=100  & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			German credit, & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, age (5 prot.) &  &  &  &  &  &  \\ \midrule
+			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
 			\midrule
 			
-			D5, k=500  & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
+			D5, k=500 & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
 			LSAT,& \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\ \midrule
+			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\ 
 			
-			D5, k=500  & Colorblind & 0.0 & 0.0000 & 0.0000 & 0 & 0.0000 \\
-			LSAT,& \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, race (3 prot.) &  &  &  &  &  & \textbf{} \\			
 			\bottomrule
 		\end{tabular}
 	}
@@ -243,9 +232,15 @@ Table~\ref{tbl:results} summarizes the results. We report on the result using $p
 %
 Actual values are given in the dataset descriptions in Section~\ref{sec:experiments-datasets}. 
 %
-First, we observe that in general changes in utility with respect to the color-blind ranking are minor, as the utility is dominated by the top positions, which do not change dramatically.
+First, we observe that in general changes in NDCG with respect to the color-blind ranking are minor, as the utility is dominated by the top positions, which do not change dramatically.
 %
-\meike{Revise this: Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
+\meike{Revise this: Second it is important to note that the baseline by~\citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
+%
+For example, in experiment D2 we observe a maximum rank drop for the non-protected group of 159. 
+%
+When investigating in the 
+%
+Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
 %
 Third, \algoFAIR achieves higher or equal ordering utility in all conditions. This is also reflected in the rank loss of the most unfairly
 treated candidate included in the ranking ({\em i.e.}, the candidate that achieves the maximum ordering utility loss).} %, which is always equal or less for \algoFAIR.
