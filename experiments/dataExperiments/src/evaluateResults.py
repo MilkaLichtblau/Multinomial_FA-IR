@@ -64,8 +64,8 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result = selectionUtilityLossPerGroup(remainingRanking, fairRanking, multi_fair_result)
             multi_fair_result = orderingUtilityLossPerGroup(colorblindRanking, fairRanking, multi_fair_result)
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                fairRanking["score"].to_numpy(),
-                                                k=kay)
+                                                           fairRanking["score"].to_numpy(),
+                                                           k=kay)
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
@@ -76,10 +76,10 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(tailLength), thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                thetaHalfSorted.head(kay)["score"].to_numpy(),
-                                                k=kay)
-            cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, cfaHalf_result)
-            cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaHalfResult.csv")
+                                                        thetaHalfSorted.head(kay)["score"].to_numpy(),
+                                                        k=kay)
+            cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaHalfSorted.head(kay), cfaHalf_result)
+            cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
             tailLength = len(thetaOneSorted) - kay
@@ -90,8 +90,8 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
-            cfaOne_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, cfaOne_result)
-            cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_cfaOneResult.csv")
+            cfaOne_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaOneSorted.head(kay), cfaOne_result)
+            cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_cfaOneResult.csv")
 
 
 if __name__ == '__main__':
