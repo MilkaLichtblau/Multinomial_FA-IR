@@ -1,0 +1,38 @@
+\begin{algorithm}[t!]
+	\caption{Algorithm \algoRecursive computes the probability, that a given mTable accepts a fair ranking (see right term of Eq.~\ref{eq:05:failureProb}).}
+	\label{alg:05:successProb} % But whenever possible refer to this algo. by name not number
+	\small
+	\AlgInput{
+		$\texttt{b[]}$ list of block lengths (Table~\ref{tbl:05:example_blocks}, 3rd line);\\ 
+		$\texttt{maxProtected}$ the sum of all entries of $\texttt{b[]}$;\\
+		$\texttt{currentBlockIndex}$ index of the current block; \\
+		$\texttt{candidatesAssigned}$ number of protected candidates assigned for the current possible solution; \\
+		$p$, the expected proportion of protected elements.}
+	\AlgOutput{The probability of accepting a fair ranking.}
+	
+	\If{$\texttt{b[].length} = 0$}{
+		\Return{$1$}
+	}
+	\tcp{we need to assign at least one protected candidate to each block}
+	$\texttt{minNeededThisBlock} \leftarrow \texttt{currentBlockIndex} - \texttt{candidatesAssigned}$\\
+	\tcp{if we already assigned enough candidates, minNeededThisBlock = 0 (termination condition for the recursion)}
+	\If{$\texttt{minNeededThisBlock} < 0$}{
+		$\texttt{minNeededThisBlock} \leftarrow 0$
+	}
+	$\texttt{maxPossibleThisBlock} \leftarrow \textit{argmin}(\texttt{b[0]}, \texttt{maxProtected})$ \\
+	$\texttt{assignments} \leftarrow 0$ \\
+	$\texttt{successProb} \leftarrow 0$ \\
+	\tcp{sublist without the first entry of $\texttt{b[]}$}
+	$\texttt{b\_new[]} \leftarrow \textit{sublist}(\texttt{b[]}, 1, \texttt{b[].length})$ \label{algoline:05:suffixes}\\
+	$\texttt{itemsThisBlock} \leftarrow \texttt{minNeededThisBlock}$\\
+	\While{$\texttt{itemsThisBlock} \leq \texttt{maxPossibleThisBlock}$}{
+		$\texttt{remainingCandidates} \leftarrow \texttt{maxProtected} - \texttt{itemsThisBlock}$ \\
+		$\texttt{candidatesAssigned} \leftarrow \texttt{candidatesAssigned} + \texttt{itemsThisBlock}$ \\
+		\tcp{each recursion returns the success probability of \emph{all possible ways} to fairly rank protected candidates after this block}
+		$\texttt{suffixSuccessProb} \leftarrow \textsc{\algoRecursive} ( $ \\ \pushline $ \texttt{remainingCandidates},\texttt{b\_new[]}, \texttt{currentBlockIndex} + 1,$ \\ $ \texttt{candidatesAssigned})$ 
+		\label{algoline:05:recursion}\\
+		\popline $\texttt{totalSuccessProb} \leftarrow \texttt{totalSuccessProb} \; + $ \\ \pushline $ \textsc{PDF}(\texttt{maxPossibleThisBlock}, \texttt{itemsThisBlock}, p) \; \cdot $ \\ $ \texttt{suffixSuccessProb}$ \label{algoline:05:pdf}\\
+		\popline $\texttt{itemsThisBlock} \leftarrow \texttt{itemsThisBlock} + 1$\\
+	}
+	\Return{probability of accepting a fair ranking: $\texttt{totalSuccessProb}$ }
+\end{algorithm}

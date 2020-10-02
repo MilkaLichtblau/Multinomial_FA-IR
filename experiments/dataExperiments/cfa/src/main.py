@@ -9,11 +9,9 @@ from evaluation.fairnessMeasures import groupPercentageAtK
 from evaluation.relevanceMeasures import pak, ndcg_score
 
 
-def rerank_with_cfa(score_stepsize, thetas, result_filename, pathToData, pathToGroups, qual_attr, group_names, scaleFactor=1):
+def rerank_with_cfa(score_stepsize, thetas, result_filename, pathToData, pathToGroups, qual_attr, group_names):
     data = pd.read_csv(pathToData, sep=',')
     groups = pd.read_csv(pathToGroups, sep=',')
-
-    data[qual_attr] = data[qual_attr] * scaleFactor
 
     # check that we have a theta for each group
     if groups.shape[0] != len(thetas):
@@ -162,8 +160,7 @@ def main():
                         '../../data/COMPAS/compas_age_java.csv',
                         '../../data/COMPAS/compas_age_groups.csv',
                         'score',
-                        groupNames,
-                        scaleFactor=1000)
+                        groupNames)
     elif sys.argv[1] == 'compas_race':
         groupNames = {"[0]":"White",
                       "[1]":"Non-White"}
@@ -173,8 +170,7 @@ def main():
                         '../../data/COMPAS/compas_race_java.csv',
                         '../../data/COMPAS/compas_race_groups.csv',
                         'score',
-                        groupNames,
-                        scaleFactor=1000)
+                        groupNames)
     elif sys.argv[1] == 'compas_worstThreeGroups':
         groupNames = {"[0]":"Others",
                       "[1]":"PoC male < 25yr",
@@ -186,8 +182,7 @@ def main():
                         '../../data/COMPAS/compas_worstThreeGroups_java.csv',
                         '../../data/COMPAS/compas_worstThreeGroups_groups.csv',
                         'score',
-                        groupNames,
-                        scaleFactor=1000)
+                        groupNames)
     elif sys.argv[1] == 'LSAT_sexRace':
         groupNames = {"[0 0]":"Male, White",
                       "[1 0]":"Female, White",
