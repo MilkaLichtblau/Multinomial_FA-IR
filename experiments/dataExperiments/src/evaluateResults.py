@@ -74,7 +74,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
             cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(tailLength), thetaHalfSorted.head(kay), cfaHalf_result)
-            cfaHalf_result = orderingUtilityLossPerGroup(thetaHalfSorted.head(kay), colorblindRanking, cfaHalf_result)
+            cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
@@ -86,7 +86,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaOne_result = pd.DataFrame()
             cfaOne_result["group"] = fairRanking['group'].unique()
             cfaOne_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(tailLength), thetaOneSorted.head(kay), cfaOne_result)
-            cfaOne_result = orderingUtilityLossPerGroup(thetaOneSorted.head(kay), colorblindRanking, cfaOne_result)
+            cfaOne_result = orderingUtilityLossPerGroup(colorblindRanking, thetaOneSorted.head(kay), cfaOne_result)
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
