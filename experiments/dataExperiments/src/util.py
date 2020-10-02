@@ -123,14 +123,21 @@ def orderingUtilityLossPerGroup(colorblindRanking, fairRanking, result):
         allCandidatesInGroup = fairRanking.loc[fairRanking["group"] == groupName]
         allOthers = fairRanking.loc[fairRanking["group"] != groupName]
         for position, candidate in allCandidatesInGroup.iterrows():
-            allOthersAbove = allOthers.loc[0:position]
+            allOthersAbove = allOthers.loc[0:position - 1]
             worstScoreAbove = allOthersAbove.score.min()
+
+            # calculate ordering utility loss, should be maximum of all
             orderUtilLoss = max(0.0, candidate.score - worstScoreAbove)
             currentMaxLossPerGroup = result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"]
             if orderUtilLoss > currentMaxLossPerGroup:
-                originalPosition = colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0]
-                result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = position - originalPosition
                 result.at[result[result["group"] == groupName].index[0], "orderUtilLoss"] = orderUtilLoss
+
+            # calculate max rank drop for groups
+            originalPosition = colorblindRanking.loc[colorblindRanking['uuid'] == candidate.uuid].index[0]
+            rankdrop = position - originalPosition
+            currentMaxRankDrop = result.at[result[result["group"] == groupName].index[0], "maxRankDrop"]
+            if rankdrop > currentMaxRankDrop:
+                result.at[result[result["group"] == groupName].index[0], "maxRankDrop"] = rankdrop
     return result
 
 ############################# VISUALISATION #############################################
