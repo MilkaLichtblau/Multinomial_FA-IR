@@ -16,4 +16,4 @@ cd $PATH_TO_FAIR_JAR
 
 # p is same percentages as in dataset
 echo "Multi FAIR with p as statistical parity"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_worstThreeGroups_java.csv 500 0.826,0.028,0.012,0.134 0.1 $PATH_TO_COMPAS_RESULTS/worstThree/compas_worstThreeGroups
+java -jar Multinomial_FA-IR.jar data $PATH_TO_COMPAS_DATA/compas_worstThreeGroups_java.csv 300 0.826,0.028,0.012,0.134 0.1 $PATH_TO_COMPAS_RESULTS/worstThree/compas_worstThreeGroups
