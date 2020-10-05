@@ -295,7 +295,7 @@ class ContinuousFairnessAlgorithm():
         # avoid type 3 (i.e. bitmap) fonts in figures
         mpl.rcParams['ps.useafm'] = True
         mpl.rcParams['pdf.use14corefonts'] = True
-#         mpl.rcParams['text.usetex'] = True
+        mpl.rcParams['text.usetex'] = True
 
         ax = dataframe.plot(kind='line', use_index=False)
         ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.,

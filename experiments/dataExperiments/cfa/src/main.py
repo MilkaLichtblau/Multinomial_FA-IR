@@ -18,7 +18,7 @@ def rerank_with_cfa(score_stepsize, thetas, result_filename, pathToData, pathToG
         raise ValueError(
             "invalid number of thetas, should be {numThetas} Specify one theta per group.".format(numThetas=groups.shape[0]))
 
-    regForOT = 5e-3
+    regForOT = 5e-4
     plot_dir = os.path.dirname(result_filename) + "/"
     print(plot_dir)
     cfa = ContinuousFairnessAlgorithm(data,
@@ -151,9 +151,9 @@ def main():
     thetas = parseThetas(sys.argv[3])
     result_dir = sys.argv[4]
     if sys.argv[1] == 'compas_age':
-        groupNames = {"[0]":"White, ",
-                      "[1]":"White, < 25",
-                      "[2]":"White, 25-45"}
+        groupNames = {"[0]":"> 45",
+                      "[1]":"< 25",
+                      "[2]":"25-45"}
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
