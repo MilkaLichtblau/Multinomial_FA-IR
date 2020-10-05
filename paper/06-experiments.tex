@@ -177,7 +177,7 @@ We show that large increases in average group exposure can be achieved with rela
 
 \subsection{Results}\label{sec:experiments-results}
 %
-\begin{table}[t]
+\begin{table}[b!]
 	\caption{Experimental results, highlighting in boldface the best non-color-blind result. 
 		%
 		Colorblind results are not shown because they are always zero.
@@ -190,6 +190,11 @@ We show that large increases in average group exposure can be achieved with rela
 		%
 		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
 		%
+		For exposure gain we report $\infty$, if a group was not among the top-$k$ in the colorblind ranking, but is now.
+		%
+		We report $-\infty$ when a group was present in the colorblind top-$k$ but is not anymore in the re-ranked results.
+		%
+		A gain of 0 means that the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
 		\meike{Both FA*IR and the baseline from \citeauthor{zehlike2020matching} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}}
 	\vspace{-3mm}
 	\label{tbl:results}
@@ -198,17 +203,17 @@ We show that large increases in average group exposure can be achieved with rela
 			&        & Exposure &   total    & Ordering     & Rank & Selection \\
 			& Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\  
 			\midrule
-			D1, k=1500 & \algoFAIR $p_{\text{eq}}$ & 0.27 & $1.915\cdot10^{-7}$ & 0.0066 & 15 & 0.0000 \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ & 19.16 & 0.0039 & 0.0687 & 387 & 0.0621 \\
-			race (1 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
+			D1, k=1500 & \algoFAIR $p_{\text{eq}}$ & $[-0.27, 0.27]$ & $1.915\cdot10^{-7}$ & $[0.0066, 0]$ & $[15, 0]$ & $[0, 0]$ \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-19.16, 19.16]$ & 0.0039 & $[0.0687, 0]$ & $[387, 0]$ & $[0.0621,0]$ \\
+			race (1 prot.) & \citeauthor{zehlike2020matching} & $[-28.6, 28,6]$  & 0.0055 & $[0.0738, 0]$ & $[620, 288]$ & $[0.0702, 0]$ \\ 
 			\midrule 
 			
-			D2, k=500 & \algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, 20.87]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[181, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75,14.11]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
-			age (2 prot.) & \citeauthor{zehlike2020matching} & $[]$ &  & $[]$ & $[]$ & $[]$ \\ %\cline{2-7} 
+			D2, k=500 & \algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, \infty]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[181, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
+			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75, \infty]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
+			age (2 prot.) & \citeauthor{zehlike2020matching} & $[-\infty, 8.38, \infty]$ & 0.0365 & $[-\infty, 0.14 ,0.00]$ & $[-\infty, 184, 0]$ & $[0.14, 0.14, 0,00]$ \\ %\cline{2-7} 
 			\midrule
 			
-			D3, k=500 & \algoFAIR  $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
+			D3, k=500 & \algoFAIR  $p_{\text{eq}}$ & $[]$ &  & $[]$ & $[]$ & $[]$ \\
 			COMPAS, three & \algoFAIR  $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
 			worst off (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
 			\midrule
@@ -232,15 +237,31 @@ Table~\ref{tbl:results} summarizes the results. We report on the result using $p
 %
 Actual values are given in the dataset descriptions in Section~\ref{sec:experiments-datasets}. 
 %
+Also remember that results of CFA$\theta$ are only comparable to a \algoFAIR $p_{\text{stat}}$ setting. 
+%
+With the $p_{\text{eq}}$ setting, we illustrate the flexibility of the approach.
+
 First, we observe that in general changes in NDCG with respect to the color-blind ranking are minor, as the utility is dominated by the top positions, which do not change dramatically.
+
+Second it is important to note that the baseline by~\citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
-\meike{Revise this: Second it is important to note that the baseline by~\citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
+For example, in experiment D2 we observe a maximum rank drop for the non-protected group of 159, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266). 
 %
-For example, in experiment D2 we observe a maximum rank drop for the non-protected group of 159. 
+However we found the following problems when closely investigating the result: the candidate that experienced the drop in 184 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 316 (now 500). 
 %
-When investigating in the 
+This means that the originally best candidate from the non-protected group (originally at rank 3) was ranked out of the top-500 by CFA$\theta$.
 %
-Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
+We suspect that this is because the method by~\citet{zehlike2020matching} can not handle ties well.
+%
+If lots of candidates have similar original scores, the fair representation scores may consist of many ties within which candidates are sorted randomly.
+%
+In such a setting, \algoFAIR has an important advantage: it guarantees in-group monotonicity, because candidates are separated into group rankings which are sorted by decreasing qualifications.
+%
+No matter which group has to be picked at the current position, the respective candidate will always be the best available from that group.
+%
+This means while ties appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
+
+\meike{Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
 %
 Third, \algoFAIR achieves higher or equal ordering utility in all conditions. This is also reflected in the rank loss of the most unfairly
 treated candidate included in the ranking ({\em i.e.}, the candidate that achieves the maximum ordering utility loss).} %, which is always equal or less for \algoFAIR.
