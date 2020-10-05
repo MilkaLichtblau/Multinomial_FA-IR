@@ -78,19 +78,25 @@ def averageGroupExposureGain(colorblindRanking, fairRanking, result):
         allCandidatesInGroup_fairRanking = fairRanking.loc[fairRanking["group"] == groupName]
         allCandidatesInGroup_colorblindRanking = colorblindRanking.loc[colorblindRanking["group"] == groupName]
         groupBias_fairRanking = positionBias(allCandidatesInGroup_fairRanking)
-#         if groupBias_fairRanking == 0:
-#             print("group " + str(groupName) + " did not appear in the top-k in fair ranking")
         groupBias_colorblind = positionBias(allCandidatesInGroup_colorblindRanking)
-#         if groupBias_colorblind == 0:
-#             print("group " + str(groupName) + " did not appear in the top-k in colorblind ranking")
-        expGain = groupBias_fairRanking - groupBias_colorblind
+        if groupBias_colorblind == 0 and groupBias_fairRanking == 0:
+            print("group " + str(groupName) + " did not appear in the top-k in both rankings")
+        elif groupBias_fairRanking == 0:
+            print("group " + str(groupName) + " did not appear in the top-k in fair ranking")
+            expGain = -math.inf
+        elif groupBias_colorblind == 0:
+            print("group " + str(groupName) + " did not appear in the top-k in colorblind ranking")
+            expGain = math.inf
+        else:
+            expGain = groupBias_fairRanking - groupBias_colorblind
+
         result.at[result[result["group"] == groupName].index[0], "expGain"] = expGain
     return result
 
 
 def positionBias(ranking):
     if ranking.empty:
-        # this case can happen if a group was not appearing in the top-k at all before reranking with FA*IR
+        # this case can happen if a group does not appear in the top-k at all
         # we assign zero then
         return 0
     totalPositionBias = 0.0
