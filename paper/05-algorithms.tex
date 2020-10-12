@@ -2,7 +2,6 @@
 We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and elaborate its complexity~(\S\ref{subsec:algorithm-complexity}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
-\note{Done}
 Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
 %
 As input, multinomial \algoFAIR takes 
@@ -75,7 +74,6 @@ If the node demands a protected candidate from group $g$ at the current position
 
 \subsection{Algorithm Optimizations}
 \label{subsec:algorithm-optimization}
-\note{Done}
 Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:time}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
 %
 Depending on the structure of $p_G$, different levels of optimization are applicable.

@@ -7,20 +7,20 @@
 			\midrule
 			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & PoC & 65.9\% \\
 			\midrule
-			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & < 25yr. & 21.8\% \\
-			& & & & & 25yr. < x < 45yr. & 57.2\% \\
+			D2 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & 25yr. < x < 45yr. & 57.2\% \\
+			& & & & & < 25yr. & 21.8\% \\
 			\midrule
-			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 500 & ad-hoc score & PoC female, < 25yr. & 2.8\%\\ 
+			D3 & COMPAS \cite{angwin_2016_machine}& 6173 & 200 & ad-hoc score & PoC female, < 25yr. & 2.8\%\\ 
 			& & & & & white female, < 25yr. & 1.2\% \\
 			& & & & & PoC male, < 25yr. & 13.4\% \\
 			\midrule
-			D4 & German credit \cite{lichman_2013_uci} & 1000 & 100 & credit rating & female, non-prot. age & 21.7\% \\
+			D4 & German credit \cite{lichman_2013_uci} & 1000 & 50 & credit rating & female, non-prot. age & 21.7\% \\
 			& & & & & male, oldest 10\% & 6.3\% \\
-			& & & & & female, youngest 10\% & 6.1\% \\
-			& & & & & male, youngest 10\% & 4.4\% \\
+			& & & & & male, youngest 10\% & 4.4\%  \\
 			& & & & & female, oldest 10\% & 3.2\% \\
+			& & & & & female, youngest 10\% & 6.1\% \\
 			\midrule
-			D5 & LSAT \cite{wightman1998lsac}  & 21K & 500  & LSAT score  & White, female & 35.3\%  \\ 
+			D5 & LSAT \cite{wightman1998lsac}  & 21K & 200  & LSAT score  & White, female & 35.3\%  \\ 
 			& & & & & PoC, female & 8.4\% \\
 			& & & & & PoC, male & 7.6\% \\
 			\bottomrule
@@ -69,7 +69,7 @@ Each dataset contains a set of people with demographic attributes, plus a qualit
 %
 Note that dataset D1 is the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
 %
-For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 100, or 500) with $k<n$.
+For each dataset, we consider a value of $k$ that is a round number ({\em e.g.}, 50, or 200) with $k<n$.
 %
 For the purposes of these experiments, we considered several scenarios of protected groups.
 %
@@ -137,7 +137,7 @@ We set the vectors $p_G$ to $p_{\text{stat}}=[0.353,0.084,0.076]$ and $p_{\text{
 
 For each dataset, we generate various top-$k$ rankings with varying targets of minimum proportion of protected candidates $p$ using \algoFAIR, plus two baseline rankings:
 
-\spara{Baseline 1: Color-blind ranking.} The ranking $c|_k$ that only considers the qualifications of the candidates, without considering group fairness, as described in Section~\ref{concept:color-blind-ranking}.
+\spara{Baseline 1: Color-blind ranking.} The ranking $\textit{cb}|_k$ that only considers the qualifications of the candidates, without considering group fairness, as described in Section~\ref{concept:color-blind-ranking}.
 
 \spara{Baseline 2: \citet{zehlike2020matching}.} The Continuous Fairness Algorithm (CFA$\theta$) is a post-processing ranking method that aligns the score distributions of the protected candidates with the Wasserstein-barycenter of all group distributions.
 %
@@ -178,11 +178,57 @@ We show that large increases in average group exposure can be achieved with rela
 \subsection{Results}\label{sec:experiments-results}
 %
 \begin{table}[b!]
-	\caption{Experimental results, highlighting in boldface the best non-color-blind result. 
+	\resizebox{1.02\columnwidth}{!}{%
+		\centering\begin{tabular}{lccccc}\toprule
+				   & Exposure &   total    & Ordering     & Rank & Selection \\
+			Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\  
+			
+			\midrule
+			\multicolumn{6}{c}{D1 -- COMPAS, k=1500, race (1 prot.)} \\
+			\midrule
+			\algoFAIR $p_{\text{eq}}$ & $[-0.27, 0.27]$ & $1.915\cdot10^{-7}$ & $[0.0066, 0]$ & $[15, 0]$ & $[0, 0]$ \\
+			\algoFAIR $p_{\text{stat}}$ & $[-19.16, 19.16]$ & 0.0039 & $[0.0687, 0]$ & $[387, 0]$ & $[0.0621,0]$ \\
+			\citeauthor{zehlike2020matching} & $[-28.6, 28.6]$  & 0.0055 & $[0.0738, 0]$ & $[620, 288]$ & $[0.0702, 0]$ \\ 
+			
+			\midrule 
+			\multicolumn{6}{c}{D2 -- COMPAS, k=500, age (2 prot.)} \\
+			\midrule
+			\algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, \textcolor{red}{20.87}]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[182, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
+			\algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75, \textcolor{red}{14.11}]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
+			\citeauthor{zehlike2020matching} & $[-38.48, 18.11, \textcolor{red}{20.49}]$ & 0.0521 & $[0.19, 0.18 ,0.00]$ & $[159, 280, 0]$ & $[0.19, 0.17, 0,00]$ \\ %\cline{2-7} 
+			
+			\midrule
+			\multicolumn{6}{c}{D3 -- COMPAS, k=200, three worst off (3 prot.)} \\
+			\midrule
+			\algoFAIR  $p_{\text{eq}}$ & $[-21.87, \textcolor{red}{7.29}, \textcolor{red}{7.30}, \textcolor{red}{7.27}]$ & 0.1526 & $[0.42, 0.14, 0.00, 0.22]$ & $[134, 0, 0, 0]$ & $[0.42, 0.13, 0.00, 0.22]$ \\
+			\algoFAIR  $p_{\text{stat}}$ & $[-3.62, \textcolor{red}{0.60}, \textcolor{red}{0.29}, \textcolor{red}{2.73}]$ & 0.0155 & $[0.17, 0.03,0.00, 0.02]$ & $[24, 0,0,0]$ & $[0.17, 0.00,0.00, 0.02] $  \\
+			\citeauthor{zehlike2020matching} &  $[-11.83, \pm 0, \pm 0, \textcolor{red}{11.83}]$ & 0.0562 & $[0.19, \pm 0, \pm 0, 0.00] $ & $[178, \pm 0, \pm 0, 0]$ & $[0.19, \pm 0, \pm 0, 0.00]$   \\ 
+			
+			\midrule
+			\multicolumn{6}{c}{D4 -- German credit, k=50, sex \& age (5 prot.)} \\
+			\midrule
+			\algoFAIR $p_{\text{eq}}$ &  $[-4.46, 0.08, 0.50, $ & 0.1698 & $[3.51, 2.70, 3.42, $ & $[28, 4, 7, 1, 0, 0]$ & $[3.05, 1.82, 1.34, $\\
+			& $1.49, 1.26, 1.12]$ & &  $ 0.55, 1.18, 1.76]$& & $0.00, 0.18, 0.33]$  \\
+			\algoFAIR $p_{\text{stat}}$ &  $[-0.83, 0.01, 0.23, $& 0.0185 & $[1.84, 1.56, 0.45, $ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23,$  \\
+			& $0.38, 0.20, 0.01]$  & & $0.00, 0.33, 1.28]$ & & $ 0.00, 1.18, 1.54]$\\
+			\citeauthor{zehlike2020matching} &  $[1.15, 0.22, -0.91, $ & 0.0471 & $[0.50, 1.41, 2.06,$ & $[2, 2, 31, 22, 0, 0]$ & $[0.34, 0.00, 1.93, $ \\ 
+			& $-0.71, 0.00, 0.25]$ &  & $ 1.75, 0.27, 0.00]$ & & $2.20, 0.00, 0.00]$\\
+			
+			\midrule
+			\multicolumn{6}{c}{D5 -- LSAT, k=200, sex \& race (3 prot.)} \\
+			\midrule
+			\algoFAIR $p_{\text{eq}}$ & $[-15.76, -1.48, 8.41, 8.82]$ & 0.0157 & $[4,4,1,0]$ & $[145, 28, 0, 0]$ & $[4, 4, 1, 0`]$  \\
+			\algoFAIR $p_{\text{stat}}$ & $[-11.12, 3.87, 2.80, 4,44]$ & 0.0026 & $[2, 2, 1, 0]$ & $[100, 15, 0, 0]$ & $[2, 2, 1, 0]$  \\
+			\citeauthor{zehlike2020matching} &  $[-14.63, 4.29, 3.88, 6.46]$ & 0.0049 & $[2, 1, 1, 0]$ & $[149, 26, 0, 0]$ & $[2, 1, 0, 0]$  \\ 
+			
+			\bottomrule
+		\end{tabular}
+	}
+	\caption{Experimental results. 
 		%
 		Colorblind results are not shown because they are always zero.
 		%
-		All measures are present per group except for the loss of NDCG which is calculated for the entire ranking and groups are ordered the same way as in Table~\ref{tbl:datasets}.
+		All measures are presented per group except for the loss of NDCG which is calculated for the entire ranking and groups are ordered the same way as in Table~\ref{tbl:datasets}.
 		%
 		The first value is always for the non-protected group.
 		%
@@ -190,70 +236,55 @@ We show that large increases in average group exposure can be achieved with rela
 		%
 		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
 		%
-		For exposure gain we report $\infty$, if a group was not among the top-$k$ in the colorblind ranking, but is now.
+		For exposure gain we report numbers in red, if a group was not among the top-$k$ in the colorblind ranking, but is now.
 		%
-		We report $-\infty$ when a group was present in the colorblind top-$k$ but is not anymore in the re-ranked results.
+		These numbers constitute the absolute exposure value a group receives after re-ranking.
 		%
-		A gain of 0 means that the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
-		\meike{Both FA*IR and the baseline from \citeauthor{zehlike2020matching} achieve the same target proportion of protected elements in the output and the same selection unfairness, but in general FA*IR achieves it with less ordering unfairness, and with less maximum rank drop (the number of positions that the most unfairly ordered element drops).}}
-	\vspace{-3mm}
-	\label{tbl:results}
-	\resizebox{1.02\columnwidth}{!}{%
-		\centering\begin{tabular}{llcccccc}\toprule
-			&        & Exposure &   total    & Ordering     & Rank & Selection \\
-			& Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\  
-			\midrule
-			D1, k=1500 & \algoFAIR $p_{\text{eq}}$ & $[-0.27, 0.27]$ & $1.915\cdot10^{-7}$ & $[0.0066, 0]$ & $[15, 0]$ & $[0, 0]$ \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-19.16, 19.16]$ & 0.0039 & $[0.0687, 0]$ & $[387, 0]$ & $[0.0621,0]$ \\
-			race (1 prot.) & \citeauthor{zehlike2020matching} & $[-28.6, 28,6]$  & 0.0055 & $[0.0738, 0]$ & $[620, 288]$ & $[0.0702, 0]$ \\ 
-			\midrule 
-			
-			D2, k=500 & \algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, \infty]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[181, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
-			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75, \infty]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
-			age (2 prot.) & \citeauthor{zehlike2020matching} & $[-17.96, 8.38, \infty]$ & 0.0365 & $[0.14, 0.14 ,0.00]$ & $[184, 184, 0]$ & $[0.14, 0.14, 0,00]$ \\ %\cline{2-7} 
-			\midrule
-			
-			D3, k=500 & \algoFAIR  $p_{\text{eq}}$ & $[]$ &  & $[]$ & $[]$ & $[]$ \\
-			COMPAS, three & \algoFAIR  $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			worst off (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
-			\midrule
-			
-			D4, k=100 & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			German credit, & \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, age (5 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  &  \\ 
-			\midrule
-			
-			D5, k=500 & \algoFAIR $p_{\text{eq}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			LSAT,& \algoFAIR $p_{\text{stat}}$ &  & \textbf{} & \textbf{} & \textbf{} & \textbf{} \\
-			sex, race (3 prot.) & \citeauthor{zehlike2020matching} &  &  &  &  & \textbf{} \\ 
-			
-			\bottomrule
-		\end{tabular}
+		We write $\pm 0$, if the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
+		%
+		We observe that \algoFAIR $p_{\text{stat}}$ and the baseline CFA$\theta$ have comparable results for experiments D1 and D5. 
+		%
+		However, we also see that CFA$\theta$ seems to not handle ties well in experiments D2 and D3 (see textual explanation for details).
+		%
+		For experiment D4 we see an interesting property of \algoFAIR: the youngest and oldest males experience a high rank drop (31 and 22) with CFA$\theta$ compared to \algoFAIR $p_{\text{stat}}$, even though they belong to the protected groups.
+		% 
+		This is because they receive exposure values higher than average in the $cb|_k$, i.e. these two groups have the best scores.
+		%
+		CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus, removes the advantage that the protected groups have in this data set.
+		%
+		\algoFAIR, in contrast, ranks candidates based on their scores, as soon as the ranked group fairness conditions are met for each group.
+		%
+		As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 	}
 	\vspace{-3mm}
+	\label{tbl:results}
 \end{table}
 %
-Table~\ref{tbl:results} summarizes the results. We report on the result using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$). 
+Table~\ref{tbl:results} summarizes the results. 
 %
-Actual values are given in the dataset descriptions in Section~\ref{sec:experiments-datasets}. 
+We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$). 
+%
+The actual values for $p_G$ are given in the dataset descriptions in Section~\ref{sec:experiments-datasets}. 
 %
 Also remember that results of CFA$\theta$ are only comparable to a \algoFAIR $p_{\text{stat}}$ setting. 
 %
-With the $p_{\text{eq}}$ setting, we illustrate the flexibility of the approach.
+With the $p_{\text{eq}}$ setting, we illustrate the flexibility of our approach.
 
-First, we observe that in general changes in NDCG with respect to the color-blind ranking are minor, as the utility is dominated by the top positions, which do not change dramatically.
+First, we observe that, for \algoFAIR $p_{\text{stat}}$ and CFA$\theta$, in general changes in NDCG with respect to the color-blind ranking are minor.
+%
+This can be explained as the utility is dominated by the top positions, which usually do not change dramatically.
 
-Second we see that \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well. 
+Second we see that in experiments D1 and D5 \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well at first glance. 
 %
-Sometimes the former yields better numbers, sometimes the latter. 
+While the former yields better numbers in terms of utility, with the latter the protected groups gain higher exposure.
+
+Nonetheless, we found a very important drawback in the results of CFA$\theta$ in experiment D2: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
-Nonetheless, we found a very important drawback in the results of CFA$\theta$: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
+Consider, for example, experiment D2, where we observe a maximum rank drop for the non-protected group of 159 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266). 
 %
-Consider, for example, experiment D2, where we observe a maximum rank drop for the non-protected group of 184 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266). 
+However, we found the following problems when closely investigating the result: the candidate that experienced the drop in 159 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 341 (now 500). 
 %
-However, we found the following problems when closely investigating the result: the candidate that experienced the drop in 184 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 316 (now 500). 
-%
-This means that the originally best candidate from the non-protected group (rank 3 in $c|_k$) was ranked out of the top-500 by CFA$\theta$.
+It means that the originally best candidate from the non-protected group (rank 3 in $cb|_k$) was ranked out of the top-500 by CFA$\theta$, hence the in-group ordering is not preserved.
 %
 We suspect that this is because the method can not handle ties well.
 %
@@ -264,11 +295,30 @@ In such a setting, \algoFAIR has an important advantage: it guarantees in-group 
 No matter which group has to be picked at the current position, the respective candidate will always be the best available from that group.
 %
 This means while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
-
-\meike{Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
 %
-Third, \algoFAIR achieves higher or equal ordering utility in all conditions. This is also reflected in the rank loss of the most unfairly
-treated candidate included in the ranking ({\em i.e.}, the candidate that achieves the maximum ordering utility loss).} %, which is always equal or less for \algoFAIR.
+In their work this problem is not yet described as a weakness of CFA$\theta$ by~\citet{zehlike2020matching}.
+
+Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D3: it can not handle data sets with very small groups or groups that show low variance.
+%
+For D3, note first that none of the protected candidates is part of the top-200 positions in the colorblind ranking. 
+%
+As two of the protected groups are very small, they are not ranked into the top-200 fair ranking by CFA$\theta$, but only the largest protected group (young, male PoC) is ranked among the top-200.
+%
+In contrast, \algoFAIR $p_{\text{stat}}$ can handle very small groups, and gives them sufficient exposure that is in line with the minimum proportions $p_G$.
+%
+The same is true for experiment D4: while CFA$\theta$ can not handle the smaller groups well.
+%
+It increases the exposure of the non-protected group while decreasing it for the oldest males and youngest females.
+
+For experiment D4 we observe an interesting advantage of \algoFAIR: the youngest and oldest males experience a high rank drop (31 and 22) with CFA$\theta$ compared to \algoFAIR $p_{\text{stat}}$, even though they belong to the protected groups.
+% 
+This is because they receive exposure values higher than average in the $cb|_k$, i.e. these two groups have the best scores.
+%
+CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus, removes the advantage that the protected groups have in this data set.
+%
+\algoFAIR, in contrast, ranks candidates based on their scores, as soon as the ranked group fairness conditions are met for each group.
+%
+As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 
 Importantly, \algoFAIR allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with the baseline (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
 %
@@ -303,7 +353,7 @@ At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when f
 		%
 		However even if $p_1$ is set low it still ensures that candidates from the middle-aged group show in the ranking, thus always losing less exposure than the non-protected group (compare Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} and~\ref{fig:experiments:compasAge:expGain:group1}).
 		%
-		Note that this experiment is an extreme case, where no candidates from group ``age < 25'' where ranked in the top-200 in $c|_k$, which explains why this group never loses exposure under any setting for $p_1$ and $p_2$ (see Fig.~\ref{fig:experiments:compasAge:expGain:group2}).
+		Note that this experiment is an extreme case, where no candidates from group ``age < 25'' where ranked in the top-200 in $cb|_k$, which explains why this group never loses exposure under any setting for $p_1$ and $p_2$ (see Fig.~\ref{fig:experiments:compasAge:expGain:group2}).
 	}
 	\vspace{-\baselineskip}
 	\label{fig:results-moving-p}
