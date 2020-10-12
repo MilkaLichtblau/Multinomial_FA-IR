@@ -210,7 +210,7 @@ We show that large increases in average group exposure can be achieved with rela
 			
 			D2, k=500 & \algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, \infty]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[181, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
 			COMPAS, & \algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75, \infty]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
-			age (2 prot.) & \citeauthor{zehlike2020matching} & $[-\infty, 8.38, \infty]$ & 0.0365 & $[-\infty, 0.14 ,0.00]$ & $[-\infty, 184, 0]$ & $[0.14, 0.14, 0,00]$ \\ %\cline{2-7} 
+			age (2 prot.) & \citeauthor{zehlike2020matching} & $[-17.96, 8.38, \infty]$ & 0.0365 & $[0.14, 0.14 ,0.00]$ & $[184, 184, 0]$ & $[0.14, 0.14, 0,00]$ \\ %\cline{2-7} 
 			\midrule
 			
 			D3, k=500 & \algoFAIR  $p_{\text{eq}}$ & $[]$ &  & $[]$ & $[]$ & $[]$ \\
@@ -243,23 +243,27 @@ With the $p_{\text{eq}}$ setting, we illustrate the flexibility of the approach.
 
 First, we observe that in general changes in NDCG with respect to the color-blind ranking are minor, as the utility is dominated by the top positions, which do not change dramatically.
 
-Second it is important to note that the baseline by~\citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
+Second we see that \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well. 
 %
-For example, in experiment D2 we observe a maximum rank drop for the non-protected group of 159, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266). 
+Sometimes the former yields better numbers, sometimes the latter. 
 %
-However we found the following problems when closely investigating the result: the candidate that experienced the drop in 184 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 316 (now 500). 
+Nonetheless, we found a very important drawback in the results of CFA$\theta$: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
-This means that the originally best candidate from the non-protected group (originally at rank 3) was ranked out of the top-500 by CFA$\theta$.
+Consider, for example, experiment D2, where we observe a maximum rank drop for the non-protected group of 184 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266). 
 %
-We suspect that this is because the method by~\citet{zehlike2020matching} can not handle ties well.
+However, we found the following problems when closely investigating the result: the candidate that experienced the drop in 184 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 316 (now 500). 
 %
-If lots of candidates have similar original scores, the fair representation scores may consist of many ties within which candidates are sorted randomly.
+This means that the originally best candidate from the non-protected group (rank 3 in $c|_k$) was ranked out of the top-500 by CFA$\theta$.
+%
+We suspect that this is because the method can not handle ties well.
+%
+If lots of candidates have similar original scores, the fair representation scores may have large ties in which candidates are ordered randomly and not w.r.t. their original ordering.
 %
 In such a setting, \algoFAIR has an important advantage: it guarantees in-group monotonicity, because candidates are separated into group rankings which are sorted by decreasing qualifications.
 %
 No matter which group has to be picked at the current position, the respective candidate will always be the best available from that group.
 %
-This means while ties appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
+This means while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
 
 \meike{Second, \algoFAIR achieves higher or equal selection utility than the baseline~\cite{zehlike2020matching} in all but one of the experimental conditions (D7).
 %
