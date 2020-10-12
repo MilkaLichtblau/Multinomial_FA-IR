@@ -39,7 +39,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             # find corresponding colorblind ranking and remainings
             pString = fairRankingFilename.split(sep="_")[3]
             kString = fairRankingFilename.split(sep="_")[2]
-            print(kString, pString)
+            print("\n", kString, pString)
             colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames if ((pString in string) and (kString in string))][0],
                                             header=0,
                                             skipinitialspace=True)
@@ -58,6 +58,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             thetaOneSorted = thetaOneSorted.reset_index(drop=True)
 
             # eval for Multinomial FA*IR
+            print("\nFA*IR Eval")
             kay = len(fairRanking)
             multi_fair_result = pd.DataFrame()
             multi_fair_result["group"] = fairRanking['group'].unique()
@@ -67,9 +68,11 @@ def evaluate(rankingsDir, evalDir, experimentNames):
                                                            fairRanking["score"].to_numpy(),
                                                            k=kay)
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
+            multi_fair_result = multi_fair_result.sort_values(by=['group'])
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
             # eval for CFA algorithm with theta=0.5
+            print("\nCFA 0.5 eval")
             tailLength = len(thetaHalfSorted) - kay
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
@@ -79,9 +82,11 @@ def evaluate(rankingsDir, evalDir, experimentNames):
                                                         thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                         k=kay)
             cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaHalfSorted.head(kay), cfaHalf_result)
+            cfaHalf_result = cfaHalf_result.sort_values(by=['group'])
             cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
+            print("\nCFA 1.0 eval")
             tailLength = len(thetaOneSorted) - kay
             cfaOne_result = pd.DataFrame()
             cfaOne_result["group"] = fairRanking['group'].unique()
@@ -91,6 +96,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
                                                 thetaOneSorted.head(kay)["score"].to_numpy(),
                                                 k=kay)
             cfaOne_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaOneSorted.head(kay), cfaOne_result)
+            cfaOne_result = cfaOne_result.sort_values(by=['group'])
             cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_cfaOneResult.csv")
 
 
