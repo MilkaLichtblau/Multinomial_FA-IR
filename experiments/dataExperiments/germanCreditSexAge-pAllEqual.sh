@@ -14,4 +14,4 @@ cd $PATH_TO_JAR
 
 # p is equal for all
 echo "Multi FAIR with p all equal"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 50 0.16665,0.16667,0.16667,0.16667,0.16667,0.16667 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
+java -jar Multinomial_FA-IR.jar data $PATH_TO_GERMAN_CREDIT_DATA/germanCredit_sexAge_java.csv 75 0.16665,0.16667,0.16667,0.16667,0.16667,0.16667 0.1 $PATH_TO_GERMAN_CREDIT_RESULTS/germanCredit_sexAge
