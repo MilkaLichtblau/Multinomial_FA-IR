@@ -14,6 +14,6 @@ cd $PATH_TO_JAR
 
 # p is equal for all
 echo "Multi FAIR with p all equal"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv 300 0.25,0.25,0.25,0.25 0.1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace
+java -jar Multinomial_FA-IR.jar data $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv 200 0.25,0.25,0.25,0.25 0.1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace
 
 
