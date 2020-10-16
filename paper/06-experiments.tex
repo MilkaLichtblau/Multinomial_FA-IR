@@ -239,13 +239,13 @@ We show that large increases in average group exposure can be achieved with rela
 			\bottomrule
 		\end{tabular}
 	}
-	\caption{Experimental results.
+	\caption{Experimental results, expressed in terms of changes of exposure and utility with respect to colorblind results.
 		%
-		Colorblind results are not shown because they are always zero.
+		%Colorblind results are not shown because they are always zero.
 		%
-		All measures are presented per group except for the loss of NDCG which is calculated for the entire ranking and groups are ordered the same way as in Table~\ref{tbl:datasets}.
+		All measures are presented per group except for the loss of NDCG which is calculated for the entire ranking.
 		%
-		The first value is always for the non-protected group.
+		Groups are in the same order as in Table~\ref{tbl:datasets}, and the first value is always for the non-protected group.
 		%
 		With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
 		%
@@ -276,6 +276,17 @@ We show that large increases in average group exposure can be achieved with rela
 \end{table}
 %
 Table~\ref{tbl:results} summarizes the results.
+\note[ChaTo]{I would use ``CFA$\theta$'' instead of Zehlike et al. in the table.
+
+Exposure gain per group: I would split into two columns. First, ``Exposure change (non-protected group)'', ``Exposure change (protected groups)''
+
+Red color seems to indicate something is wrong while the opposite is true,  perhaps you can underline those values or add an asterisk to them (something you can see in black and white).
+
+The discussion about the table is split between the caption of the table and the main text. I think the caption of the table should be just to explain what each column is. The commentary and observations should appear in the main text.
+
+As an idea, perhaps the table could be separated in two parts: first a table only with method, exposure change, NDCG change; then another table with method, ordering utility, rank drop, selection utility. The discussion following these two tables could be more easy to follow, perhaps.
+
+}
 %
 We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$).
 %
@@ -336,7 +347,10 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 
 Importantly, \algoFAIR allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with the baseline (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
-%
+
+\note[ChaTo]{This part perhaps requires a subsection header or a preamble indicating why you want to introduce this new figure.
+
+Again, perhaps in the caption of Figure~\ref{fig:results-moving-p} given that the caption is long, I would move the discussion/commentary on the results to the main text, and leave in the caption just the indication of what the number mean.}
 Figure~\ref{fig:results-moving-p} shows results when varying $p_1$ and $p_2$ in data set D2 (COMPAS, the protected groups are people of age 25--45 ($p_1$) and people under 25 years ($p_2$).
 %
 This means that \algoFAIR allows a wide range of positive actions, for instance, granting reintegration programs to people with promising COMPAS ratings, with a preference towards younger offenders.

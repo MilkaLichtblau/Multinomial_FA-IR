@@ -7,33 +7,39 @@ A top-$k$ ranking algorithm is typically used to find the most suitable way of o
 %
 Conventionally, these lists are ranked in descending order of some measure of the relative quality of items, according to the \emph{probability ranking principle}~\cite{robertson1977probability}.
 
-The main concern motivating this paper is that a biased machine learning model that produces ranked lists can further systematically reduce the visibility of an already disadvantaged group~\cite{peder2008,Dwork2012} (corresponding to a legally protected category such as people with disabilities, racial or ethnic minorities, or an under-represented gender in a specific industry).
+The main concern motivating this paper is that a machine learning ranking model may produce ranked lists that can systematically reduce the visibility of an already disadvantaged group~\cite{peder2008,Dwork2012}.
+%
+Disadvantaged groups correspond to legally protected categories such as people with disabilities, racial or ethnic minorities, or an under-represented gender in a specific professional domain.
 %
 Furthermore it is assumed that this bias manifests differently across groups, rendering inter-group relevance scores incomparable with each other.
 
-According to \citet{friedman1996bias} a computer system is \emph{biased} ``if it systematically and unfairly discriminate[s] against certain individuals or groups of individuals in favor of others. 
+
+According to \citet{friedman1996bias} a computer system is \emph{biased} ``if it systematically and unfairly discriminate[s] against certain individuals or groups of individuals in favor of others.
 %
 A system discriminates unfairly if it denies an opportunity or a good or if it assigns an undesirable outcome to an individual or a group of individuals on grounds that are unreasonable or inappropriate.''
 %
 Yet ``unfair discrimination alone does not give rise to bias unless it occurs systematically'' and ``systematic discrimination does not establish bias unless it is joined with an unfair outcome.''
 %
-On a ranking, the desired good for an individual is to appear in the result and to be ranked amongst the top-$k$ positions. 
+On a ranking, the desired good for an individual is to appear in the result and to be ranked amongst the top-$k$ positions.
 %
-The outcome is unfair if members of one or more protected groups are systematically ranked lower than those of a privileged group.
+The outcome can be deemed unfair if members of one or more protected groups are systematically ranked lower than those of a privileged group.
 %
-The ranking algorithm discriminates unfairly if this ranking decision is based fully or partially on the protected feature. 
+The ranking algorithm discriminates unfairly if this ranking decision is based fully or partially on the protected feature.
 %
-This discrimination is systematic when it is embodied in the algorithm's ranking model. 
+This discrimination is systematic when it is embodied in the algorithm's ranking model.
 %
 As shown in earlier research, a machine learning model trained on datasets incorporating \textit{preexisting bias} will embody this bias and therefore produce biased results, potentially increasing any disadvantage further, reinforcing existing bias~\cite{oneil2016weapons}.
 
-Based on this observation, in this paper we study the problem of producing a fair ranking given legally-protected attributes, i.e., a ranking in which the representation of different minority groups does not fall below their respective minimum proportions $p_G$ \emph{at any point in the ranking}, while the utility of the ranking is maintained as high as possible.
+
+Based on this observation, in this paper we study the problem of producing a ranking that we will consider fair given legally-protected attributes.
+%
+A formal definition can be found in Section~\ref{sec:problem}; in short, we will try to produce a ranking in which the proportion of different minority groups in any prefix of the ranking does not fall below minimum proportions $p_G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
 %
 %We denote however the motivating assumption of our method which is that utility measures \emph{are not comparable across groups} because said bias manifests differently for each group.
 
-We propose a post-processing method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper. 
+We propose a post-processing method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper.
 %
-We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not. 
+We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not.
 %
 Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide $p_G$ as input which can originate in a legal mandate or in voluntary commitments.
 %
@@ -44,7 +50,8 @@ while in Spain, a minimum of 40\% of political candidates in voting districts ex
 In other cases, such quotas might be adopted voluntarily, for instance through a diversity charter.\footnote{European Commission: \url{http://ec.europa.eu/justice/discrimination/diversity/charters/}}
 %
 In general these measures do not mandate perfect parity, as distributions of qualifications across groups can be unbalanced for legitimate, explainable reasons~\cite{zliobaite2011handling,pedreschi2009integrating}. % pedreschi2009integrating has the truck driver license example }
-%
+
+
 The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $ j $ of the dice having success probability $p_j \in p_G$).
 %
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking in this test.
@@ -87,12 +94,12 @@ We remark that our method is suitable for concerns about intersectionality, whic
 %
 Consider as an example the case DeGraffenreid v. General Motors in 1976: here Emma DeGraffenreid wanted to challenge General Motors for being discriminated in the promotion procedure for being a black woman.
 %
-However the court found that GM had neither discriminated against blacks, nor against women and therefore ruled that DeGraffenreid ``could not combine the claims'' of race and sex discrimination. 
+However the court found that GM had neither discriminated against blacks, nor against women and therefore ruled that DeGraffenreid ``could not combine the claims'' of race and sex discrimination.
 %
 Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one category.
 
 \spara{Our contributions.}
-In this paper, we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups as an extension of~\cite{zehlike2017fair}, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria. 
+In this paper, we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups as an extension of~\cite{zehlike2017fair}, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria.
 %
 The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
 
@@ -110,7 +117,7 @@ First, by a criterion we call \emph{selection utility}, which prefers rankings i
 %
 Second, by a criterion we call \emph{ordering utility}, which prefers rankings in which for every pair of candidates included in the top-$k$, either the more qualified candidate is ranked above, or the difference in their qualifications is small.
 %
-Note however, that in a setting with multiple protected groups optimal selection and ordering utility cannot be guaranteed because of said differences in the group skews. 
+Note however, that in a setting with multiple protected groups optimal selection and ordering utility cannot be guaranteed because of said differences in the group skews.
 %
 Mathematically this means that the optimal solution for multinomial ranked group fairness (i.e. for more than one protected group) is a solution space rather than just a single point as it was in~\cite{zehlike2017fair}, while the optimal solution in terms of utility is still a single point within said solution space whose location depends on the candidate set at hand.
 %
@@ -148,7 +155,7 @@ Summarizing, the main contributions of this paper are:
 	\item the \algoFAIR\ algorithm for producing a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
 \end{compactenum}
 
-Our method can be used within an anti-discrimination framework such as \emph{positive actions}~\cite{sowell2005affirmative}. 
+Our method can be used within an anti-discrimination framework such as \emph{positive actions}~\cite{sowell2005affirmative}.
 %
 We do not claim these are the only way of achieving fairness, but we provide \emph{an algorithm grounded in statistical tests that enables the implementation of a positive action policy in the context of ranking}.
 
@@ -161,4 +168,3 @@ Section~\ref{sec:algorithms} describes the \algoFAIR\ algorithm and the model ad
 Section~\ref{sec:experiments} presents experimental results.
 %
 Section~\ref{sec:conclusions} presents our conclusions and future work.
-
