@@ -1,197 +1,614 @@
 Evaluation for COMPAS experiments
 age
-k=100 p=[0.2,0.2,0.6]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.1,0.6]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.6,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.5,0.1,0.4]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.5,0.4,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.1,0.7]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.4,0.5,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.6,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.4,0.4]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.5,0.3,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.5,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.4,0.3,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.4,0.1,0.5]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.4,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.3,0.4]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=500 p=[0.33333,0.33333,0.33334]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.6,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.6,0.1,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.5,0.2,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.2,0.7]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.7,0.1,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.8,0.1,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.7,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.8,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.6,0.2,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.3,0.5]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.7,0.2,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.4,0.2,0.4]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.4,0.5]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=500 p=[0.209,0.573,0.218]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.1,0.8]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.3,0.6]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.2,0.5,0.3]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.3,0.2,0.5]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.4,0.4,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.5,0.4]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.6,0.3,0.1]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.1,0.7,0.2]
-group 2 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.6,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.8,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.7,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.3,0.5]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.1,0.8]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+ k=200 p=[0.3,0.3,0.4]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.2,0.6]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.4,0.2,0.4]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.3,0.2,0.5]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.6,0.2,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.8,0.1,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.4,0.5,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.5,0.4]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.6,0.3,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.4,0.1,0.5]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.7,0.1,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.5,0.3,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.3,0.6,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.5,0.2,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.5,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.7,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=500 p=[0.33333,0.33333,0.33334]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.3,0.1,0.6]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.2,0.4,0.4]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.3,0.5,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.2,0.7]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+ k=200 p=[0.4,0.4,0.2]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.6,0.1,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.5,0.1,0.4]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.6,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.4,0.5]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+ k=200 p=[0.5,0.4,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=500 p=[0.209,0.573,0.218]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.3,0.4,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.1,0.3,0.6]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in colorblind ranking
+group 0 did not appear in the top-k in fair ranking
+
+ k=200 p=[0.2,0.1,0.7]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.7,0.2,0.1]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+ k=200 p=[0.4,0.3,0.3]
+
+FA*IR Eval
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 0 did not appear in the top-k in fair ranking
+group 2 did not appear in the top-k in colorblind ranking
+
+CFA 1.0 eval
+group 0 did not appear in the top-k in fair ranking
 group 2 did not appear in the top-k in colorblind ranking
 race
-k=500 p=[0.66,0.34]
-k=1500 p=[0.5,0.5]
-k=1500 p=[0.66,0.34]
-k=500 p=[0.5,0.5]
+
+ k=1500 p=[0.34,0.66]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+
+ k=1500 p=[0.5,0.5]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
 worstThree
-k=500 p=[0.826,0.028,0.012,0.134]
+
+ k=200 p=[0.826,0.028,0.012,0.134]
+
+FA*IR Eval
 group 3 did not appear in the top-k in colorblind ranking
 group 1 did not appear in the top-k in colorblind ranking
 group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 3 did not appear in the top-k in both rankings
+group 1 did not appear in the top-k in both rankings
+group 2 did not appear in the top-k in both rankings
+
+CFA 1.0 eval
 group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
+group 1 did not appear in the top-k in both rankings
+group 2 did not appear in the top-k in both rankings
+
+ k=200 p=[0.25,0.25,0.25,0.25]
+
+FA*IR Eval
 group 2 did not appear in the top-k in colorblind ranking
 group 3 did not appear in the top-k in colorblind ranking
 group 1 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.826,0.028,0.012,0.134]
+
+CFA 0.5 eval
+group 2 did not appear in the top-k in both rankings
+group 3 did not appear in the top-k in both rankings
+group 1 did not appear in the top-k in both rankings
+
+CFA 1.0 eval
+group 2 did not appear in the top-k in both rankings
+group 3 did not appear in the top-k in colorblind ranking
+group 1 did not appear in the top-k in both rankings
+
+ k=300 p=[0.826,0.028,0.012,0.134]
+
+FA*IR Eval
 group 3 did not appear in the top-k in colorblind ranking
 group 1 did not appear in the top-k in colorblind ranking
 group 2 did not appear in the top-k in colorblind ranking
+
+CFA 0.5 eval
+group 3 did not appear in the top-k in both rankings
+group 1 did not appear in the top-k in both rankings
+group 2 did not appear in the top-k in both rankings
+
+CFA 1.0 eval
 group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-k=100 p=[0.25,0.25,0.25,0.25]
-group 2 did not appear in the top-k in colorblind ranking
-group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
-group 2 did not appear in the top-k in colorblind ranking
-group 3 did not appear in the top-k in colorblind ranking
-group 1 did not appear in the top-k in colorblind ranking
+group 1 did not appear in the top-k in both rankings
+group 2 did not appear in the top-k in both rankings
 Evaluation for GermanCredit experiments
 
-k=100 p=[0.58,0.22,0.065,0.045,0.03,0.06]
+
+ k=50 p=[0.58,0.22,0.065,0.045,0.03,0.06]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+
+ k=100 p=[0.58,0.22,0.065,0.045,0.03,0.06]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+
+ k=50 p=[0.16665,0.16667,0.16667,0.16667,0.16667,0.16667]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
 Evaluation for LSAT experiments
 
-k=200 p=[0.25,0.25,0.25,0.25]
-k=200 p=[0.49,0.35,0.084,0.076]
+
+ k=200 p=[0.25,0.25,0.25,0.25]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+
+ k=300 p=[0.49,0.35,0.084,0.076]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+
+ k=200 p=[0.49,0.35,0.084,0.076]
+
+FA*IR Eval
+
+CFA 0.5 eval
+
+CFA 1.0 eval
+

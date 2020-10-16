@@ -2,7 +2,6 @@
 We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and elaborate its complexity~(\S\ref{subsec:algorithm-complexity}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
-\note{Done}
 Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
 %
 As input, multinomial \algoFAIR takes 
@@ -75,8 +74,7 @@ If the node demands a protected candidate from group $g$ at the current position
 
 \subsection{Algorithm Optimizations}
 \label{subsec:algorithm-optimization}
-\note{Done}
-Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:time}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
+Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:time-space}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
 %
 Depending on the structure of $p_G$, different levels of optimization are applicable.
 
@@ -85,7 +83,7 @@ We note however that an mTree has to be computed only once for a particular comb
 We provide the already pre-computed mTrees and MCDF caches for our experiments and the intermediate steps not only for reproducibility but for use in practice too.
 
 \subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
-Table~\ref{tbl:time} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$. 
+Table~\ref{tbl:time-space} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$. 
 %
 In the worst case Algorithm~\ref{alg:imcdf} computes it $|G|+1$ times for each group $g$ in $m_g(i)$ and each position $i\leq k$.
 %
@@ -143,59 +141,34 @@ If any of these trees is needed at a later point in time it can be loaded from d
 \subsection{Algorithm Complexity}\label{subsec:algorithm-complexity}
 
 \begin{table}[t]
-	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time}}
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
 	\vspace{-4mm}
 	\scalebox{0.75}{
-		\begin{tabular}{ll}
+		\begin{tabular}{lll}
 			\toprule
-			\textbf{Algorithm} & \textbf{Time Complexity} \\ 
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\ 
 			\midrule
 			\rowcolor[HTML]{C0C0C0} 
-			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ \\ 
-			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ \\ 
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\ 
+			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\ 
 			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ \\ 
-			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ \\ 
+			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\ 
+			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ & $\mathcal{O}(|G|^2)$ \\ 
 			\rowcolor[HTML]{C0C0C0}
-			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ \\ 
-			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
+			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ & $\mathcal{O}(|G|^{k})$\\ 
+			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$  & $\mathcal{O}(|G|^k)$\\ 
 			\rowcolor[HTML]{C0C0C0}
-			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ \\ 
-			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ \\ 
+			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ & $\mathcal{O}(|G|^k)$\\ 
+			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ & $\mathcal{O}(|G|^k + n + k)$ \\ 
 			\bottomrule
 		\end{tabular}
 	}
-\end{table}
-
-
-\begin{table}[b]
-	\scalebox{0.75}{
-		\begin{tabular}{ll}
-			\toprule
-			\textbf{Algorithm} & \textbf{Space Complexity} \\ 
-			\midrule
-			\rowcolor[HTML]{C0C0C0}
-			\algoMtable & $\mathcal{O}(k)$ \\ 
-			\algoRecursive & $\mathcal{O}(k)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(k)$ \\ 
-			\algoImcdf & $\mathcal{O}(|G|^2)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoComputeMTree & $\mathcal{O}(|G|^{k})$ \\ 
-			\algoMultBinary & $\mathcal{O}(|G|^k)$ \\ 
-			\rowcolor[HTML]{C0C0C0}
-			\algoReg & $\mathcal{O}(|G|^k)$ \\ 
-			\algoFAIR & $\mathcal{O}(|G|^k + n + k)$ \\ 
-			\bottomrule
-		\end{tabular}
-	}
-	\caption{Space complexity for all algorithms without pre-computed results.\label{tbl:space}}
 \end{table}
 
 \todo{@Chato: Maybe we put the comments on space and time complexity in the appendix?}
 This section presents time and space complexity analyses for all proposed algorithms. 
 %
-Table~\ref{tbl:time} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
+Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
 %
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
 \algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values. 

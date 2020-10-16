@@ -1,30 +1,32 @@
 \section{Conclusions}\label{sec:conclusions}
 
-The method we have presented can generate a ranking with a guaranteed ranked group fairness, and as we have observed, does not introduce a large utility loss in general .
+In this paper we presented the extension of \algoFAIR to multiple groups, where we guarantee ranked group fairness, without introducing a large utility loss.
 %
-Especially when groups largely have the same utility score in the top positions (as is the case in the COMPAS experiments) no ranking utility at all is lost in terms of NDCG. 
+Especially when groups largely have the same utility score in the top positions (as is the case in the COMPAS experiments) no ranking utility at all is lost in terms of NDCG or individual fairness. 
 %
 In this case \algoFAIR only benefits the protected groups without skewing the ranking result.
 %
+If a protected group already receives advantageous exposure in the colorblind ranking and the ranked group fairness condition is already met via the ranking scores of the candidates, \algoFAIR preserves this. 
+%
+A protected candidate can only lose exposure due to a protected candidate from another group being ranked up, but not due to a non-protected one.
+%
 Additionally the user can control the degree of fairness that is obtained in the result by setting $p_G$ to a value that is appropriate for the situation at hand.
 %
-\meike{Compared to the baseline of~\citet{zehlike2020matching}, in general we introduce the same or less utility loss.} 
-%
-More importantly, we can transparently control through a parameter vector $p_G$ the trade-off between fairness and utility, instead of having a less intuitive fairness parameter $\theta$ that operates on the barycenter of the group distributions.
+This lets them transparently control the trade-off between fairness and utility, instead of having a less intuitive fairness parameter $\theta$ that operates on the barycenter of group distributions.
 
 \spara{Future work.}
-
-Currently an important challenge is the algorithmic complexity of calculating the mTree for a particular configuration of $p_G$ and $\alpha$.
 %
-Though we already implemented improvements to speed things up the calculation of an adjusted mTree of length $k=100$ for one configuration with six groups takes several weeks.
+An important challenge is the algorithmic complexity of calculating the mTree for a particular configuration of $p_G$ and $\alpha$.
 %
-Of course this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration this calculation times are currently unavoidable.
+Though we already implemented improvements to reduce complexity, calculating an adjusted mTree of length $k=100$ with six groups takes several weeks.
+%
+Of course this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration these calculation times are currently unavoidable.
 %
 A significant speed-up could be achieved by programming a customized mcdf-function which can store the results of repetitive computation steps. 
 %
 This is however very memory-intensive and the algorithm then needs to run on large computer clusters.
 %
-Additionally one could provide an additional program that fills the MCDF Cache with various configurations of $p_G$ and $\alpha$.
+Additionally one could provide a script that fills the MCDF Cache with various configurations of $p_G$ and $\alpha$.
 %
 This calculation can continuously run as a separate process on a server which then provides the obtained caches to users who want to compute new mTrees.
 
