@@ -3,7 +3,7 @@
 \begin{table}[h]
 	\resizebox{1.01\columnwidth}{!}{%
 		\centering\begin{tabular}{clcclllc}\toprule
-			&        &                         &                         & Quality   & Protected & Protected \\
+			&        &                         &                         & Qualification   & Protected & Protected \\
 			& Dataset & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$k$} & criterion & groups     & \% \\
 			\midrule
 			D1 & COMPAS \cite{angwin_2016_machine}& 6173 & 1500 & ad-hoc score & PoC & 65.9\% \\
@@ -68,7 +68,7 @@ In this section, we consider several reference datasets for evaluating the multi
 
 Table~\ref{tbl:datasets} summarizes the datasets used in our experiments.
 %
-Each dataset contains a set of people with demographic attributes, plus a quality or score attribute.
+Each dataset contains a set of people with demographic attributes, plus a score attribute.
 %
 Note that dataset D1 is the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
 %
@@ -172,7 +172,7 @@ We also report the maximum rank drop, {\em i.e.}, the number of positions lost b
 
 \spara{NDCG (Performance Measure). }
 %
-We report a normalized weighted summation (Normalized Discounted Cummulative Gaing - NDCG) of the scores/quality of the elements in the ranking, $\sum_{i=1}^{k} w_i q_{(\tau_i)}$, in which the weights are chosen to have a logarithmic discount in the position:  $w_i = \frac{1}{\log_2 (i+1)}$. This is a standard measure to evaluate search rankings~\cite{jarvelin2002cumulated}.
+We report a normalized weighted summation (Normalized Discounted Cummulative Gaing - NDCG) of the scores of the elements in the ranking, $\sum_{i=1}^{k} w_i q_{(\tau_i)}$, in which the weights are chosen to have a logarithmic discount in the position:  $w_i = \frac{1}{\log_2 (i+1)}$. This is a standard measure to evaluate search rankings~\cite{jarvelin2002cumulated}.
 %%
 This is normalized so that the maximum value is $1.0$.
 
