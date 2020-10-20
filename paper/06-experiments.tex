@@ -49,7 +49,7 @@ In this section, we consider several reference datasets for evaluating the multi
 	\label{fig:dataset:compas:race}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
 	\subfloat
-	[Score distribution by age in the COMPAS dataset \inote{older THAN 45 or $>45$, younger THAN 25 or $<25$}. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data. Experiment D2.
+	[Score distribution by age in the COMPAS dataset. We see that age is a strong predictor of recidivism risk which suggests that the COMPAS questionnaire injects a bias against younger people into the data. Experiment D2.
 	\label{fig:dataset:compas:age}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_age_kde.png}}\hfill
 	\subfloat
@@ -63,8 +63,6 @@ In this section, we consider several reference datasets for evaluating the multi
 \end{figure}
 
 \subsection{Datasets}\label{sec:experiments-datasets}
-
-\note[ChaTo]{I'm uncomfortable with using ``quality'' -- throughout the paper, I would refer to this as simply ``score''.}
 
 Table~\ref{tbl:datasets} summarizes the datasets used in our experiments.
 %
@@ -80,7 +78,7 @@ We remark that the choice of protected group is not arbitrary: it is determined 
 %
 Similarly, the minimum proportion can always be provided by regulation or voluntary commitments; in the absence of this minimum proportion one can use the fraction of people who are members of that group within the entire population.
 %
-An experiment consists of generating a \inote{re-?}ranking using multinomial \algoFAIR and then comparing it with baseline rankings according to the metrics introduced in the next section.
+An experiment consists of generating a ranking from the set of candidates using multinomial \algoFAIR and then comparing it with baseline rankings according to the metrics introduced in the next section.
 %
 We use the three publicly-available datasets: COMPAS~\cite{angwin_2016_machine}, German Credit~\cite{lichman_2013_uci}) and LSAC~\cite{wightman1998lsac}.
 
@@ -192,101 +190,114 @@ We show that large increases in average group exposure can be achieved with rela
 
 \subsection{Results}\label{sec:experiments-results}
 %
-\begin{table}[b!]
-	\resizebox{1.02\columnwidth}{!}{%
-		\centering\begin{tabular}{lccccc}\toprule
-				   & Exposure &   total    & Ordering     & Rank & Selection \\
-			Method & gain per group & NDCG loss  & utility loss & drop & utility loss \\
-
-			\midrule
-			\multicolumn{6}{c}{D1 -- COMPAS, k=1500, race (1 prot.)} \\
-			\midrule
-			\algoFAIR $p_{\text{eq}}$ & $[-0.27, 0.27]$ & $1.915\cdot10^{-7}$ & $[0.0066, 0]$ & $[15, 0]$ & $[0, 0]$ \\
-			\algoFAIR $p_{\text{stat}}$ & $[-19.16, 19.16]$ & 0.0039 & $[0.0687, 0]$ & $[387, 0]$ & $[0.0621,0]$ \\
-			\citeauthor{zehlike2020matching} & $[-28.6, 28.6]$  & 0.0055 & $[0.0738, 0]$ & $[620, 288]$ & $[0.0702, 0]$ \\
-
-			\midrule
-			\multicolumn{6}{c}{D2 -- COMPAS, k=500, age (2 prot.)} \\
-			\midrule
-			\algoFAIR $p_{\text{eq}}$ & $[-13.77, -7.10, \textcolor{red}{20.87}]$ & 0.0580 & $[0.23, 0,23, 0.00]$ & $[182, 127, 0]$ & $[0.23, 0.23, 0.00]$ \\
-			\algoFAIR $p_{\text{stat}}$ & $[-20.86, 6.75, \textcolor{red}{14.11}]$ & 0.0354 & $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ & $[0.21, 0.21, 0.00]$ \\
-			\citeauthor{zehlike2020matching} & $[-38.48, 18.11, \textcolor{red}{20.49}]$ & 0.0521 & $[0.19, 0.18 ,0.00]$ & $[159, 280, 0]$ & $[0.19, 0.17, 0,00]$ \\ %\cline{2-7}
-
-			\midrule
-			\multicolumn{6}{c}{D3 -- COMPAS, k=200, three worst off (3 prot.)} \\
-			\midrule
-			\algoFAIR  $p_{\text{eq}}$ & $[-21.87, \textcolor{red}{7.29}, \textcolor{red}{7.30}, \textcolor{red}{7.27}]$ & 0.1526 & $[0.42, 0.14, 0.00, 0.22]$ & $[134, 0, 0, 0]$ & $[0.42, 0.13, 0.00, 0.22]$ \\
-			\algoFAIR  $p_{\text{stat}}$ & $[-3.62, \textcolor{red}{0.60}, \textcolor{red}{0.29}, \textcolor{red}{2.73}]$ & 0.0155 & $[0.17, 0.03,0.00, 0.02]$ & $[24, 0,0,0]$ & $[0.17, 0.00,0.00, 0.02] $  \\
-			\citeauthor{zehlike2020matching} &  $[-11.83, \pm 0, \pm 0, \textcolor{red}{11.83}]$ & 0.0562 & $[0.19, \pm 0, \pm 0, 0.00] $ & $[178, \pm 0, \pm 0, 0]$ & $[0.19, \pm 0, \pm 0, 0.00]$   \\
-
-			\midrule
-			\multicolumn{6}{c}{D4 -- German credit, k=50, sex \& age (5 prot.)} \\
-			\midrule
-			\algoFAIR $p_{\text{eq}}$ &  $[-4.46, 0.08, 0.50, $ & 0.1698 & $[3.51, 2.70, 3.42, $ & $[28, 4, 7, 1, 0, 0]$ & $[3.05, 1.82, 1.34, $\\
-			& $1.49, 1.26, 1.12]$ & &  $ 0.55, 1.18, 1.76]$& & $0.00, 0.18, 0.33]$  \\
-			\algoFAIR $p_{\text{stat}}$ &  $[-0.83, 0.01, 0.23, $& 0.0185 & $[1.84, 1.56, 0.45, $ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23,$  \\
-			& $0.38, 0.20, 0.01]$  & & $0.00, 0.33, 1.28]$ & & $ 0.00, 1.18, 1.54]$\\
-			\citeauthor{zehlike2020matching} &  $[1.15, 0.22, -0.91, $ & 0.0471 & $[0.50, 1.41, 2.06,$ & $[2, 2, 31, 22, 0, 0]$ & $[0.34, 0.00, 1.93, $ \\
-			& $-0.71, 0.00, 0.25]$ &  & $ 1.75, 0.27, 0.00]$ & & $2.20, 0.00, 0.00]$\\
-
-			\midrule
-			\multicolumn{6}{c}{D5 -- LSAT, k=200, sex \& race (3 prot.)} \\
-			\midrule
-			\algoFAIR $p_{\text{eq}}$ & $[-15.76, -1.48, 8.41, 8.82]$ & 0.0157 & $[4,4,1,0]$ & $[145, 28, 0, 0]$ & $[4, 4, 1, 0`]$  \\
-			\algoFAIR $p_{\text{stat}}$ & $[-11.12, 3.87, 2.80, 4,44]$ & 0.0026 & $[2, 2, 1, 0]$ & $[100, 15, 0, 0]$ & $[2, 2, 1, 0]$  \\
-			\citeauthor{zehlike2020matching} &  $[-14.63, 4.29, 3.88, 6.46]$ & 0.0049 & $[2, 1, 1, 0]$ & $[149, 26, 0, 0]$ & $[2, 1, 0, 0]$  \\
-
-			\bottomrule
-		\end{tabular}
-	}
-	\caption{Experimental results, expressed in terms of changes of exposure and utility with respect to colorblind results.
+\begin{table}[t!]
+	\caption{Experimental results, showing changes in the average group exposure and ranking utility in terms of NDCG. 
 		%
 		%Colorblind results are not shown because they are always zero.
 		%
-		All measures are presented per group except for the loss of NDCG which is calculated for the entire ranking.
+		Exposure is presented per group while the loss of NDCG is calculated for the entire ranking.
+		%
+		The protected groups are in the same order as in Table~\ref{tbl:datasets}.
+		%
+		%With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
+		%
+		%With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		%
+		For exposure gain we report numbers with an asterisk, if a group was not among the top-$k$ in the colorblind ranking, but is now.
+		%
+		These numbers constitute the \emph{absolute} exposure value a group receives after re-ranking.
+		%
+		We write $\pm 0$, if the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
+		\label{tbl:results-part-one}
+	}
+	\vspace{-5mm}
+	\centering\begin{tabular}{llccc}\toprule
+   					&			& Exposure gain 	& Exposure gain		&   total   \\
+		Experiment	& Method 	& per prot. group 	& non-prot. group 	& NDCG loss  \\
+
+		\midrule
+		D1 -- COMPAS,	& \algoFAIR $p_{\text{eq}}$ 	& 0.27 	& -0.27 	& $1.915\cdot10^{-7}$ \\
+		k=1500, 		& \algoFAIR $p_{\text{stat}}$	& 19.16 & -19.16 	& 0.0039 \\
+		race (1 prot.)	& CFA$\theta$ 					& 28.60 & -28.60	& 0.0055 \\
+
+		\midrule
+		D2 -- COMPAS, 	& \algoFAIR $p_{\text{eq}}$ 	& $[-7.10, 20.87^*]$ 	& -13.77 	& 0.0580 \\
+		k=500, 			& \algoFAIR $p_{\text{stat}}$ 	& $[6.75, 14.11^*]$ 	& -20.86 	& 0.0354 \\
+		age (2 prot.)	& CFA$\theta$ 					& $[18.11, 20.49^*]$ 	& -38.48	& 0.0521 \\ %\cline{2-7}
+
+		\midrule
+		D3 -- COMPAS, 			& \algoFAIR  $p_{\text{eq}}$ 	& $[7.29^*, 7.30^*, 7.27^*]$ & -21.87	& 0.1526 \\
+		k=200, 					& \algoFAIR  $p_{\text{stat}}$ 	& $[0.60^*, 0.29^*, 2.73^*]$ & -3.62	& 0.0155 \\
+		3 worst off (3 prot.) 	& CFA$\theta$ 					& $[\pm 0, \pm 0, 11.83^*]$	 & -11.83	& 0.0562 \\
+
+		\midrule
+		D4 -- German credit, 	& \algoFAIR $p_{\text{eq}}$ 	&  $[0.08, 0.50, 1.49, 1.26, 1.12]$ 	& -4.46 	& 0.1698 \\
+		k=50,  					& \algoFAIR $p_{\text{stat}}$ 	&  $[0.01, 0.23, 0.38, 0.20, 0.01]$		& -0.83 	& 0.0185 \\
+		age (5 prot.) 			& CFA$\theta$ 					&  $[0.22, -0.91, -0.71, 0.00, 0.25]$ 	& 1.15 		& 0.0471 \\
+
+		\midrule
+		D5 -- LSAT, 			& \algoFAIR $p_{\text{eq}}$ 	& $[-1.48, 8.41, 8.82]$ & -15.76 & 0.0157 \\
+		k=200, 					& \algoFAIR $p_{\text{stat}}$ 	& $[3.87, 2.80, 4,44]$ 	& -11.12 & 0.0026 \\
+		sex \& race (3 prot.) 	& CFA$\theta$ 					& $[4.29, 3.88, 6.46]$ 	& -14.63 & 0.0049 \\
+
+		\bottomrule
+	\end{tabular}
+	\vspace{-5mm}
+\end{table}
+%
+\begin{table}[t!]
+	\caption{Experimental results, changes of individual utility loss respect to colorblind results.
+		%
+		%Colorblind results are not shown because they are always zero.
+		%
+		All measures are presented per group.
 		%
 		Groups are in the same order as in Table~\ref{tbl:datasets}, and the first value is always for the non-protected group.
 		%
-		With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
+		%With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
 		%
-		With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		%With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
 		%
-		For exposure gain we report numbers in red, if a group was not among the top-$k$ in the colorblind ranking, but is now.
-		%
-		These numbers constitute the absolute exposure value a group receives after re-ranking.
-		%
-		We write $\pm 0$, if the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
-		%
-		We observe that \algoFAIR $p_{\text{stat}}$ and the baseline CFA$\theta$ have comparable results for experiments D1 and D5.
-		%
-		However, we also see that CFA$\theta$ seems to not handle ties well in experiments D2 and D3 (see textual explanation for details).
-		%
-		For experiment D4 we see an interesting property of \algoFAIR: the youngest and oldest males experience a high rank drop (31 and 22) with CFA$\theta$ compared to \algoFAIR $p_{\text{stat}}$, even though they belong to the protected groups.
-		%
-		This is because they receive exposure values higher than average in the $cb|_k$, i.e. these two groups have the best scores.
-		%
-		CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus, removes the advantage that the protected groups have in this data set.
-		%
-		\algoFAIR, in contrast, ranks candidates based on their scores, as soon as the ranked group fairness conditions are met for each group.
-		%
-		As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
+		We write $\pm 0$, if the group appears neither in the colorblind, nor in the re-ranked top-$k$.
 	}
-	\vspace{-3mm}
-	\label{tbl:results}
+	\vspace{-4mm}
+	\label{tbl:results-part-two}
+	\resizebox{1.01\columnwidth}{!}{%
+	\centering\begin{tabular}{llccc}\toprule
+					& 			& Ordering     & Rank & Selection \\
+		Experiment 	& Method 	& utility loss & drop & utility loss \\
+		
+		\midrule
+		D1 -- COMPAS,	& \algoFAIR $p_{\text{eq}}$ 	& $[0.0066, 0]$ & $[15, 0]$ 	& $[0, 0]$ \\
+		k=1500, 		& \algoFAIR $p_{\text{stat}}$ 	& $[0.0687, 0]$ & $[387, 0]$ 	& $[0.0621,0]$ \\
+		race (1 prot.)	& CFA$\theta$ 					& $[0.0738, 0]$ & $[620, 288]$ 	& $[0.0702, 0]$ \\
+		
+		\midrule
+		D2 -- COMPAS, 	& \algoFAIR $p_{\text{eq}}$ 	& $[0.23, 0,23, 0.00]$ & $[182, 127, 0]$ 	& $[0.23, 0.23, 0.00]$ \\
+		k=500, 			& \algoFAIR $p_{\text{stat}}$ 	& $[0.21, 0.21, 0.00]$ & $[266, 3, 0]$ 		& $[0.21, 0.21, 0.00]$ \\
+		age (2 prot.)	& CFA$\theta$ 					& $[0.19, 0.18 ,0.00]$ & $[159, 280, 0]$ 	& $[0.19, 0.17, 0,00]$ \\ %\cline{2-7}
+		
+		\midrule
+		D3 -- COMPAS, 			& \algoFAIR  $p_{\text{eq}}$ 	& $[0.42, 0.14, 0.00, 0.22]$ 	& $[134, 0, 0, 0]$ 		& $[0.42, 0.13, 0.00, 0.22]$ \\
+		k=200, 					& \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03,0.00, 0.02]$ 	& $[24, 0,0,0]$ 				& $[0.17, 0.00,0.00, 0.02] $  \\
+		3 worst off (3 prot.) 	& CFA$\theta$ 					& $[0.19, \pm 0, \pm 0, 0.00] $ & $[178, \pm 0, \pm 0, 0]$ 	& $[0.19, \pm 0, \pm 0, 0.00]$   \\
+		
+		\midrule
+		D4 -- German credit, 	& \algoFAIR $p_{\text{eq}}$ 	&  $[3.51, 2.70, 3.42, 0.55, 1.18, 1.76]$ 	& $[28, 4, 7, 1, 0, 0]$ 	& $[3.05, 1.82, 1.34, 0.00, 0.18, 0.33]$ \\
+		k=50,  					& \algoFAIR $p_{\text{stat}}$ & $[1.84, 1.56, 0.45, 0.00, 0.33, 1.28]$ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23, 0.00, 1.18, 1.54]$  \\
+		age (5 prot.) 			& CFA$\theta$ &  $[0.50, 1.41, 2.06, 1.75, 0.27, 0.00]$ & $[2, 2, 31, 22, 0, 0]$ & $[0.34, 0.00, 1.93, 2.20, 0.00, 0.00]$ \\
+		
+		\midrule
+		D5 -- LSAT, 			& \algoFAIR $p_{\text{eq}}$ 	& $[4,4,1,0]$ 		& $[145, 28, 0, 0]$ & $[4, 4, 1, 0`]$  \\
+		k=200, 					& \algoFAIR $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ 	& $[100, 15, 0, 0]$ & $[2, 2, 1, 0]$  \\
+		sex \& race (3 prot.) 	& CFA$\theta$ 					& $[2, 1, 1, 0]$ 	& $[149, 26, 0, 0]$ & $[2, 1, 0, 0]$  \\
+		
+		\bottomrule
+	\end{tabular}
+	}
+	\vspace{-5mm}
 \end{table}
-%
-Table~\ref{tbl:results} summarizes the results.
-\note[ChaTo]{I would use ``CFA$\theta$'' instead of Zehlike et al. in the table.
-
-Exposure gain per group: I would split into two columns. First, ``Exposure change (non-protected group)'', ``Exposure change (protected groups)''
-
-Red color seems to indicate something is wrong while the opposite is true,  perhaps you can underline those values or add an asterisk to them (something you can see in black and white).
-
-The discussion about the table is split between the caption of the table and the main text. I think the caption of the table should be just to explain what each column is. The commentary and observations should appear in the main text.
-
-As an idea, perhaps the table could be separated in two parts: first a table only with method, exposure change, NDCG change; then another table with method, ordering utility, rank drop, selection utility. The discussion following these two tables could be more easy to follow, perhaps.
-
-}
+Table~\ref{tbl:results-part-one} and~\ref{tbl:results-part-two} summarize the results.
 %
 We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$).
 %
@@ -306,11 +317,11 @@ While the former yields better numbers in terms of utility, with the latter the 
 
 Nonetheless, we found a very important drawback in the results of CFA$\theta$ in experiment D2: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
-Consider, for example, experiment D2, where we observe a maximum rank drop for the non-protected group of 159 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266).
+Consider Table~\ref{tbl:results-part-two} where we observe a maximum rank drop for the non-protected group of 159 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266).
 %
 However, we found the following problems when closely investigating the result: the candidate that experienced the drop in 159 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 341 (now 500).
 %
-It means that the originally best candidate from the non-protected group (rank 3 in $cb|_k$) was ranked out of the top-500 by CFA$\theta$, hence the in-group ordering is not preserved.
+This means that the originally best candidate from the non-protected group (rank 3 in $cb|_k$) was ranked out of the top-500 by CFA$\theta$, hence the in-group ordering is not preserved.
 %
 We suspect that this is because the method can not handle ties well.
 %
@@ -346,14 +357,25 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 %
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 
-Importantly, \algoFAIR allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with the baseline (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
-
-\note[ChaTo]{This part perhaps requires a subsection header or a preamble indicating why you want to introduce this new figure.
-
-Again, perhaps in the caption of Figure~\ref{fig:results-moving-p} given that the caption is long, I would move the discussion/commentary on the results to the main text, and leave in the caption just the indication of what the number mean.}
-Figure~\ref{fig:results-moving-p} shows results when varying $p_1$ and $p_2$ in data set D2 (COMPAS, the protected groups are people of age 25--45 ($p_1$) and people under 25 years ($p_2$).
+\spara{A wide range of possibilities to set $p_G$.}
 %
-This means that \algoFAIR allows a wide range of positive actions, for instance, granting reintegration programs to people with promising COMPAS ratings, with a preference towards younger offenders.
+An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with the baseline (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
+
+Figure~\ref{fig:results-moving-p} shows results when varying $p_1$ and $p_2$ in data set D2: COMPAS, the protected groups are people of age 25--45 ($p_1$) and people under 25 years ($p_2$).
+%
+In Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} we see that the non-protected group loses exposure under all settings, as expected.
+%
+At the same time however NDCG loss is minor and under many settings not increasing beyond a statistical significance level of 0.05\% (Fig.~\ref{fig:experiments:compasAge:ndcgloss}).
+%
+Comparing Figures~\ref{fig:experiments:compasAge:expGain:group1} and~\ref{fig:experiments:compasAge:expGain:group2} we see that in general, if one protected group scores significantly better in the colorblind ranking (group ``25 -- 45'' in Fig.~\ref{fig:dataset:compas:age}) than another one (group ``younger 25'' in Fig.~\ref{fig:dataset:compas:age}), the first may be ranked down to make room for the second.
+%
+Figure~\ref{fig:experiments:compasAge:expGain:group1} shows that the middle-aged group in the COMPAS data set loses exposure to the young group unless $p_1$ is set high enough.
+%
+However even if $p_1$ is set low it still ensures that candidates from the middle-aged group show in the ranking, thus always losing less exposure than the non-protected group (compare Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} and~\ref{fig:experiments:compasAge:expGain:group1}).
+%
+Note that this experiment is an extreme case, where no candidates from group ``age < 25'' where ranked in the top-200 in $cb|_k$, which explains why this group never loses exposure under any setting for $p_1$ and $p_2$ (see Fig.~\ref{fig:experiments:compasAge:expGain:group2}).
+
+This experiment shows that \algoFAIR allows a wide range of positive actions, for instance, granting reintegration programs to people with promising COMPAS ratings, with a preference towards younger offenders.
 %
 In this case, the Figure~\ref{fig:experiments:compasAge:ndcgloss} shows that we can double the proportion of young people in the top-$k$ ranking (e.g. from 0\% in the original up to 40\% in the fair ranking) without introducing a large drop for the other protected group loss: in the colorblind ranking they received exposure equivalent to $0.4 > p_1 > 0.5$, so setting $p_1 = p_2 = 0.4$ only causes an exposure drop of 5.8\%.
 %
@@ -371,18 +393,6 @@ At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when f
 		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
 		%
 		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
-		%
-		In Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} we see that the non-protected group loses exposure under all settings, as expected.
-		%
-		At the same time however NDCG loss is minor and under many settings not reaching beyond a statistical significance level of 0.05\% (Fig.~\ref{fig:experiments:compasAge:ndcgloss}).
-		%
-		Comparing Figures~\ref{fig:experiments:compasAge:expGain:group1} and~\ref{fig:experiments:compasAge:expGain:group2} we see that in general, if one protected group scores significantly better in the colorblind ranking (group ``25 -- 45'' in Fig.~\ref{fig:dataset:compas:age}) than another one (group ``younger 25'' in Fig.~\ref{fig:dataset:compas:age}), the first may be ranked down to make room for the second.
-		%
-		Figure~\ref{fig:experiments:compasAge:expGain:group1} shows that the middle-aged group in the COMPAS data set loses exposure to the young group unless $p_1$ is set high enough.
-		%
-		However even if $p_1$ is set low it still ensures that candidates from the middle-aged group show in the ranking, thus always losing less exposure than the non-protected group (compare Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} and~\ref{fig:experiments:compasAge:expGain:group1}).
-		%
-		Note that this experiment is an extreme case, where no candidates from group ``age < 25'' where ranked in the top-200 in $cb|_k$, which explains why this group never loses exposure under any setting for $p_1$ and $p_2$ (see Fig.~\ref{fig:experiments:compasAge:expGain:group2}).
 	}
 	\vspace{-\baselineskip}
 	\label{fig:results-moving-p}
