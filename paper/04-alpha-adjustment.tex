@@ -1,6 +1,7 @@
 %!TEX root = main.tex
 
 \section{Ranked Group Fairness Verification and Model Adjustment}
+\label{sec:alpha-adjustment}
 To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure of the inverse multinomial CDF with parameters $k, p_G$ and $ \alpha $ can be used.
 %
 The inverse CDF specifies value of a random variable such that the probability of the variable being less than or equal to that value equals a given probability (in our case $p_G$).
@@ -73,6 +74,12 @@ These trees can be constructed using the process described in algorithms~\ref{al
 \FloatBarrier
 \subsection{Model Adjustment}
 \label{subsec:group-fairness-correction}
+
+\note[ChaTo]{This is a long subsection ... I wonder if it can be split into two or three subsections, e.g., 4.3 Model Adjustment 4.4 Optimizations, or something like that.
+
+In general this section \ref{sec:alpha-adjustment} deals with two different topics: one is how to adjust the $\alpha$, the other one (necessary for adjusting $\alpha$ but also for creating a fair ranking) is about optimizing the mTree generation and storage. The latter could include material currently in \ref{subsec:algorithm-optimization}.
+
+A division between these two should be clearer.}
 
 Our ranked group fairness definition requires an adjusted significance $\alphaadj = \adj(\alpha, k, p)$, because it tests multiple hypotheses ($k$ of them).
 %

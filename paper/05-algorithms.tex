@@ -1,12 +1,14 @@
+%!TEX root = main.tex
+
 \section{Algorithm}\label{sec:algorithms}
-We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and elaborate its complexity~(\S\ref{subsec:algorithm-complexity}).
+We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and determine its complexity~(\S\ref{subsec:algorithm-complexity}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
 Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
 %
-As input, multinomial \algoFAIR takes 
+As input, multinomial \algoFAIR takes
 the expected size $k$ of the ranking to be returned,
-the qualifications $q_c$, 
+the qualifications $q_c$,
 indicator variables $g_c$ indicating if candidate $c$ is protected,
 the vector of minimum target proportions $p_G$, and
 the adjusted significance level $\alphaadj$.
@@ -17,7 +19,7 @@ Next (line \ref{alg:fair:mtree}), the algorithm derives a ranked group fairness 
 %
 Then, multinomial \algoFAIR greedily constructs a ranking subject to candidate qualifications, and minimum protected elements required.
 %
-Note that the right choice of a tree node on level $i$ depends on the path chosen along the tree and therefore on its concrete parent at level $i-1$. 
+Note that the right choice of a tree node on level $i$ depends on the path chosen along the tree and therefore on its concrete parent at level $i-1$.
 %
 In case \texttt{mtree} branches into different possibilities to satisfy ranked group fairness (as an example see Fig.~\ref{fig:mtree-asymmetric-adjusted} for $k=4$), the algorithm chooses the branch that has a higher value for $F$, meaning it chooses the branch that has a higher probability.
 %
@@ -42,7 +44,7 @@ If the node demands a protected candidate from group $g$ at the current position
 	}
 
 	$\texttt{mtree}(i) \leftarrow \texttt{\algoComputeMTree}(k, p_G, \alphaadj)$  \label{alg:fair:mtree}\\
-		
+
 	%\AlgComment{create fair ranking}
 	$(t_0, t_1, \ldots, t_{|G|}) \leftarrow (0, \ldots, 0)$ \\
 	$i \leftarrow 0 $ \\
@@ -55,8 +57,8 @@ If the node demands a protected candidate from group $g$ at the current position
 
 			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
 				\AlgComment{add a protected candidate}
-				$t_g \leftarrow t_g + 1$ \\ 
-				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\  
+				$t_g \leftarrow t_g + 1$ \\
+				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\
 				\texttt{noCandidateAdded = False}
 			}\label{alg:fair:pend}
 		}
@@ -64,9 +66,9 @@ If the node demands a protected candidate from group $g$ at the current position
 			\AlgComment{no protected candidate needed: add the best available}
 			$P_g \leftarrow$ \texttt{findBestCandidateQueue()} \\
 			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
-			$t_g \leftarrow t_g + 1$ 
+			$t_g \leftarrow t_g + 1$
 		}\label{alg:fair:anyend}
-		
+
 	}
 	\Return{$\tau$}
 \end{algorithm}
@@ -74,7 +76,10 @@ If the node demands a protected candidate from group $g$ at the current position
 
 \subsection{Algorithm Optimizations}
 \label{subsec:algorithm-optimization}
-Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:time-space}), our implementation persists already computed mTrees and their components to never do the same computation twice. 
+
+\note[ChaTo]{I suggest to move this entire subsection (\S\ref{subsec:algorithm-optimization}) to the previous section (\S\ref{sec:alpha-adjustment}). That way here we would assume the mTrees were already created in the best/cheapest possible way.}
+
+Because the computation of an adjusted mTree is expensive (Table~\ref{tbl:time-space}), our implementation caches already computed mTrees and their components to never do the same computation twice.
 %
 Depending on the structure of $p_G$, different levels of optimization are applicable.
 
@@ -83,27 +88,27 @@ We note however that an mTree has to be computed only once for a particular comb
 We provide the already pre-computed mTrees and MCDF caches for our experiments and the intermediate steps not only for reproducibility but for use in practice too.
 
 \subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
-Table~\ref{tbl:time-space} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$. 
+Table~\ref{tbl:time-space} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$.
 %
 In the worst case Algorithm~\ref{alg:imcdf} computes it $|G|+1$ times for each group $g$ in $m_g(i)$ and each position $i\leq k$.
 %
 However, the same calculation may be done many times:
 %
-As an example consider the (fictive) mTree nodes $[2,1]$ and $[1,2]$ at position $k=3$. 
+As an example consider the (fictive) mTree nodes $[2,1]$ and $[1,2]$ at position $k=3$.
 %
-To compute the successors of node $[2,1]$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$. 
+To compute the successors of node $[2,1]$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$.
 %
 We store the results of these calculation in a map that we call MCDF cache with the algorithm arguments ($k$ and the minimum protected candidates of each group) as key and the corresponding mcdf as value.
 %
-Next we compute the successors of node $[1,2]$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$. 
+Next we compute the successors of node $[1,2]$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
 %
 We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
 
-Furthermore, if our example has symmetric minimum proportions $p_1 = p_1$, the mcdf of $(4,[2,1])$ is equal to $(4,[1,2])$ and $\textit{mcdf}(4,[1,3]) = \textit{mcdf}(4,[3,1])$. 
+Furthermore, if our example has symmetric minimum proportions $p_1 = p_1$, the mcdf of $(4,[2,1])$ is equal to $(4,[1,2])$ and $\textit{mcdf}(4,[1,3]) = \textit{mcdf}(4,[3,1])$.
 %
 Generally, if $p_1 = p_2 = \cdots = p_{|G|}$, we can make use of the mTree's symmetry: we calculate the mcdf only for node $m(i)$ and store it in the cache \emph{as well as its mirror} (see Section~\ref{subsubsec:discarding-symmetric-nodes}), because their mcdf values are the same.
 
-Note that the mcdf computation is only depends on $p_G$ and not on $alpha$. 
+Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
 %
 We can therefore persists the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
 %
@@ -111,21 +116,21 @@ This also saves additional computation time during significance adjustment.
 
 \subsubsection{Discarding symmetric nodes}
 \label{subsubsec:discarding-symmetric-nodes}
-In case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_|G|$ the mTree shows a convenient property that we can use to reduce additional space and computation time. 
+In case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_|G|$ the mTree shows a convenient property that we can use to reduce additional space and computation time.
 %
-Remember that whenever the mcdf value falls below $\alpha$ for a particular position $i$, we have to put a protected candidate onto $i$. 
+Remember that whenever the mcdf value falls below $\alpha$ for a particular position $i$, we have to put a protected candidate onto $i$.
 %
 For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $m(i)$ of the same likelyhood.
 %
-As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6. 
+As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6.
 %
-For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $[1, 0]$ and $[0,1]$. 
+For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $[1, 0]$ and $[0,1]$.
 %
 Both have the same mcdf values.
 %
 We store only one of the nodes and flag it as ``has mirrored node'' and continue our mTree computation only in the stored branch.
 %
-This way we save half of the space and computation time needed, without loosing any information about the tree. 
+This way we save half of the space and computation time needed, without loosing any information about the tree.
 
 \subsubsection{Stored mTrees}
 \label{subsubsec:stored-mtrees}
@@ -146,45 +151,46 @@ If any of these trees is needed at a later point in time it can be loaded from d
 	\scalebox{0.75}{
 		\begin{tabular}{lll}
 			\toprule
-			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\ 
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
 			\midrule
-			\rowcolor[HTML]{C0C0C0} 
-			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\ 
-			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\ 
 			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\ 
-			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ & $\mathcal{O}(|G|^2)$ \\ 
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
+			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
 			\rowcolor[HTML]{C0C0C0}
-			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ & $\mathcal{O}(|G|^{k})$\\ 
-			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$  & $\mathcal{O}(|G|^k)$\\ 
+			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\
+			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ & $\mathcal{O}(|G|^2)$ \\
 			\rowcolor[HTML]{C0C0C0}
-			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ & $\mathcal{O}(|G|^k)$\\ 
-			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ & $\mathcal{O}(|G|^k + n + k)$ \\ 
+			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ & $\mathcal{O}(|G|^{k})$\\
+			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$  & $\mathcal{O}(|G|^k)$\\
+			\rowcolor[HTML]{C0C0C0}
+			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ & $\mathcal{O}(|G|^k)$\\
+			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ & $\mathcal{O}(|G|^k + n + k)$ \\
 			\bottomrule
 		\end{tabular}
 	}
 \end{table}
 
-\todo{@Chato: Maybe we put the comments on space and time complexity in the appendix?}
-This section presents time and space complexity analyses for all proposed algorithms. 
+\todo[Meike]{@Chato: Maybe we put the comments on space and time complexity in the appendix?}
+\note[ChaTo]{I'm thinking they fit well in the main text (they don't need to go to an appendix), but perhaps would put the analysis on the complexity of mTree generation and model adjustment in the previous section (\S\ref{sec:multinomial-adjustment}) and the complexity of FA*IR when the mTable/mTree is created in this section (\S\ref{sec:experiments})}
+This section presents time and space complexity analyses for all proposed algorithms.
 %
 Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
 %
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
-\algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values. 
+\algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values.
 %
 This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$.  Assuming a constant time for the calculation of the binomial probability mass function, the time complexity of the implementation for the inverse binomial cdf which we used is in $\mathcal{O}(i^2)$ where $i$ is the position we calculate the inverse binomial cdf for.
 %
-Note that the complexity of the inverse binomial cdf is dependent on how accurate the computation is. 
+Note that the complexity of the inverse binomial cdf is dependent on how accurate the computation is.
 %
 The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate results for future calculations.
 %
 \subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
-The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}. 
+The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}.
 %
-Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity. 
+Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity.
 %
-Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$. 
+Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
 For the sake of readability we will write $\mathcal{O}($\algoMtable$) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
@@ -195,7 +201,7 @@ The binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(
 %
 For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
 %
-Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$. 
+Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$.
 %
 The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.
 %
@@ -204,49 +210,44 @@ As for its binomial pendant the complexity of the multinomial cdf is dependant o
 %
 We will write $\mathcal{O}(MCDF(i,p_G,\alpha))$ as the asymptotic complexity of this function. In the library we used for our implementation, the time complexity to calculate the multinomial cdf at position $i$ is in $\mathcal{O}(i^{|G|})$. Thus the most expensive position to calculate the multinomial cdf for is $k$.
 %
-For the overall time complexity we get $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ with $|G|$ being the number of protected groups. 
+For the overall time complexity we get $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ with $|G|$ being the number of protected groups.
 %
 The space complexity is $\mathcal{O}(|G|^2)$ because we store $|G|$ nodes, with each node being an array of length $|G|$.
 %
 \subsubsection{\algoComputeMTree complexity}\label{subsubsec:mtree-complexity}
-Algorithm \algoComputeMTree constructs an mTree of depth $k$. 
+Algorithm \algoComputeMTree constructs an mTree of depth $k$.
 %
 There may be up to $|G|$ possible children for each node in the tree resulting in $|G|^{k-1} +1$ nodes, leading to a time complexity of $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$.
 %
 We store $|G|^{k-1} +1$ nodes with arrays of length $|G|$, leading to space complexity of $\mathcal{O}(|G|^{k})$.
 %
 \subsubsection{\algoMultBinary complexity}\label{subsubsec:multBinary-complexity}
-Also in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic. 
+Also in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic.
 %
-However there is no discrete measure for mTrees as was in case of the mTable mass. 
+However there is no discrete measure for mTrees as was in case of the mTable mass.
 %
-Therefore the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria. 
+Therefore the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria.
 %
 As we are searching on the interval $\left[0,\alpha\right[$ the resulting number of possible mTrees is $\frac{\alpha}{\epsilon}$.
 %
-Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its fail probability for each step. 
+Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its fail probability for each step.
 %
-The fail probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree. 
+The fail probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree.
 %
-This process needs $\mathcal{O}(10.000 \cdot k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them. 
+This process needs $\mathcal{O}(10.000 \cdot k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them.
 %
-Hence the overall time complexity becomes $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$. 
+Hence the overall time complexity becomes $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$.
 %
 The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and their fail probability.
 %
 \subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
-Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary. 
+Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
 %
 However a significant reduction in computation time compared can be achieved when combining the two instead of using \algoMultBinary only (Figure~\ref{fig:regression_adjustment_benefits}).
 %
 \subsubsection{\algoFAIR complexity}\label{subsubsec:FAIR-complexity}
-Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$. 
+Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$.
 %
-In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$. 
+In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$.
 %
 The space complexity is that of \algoMultBinary plus $\mathcal{O}(n)$ for the candidates we want to rank plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(|G|^k + n + k)$.
-
-
-
-
-
