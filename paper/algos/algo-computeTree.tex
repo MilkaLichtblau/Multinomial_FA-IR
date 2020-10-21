@@ -1,10 +1,10 @@
-\begin{algorithm}[h]
+\begin{algorithm}[t!]
 	\caption{Algorithm \algoComputeMTree computes the data structure to efficiently verify or construct a ranking that satisfies multinomial ranked group fairness.}
 	\label{alg:computeMTree}
 	\small
 	\AlgInput{$k$, the size of the ranking to produce; $p_G$, the expected proportions of protected elements for each group; $\alphaadj$, the significance for each individual test.}
 	\AlgOutput{$ \mtree $: A tree data structure that contains the minimum number of protected candidates for each group.}
-	$\mtree[0] \leftarrow \text{zeros(G)}$ \AlgComment{initialize auxiliary root node with $ G $ entries} 
+	$\mtree[0] \leftarrow \text{zeros(|G|)}$ \AlgComment{initialize auxiliary root node with $ |G| $ entries} 
 	\For{$i \leftarrow 1$ \KwTo $k$}{
 		\For{\tt parent in $ \mtree[i - 1] $}{
 			\AlgComment{find all child nodes that satisfy ranked group fairness}
@@ -15,7 +15,7 @@
 	\Return{$ \mtree $ }
 \end{algorithm}
 
-\begin{algorithm}[h]
+\begin{algorithm}[t!]
 	\caption{Algorithm \algoImcdf computes the inverse of the multinomial cumulative distribution function $ F^{-1}(\alphaadj; i, p_G) $. It finds all possible child nodes of a given parent that satisfy the ranked group fairness condition. }
 	\label{alg:imcdf} 
 	\small

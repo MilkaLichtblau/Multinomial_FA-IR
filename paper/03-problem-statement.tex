@@ -2,7 +2,7 @@
 
 \section{The Fair Top-k Ranking Problem}\label{sec:problem}
 
-In this section, we first present the needed notation (\S\ref{subsec:preliminaries}), then the ranked group fairness criterion (\S\ref{subsec:group-fairness}-\S\ref{subsec:group-fairness-correction}) and criteria for utility (\S\ref{subsec:individual-fairness}). Finally we provide a formal problem statement (\S\ref{subsec:problem-statement}).
+In this section, we first present the needed notation (\S\ref{subsec:preliminaries}), then the ranked group fairness criterion (\S\ref{subsec:group-fairness}) and criteria for utility (\S\ref{subsec:individual-fairness}). Finally we provide a formal problem statement (\S\ref{subsec:problem-statement}).
 %
 This formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting.
 
@@ -138,7 +138,7 @@ The ranked group fairness criterion enforces the fair representation condition o
 	\label{def:ranked-group-fairness-condition}
 	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(\alpha, k, p_G)$.
 	%
-	Function $\adj(\alpha, k, p_G)$ is a corrected significance to account for multiple hypotheses testing (described in section~\ref{subsec:group-fairness-correction}).
+	Function $\adj(\alpha, k, p_G)$ is a corrected significance to account for multiple hypotheses testing (described in section~\ref{sec:model-adjustment}).
 \end{definition}
 
 We note that a solution space of rankings exists that satisfy this condition for a given 3-tuple $(k, p_G, \alpha)$ instead of just a single ranking as is the case when only one protected group is present.
