@@ -55,12 +55,6 @@ The second algorithm \algoImcdf takes as input a 4-tuple $(\alphaadj, i, p_G, \t
 \section{Model Adjustment}
 \label{sec:model-adjustment}
 
-\note[ChaTo]{This is a long subsection ... I wonder if it can be split into two or three subsections, e.g., 4.3 Model Adjustment 4.4 Optimizations, or something like that.
-
-In general this section \ref{sec:alpha-adjustment-multi} deals with two different topics: one is how to adjust the $\alpha$, the other one (necessary for adjusting $\alpha$ but also for creating a fair ranking) is about optimizing the mTree generation and storage. The latter could include material currently in \ref{subsec:algorithm-optimization}.
-
-A division between these two should be clearer.}
-
 Our ranked group fairness definition requires an adjusted significance $\alphaadj = \adj(\alpha, k, p)$, because it tests multiple hypotheses ($k$ of them).
 %
 If we use $\alphaadj = \alpha$, we will have too many false positives, i.e., we reject rankings that are fair, at a rate larger than $\alpha$.
@@ -391,7 +385,7 @@ The filenames contain the tree parameters, whether or not it is adjusted, and it
 If any of these trees is needed at a later point in time it can be loaded from disc instead of being recomputed, be it as input for multinomial \algoFAIR or as temporary tree during a new adjusted mTree computation.
 
 \subsection{Complexity Analysis}
-\begin{table}[t]
+\begin{table}[b!]
 	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
 	\vspace{-4mm}
 	\scalebox{0.75}{
@@ -416,7 +410,7 @@ This section presents time and space complexity analyses for all algorithms from
 %
 Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
 %
-The complexity analysis for \algoFAIR is done in Subsection~\ref{subsubsec:FAIR-complexity}, but Table~\ref{tbl:time-space} already contains the summary, such that it shows time and space complexity for all algorithms in this paper.
+The complexity analysis for \algoFAIR is done in Subsection~\ref{subsec:FAIR-complexity}, but Table~\ref{tbl:time-space} already contains the summary, such that it shows time and space complexity for all algorithms in this paper.
 
 \subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
 The complexity of the multinomial cdf is dependant on the current position $i$ (also understood as \textit{number of trials}), $|G|$ the number of protected groups, and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$ (also \textit{number of successes}).

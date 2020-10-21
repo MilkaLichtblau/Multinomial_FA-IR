@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 
-\section{Algorithm}\label{sec:algorithms}
-We present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}), report optimizations that we implemented to speed it up (\S\ref{subsec:algorithm-optimization}) and determine its complexity~(\S\ref{subsec:algorithm-complexity}).
+\section{The Multinomial \algoFAIR Algorithm}\label{sec:multinom-fair-algo}
+In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and determine its complexity~(\S\ref{subsec:FAIR-complexity}).
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
 Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
@@ -74,13 +74,13 @@ If the node demands a protected candidate from group $g$ at the current position
 \end{algorithm}
 \vspace{-3mm}
 
-\subsection{Algorithm Complexity}\label{subsec:algorithm-complexity}
-
-
-%
-\subsubsection{\algoFAIR complexity}\label{subsubsec:FAIR-complexity}
+\subsection{Algorithm Complexity}\label{subsec:FAIR-complexity}
 Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$.
 %
-In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$.
+In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\text{\algoMultBinary}) + \mathcal{O}(k)$.
 %
-The space complexity is that of \algoMultBinary plus $\mathcal{O}(n)$ for the candidates we want to rank plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(|G|^k + n + k)$.
+Note however, that if we used parameters $(k, p_G, \alpha)$ at any point in the past, we can obtain a previously calculated tree from disc, thus leading to a reduced complexity of $\mathcal{O}(n \log{} n) + \mathcal{O}(k)$.
+%
+The space complexity is $\mathcal{O}(n)$ for the candidates we want to rank, plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(n + k)$ (plus that of \algoMultBinary, if we have to calculate the mTree first, then leading to $\mathcal{O}(|G|^k + n + k)$).
+%
+The complexity is summarized in Table~\ref{tbl:time-space}.
