@@ -1,110 +1,104 @@
 %!TEX root = main.tex
 
-\section{Ranked Group Fairness Verification and Model Adjustment}
-\label{sec:alpha-adjustment}
-To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure of the inverse multinomial CDF with parameters $k, p_G$ and $ \alpha $ can be used.
+\section{Ranked Group Fairness Verification}
+\label{sec:fairness-verification}
+\input{pics/mTrees}
+To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the \emph{inverse multinomial CDF} with parameters $k, p_G$ and $ \alpha $.
 %
-The inverse CDF specifies a value for a random variable, such that the probability of this variable being less than or equal to that value equals a given probability (in our case $p_G$).
-%
-
-\subsection{Verifying ranked group fairness for multiple protected groups.}
-As in the binomial case, the verification of ranked group fairness can be done efficiently with a pre-computed data structure.
-%
-For multiple protected groups this data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $ rather than a single line as in Table~\ref{tbl:ranked_group_fairness_table}.
+The inverse CDF specifies the value of the random variable, such that the probability of this variable being less than or equal to that value equals a given probability (in our case $p_G$).
 %
 As the multinomial CDF is not injective and has hence no inverse, there is no quantile function that tells us exactly how many candidates are needed at each $ k $.
 %
-Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure becomes a tree.
+Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $.
 %
-Note that each tree level corresponds to the respective ranking position, i.e. the root level corresponds to the first ranking position and so forth.
+Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = [1/3, 1/3]$. 
 %
-Also note that each path corresponds to a valid distribution of protected candidates in the ranking.
+Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, i.e. the root level corresponds to the first ranking position and so forth.
 %
-\input{pics/mTrees}
+As an example, consider tree level 4 in Fig.~\ref{fig:mtree-symmetric-unadjusted}.
 %
-Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree.
+At this level, we have three nodes ``[2,0],'' ``[1,1],'' and ``[0,2],'' each of them containing a set of minima for elements of the protected groups (the nodes do not include any minima for the non-protected group).
 %
-It assumes there are two protected groups with minimum proportions $1/3$ and $1/3$. Levels go from left to right starting from one.
+This means it is acceptable to have among the first four elements in the ranking either at least 2 elements from protected group 1, or at least 1 element from each protected group, or at least 2 elements from protected group 2.
 %
-To determine how many elements of each protected group are required in the ranking, we look at all nodes at a given level, which provide the acceptable configurations. An acceptable configuration is a set of minima for elements of the protected groups; the nodes do not include any minima for the non-protected group.
+Note however, that nodes have parental relationships and that each \emph{path} corresponds to a fair distribution of protected candidates in the ranking.
 %
-For instance in this tree when there are 3 elements, there are 3 nodes named ``[2,0],'' ``[1,1],'' and ``[0,2].''
+Thus, if at level 4 we rank two candidates from protected group 1, thus satisfying the node with the asterisk in Fig.~\ref{fig:mtree-symmetric-unadjusted}, at level 5 have to satisfy either node ``[2,1],'' or node ``[3,0].''
 %
-This means it is acceptable to have among the first 3 elements in the ranking either at least 2 elements from protected group 1, or at least 1 element from each protected group, or at least 2 elements from protected group 2.
-%
-The tree is symmetric when the minimum proportions are equal. Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+The other nodes ``[1,1],'' ``[1,2],'' and ``[0,3]'' are not a child of node ``[2,0]'' and therefore cannot be considered to satisfy the ranked group fairness condition anymore.
 
-Each path in these trees corresponds to a valid strategy to place a minimum amount of protected candidates in the ranking under test (or construction).
+The tree is symmetric when the minimum proportions are equal. 
 %
-These trees can be constructed using the process described in algorithms~\ref{alg:computeMTree} and~\ref{alg:imcdf}.
-%
-\todo[ChaTo]{I think here a brief (1 paragraph) description of the algorithm would be a good idea, perhaph simply saying it iterates through protected groups and check if adding one more candidate from that protected group is required or not.}
+Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ALGORITHM COMPUTE MTREE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{algos/algo-computeTree.tex}
 
-\FloatBarrier
-\subsection{Model Adjustment}
-\label{subsec:group-fairness-correction}
+As stated at the beginning of this section mTrees are pre-computed data structures that allow efficient verification of the ranked group fairness condition.
+%
+To construct them we use algorithms~\ref{alg:computeMTree} and~\ref{alg:imcdf}.
+%
+The first algorithm \algoComputeMTree takes a triple $(k,p_G,\alphaadj)$ as input and returns the mTree for these parameters.
+%
+First it creates an auxiliary root node that contains $|G|$ zero entries, which serves as the root parent.
+%
+Then for each parent node \texttt{parent} at each position position $i \leq k$ it calls the inverse multinomial CDF function.
+%
+The second algorithm \algoImcdf takes as input a 4-tuple $(\alphaadj, i, p_G, \texttt{parent})$ and returns all nodes satisfying the following two conditions:
+\begin{inparaenum}[(i.)]
+	\item they have to be children of node \texttt{parent}, and
+	\item they satisfy the fair representation condition (Def.~\ref{def:fair-representation-condition}, page~\pageref{def:fair-representation-condition}).
+\end{inparaenum}
+
+\section{Model Adjustment}
+\label{sec:model-adjustment}
 
 \note[ChaTo]{This is a long subsection ... I wonder if it can be split into two or three subsections, e.g., 4.3 Model Adjustment 4.4 Optimizations, or something like that.
 
-In general this section \ref{sec:alpha-adjustment} deals with two different topics: one is how to adjust the $\alpha$, the other one (necessary for adjusting $\alpha$ but also for creating a fair ranking) is about optimizing the mTree generation and storage. The latter could include material currently in \ref{subsec:algorithm-optimization}.
+In general this section \ref{sec:alpha-adjustment-multi} deals with two different topics: one is how to adjust the $\alpha$, the other one (necessary for adjusting $\alpha$ but also for creating a fair ranking) is about optimizing the mTree generation and storage. The latter could include material currently in \ref{subsec:algorithm-optimization}.
 
 A division between these two should be clearer.}
 
 Our ranked group fairness definition requires an adjusted significance $\alphaadj = \adj(\alpha, k, p)$, because it tests multiple hypotheses ($k$ of them).
 %
-If we use $\alphaadj = \alpha$, we will have false positives, i.e., we will reject rankings that are fair, at a rate larger than $\alpha$.
+If we use $\alphaadj = \alpha$, we will have too many false positives, i.e., we reject rankings that are fair, at a rate larger than $\alpha$.
 %
-To adjust significance, we extend a generative model for rankings with one protected group, using a binomial distribution~\cite{yang2016measuring}, to a multinomial distribution.
+To adjust the significance of multinomial \algoFAIR, we extend the generative model for fair rankings by~\citet{yang2016measuring} which we used in~\cite{zehlike2017fair}, to use a multinomial distribution instead of a binomial one.
 %
 Specifically, we consider that the following ranking should be accepted by the ranked group fairness test: \begin{inparaenum}[(i)]
 	\item start with an empty list, and
-	\item incrementally add the best protected candidate from group $g$ with probability $p_g$, or the best available non-protected candidate with probability $p_0 = 1-\sum_{j=1}^{|G|} p_j$.
+	\item incrementally add the next best protected candidate from group $g$ with probability $p_g$, or the next best available non-protected candidate with probability $p_0 = 1-\sum_{j=1}^{|G|} p_j$.
 \end{inparaenum}
 %
-``Best'' means the one with the highest utility.
-
-To illustrate why this correction is needed, observe Figure~\ref{fig:why-adjustment-is-needed-binomial}, which assumes one protected group.
-%
-This figure is generated by simulation, generating rankings using the process described above and showing the probability of those rankings being rejected by our ranked group fairness test with $\alphaadj=0.1$.
-%
-The figure suggests that depending on $k$ we would need to change the value of $\alpha$ if we want to achieve a rejection rate of $0.1$.
-%
-Figure~\ref{fig:why-adjustment-is-needed-multinomial} shows the same phenomenon for multiple protected groups with $p_1=p_2=\frac{1}{3}$.
-%
-We can see these rankings are rejected by our multinomial ranked group fairness test with a probability different from $\alphaadj=0.1$.
-%
-The curves are computed by the method we describe in the following paragraphs, and it experimentally matches the result of simulations we performed.
-\note[ChaTo]{The previous sentence is strange. You say this figure was obtained by simulation, but now you say something that sounds different.}
+``Next best'' means the one with the highest utility.
 
 \begin{figure}[h]
 	\centering
-	\subfloat[Probability that a fair ranking created by a Bernoulli process with $p=0.5$ fails the ranked group fairness test.\label{fig:why-adjustment-is-needed-binomial}]
-	{\includegraphics[width=.48\textwidth]{pics/failProbPlotBinom.png}}\hfill
-	\subfloat[Probability that a fair ranking created by a multinomial distribution process with $p_G = (0.33, 0.33)$ fails the multinomial ranked group fairness test.  \label{fig:why-adjustment-is-needed-multinomial}]
-	{\includegraphics[width=.48\textwidth]{pics/failProbPlotMultinom.png}}\hfill
+	{\includegraphics[width=.48\textwidth]{pics/failProbPlotMultinom.png}}
 	\caption{Experiments on data generated by a simulation, showing the need for multiple tests correction.
-	%
-		The data has: one protected group, with a ranking created by  a Bernoulli process (Fig.~\ref{fig:why-adjustment-is-needed-binomial}); and two protected groups, with a ranking created by a multinomial process (Fig.~\ref{fig:why-adjustment-is-needed-multinomial}).
 		%
-		Rankings should have been rejected as unfair at a rate $\alpha = 0.1$.
+		The data has two protected groups, rankings are created by a multinomial process (``rolling a 3-sided dice'') with $p_G = (0.33, 0.33)$.
+		%
+		These rankings should have been rejected as unfair at a rate $\alpha = 0.1$.
 		%
 		However, we see that the rejection probability increases with $k$.
 		%
 		Note the scale of $k$ is logarithmic.}
-	\label{fig:need-for-model-adjustment}
+	\label{fig:why-adjustment-is-needed-multinomial}
 \end{figure}
-
+To illustrate why this correction is needed, observe Figure~\ref{fig:why-adjustment-is-needed-multinomial}, which assumes two protected groups with $p_1=p_2=\frac{1}{3}$.
+%
+This figure is generated by simulation, generating rankings with the process described above.
+%
+It shows the probability of those rankings being rejected by our ranked group fairness test with $\alphaadj=0.1$.
+%
 Generally, we can see that the probability of a Type-I error (declaring this fair ranking as unfair) is higher than $\alpha = 0.1$.
 %
-If the $k$ tests were independent, we could use $\alphaadj = 1 - (1 - \alpha)^{1/k}$ (i.e., {\v S}id{\'a}k's correction), but given the positive dependence, the false negative rate is smaller than the bound given by {\v S}id{\'a}k's correction.
-
-We will separate the explanation of the model adjustment into two subsections: first we explain the simpler case of a binomial distribution, i.e. the presence of one non-protected and \emph{one} protected group, which can be solved analytically.
+Therefore, depending on $k$ we would need to change the value of $\alpha$, if we want to achieve a rejection rate of $0.1$.
 %
-Second we explain the more general case of a multinomial distribution, where more than one protected group is present.
+If the $k$ tests were independent, we could use $\alphaadj = 1 - (1 - \alpha)^{1/k}$ (i.e., {\v S}id{\'a}k's correction), but given the positive dependence, the false negative rate is smaller than the bound given by {\v S}id{\'a}k's correction.
 
 \subsubsection{Model Adjustment for Multiple Protected Groups}
 \label{sec:multinomial-adjustment}
