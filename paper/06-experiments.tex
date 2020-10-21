@@ -1,6 +1,8 @@
 %!TEX root = main.tex
 %
-\begin{table}[h]
+%
+\section{Experiments}\label{sec:experiments}
+\begin{table}[b!]
 	\resizebox{1.01\columnwidth}{!}{%
 		\centering\begin{tabular}{clcclllc}\toprule
 			&        &                         &                         & Qualification   & Protected & Protected \\
@@ -30,10 +32,6 @@
 	\caption{Datasets and experimental settings. The ad-hoc score for COMPAS was calculated by a weighted summation of recidivism risk, number of prior arrests and violent recidivism risk.	\label{tbl:datasets}}
 	\vspace{-3mm}
 \end{table}
-%
-\section{Experiments}\label{sec:experiments}
-%\todo{Are we still doing this experiment to verify algorithm correctness?}
-%In the first part of our experiments we create synthetic datasets to demonstrate the correctness of the adjustment done by Algorithm \algoCorrect (\S\ref{subsubsec:JuliaExperimentalVerification}).
 %
 In this section, we consider several reference datasets for evaluating the multinomial \algoFAIR algorithm (datasets in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}).
 

@@ -79,7 +79,9 @@ Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sort
 %
 In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\text{\algoMultBinary}) + \mathcal{O}(k)$.
 %
-Note however, that if we used parameters $(k, p_G, \alpha)$ at any point in the past, we can obtain a previously calculated tree from disc, thus leading to a reduced complexity of $\mathcal{O}(n \log{} n) + \mathcal{O}(k)$.
+Note however, that if we used parameters $(k, p_G, \alpha)$ at any point in the past, we can obtain a previously calculated tree from disc.
+%
+In this case \algoFAIR has a complexity of $\mathcal{O}(n \log{} n) + \mathcal{O}(k)$.
 %
 The space complexity is $\mathcal{O}(n)$ for the candidates we want to rank, plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(n + k)$ (plus that of \algoMultBinary, if we have to calculate the mTree first, then leading to $\mathcal{O}(|G|^k + n + k)$).
 %
