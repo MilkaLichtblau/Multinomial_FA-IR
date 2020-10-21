@@ -100,14 +100,15 @@ Therefore, depending on $k$ we would need to change the value of $\alpha$, if we
 %
 If the $k$ tests were independent, we could use $\alphaadj = 1 - (1 - \alpha)^{1/k}$ (i.e., {\v S}id{\'a}k's correction), but given the positive dependence, the false negative rate is smaller than the bound given by {\v S}id{\'a}k's correction.
 
-\subsubsection{Model Adjustment for Multiple Protected Groups}
-\label{sec:multinomial-adjustment}
+\subsection{General Procedure}
+\label{subsec:general-process}
 %
 With the presence of more than one protected group, the analytical extension of the model adjustment to a multinomial setting is too complex to be written into a closed formula.
-
-We found no efficient way to calculate all permutations which pass or fail the test and we choose an experimental procedure to adjust $ \alpha $.
 %
-It is a generalization of the binomial process suggested by~\citet{yang2016measuring} to multinomial settings:
+In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair} (see also Section~\ref{sec:adjustment-binomial}), we found no analytical way to calculate all permutations which pass or fail the test.
+%
+Therefore we develop an experimental procedure to adjust $ \alpha $:
+%
 \begin{enumerate}
 	\item Get input $ p_G, k, \alpha $.
 	\item Build mTree with input $ \alpha $.
@@ -119,14 +120,20 @@ It is a generalization of the binomial process suggested by~\citet{yang2016measu
 	\item Now we build a new mTree using $ \alphaadj $ and repeat the procedure until $ \failprob \approx \alpha $.
 \end{enumerate}
 %
-This adjustment procedure requires to compute a new mTree at each iteration which is expensive on its own. Depending on the level of accuracy needed, a large number of iterations $M$ might be required.
+Once we found $\alphaadj$ we can recompute the mTrees from Figures~\ref{fig:mtree-symmetric-unadjusted} and~\ref{fig:mtree-asymmetric-unadjusted} to obtain an overall significance level of $\alpha = 0.1$.
 %
-Additionally the binary search heuristic needs many steps to find $\alpha$, if large intervals have to be searched.
+Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
+\input{pics/mTreesAdjusted.tex}
 
-
-We use three strategies to drastically reduce computational costs of this simulation-based adjustment.
+\subsection{Optimizations for MTree Calculation}
+\label{subsec:mtree-optimization}
+In this subsection we explain how we optimize the adjustment procedure to reduce complexity, as it requires to compute a new mTree at each iteration which is expensive on its own. 
 %
-\begin{inparaenum}[(1)]
+Furthermore, depending on the level of accuracy needed, a large number of iterations $M$ might be required and the binary search heuristic may need many steps to find $\alpha$, if large intervals have to be searched.
+%
+We use three strategies to drastically reduce computational costs of this simulation-based adjustment:
+%
+\begin{inparaenum}[(i)]
 %
 \item we reduce the space requirements of the mTree structure;
 %
@@ -134,21 +141,19 @@ We use three strategies to drastically reduce computational costs of this simula
 %
 \item we exploit the monotonicity of $\alphaadj$ with respect to $\alpha$ and use a regression procedure to speed up the binary search.
 \end{inparaenum}
-%
-We next explain each strategy.
 
-
-First, we improve the mTree data structure itself by excluding the calculation and storage of redundant information.
+\subsubsection{Reducing mTree Space Requirements.} 
+We improve the mTree data structure by excluding the calculation and storage of redundant information.
 %
-Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the mTree structure with all parent-child relations as edges.
-%
-In these structures, a node can only appear once at each level. Duplicate nodes are combined into a single node with multiple parents.
+First we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
 %
 Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
-This is possible because we know that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
+Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the mTree structure with all parent-child relations as edges.
 %
-Before we can prove this property, we need to introduce the following definition.
+We leave out these edges, thus reducing space, because we can prove that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
+
+Before we can prove this property, we need to introduce the following definition, which formalizes what a successful mTree test at level $i$ looks like.
 %
 \begin{definition}[Successful mTree Testing]
 \label{def:valid-mtree-test}
@@ -158,12 +163,12 @@ Let furthermore $MT$ be a $mTree$, with $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ th
 %
 We write $\tau_{G,i} \geq m_{G,i}$ if $\tau_g \geq m_g$ for all $g=1,\ldots,|G|$.
 %
-We call a test on level $i$ of $MT$ successful if and only if $\tau_{G,i} \geq m_{G,i}$.
+We call a test on level $i$ of $MT$ successful, iff $\tau_{G,i} \geq m_{G,i}$.
 \end{definition}
 %
-\noindent With this we can make sure that if we test a ranking on each level of the mTree successfully, the entire ranking will be fair according to the ranked group fairness definition.
+Again, in order to remove the parental relationships in the mTree, thus reducing storage space, we have to prove that, if we test a ranking on each level of the mTree successfully, the entire ranking will be fair according to the ranked group fairness definition.
 %
-We prove this by showing that, if a ranking passes the test for any two nodes $n_1$ and $n_2$ at two consecutive levels $h$ and $h+1$ and $n_1$ is \emph{not} a parent of $n_2$, then all actual children of $n_1$ will have a weaker requirement than $n_2$ and will hence also test successfully.
+We prove this by showing that, if a ranking passes the test for any two nodes $n_1$ and $n_2$ at two consecutive levels $h$ and $h+1$, and $n_1$ is \emph{not} a parent of $n_2$, then all actual children of $n_1$ will have a weaker requirement than $n_2$ and will hence also test successfully.
 %
 Furthermore we show that all nodes at level $h+1$ for which the ranking fails the test are part of a path that already rejected it as unfair at level $h$.
 %
@@ -181,14 +186,15 @@ Note that the ranking would fail at node $[3,0]$, but with $[1,1]$ at level 9 it
 \label{theorem:lazy-mTree-test}
 Let $MT$ be a mTree and $\tau$ a ranking of size $k$.
 %
-There exists at least one successful test for $\tau$ at each level of $MT$
-if and only if
-there exists a valid path from the root of $MT$ to a leaf of $MT$.
+There exists at least one successful test for $\tau$ at each level of $MT$,
+iff there exists a valid path from the root of $MT$ to a leaf of $MT$.
 \end{theorem}
 %
 \begin{proof}
 	\label{proof:lazy-mTree-test}
-	It is clear that at least one successful test per level is necessary for the path to exist, let us prove that it is sufficient.
+	It is clear that at least one successful test per level is necessary for the path to exist.
+	%
+	Let us proof that one successful test is a sufficient condition for the path to exist.
 	%
 	Let $MT$ be a mTree and $\tau$ be a ranking that passes the test at level $h$ of $MT$.
 	%
@@ -200,7 +206,7 @@ there exists a valid path from the root of $MT$ to a leaf of $MT$.
 	%
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
-	For all entries $m_{g}(h+1)$ of $m_{G,(h+1)}$ it is that $m_{g}(h) \leq m_{g}(h+1)$ by construction of the mTree in which requirements for protected candidates can only increase or stay the same.
+	For all entries $m_{g}(h+1)$ of $m_{G,(h+1)}$ it is that $m_{g}(h) \leq m_{g}(h+1)$ by construction of the mTree, in which requirements for protected candidates can only increase or stay the same, but cannot decrease.
 
 	\noindent We can now distinguish between the following two cases:
 	\\
@@ -233,13 +239,14 @@ We showed that Case (2.2) is impossible. There is only Case 1 left if we have ra
 It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than such path.
 \end{proof}
 %
-\noindent Because of theorem \ref{theorem:lazy-mTree-test} we do not need to keep the tree structure and may store only a set of tuples for each level, removing duplicate entries.
+\noindent Because of theorem \ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, removing duplicate entries.
 %
 In case of symmetric minimum proportions $p_G$, we can further save memory and computation time, by reducing mirrored entries such as $[0,2]$ and $[2,0]$.
 %
 We simply flag a node for which a mirror exists on the same depth level and do not calculate the mirrored branch.
 
-Second, we use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e., a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are equal in the first ten positions.
+\subsubsection{Adjusting for Small $k$ First}
+We use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e., a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are equal in the first ten positions.
 %
 This means that we can start the adjustment from the root node and expand the tree gradually to find the correct $ \alphaadj $, because if $\failprob$ is too high for given $k$, it will also be too high for any $k' > k$. %in particular and we do not have to consider the larger tree, as long as we do not have a good $\alphaadj$ for $k=10$.
 %
@@ -255,29 +262,29 @@ This means that we can start the adjustment from the root node and expand the tr
 %
 %Then we set $ k=k+ $\texttt{stepsize}, and repeat the procedure until we reach the desired ranking length.
 %
-We can see in Figure \ref{fig:need-for-model-adjustment} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
+We can see in Figure~\ref{fig:why-adjustment-is-needed-multinomial} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
 
-\note[ChaTo]{Here it says second-degree polynomial but Figure~\ref{fig:regression_adjustment_benefits} says linear regression; that's a bit unclear.}
-Third, we use a second-degree polynomial regression model to get our first estimate for a good $\alphaadj$ candidate and apply the binary search heuristic from that candidate, rather than starting with a random value, that might be very far away from the correct $\alphaadj$.
 %
-In this case we give as input a few additional parameters: \texttt{kTarget} -- the length of the target ranking, \texttt{kStart} -- the size of the first mTree, \texttt{maxPreAdjustK} -- the maximum size of the mTree before we use regression to predict a good candidate $\alpha_{c_r}$ for the final $\alphaadj$, and \texttt{num\_iterations} -- the number of training instances to be computed.
-%
-To create a training dataset $R$, we compute \texttt{num\_iterations} small mTrees (i.e. with different $k \leq $ \texttt{maxPreAdjustK}) and adjust the respective $\alpha$ values as described in the beginning of Section~\ref{sec:multinomial-adjustment}.
-%
-For each iteration $j$ the pair $(k_j, \alpha_{c_j})$ is stored as a training instance in $R$.
-%
-\begin{figure}[h]
+\begin{figure}[t!]
 	\centering
 	%
-	\subfloat[Training data $R$ for a linear regression model to predict a good candidate for $\alphaadj$. Each pair $(k_j, \alpha_{c_j})$ is computed for small $k$ using the procedure described in the beginning of Section~\ref{sec:multinomial-adjustment}. \label{fig:regression-training-data}]
+	\subfloat[Training data $R$ for a regression model to predict a good candidate for $\alphaadj$. Each pair $(k_j, \alpha_{c_j})$ is computed for small $k$ using the procedure described in Subsection~\ref{subsec:general-process}. \label{fig:regression-training-data}]
 	{\includegraphics[width=.48\textwidth]{pics/alpha_030303_01.png}}\hfill
 	%
-	\subfloat[Computation time comparison between binary search only and binary search combined with linear regression for the multinomial significance adjustment. \inote{"regression" in the figure perhaps could be "regression and binary search"}  \label{fig:regression-time-saved}]
+	\subfloat[Computation time comparison between binary search only and binary search combined with regression for the multinomial significance adjustment. \inote{"regression" in the figure perhaps could be "regression and binary search"}  \label{fig:regression-time-saved}]
 	{\includegraphics[width=.48\textwidth]{pics/computationTimeRegressionVSBinaryMultinomial.png}}\hfill
 	\caption{}
 	\label{fig:regression_adjustment_benefits}
 	\vspace{-3mm}
 \end{figure}
+\subsubsection{Finding a Good Starting Candidate for the Binary Search}
+We use a second-degree polynomial regression model to get our first estimate for a good $\alphaadj$ candidate and apply the binary search heuristic from that candidate, rather than starting with a random value, that might be very far away from the correct $\alphaadj$.
+%
+We need a few additional parameters as input: \texttt{kTarget} -- the length of the target ranking, \texttt{kStart} -- the size of the first mTree, \texttt{maxPreAdjustK} -- the maximum size of the mTree before we use regression to predict a good candidate $\alpha_{c_r}$ for the final $\alphaadj$, and \texttt{num\_iterations} -- the number of training instances to be computed.
+%
+To create a training dataset $R$, we compute \texttt{num\_iterations} small mTrees (i.e. with different $k \leq $ \texttt{maxPreAdjustK}) and adjust the respective $\alpha$ values as described in Subsection~\ref{subsec:general-process}.
+%
+For each iteration $j$ the pair $(k_j, \alpha_{c_j})$ is stored as a training instance in $R$.
 %
 Figure~\ref{fig:regression-training-data} shows a training set for $p_G=[1/3, 1/3], \texttt{maxPreAdjustK}=100$.
 %
@@ -285,9 +292,10 @@ Then a regression model is trained to predict $\alpha_{c_r}$ for \texttt{kTarget
 %
 This $\alpha_{c_r}$ is now used to start the binary search for the correct and final $\alphaadj$.
 %
-Figure~\ref{fig:regression-time-saved} shows the runtime difference for the model adjustment routine with and without the use of linear regression.
+Figure~\ref{fig:regression-time-saved} shows the runtime difference for the model adjustment routine with and without the use of regression.
 
-Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in pseudo-code and performs the following steps:
+\subsection{Final Adjustment Algorithm}
+Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in pseudo-code, which performs the following steps:
 %
 \begin{enumerate}
 	\item Define the necessary parameters: \texttt{kTarget}, \texttt{kStart}, \texttt{maxPreAdjustK}, and \texttt{num\_iterations}
@@ -300,7 +308,8 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in 
 	\item Train a regression model with training data $R$ to predict $\alpha_{c_r}$ for $\texttt{kTarget}$.
 	\item Use binary search (Algorithm~\ref{alg:mult_binary}) to find $\alphaadj$ for parameters $k,p_G, \alpha_{c_r}$.
 \end{enumerate}
-\begin{algorithm}[t!]
+%
+\begin{algorithm}[b!]
 	\caption{Algorithm \algoReg estimates the corrected significance level $\alphaadj$ such that the mTree $m(\alphaadj , k, p_G)$ has the probability of rejecting a fair ranking $\alpha$}
 	\label{alg:regression_search} % But whenever possible refer to this algo. by name not number
 	\small
@@ -325,10 +334,5 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in 
     $\alphaadj \leftarrow \textsc{MultinomialBinarySearchAdjustment}(\alpha_{c_r},k,p_G)$ \\
     \Return{$\alphaadj$}
 \end{algorithm}
-%
-Once we found $\alphaadj$ we can recompute the mTrees from  Figures~\ref{fig:mtree-symmetric-unadjusted} and~\ref{fig:mtree-asymmetric-unadjusted} to obtain an overall significance level of $\alpha$.
-%
-Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
-\input{pics/mTreesAdjusted.tex}
 
 \FloatBarrier
