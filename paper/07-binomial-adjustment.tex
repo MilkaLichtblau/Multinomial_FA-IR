@@ -1,5 +1,23 @@
 \section{Verifying ranked group fairness for a single protected group. }
 \label{sec:adjustment-binomial}
+\begin{table}[t]
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space-binom}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
+			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
+			\rowcolor[HTML]{C0C0C0}
+			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
 %
 For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF can be stored as a simple table. Analogous to the multinomial case, we will call such a table \textit{mTable}.
 %

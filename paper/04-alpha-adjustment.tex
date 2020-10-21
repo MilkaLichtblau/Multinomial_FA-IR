@@ -125,7 +125,7 @@ Once we found $\alphaadj$ we can recompute the mTrees from Figures~\ref{fig:mtre
 Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
 \input{pics/mTreesAdjusted.tex}
 
-\subsection{Optimizations for MTree Calculation}
+\subsection{Optimizations for the MTree Calculation}
 \label{subsec:mtree-optimization}
 In this subsection we explain how we optimize the adjustment procedure to reduce complexity, as it requires to compute a new mTree at each iteration which is expensive on its own. 
 %
@@ -137,16 +137,33 @@ We use three strategies to drastically reduce computational costs of this simula
 %
 \item we reduce the space requirements of the mTree structure;
 %
-\item we construct the tree level by level and reject if the ranking does not satisfy any node in a level;
-%
 \item we exploit the monotonicity of $\alphaadj$ with respect to $\alpha$ and use a regression procedure to speed up the binary search.
+%
+\item we apply the adjustment procedure for small trees first and only increase $k$, if we found the correct  $\alphaadj$ for the small trees.
 \end{inparaenum}
 
 \subsubsection{Reducing mTree Space Requirements.} 
+\label{subsubsec:reducing-space-requirements}
 We improve the mTree data structure by excluding the calculation and storage of redundant information.
 %
 First we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
+
+Second, in case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_|G|$ the mTree shows a convenient property that we can use to reduce additional space, as well as computation time.
 %
+Remember that whenever the multinomial CDF value falls below $\alpha$ for a particular position $i$, we have to put a protected candidate onto $i$.
+%
+For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $m(i)$ of the same likelyhood.
+%
+As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6.
+%
+For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $[1, 0]$ and $[0,1]$.
+%
+Both have the same multinomial CDF values.
+%
+We store only one of the nodes and flag it as ``has mirrored node'' and continue our mTree computation only in the stored branch.
+%
+This way we save half of the space and computation time needed, without loosing any information about the tree.
+
 Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
 Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the mTree structure with all parent-child relations as edges.
@@ -239,30 +256,7 @@ We showed that Case (2.2) is impossible. There is only Case 1 left if we have ra
 It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than such path.
 \end{proof}
 %
-\noindent Because of Theorem~\ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, removing duplicate entries.
-%
-In case of symmetric minimum proportions $p_G$, we can further save memory and computation time, by reducing mirrored entries such as $[0,2]$ and $[2,0]$.
-%
-We simply flag a node for which a mirror exists on the same depth level and do not calculate the mirrored branch.
-
-\subsubsection{Adjusting for Small $k$ First}
-We use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e., a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are equal in the first ten positions.
-%
-This means that we can start the adjustment from the root node and expand the tree gradually to find the correct $ \alphaadj $, because if $\failprob$ is too high for given $k$, it will also be too high for any $k' > k$. %in particular and we do not have to consider the larger tree, as long as we do not have a good $\alphaadj$ for $k=10$.
-%
-%In order to show that we can indeed do that, assume that the for loop of algorithm \ref{alg:computeMTree} stops at $k=10$ instead of $k=20$.
-%
-%Furthermore, we can understand the mTree as a set of rules that a ranking has to satisfy.
-%
-%If there are no rules for how many protected candidates are required after position $10$, this is equivalent to not requiring more protected candidates after position $10$.
-%
-%Thus, the probability that a fair ranking is rejected by a shorter mTree is less or equal to a deeper mTree.
-%
-%We utilize this property to lower computational costs: we calculate the mTree for $k=10$, then create 10000 rankings of length 10 and calculate $ \alphaadj $ under this setting.
-%
-%Then we set $ k=k+ $\texttt{stepsize}, and repeat the procedure until we reach the desired ranking length.
-%
-We can see in Figure~\ref{fig:why-adjustment-is-needed-multinomial} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
+\noindent Because of Theorem~\ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, while removing duplicate entries.
 
 %
 \begin{figure}[t!]
@@ -294,6 +288,27 @@ This $\alpha_{c_r}$ is now used to start the binary search for the correct and f
 %
 Figure~\ref{fig:regression-time-saved} shows the runtime difference for the model adjustment routine with and without the use of regression.
 
+\subsubsection{Adjusting for Small $k$ First}
+We use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e., a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are equal in the first ten positions.
+%
+This means that we can start the adjustment from the root node and expand the tree gradually to find the correct $ \alphaadj $, because if $\failprob$ is too high for given $k$, it will also be too high for any $k' > k$. %in particular and we do not have to consider the larger tree, as long as we do not have a good $\alphaadj$ for $k=10$.
+%
+%In order to show that we can indeed do that, assume that the for loop of algorithm \ref{alg:computeMTree} stops at $k=10$ instead of $k=20$.
+%
+%Furthermore, we can understand the mTree as a set of rules that a ranking has to satisfy.
+%
+%If there are no rules for how many protected candidates are required after position $10$, this is equivalent to not requiring more protected candidates after position $10$.
+%
+%Thus, the probability that a fair ranking is rejected by a shorter mTree is less or equal to a deeper mTree.
+%
+%We utilize this property to lower computational costs: we calculate the mTree for $k=10$, then create 10000 rankings of length 10 and calculate $ \alphaadj $ under this setting.
+%
+%Then we set $ k=k+ $\texttt{stepsize}, and repeat the procedure until we reach the desired ranking length.
+%
+We can see in Figure~\ref{fig:why-adjustment-is-needed-multinomial} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
+%
+Figure~\ref{fig:regression-time-saved} shows the reduction of computation time when we combine the binary search with a regression and the pre-adjustment strategy.
+
 \subsection{Final Adjustment Algorithm}
 Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in pseudo-code, which performs the following steps:
 %
@@ -309,7 +324,7 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in 
 	\item Use binary search (Algorithm~\ref{alg:mult_binary}) to find $\alphaadj$ for parameters $k,p_G, \alpha_{c_r}$.
 \end{enumerate}
 %
-\begin{algorithm}[b!]
+\begin{algorithm}[t!]
 	\caption{Algorithm \algoReg estimates the corrected significance level $\alphaadj$ such that the mTree $m(\alphaadj , k, p_G)$ has the probability of rejecting a fair ranking $\alpha$}
 	\label{alg:regression_search} % But whenever possible refer to this algo. by name not number
 	\small
@@ -335,4 +350,115 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in 
     \Return{$\alphaadj$}
 \end{algorithm}
 
+\subsection{Further Optimizations}
+In addition to the optimizations \emph{during} mTree calculation which we presented in Subsection~\ref{subsec:mtree-optimization}, our implementation caches already computed mTrees and their components to never do the same computation twice.
+%
+We denote that a mTree has to be computed only once for a particular combination of $k, p_G, \alpha$. 
+
+\subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
+Table~\ref{tbl:time-space} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$.
+%
+In the worst case Algorithm~\ref{alg:imcdf} computes it $|G|+1$ times for each group $g$ in $m_g(i)$ and each position $i\leq k$.
+%
+However, the same calculation may be done many times:
+%
+As an example consider the (fictive) mTree nodes $[2,1]$ and $[1,2]$ at position $k=3$.
+%
+To compute the successors of node $[2,1]$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$.
+%
+We store the results of these calculation in a map that we call MCDF cache with the algorithm arguments ($k$ and the minimum protected candidates of each group) as key and the corresponding mcdf as value.
+%
+Next we compute the successors of node $[1,2]$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
+%
+We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
+
+%Furthermore, if our example has symmetric minimum proportions $p_1 = p_1$, the mcdf of $(4,[2,1])$ is equal to $(4,[1,2])$ and $\textit{mcdf}(4,[1,3]) = \textit{mcdf}(4,[3,1])$.
+%%
+%Generally, if $p_1 = p_2 = \cdots = p_{|G|}$, we can make use of the mTree's symmetry: we calculate the mcdf only for node $m(i)$ and store it in the cache \emph{as well as its mirror} (see Subsection~\ref{subsubsec:reducing-space-requirements}), because their mcdf values are the same.
+
+Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
+%
+We can therefore persists the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
+
+\subsubsection{Stored mTrees}
+\label{subsubsec:stored-mtrees}
+During the computation of an adjusted mTree with parameters $k,p_G , \alpha$ we calculate many temporary mTrees (first the unadjusted ones, then the ones for the regression algorithm, then the ones for the binary search steps).
+%
+We persist all of the temporary mTrees plus the final tree in files for later usage.
+%
+The filenames contain the tree parameters, whether or not it is adjusted, and its probability to fail a fair ranking $\failprob$.
+%
+If any of these trees is needed at a later point in time it can be loaded from disc instead of being recomputed, be it as input for multinomial \algoFAIR or as temporary tree during a new adjusted mTree computation.
+
+\subsection{Complexity Analysis}
+\begin{table}[t]
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(MCDF(k,p,\alpha ))$ & $\mathcal{O}(|G|^2)$ \\
+			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\algoImcdf)$ & $\mathcal{O}(|G|^{k})$\\
+			\rowcolor[HTML]{C0C0C0}
+			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$  & $\mathcal{O}(|G|^k)$\\
+			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\algoComputeMTree))$ & $\mathcal{O}(|G|^k)$\\
+			\rowcolor[HTML]{C0C0C0}
+			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\algoMultBinary) + \mathcal{O}(k)$ & $\mathcal{O}(|G|^k + n + k)$ \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+This section presents time and space complexity analyses for all algorithms from this section.
+%
+Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
+%
+The complexity analysis for \algoFAIR is done in Subsection~\ref{subsubsec:FAIR-complexity}, but Table~\ref{tbl:time-space} already contains the summary, such that it shows time and space complexity for all algorithms in this paper.
+
+\subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
+The complexity of the multinomial cdf is dependant on the current position $i$ (also understood as \textit{number of trials}), $|G|$ the number of protected groups, and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$ (also \textit{number of successes}).
+%
+We will write $\mathcal{O}(\text{MCDF}(i,p_G,\alpha))$ as the asymptotic complexity of this function. 
+%
+In the library we used for our implementation, the time complexity to calculate the multinomial CDF at position $i$ is in $\mathcal{O}(\text{MCDF}(i,p_G,\alpha)) = \mathcal{O}(i^{|G|})$. 
+%
+Thus the most expensive position to calculate the multinomial CDF for is $k$.
+%
+For the overall time complexity of \algoImcdf we get $\mathcal{O}(|G|) \cdot \mathcal{O}(\text{MCDF}(k,p,\alpha ))$ with $|G|$ being the number of protected groups.
+%
+The space complexity is $\mathcal{O}(|G|^2)$ because we store $|G|$ nodes, with each node being an array of length $|G|$.
+%
+\subsubsection{\algoComputeMTree complexity}\label{subsubsec:mtree-complexity}
+Algorithm \algoComputeMTree constructs an mTree of depth $k$.
+%
+There may be up to $|G|$ possible children for each node in the tree resulting in $|G|^{k-1} +1$ nodes, leading to a time complexity of $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\text{\algoImcdf})$.
+%
+We store $|G|^{k-1} +1$ nodes with arrays of length $|G|$, leading to space complexity of $\mathcal{O}(|G|^{k})$.
+%
+\subsubsection{\algoMultBinary complexity}\label{subsubsec:multBinary-complexity}
+Also in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic.
+%
+However there is no discrete measure for mTrees as was in case of the mTable mass.
+%
+Therefore the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria.
+%
+As we are searching on the interval $\left[0,\alpha\right[$ the resulting number of possible mTrees is $\frac{\alpha}{\epsilon}$.
+%
+Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its fail probability for each step.
+%
+The fail probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree.
+%
+This process needs $\mathcal{O}(10.000 \cdot k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them.
+%
+Hence the overall time complexity becomes $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\text{\algoComputeMTree}))$.
+%
+The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and their fail probability.
+%
+\subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
+Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
+%
+However a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
 \FloatBarrier
