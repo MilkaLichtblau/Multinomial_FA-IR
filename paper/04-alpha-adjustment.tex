@@ -4,7 +4,7 @@
 \label{sec:alpha-adjustment}
 To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure of the inverse multinomial CDF with parameters $k, p_G$ and $ \alpha $ can be used.
 %
-The inverse CDF specifies value of a random variable such that the probability of the variable being less than or equal to that value equals a given probability (in our case $p_G$).
+The inverse CDF specifies a value for a random variable, such that the probability of this variable being less than or equal to that value equals a given probability (in our case $p_G$).
 %
 \subsection{Verifying ranked group fairness for a single protected group. }
 %
@@ -51,7 +51,7 @@ Also note that each path corresponds to a valid distribution of protected candid
 %
 Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree.
 %
-It assumes there are two protected groups with minimum proportions $1/3$ and $1/3$. Levels go from left to right starting from zero.
+It assumes there are two protected groups with minimum proportions $1/3$ and $1/3$. Levels go from left to right starting from one.
 %
 To determine how many elements of each protected group are required in the ranking, we look at all nodes at a given level, which provide the acceptable configurations. An acceptable configuration is a set of minima for elements of the protected groups; the nodes do not include any minima for the non-protected group.
 %
