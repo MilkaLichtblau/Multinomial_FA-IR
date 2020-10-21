@@ -196,7 +196,7 @@ We call these \textit{legal mTables}.
 %
 \noindent Lemma \ref{lemma:05:legal-valid-mtable} follows directly by construction.
 
-Now that we have defined what constitutes an mTable, we can go on and find a discrete partition of the $\alpha$ space. The challenge is that this measure has to correspond to exactly one legal mTable for a given set of parameters $k,p,\alpha$. Fortunately, there is a simple solution.
+Now that we have defined what constitutes an mTable, we can go on and find a discrete partition of the $\alpha$ space. The challenge is that this measure has to correspond to exactly one legal mTable for a given set of parameters $k,p,\alpha$. Fortunately, there is a simple solution which we call \textit{mass of a mTable}.
 %The definition of a legal mTable together with its corresponding mass enables us to perform a binary search, which helps us to find $\alphaadj$ and hence the correct mTable with an overall failure probability of $\alpha$.
 %
 %Note that for any value of $\alpha$ there exists exactly one \emph{legal} mTable.
@@ -211,7 +211,7 @@ Now that we have defined what constitutes an mTable, we can go on and find a dis
 	$L_1(\text{mTable}_{p,k,\alpha})=\sum_{i=1}^k m(i)$ the \textit{mass of $\text{mTable}_{p,\alpha,k}$}.
 \end{definition}
 %
-Now, we have to relate the continuous $\alpha$ space to the discrete measure of an mTable.
+Now, we have to relate the continuous $\alpha$ space to the mass of a mTable.
 %
 \begin{lemma}
 	\label{lemma:05:non-decreasing-with-alpha-mtable}
@@ -247,9 +247,9 @@ Of course this only works if there exists exactly one legal mTable for each mass
 	The only possibility left is hence that $\alpha_1 = \alpha_2$, which contradicts $MT \neq MT'$, as both are created using function \texttt{constructMTable}.
 \end{proof}
 
-\paragraph{The number of valid mTables.} In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
+\subsection{The number of valid mTables.} In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
 %
-\note[ChaTo]{@Tom: please check if the following sentence that I added is correct, I thought it would make this more understandable.}
+%\note[ChaTo]{@Tom: please check if the following sentence that I added is correct, I thought it would make this more understandable.}
 This is basically the number of non-decreasing sequences of integers that start with a $0$, end with a number smaller or equal to $k$, and have length $k$.
 %
 \begin{theorem}
