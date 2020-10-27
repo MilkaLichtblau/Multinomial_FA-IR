@@ -5,7 +5,7 @@ People search engines are increasingly common for job recruiting and even for fi
 %
 A top-$k$ ranking algorithm is typically used to find the most suitable way of ordering items (persons, in this case), considering that if the number of people matching a query is large, most users will not scan the entire list.
 %
-Conventionally, these lists are ranked in descending order of some measure of the relative quality of items, according to the \emph{probability ranking principle}~\cite{robertson1977probability}.
+Conventionally, these lists are ranked in descending order of some measure of the relative fitness of items, according to the \emph{probability ranking principle}~\cite{robertson1977probability}.
 
 The main concern motivating this paper is that a machine learning ranking model may produce ranked lists that can systematically reduce the visibility of an already disadvantaged group~\cite{peder2008,Dwork2012}.
 %
@@ -163,7 +163,7 @@ The rest of this paper is organized as follows.
 %
 The next section presents a brief survey of related literature, while Section~\ref{sec:problem} introduces our ranked group fairness and utility criteria, our model adjustment approach, and a formal problem statement.
 %
-Section~\ref{sec:algorithms} describes the \algoFAIR\ algorithm and the model adjustment algorithm.
+Section~\ref{sec:multinom-fair-algo} describes the \algoFAIR\ algorithm and the model adjustment algorithm.
 %
 Section~\ref{sec:experiments} presents experimental results.
 %

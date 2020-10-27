@@ -1,341 +1,108 @@
-\section{Ranked Group Fairness Verification and Model Adjustment}
-To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure of the inverse multinomial CDF with parameters $k, p_G$ and $ \alpha $ can be used.
-%
-The inverse CDF specifies value of a random variable such that the probability of the variable being less than or equal to that value equals a given probability (in our case $p_G$).
-%
-\subsection{Verifying ranked group fairness for a single protected group. }
-%
-For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF is called the quantile function.
-%
-Table~\ref{tbl:ranked_group_fairness_table} shows an example of such a pre-computed data structure with different $ k $ and $ p $, using $\alpha=0.1$.
-%
-For instance, for $p=0.5$ we see that at least 1 candidate from the protected group is needed in the top 4 positions, and 2 protected candidates in the top 7 positions.
+%!TEX root = main.tex
 
-\begin{table}[t!]
-	\caption{Example values of $m_{\alpha,p}(k)$, the minimum number of candidates in the protected group that must appear in the top $k$ positions to pass the ranked group fairness criteria with $\alpha=0.1$ in a binomial setting.}
-	\vspace{-3mm}
-	\label{tbl:ranked_group_fairness_table}
-	\small\begin{tabular}{r|cccccccccccc}
-		\diaghead{some text}%
-		{p}{k}&
-		% & \multicolumn{10}{c}{k} \\
-		1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ \midrule
-		0.1      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  &  0 &  0 \\
-		0.2      & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  &  1 &  1 \\
-		0.3      & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1  &  1 &  2 \\
-		0.4      & 0 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 2 & 2  &  2 &  3 \\
-		0.5      & 0 & 0 & 0 & 1 & 1 & 1 & 2 & 2 & 3 & 3  &  3 &  4 \\
-		0.6      & 0 & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 4  &  5 &  5 \\
-		0.7      & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 5 & 5  &  6 &  6 \\
-		\bottomrule
-	\end{tabular}
-\end{table}
-
-\subsection{Verifying ranked group fairness for multiple protected groups.}
-As in the binomial case, the verification of ranked group fairness can be done efficiently with a pre-computed data structure.
+\section{Ranked Group Fairness Verification}
+\label{sec:fairness-verification}
+\input{pics/mTrees}
+To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the \emph{inverse multinomial CDF} with parameters $k, p_G$ and $ \alpha $.
 %
-For multiple protected groups this data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $ rather than a single line as in Table~\ref{tbl:ranked_group_fairness_table}.
+The inverse CDF specifies the value of the random variable, such that the probability of this variable being less than or equal to that value equals a given probability (in our case $p_G$).
 %
 As the multinomial CDF is not injective and has hence no inverse, there is no quantile function that tells us exactly how many candidates are needed at each $ k $.
 %
-Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure becomes a tree.
+Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $.
 %
-Note that each tree level corresponds to the respective ranking position, i.e. the root level corresponds to the first ranking position and so forth.
+Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = [1/3, 1/3]$. 
 %
-Also note that each path corresponds to a valid distribution of protected candidates in the ranking.
+Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, i.e. the root level corresponds to the first ranking position and so forth.
 %
-\input{pics/mTrees}
+As an example, consider tree level 4 in Fig.~\ref{fig:mtree-symmetric-unadjusted}.
 %
-Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree. It assumes there are two protected groups with minimum proportions $1/3$ and $1/3$. Levels go from left to right starting from zero. To determine how many elements of each protected group are required in the ranking, we look at all nodes at a given level, which provide the acceptable configurations.
+At this level, we have three nodes ``[2,0],'' ``[1,1],'' and ``[0,2],'' each of them containing a set of minima for elements of the protected groups (the nodes do not include any minima for the non-protected group).
 %
-For instance in this tree when there are 3 elements, there are 3 nodes named ``[2,0],'' ``[1,1],'' and ``[0,2].'' This means it is acceptable to have among the first 3 elements in the ranking either at least 2 elements from group 1, or at least 1 element from each group, or at least 2 elements from group 2.
+This means it is acceptable to have among the first four elements in the ranking either at least 2 elements from protected group 1, or at least 1 element from each protected group, or at least 2 elements from protected group 2.
 %
-The tree is symmetric when the minimum proportions are equal. Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+Note however, that nodes have parental relationships and that each \emph{path} corresponds to a fair distribution of protected candidates in the ranking.
+%
+Thus, if at level 4 we rank two candidates from protected group 1, thus satisfying the node with the asterisk in Fig.~\ref{fig:mtree-symmetric-unadjusted}, at level 5 have to satisfy either node ``[2,1],'' or node ``[3,0].''
+%
+The other nodes ``[1,1],'' ``[1,2],'' and ``[0,3]'' are not a child of node ``[2,0]'' and therefore cannot be considered to satisfy the ranked group fairness condition anymore.
 
-Each path in these trees corresponds to a valid strategy to place a minimum amount of protected candidates in the ranking under test (or construction).
+The tree is symmetric when the minimum proportions are equal. 
 %
-These trees can be constructed using the process described in algorithms~\ref{alg:computeMTree} and~\ref{alg:imcdf}.
-%
+Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ALGORITHM COMPUTE MTREE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{algos/algo-computeTree.tex}
 
-\FloatBarrier
-\subsection{Model Adjustment}
-\label{subsec:group-fairness-correction}
+As stated at the beginning of this section mTrees are pre-computed data structures that allow efficient verification of the ranked group fairness condition.
+%
+To construct them we use algorithms~\ref{alg:computeMTree} and~\ref{alg:imcdf}.
+%
+The first algorithm \algoComputeMTree takes a triple $(k,p_G,\alphaadj)$ as input and returns the mTree for these parameters.
+%
+First it creates an auxiliary root node that contains $|G|$ zero entries, which serves as the root parent.
+%
+Then for each parent node \texttt{parent} at each position position $i \leq k$ it calls the inverse multinomial CDF function.
+%
+The second algorithm \algoImcdf takes as input a 4-tuple $(\alphaadj, i, p_G, \texttt{parent})$ and returns all nodes satisfying the following two conditions:
+\begin{inparaenum}[(i.)]
+	\item they have to be children of node \texttt{parent}, and
+	\item they satisfy the fair representation condition (Def.~\ref{def:fair-representation-condition}, page~\pageref{def:fair-representation-condition}).
+\end{inparaenum}
+
+\section{Model Adjustment}
+\label{sec:model-adjustment}
 
 Our ranked group fairness definition requires an adjusted significance $\alphaadj = \adj(\alpha, k, p)$, because it tests multiple hypotheses ($k$ of them).
 %
-If we use $\alphaadj = \alpha$, we will produce too many false positives, i.e. rejecting fair rankings, at a rate larger than $\alpha$.
+If we use $\alphaadj = \alpha$, we will have too many false positives, i.e., we reject rankings that are fair, at a rate larger than $\alpha$.
 %
-To adjust significance, we extend a generative model for rankings with one protected group, using a binomial distribution~\cite{yang2016measuring}, to a multinomial distribution.
+To adjust the significance of multinomial \algoFAIR, we extend the generative model for fair rankings by~\citet{yang2016measuring} which we used in~\cite{zehlike2017fair}, to use a multinomial distribution instead of a binomial one.
 %
 Specifically, we consider that the following ranking should be accepted by the ranked group fairness test: \begin{inparaenum}[(i)]
 	\item start with an empty list, and
-	\item incrementally add the best protected candidate from group $g$ with probability $p_g$, or the best available non-protected candidate with probability $p_0 = 1-\sum_{j=1}^{|G|} p_j$.
+	\item incrementally add the next best protected candidate from group $g$ with probability $p_g$, or the next best available non-protected candidate with probability $p_0 = 1-\sum_{j=1}^{|G|} p_j$.
 \end{inparaenum}
 %
-``Best'' means the one with the highest utility.
-
-To illustrate why this correction is needed, observe Figure~\ref{fig:why-adjustment-is-needed-binomial}, which assumes one protected group.
-%
-This figure is generated by simulation, generating rankings using the process described above and showing the probability of those rankings being rejected by our ranked group fairness test with $\alphaadj=0.1$.
-%
-The figure suggests that depending on $k$ we would need to change the value of $\alpha$ if we want to achieve a rejection rate of $0.1$.
-%
-Figure~\ref{fig:why-adjustment-is-needed-multinomial} shows the same phenomenon but for multiple protected groups and $p_1=p_2=\frac{1}{3}$.
-%
-We can see these rankings are rejected by our multinomial ranked group fairness test with a probability different from $\alphaadj=0.1$.
-%
-The curves are computed by the method we describe in the following paragraphs, and it experimentally matches the result of simulations we performed.
+``Next best'' means the one with the highest utility.
 
 \begin{figure}[h]
 	\centering
-	\subfloat[Probability that a fair ranking created by a Bernoulli process with $p=0.5$ fails the ranked group fairness test.\label{fig:why-adjustment-is-needed-binomial}]
-	{\includegraphics[width=.48\textwidth]{pics/failProbPlotBinom.png}}\hfill
-	\subfloat[Probability that a fair ranking created by a multinomial distribution process with\\ $p_G = (0.33, 0.33)$ fails the multinomial ranked group fairness test.  \label{fig:why-adjustment-is-needed-multinomial}]
-	{\includegraphics[width=.48\textwidth]{pics/failProbPlotMultinom.png}}\hfill
-	\caption{Experiments on synthetic data with one and two protected groups showing the need for multiple tests correction.
-		The data was created by the statistical process of a binomial (Fig.~\ref{fig:why-adjustment-is-needed-binomial}) and multinomial (Fig.~\ref{fig:why-adjustment-is-needed-multinomial}) distribution and should be rejected as unfair at a maximum rate $\alpha \leq 0.1$.
-		However we see that the rejection probability increases steeply by $k$ and the number of groups.
+	{\includegraphics[width=.48\textwidth]{pics/failProbPlotMultinom.png}}
+	\caption{Experiments on data generated by a simulation, showing the need for multiple tests correction.
+		%
+		The data has two protected groups, rankings are created by a multinomial process (``rolling a 3-sided dice'') with $p_G = (0.33, 0.33)$.
+		%
+		These rankings should have been rejected as unfair at a rate $\alpha = 0.1$.
+		%
+		However, we see that the rejection probability increases with $k$.
+		%
 		Note the scale of $k$ is logarithmic.}
-	\label{fig:need-for-model-adjustment}
+	\label{fig:why-adjustment-is-needed-multinomial}
 \end{figure}
-
+To illustrate why this correction is needed, observe Figure~\ref{fig:why-adjustment-is-needed-multinomial}, which assumes two protected groups with $p_1=p_2=\frac{1}{3}$.
+%
+This figure is generated by simulation, generating rankings with the process described above.
+%
+It shows the probability of those rankings being rejected by our ranked group fairness test with $\alphaadj=0.1$.
+%
 Generally, we can see that the probability of a Type-I error (declaring this fair ranking as unfair) is higher than $\alpha = 0.1$.
+%
+Therefore, depending on $k$ we would need to change the value of $\alpha$, if we want to achieve a rejection rate of $0.1$.
 %
 If the $k$ tests were independent, we could use $\alphaadj = 1 - (1 - \alpha)^{1/k}$ (i.e., {\v S}id{\'a}k's correction), but given the positive dependence, the false negative rate is smaller than the bound given by {\v S}id{\'a}k's correction.
 
-We will separate the explanation of the model adjustment into two subsections: first we explain the simpler case of a binomial distribution, i.e. the presence of one non-protected and \emph{one} protected group, which can be solved analytically.
-%
-Second we explain the more general case of a multinomial distribution, where more than one protected group is present.
-
-\subsubsection{Model Adjustment for One Protected Group}\label{subsubsec:adjustment-binomial}
-
-The probability that a fair ranking, created by the process of~\citet{yang2016measuring}, passes the ranked group fairness test with parameters $(p,\alpha)$ can be computed as follows:
-%
-Let $m(k) = m_{\alpha,p}(k) = F^{-1}(k,p,\alpha)$ be the number of protected elements required up to position $k$.
-%
-Let $\minv(i) = k$ s.t. $m(k) = i$ be the position at which $i$ protected elements are required.
-%
-Let $b(i) = \minv(i) - \minv(i-1)$ (with $\minv(0) = 0$) be the size of a ``block,'' that is, the gap between one increase and the next in $m(\cdot)$.
-%
-We call the $k$-dimensional vector $(m(1), m(2), \ldots , m(k))$ a \emph{mTable}.
-%
-An example is shown on Table~\ref{tbl:05:example_blocks}.
-%
-\begin{table}[h]
-	\centering
-	\begin{tabular}{cccccccccccccc}\toprule
-		$k$    & 1 & 2 & 3 & \textbf{{4}} & 5 & 6 & \textbf{7} & 8 & \textbf{9} & 10 & 11 & \textbf{12} \\
-		\midrule
-		$m(k)$ & 0 & 0 & 0 & \multicolumn{1}{c|}{1} & 1 & 1 & \multicolumn{1}{c|}{2} & 2 & \multicolumn{1}{c|}{3} & 3  & 3  & \multicolumn{1}{c}{4}\\
-		Inverse   & \multicolumn{4}{c|}{$\minv(1)=4$}
-		& \multicolumn{3}{c|}{$\minv(2)=7$}
-		& \multicolumn{2}{c|}{$\minv(3)=9$}
-		& \multicolumn{3}{c}{$\minv(4)=12$}\\
-		Blocks       & \multicolumn{4}{c|}{$b(1)=4$}
-		& \multicolumn{3}{c|}{$b(2)=3$}
-		& \multicolumn{2}{c|}{$b(3)=2$}
-		& \multicolumn{3}{c}{$b(4)=3$}\\
-		\bottomrule
-	\end{tabular}
-	\caption[Example of different block sizes]{Example of $m(\cdot)$, $\minv(\cdot)$, and $b(\cdot)$ for $p=0.5, \alpha=0.1$.}
-	\label{tbl:05:example_blocks}
-\end{table}
-
-\noindent Furthermore let
-\begin{equation}
-	\label{eq:05:combinations}
-	I_{m(k)} = \{ v = (i_1, i_2, \ldots, i_{m(k)}): \forall \ell' \in \lbrace 1,\ldots,m(k) -1 \rbrace, 0 \le i_{\ell'} \le b(\ell') \wedge \sum_{j=1}^{\ell'} i_j \ge \ell' \}
-\end{equation} 
-%
-represent all possible ways in which a fair ranking\footnote{Note that we do not consider rankings of size 0, which always pass the test.} generated by the method of \citet{yang2017measuring} can pass the ranked group fairness test, with $i_j$ corresponding to the number of protected elements in block $j \; (\text{with } 1 \le j \le k)$.
-%
-As an example consider again Table~\ref{tbl:05:example_blocks}: the first block contains four positions, i.e. $b(1)=4$ and this block passes the ranked group fairness test, if it contains at least one protected candidate.
-%
-It also passes the test, if it contains more protected candidates, hence $i_1 \in \{1, 2, 3, 4\}$. 
-
-The probability of considering a ranking of $k$ elements (i.e. $m(k)$ blocks) unfair, is:
-\begin{equation} 
-	\label{eq:05:failureProb}
-	1 - \sum_{v \in I_{m(k)}} \prod_{j=1}^{m(k)} f(v_j; b(j), p)
-\end{equation}
-%
-\noindent where $f(x;b(j),p) = Pr(X = x)$ is the probability density function (pdf) of a binomially distributed variable $X \sim Bin(b(j), p)$.
-%
-However, if calculated naively this expression is intractable because of the large number of combinations in $I_{m(k)}$.
-
-\input{algos/05-successProb.tex}
-We therefore propose Algorithm~\ref{alg:05:successProb}, which computes the probability that a fair ranking passes the ranked group fairness test (i.e. the right term of Equation~\ref{eq:05:failureProb}) \emph{recursively}.
-%
-%With this algorithm however, we have to account for an important pitfall: we may choose a combination of $k, p, \alpha$ where the last block ``reaches beyond'' $k$.
-%
-%Consider again Table~\ref{tbl:05:example_blocks} with $k=8, \minpro$p=$0.5, \alpha=0.1$: the second block reaches until position 7, while the third block reaches until position 9.
-%
-%If we cut off the mTable at $k=8$ to adjust the significance level, the last block reaches beyond $k$ which is to position 9. 
-%
-%\meike{Inwiefern macht der neue Algorithmus das Problem mit aufgebrochenen Blöcken besser?}
-%To account for that t
-The algorithm breaks the vector $v = (i_1, i_2, \ldots ,i_{\ell})$ of Equation~\ref{eq:05:combinations} into a \textit{prefix} and a \textit{suffix} (Alg.~\ref{alg:05:successProb}, Line~\ref{algoline:05:suffixes}).
-%
-We call $i_1$ the \textit{prefix} of $(i_2, \ldots, i_{\ell})$, and $(i_2, \ldots, i_{\ell})$ the \textit{suffix} of $i_1$.
-%
-The algorithm starts with a prefix and calculates all possible suffixes, that pass the ranked group fairness test, recursively (Line~\ref{algoline:05:recursion}).
-%
-Consider the following example: for the first prefix $i_1 = 1$ the algorithm computes all possible suffixes, where we rank exactly one protected candidate in the first block.
-%
-For this prefix $i_1$ combined with each possible suffix $v \setminus i_1$ we calculate $\prod_{j=1}^{m(k)} f(v_j; b(j), p)$ (Line~\ref{algoline:05:pdf}), which is the probability that one particular instance of $v$ passes the ranked group fairness test (for short, we refer to it as the ``success probability'').
-%
-In the next recursion the prefix is $i_1=1, i_2 =1$ and the algorithm computes all possible suffixes, i.e. all rankings where we rank exactly one protected candidates in the first block and one protected candidate in the second block, and the respective success probabilities.
-%
-This procedure continues for $m(k)$ iterations. 
-%
-After that the entire procedure starts again with $i_1=2$ and is repeated until the maximum number of protected candidates is reached, in our case $b(1)=4$.
-%
-All intermediate success probabilities are added up (Line~\ref{algoline:05:pdf}) to the total success probability of the mTable that was created with the given setting of $k, p, \alpha$.
-
-Note that there are at most $\prod_{j=1}^{m(k)}b(j)$ possible combinations to distribute the protected candidates within the blocks.
-%
-Furthermore many $v \in I_{m(k)}$ share the same prefix and hence have the same probability density value for these prefixes.
-%
-To reduce computation time the algorithm stores the binomial probability density value for each prefix in a hash map with the prefix as key and the respective pdf as value.
-%
-Thus the overall computational complexity becomes $O(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
-
-\paragraph{Finding the correct mTable.} 
-To find the correct mTable, that is the mTable with an overall acceptance probability of $1-\alpha$, we propose Algorithm~\ref{alg:05:binarySearch} that takes  parameters $k, p, \alphaadj$ as input.
-%
-%We use Algorithm~\ref{alg:05:successProb} to determine the adjusted significance level $\alphaadj$ for the ranked group fairness test, such that the overall acceptance probability for the mTable with parameters $k, p, \alphaadj$ becomes $1-\alpha$.
-%
-It sequentially creates mTables (recall that these are $k$-dimensional vectors of the form $(m(1), m(2), \ldots , m(k))$) for different values of $\alphaadj$, and then calls Algorithm~\ref{alg:05:successProb} to calculate their success probability until it finds the correct mTable with overall failure probability $\alpha$ . 
-
-\input{algos/05-binarySearchForMtable.tex}
-To search for the correct mTable systematically and efficiently we perform a binary search, for which we need a discrete measure to search on.
-%
-We call this measure the \emph{mass} of a mTable.
-%
-\begin{definition}[Mass of a mTable]
-	\label{def:05:Mass of a MTable}
-	For $\text{mTable}_{p,k,\alpha}=(m(1) , m(2) , \ldots , m(k))$ we call\\
-	$L_1(\text{mTable}_{p,k,\alpha})=\sum_{i=1}^k m(i)$ the \textit{mass of $\text{mTable}_{p,\alpha,k}$}.
-\end{definition}
-%
-Furthermore we only want to consider only mTables with certain properties, which we define in the following paragraph.
-%
-This is important because we want to reduce the search space of $k$-dimensional vectors as much as possible.
-%
-A $k$-dimensional vector (e.g. $(0,0,1,2,3)$) has to have two properties in order to constitute a mTable, rather than just a vector of natural numbers: it has to be \emph{valid} and \emph{legal}.
-%
-\begin{definition}[Valid mTable]
-	\label{def:05:valid-mtable}
-	The $\text{mTable}_{p,k,\alpha}=(m(1) , m(2) , \ldots , m(k))$ is \emph{valid} if and only if, $m(i) \leq m(j)$ for all $i,j \in \lbrace 1, \ldots, k \rbrace$ with $i < j$ and $m(i)=n \Rightarrow m(i+1) \leq n+1$.
-\end{definition}
-\noindent It is easy to see that many valid mTables exist.
-%
-They correspond to all $k$-dimensional arrays with integers monotonically increasing by array indices.
-%
-However we only want to consider those valid mTables for our ranked group fairness test that have been created by the statistical process in~\citet{yang2017measuring}.
-%
-We call these legal mTables.
-%
-\begin{definition}[Legal mTable]
-	\label{def:05:legal-mtable}
-	A $\text{mTable}_{p,\alpha,k}$ is \textit{legal} if and only if there exists a $p,k,\alpha$ such that
-	$\texttt{constructMTable}(p,k,\alpha)=\text{mTable}_{p,\alpha,k}$.
-\end{definition}
-%
-\begin{definition}[constructMTable]
-	\label{def:05:construct-mtable-single-test}
-	For $p\in [0,1], k \in \mathbb{N}, \alpha \in [0,1]$ we define a function to construct a mTable from input parameters $p, k, \alpha$ according to \cite{yang2017measuring}.
-	
-	\noindent$\texttt{constructMTable} : \\ (0,1) \times \mathbb{N} \times [0,1] \longrightarrow \lbrace (m(1) ,\ldots, m(k)): m(i) = F^{-1}(i,p,\alpha), \, i = \{1,\ldots,k\}\rbrace$ \\
-	with $\texttt{constructMTable}(p,k,\alpha)=\text{mTable}_{p,k,\alpha}$.
-\end{definition}
-%
-\begin{lemma}
-	\label{lemma:05:legal-valid-mtable}
-	If a mTable is legal, it is also valid.
-\end{lemma}
-%
-\noindent Lemma \ref{lemma:05:legal-valid-mtable} follows directly by construction. 
-
-The definition of a legal mTable together with its corresponding mass enables us to perform a binary search, which helps us to find $\alphaadj$ and hence the correct mTable with an overall failure probability of $\alpha$.
-%
-Note that for any value of $\alpha$ there exists exactly one \emph{legal} mTable.
-%
-However, the opposite is not true: as $\alpha$ is a real number from the interval $[0, 1]$, the same mTable can be created using different (but very similar) values of $\alpha$.
-%
-Thus without a discrete measure for a mTable we do not know when to stop searching, which is why we introduce the \emph{mass of a mTable}.
-%
-Now, we have to relate the continuous $\alpha$ to the discrete measure of an mTable.
-%
-\begin{lemma}
-	\label{lemma:05:non-decreasing-with-alpha-mtable}
-	Every $\text{mTable}_{p,k,\alpha}=\texttt{constructMTable}(p,k,\alpha)=(m(1) , m(2) , \ldots , m(k))$ is non-decreasing with $\alpha$. This means that
-	$\texttt{constructMTable}(p,k,\alpha - \epsilon) = (m(1)' , m(2)' , \ldots , m(k)')$ will result in $m(i)' \leq m(i)$ for $i=1,\ldots,k$ and $\epsilon > 0$.
-\end{lemma}
-%
-\noindent This property shows that, if we reduce $\alpha$ in our binary search, the mass of the corresponding mTable is also reduced or stays the same.
-%
-It very usefully implies a criterion to stop the binary search: namely we stop the calculation when the mass of the mTable of the left search boundary equals the right search boundary.
-%
-Of course this only works if there exists exactly one legal mTable for each mass, which we proof in the following.
-\begin{theorem}
-	\label{theorem:05:mtable-mass-injection}
-	For fix $p,k$ there exists exactly one legal mTable for each mass $L_1\in \lbrace 1,\ldots,k \rbrace$.
-\end{theorem}
-%
-\begin{proof}
-	\label{proof:05:mtable-mass-injection}
-	We prove this by contradiction: Let $MT_{p,k,\alpha_1}$ and $MT'_{p,k, \alpha_2}$ be two different mTables with $L_1(MT_{p,k,\alpha_1 }) = L_1(MT'_{p,k,\alpha_2})$.\\
-	%
-	If both are legal then it applies that $\texttt{constructMTable}(p,\alpha_1 ,k)=MT_{p,\alpha_1 ,k}$
-	and \\ $\texttt{constructMTable}(p,\alpha_2 ,k)=MT'_{p,\alpha_2 ,k}$.
-	%
-	Because $MT_{p,k,\alpha_1} \neq MT'_{p,k,\alpha_2}$, without loss of generality entries $m(i), m(i)' , m(j) , m(j)'$ exist in each table, such that $|m(i) - m(i)'| = |m(j) - m(j)'|$ while at the same time $m(i) > m(i)'$ , $m(j) < m(j)'$ for $i<j, i,j \in \lbrace 1, \ldots , k \rbrace$.
-	%
-	(Think of it as the two entries in each table "evening out", such that both tables have the same mass.)\\
-	%
-	If $\alpha_1 > \alpha_2$, then the statement $m(j)' > m(j)$ violates Lemma~\ref{lemma:05:non-decreasing-with-alpha-mtable}.
-	%
-	If $\alpha_2 > \alpha_1$, then the statement $m(i) > m(i)'$ also violates Lemma~\ref{lemma:05:non-decreasing-with-alpha-mtable}.
-	%
-	The only possibility left is hence that $\alpha_1 = \alpha_2$, which contradicts $MT \neq MT'$, as both are created using function \texttt{constructMTable}.
-\end{proof}
-
-\paragraph{The number of valid mTables.} In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
-%
-\begin{theorem}
-	\label{theorem:05:number-of-mtables}
-	The number of legal mTables for $k,p$ is less or equal to $\frac{k(k-1)}{2}$ .
-\end{theorem}
-
-\begin{proof}
-	\label{proof:05:number-of-mtables}
-	With the proof above we can count the number of legal mTables for fix $p,k$ as follows: The maximum mass of a legal mTable of length $k$ is by construction
-	$L_1 ((m(1) = 1,m(2) = 2, \ldots, m(k) = k)) = \sum_{i=1}^k m(i) = \frac{k(k-1)}{2}$
-	%
-	Following definition~\ref{def:05:valid-mtable} the entry $m(1)$ is either $0$ or $1$.
-	%
-	In turn $m(2)$ can only be $2$, if $m(1)$ was $1$ (otherwise $m(2)<2$).
-	%
-	Accordingly, the minimum mass of a legal mTable is $L_1((m(1),m(2), \ldots, m(k))) = 0$, if all $m(i)=0$.
-	%
-	We have shown that exactly one legal mTable exists for each mass.
-	%
-	It follows directly that there are at most $\frac{k(k-1)}{2}$ masses and therewith legal mTables.
-\end{proof}
-
-\subsubsection{Model Adjustment for Multiple Protected Groups}
-\label{sec:multinomial-adjustment}
+\subsection{General Procedure}
+\label{subsec:general-process}
 %
 With the presence of more than one protected group, the analytical extension of the model adjustment to a multinomial setting is too complex to be written into a closed formula.
-
-We found no efficient way to calculate all permutations which pass or fail the test and we choose an experimental procedure to adjust $ \alpha $.
 %
-It is a generalization of the binomial process suggested by~\citet{yang2016measuring} to multinomial settings:
+In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair} (see also Section~\ref{sec:adjustment-binomial}), we found no analytical way to calculate all permutations which pass or fail the test.
+%
+Therefore we develop an experimental procedure to adjust $ \alpha $:
+%
 \begin{enumerate}
 	\item Get input $ p_G, k, \alpha $.
 	\item Build mTree with input $ \alpha $.
@@ -347,35 +114,57 @@ It is a generalization of the binomial process suggested by~\citet{yang2016measu
 	\item Now we build a new mTree using $ \alphaadj $ and repeat the procedure until $ \failprob \approx \alpha $.
 \end{enumerate}
 %
-This adjustment procedure requires to compute a new mTree at each iteration which is expensive on its own. Depending on the level of accuracy needed, a large number of iterations $M$ might be required.
+Once we found $\alphaadj$ we can recompute the mTrees from Figures~\ref{fig:mtree-symmetric-unadjusted} and~\ref{fig:mtree-asymmetric-unadjusted} to obtain an overall significance level of $\alpha = 0.1$.
 %
-Additionally the binary search heuristic needs many steps to find $\alpha$, if large intervals have to be searched.
+Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
+\input{pics/mTreesAdjusted.tex}
 
-We use three strategies to drastically reduce computational costs.
+\subsection{Optimizations for the MTree Calculation}
+\label{subsec:mtree-optimization}
+In this subsection we explain how we optimize the adjustment procedure to reduce complexity, as it requires to compute a new mTree at each iteration which is expensive on its own. 
 %
-\begin{inparaenum}[(1)]
+Furthermore, depending on the level of accuracy needed, a large number of iterations $M$ might be required and the binary search heuristic may need many steps to find $\alpha$, if large intervals have to be searched.
+%
+We use three strategies to drastically reduce computational costs of this simulation-based adjustment:
+%
+\begin{inparaenum}[(i)]
 %
 \item we reduce the space requirements of the mTree structure;
 %
-\item we construct the tree level by level and reject if the ranking does not satisfy any node in a level;
-%
 \item we exploit the monotonicity of $\alphaadj$ with respect to $\alpha$ and use a regression procedure to speed up the binary search.
-\end{inparaenum}
 %
-We next explain each strategy.
+\item we apply the adjustment procedure for small trees first and only increase $k$, if we found the correct  $\alphaadj$ for the small trees.
+\end{inparaenum}
 
+\subsubsection{Reducing mTree Space Requirements.} 
+\label{subsubsec:reducing-space-requirements}
+We improve the mTree data structure by excluding the calculation and storage of redundant information.
+%
+First we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
 
-First, we improve the mTree data structure itself by excluding the calculation and storage of redundant information.
+Second, in case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_|G|$ the mTree shows a convenient property that we can use to reduce additional space, as well as computation time.
+%
+Remember that whenever the multinomial CDF value falls below $\alpha$ for a particular position $i$, we have to put a protected candidate onto $i$.
+%
+For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $m(i)$ of the same likelyhood.
+%
+As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6.
+%
+For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $[1, 0]$ and $[0,1]$.
+%
+Both have the same multinomial CDF values.
+%
+We store only one of the nodes and flag it as ``has mirrored node'' and continue our mTree computation only in the stored branch.
+%
+This way we save half of the space and computation time needed, without loosing any information about the tree.
+
+Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
 Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the mTree structure with all parent-child relations as edges.
 %
-In these structures, a node can only appear once at each level. Duplicate nodes are combined into a single node with multiple parents.
-%
-Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
-%
-This is possible because we know that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
-%
-Before we can prove this property, we need to introduce the following definition.
+We leave out these edges, thus reducing space, because we can prove that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
+
+Before we can prove this property, we need to introduce the following definition, which formalizes what a successful mTree test at level $i$ looks like.
 %
 \begin{definition}[Successful mTree Testing]
 \label{def:valid-mtree-test}
@@ -385,12 +174,12 @@ Let furthermore $MT$ be a $mTree$, with $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ th
 %
 We write $\tau_{G,i} \geq m_{G,i}$ if $\tau_g \geq m_g$ for all $g=1,\ldots,|G|$.
 %
-We call a test on level $i$ of $MT$ successful if and only if $\tau_{G,i} \geq m_{G,i}$.
+We call a test on level $i$ of $MT$ successful, iff $\tau_{G,i} \geq m_{G,i}$.
 \end{definition}
 %
-\noindent With this we can make sure that if we test a ranking on each level of the mTree successfully, the entire ranking will be fair according to the ranked group fairness definition.
+Again, in order to remove the parental relationships in the mTree, thus reducing storage space, we have to prove that, if we test a ranking on each level of the mTree successfully, the entire ranking will be fair according to the ranked group fairness definition.
 %
-We prove this by showing that, if a ranking passes the test for any two nodes $n_1$ and $n_2$ at two consecutive levels $h$ and $h+1$ and $n_1$ is \emph{not} a parent of $n_2$, then all actual children of $n_1$ will have a weaker requirement than $n_2$ and will hence also test successfully.
+We prove this by showing that, if a ranking passes the test for any two nodes $n_1$ and $n_2$ at two consecutive levels $h$ and $h+1$, and $n_1$ is \emph{not} a parent of $n_2$, then all actual children of $n_1$ will have a weaker requirement than $n_2$ and will hence also test successfully.
 %
 Furthermore we show that all nodes at level $h+1$ for which the ranking fails the test are part of a path that already rejected it as unfair at level $h$.
 %
@@ -403,16 +192,20 @@ In fact we see that the actual successor of $[1,1]$ is a node with the same conf
 However, if our ranking passes the test for the stricter node $[2,1]$, it also passes for $[1,1]$ and thus we do not need to know the true parent of $[2,1]$.
 %
 Note that the ranking would fail at node $[3,0]$, but with $[1,1]$ at level 9 it would have failed already at $[3,0]$'s predecessor $[2,0]$.
-\note[ChaTo]{I did not review the following proof.}
 %
 \begin{theorem}
 \label{theorem:lazy-mTree-test}
-Let $MT$ be a mTree and $\tau$ a ranking of size $k$. If and only if there exists at least one successful test for $\tau$ at each level of $MT$, there exists a valid path from the root of $MT$ to a leaf of $MT$.
+Let $MT$ be a mTree and $\tau$ a ranking of size $k$.
+%
+There exists at least one successful test for $\tau$ at each level of $MT$,
+iff there exists a valid path from the root of $MT$ to a leaf of $MT$.
 \end{theorem}
 %
 \begin{proof}
 	\label{proof:lazy-mTree-test}
-	It is clear that at least one successful test per level is necessary for the path to exist, let us prove that it is sufficient.
+	It is clear that at least one successful test per level is necessary for the path to exist.
+	%
+	Let us proof that one successful test is a sufficient condition for the path to exist.
 	%
 	Let $MT$ be a mTree and $\tau$ be a ranking that passes the test at level $h$ of $MT$.
 	%
@@ -424,7 +217,7 @@ Let $MT$ be a mTree and $\tau$ a ranking of size $k$. If and only if there exist
 	%
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
-	For all entries $m_{g}(h+1)$ of $m_{G,(h+1)}$ it is that $m_{g}(h) \leq m_{g}(h+1)$ by construction of the mTree in which requirements for protected candidates can only increase or stay the same.
+	For all entries $m_{g}(h+1)$ of $m_{G,(h+1)}$ it is that $m_{g}(h) \leq m_{g}(h+1)$ by construction of the mTree, in which requirements for protected candidates can only increase or stay the same, but cannot decrease.
 
 	\noindent We can now distinguish between the following two cases:
 	\\
@@ -457,15 +250,42 @@ We showed that Case (2.2) is impossible. There is only Case 1 left if we have ra
 It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than such path.
 \end{proof}
 %
-\noindent Because of theorem \ref{theorem:lazy-mTree-test} we do not need to keep the tree structure and may store only a list of tuples for each level, additionally to removing duplicate entries.
-%
-In case of symmetric minimum proportions $p_G$, we can further save memory and computation time, by reducing mirrored entries such as $[0,2]$ and $[2,0]$.
-%
-We simply flag a node for which a mirror exists on the same depth level and do not calculate the mirrored branch.
+\noindent Because of Theorem~\ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, while removing duplicate entries.
 
-Second, we use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e. a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are congruent within the first ten positions.
 %
-This means that we can start the adjustment from the root node and expand the tree gradually to find the correct $ \alphaadj $, because if $\failprob$ is too high for $k=10$ it will be too high for $k=20$ in particular and we do not have to consider the larger tree, as long as we do not have a good $\alphaadj$ for $k=10$.
+\begin{figure}[t!]
+	\centering
+	%
+	\subfloat[Training data $R$ for a regression model to predict a good candidate for $\alphaadj$. Each pair $(k_j, \alpha_{c_j})$ is computed for small $k$ using the procedure described in Subsection~\ref{subsec:general-process}. \label{fig:regression-training-data}]
+	{\includegraphics[width=.48\textwidth]{pics/alpha_030303_01.png}}\hfill
+	%
+	\subfloat[Computation time comparison between binary search only and binary search combined with regression for the multinomial significance adjustment.  \label{fig:regression-time-saved}]
+	{\includegraphics[width=.48\textwidth]{pics/computationTimeRegressionVSBinaryMultinomial.png}}\hfill
+	\caption{}
+	\label{fig:regression_adjustment_benefits}
+	\vspace{-3mm}
+\end{figure}
+\subsubsection{Finding a Good Starting Candidate for the Binary Search}
+We use a second-degree polynomial regression model to get our first estimate for a good $\alphaadj$ candidate and apply the binary search heuristic from that candidate, rather than starting with a random value, that might be very far away from the correct $\alphaadj$.
+%
+We need a few additional parameters as input: \texttt{kTarget} -- the length of the target ranking, \texttt{kStart} -- the size of the first mTree, \texttt{maxPreAdjustK} -- the maximum size of the mTree before we use regression to predict a good candidate $\alpha_{c_r}$ for the final $\alphaadj$, and \texttt{num\_iterations} -- the number of training instances to be computed.
+%
+To create a training dataset $R$, we compute \texttt{num\_iterations} small mTrees (i.e. with different $k \leq $ \texttt{maxPreAdjustK}) and adjust the respective $\alpha$ values as described in Subsection~\ref{subsec:general-process}.
+%
+For each iteration $j$ the pair $(k_j, \alpha_{c_j})$ is stored as a training instance in $R$.
+%
+Figure~\ref{fig:regression-training-data} shows a training set for $p_G=[1/3, 1/3], \texttt{maxPreAdjustK}=100$.
+%
+Then a regression model is trained to predict $\alpha_{c_r}$ for \texttt{kTarget}.
+%
+This $\alpha_{c_r}$ is now used to start the binary search for the correct and final $\alphaadj$.
+%
+Figure~\ref{fig:regression-time-saved} shows the runtime difference for the model adjustment routine with and without the use of regression.
+
+\subsubsection{Adjusting for Small $k$ First}
+We use the fact that given a value of $\alpha$, the mTree calculation is not dependent on $ k $, i.e., a mTree for $k=20$ and a mTree for $k=10$ for the same $\alpha$ are equal in the first ten positions.
+%
+This means that we can start the adjustment from the root node and expand the tree gradually to find the correct $ \alphaadj $, because if $\failprob$ is too high for given $k$, it will also be too high for any $k' > k$. %in particular and we do not have to consider the larger tree, as long as we do not have a good $\alphaadj$ for $k=10$.
 %
 %In order to show that we can indeed do that, assume that the for loop of algorithm \ref{alg:computeMTree} stops at $k=10$ instead of $k=20$.
 %
@@ -479,38 +299,12 @@ This means that we can start the adjustment from the root node and expand the tr
 %
 %Then we set $ k=k+ $\texttt{stepsize}, and repeat the procedure until we reach the desired ranking length.
 %
-We can see in Figure \ref{fig:need-for-model-adjustment} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
+We can see in Figure~\ref{fig:why-adjustment-is-needed-multinomial} that $ \failprob $ grows very fast for small $k$, which makes an early adjustment of $\alpha$ most efficient to save computation time.
+%
+%Figure~\ref{fig:regression-time-saved} shows the reduction of computation time when we combine the binary search with a regression and the pre-adjustment strategy.
 
-Third, we use a second-degree polynomial regression model to get our first estimate for a good $\alphaadj$ candidate and apply the binary search heuristic from that candidate, rather than starting with a random value, that might be very far away from the correct $\alphaadj$.
-%
-In this case we give as input a few additional parameters: \texttt{kTarget} -- the length of the target ranking, \texttt{kStart} -- the size of the first mTree, \texttt{maxPreAdjustK} -- the maximum size of the mTree before we use regression to predict a good candidate $\alpha_{c_r}$ for the final $\alphaadj$, and \texttt{num\_iterations} -- the number of training instances to be computed.
-%
-To create a training dataset $R$, we compute \texttt{num\_iterations} small mTrees (i.e. with different $k \leq $ \texttt{maxPreAdjustK}) and adjust the respective $\alpha$ values as described in the beginning of Section~\ref{sec:multinomial-adjustment}.
-%
-For each iteration $j$ the pair $(k_j, \alpha_{c_j})$ is stored as a training instance in $R$.
-%
-\begin{figure}[h]
-	\centering
-	%
-	\subfloat[Training data $R$ for a linear regression model to predict a good candidate for $\alphaadj$. Each pair $(k_j, \alpha_{c_j})$ is computed for small $k$ using the procedure described in the beginning of Section~\ref{sec:multinomial-adjustment}. \label{fig:regression-training-data}]
-	{\includegraphics[width=.48\textwidth]{pics/alpha_030303_01.png}}\hfill
-	%
-	\subfloat[Computation time comparison between binary search only and binary search combined with linear regression for the multinomial significance adjustment.  \label{fig:regression-time-saved}]
-	{\includegraphics[width=.48\textwidth]{pics/computationTimeRegressionVSBinaryMultinomial.png}}\hfill
-	\caption{}
-	\label{fig:regression_adjustment_benefits}
-	\vspace{-3mm}
-\end{figure}
-%
-Figure~\ref{fig:regression-training-data} shows a training set for $p_G=[1/3, 1/3], \texttt{maxPreAdjustK}=100$.
-%
-Then a regression model is trained to predict $\alpha_{c_r}$ for \texttt{kTarget}.
-%
-This $\alpha_{c_r}$ is now used to start the binary search for the correct and final $\alphaadj$.
-%
-Figure~\ref{fig:regression-time-saved} shows the runtime difference for the model adjustment routine with and without the use of linear regression.
-
-Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in pseudo-code and performs the following steps:
+\subsection{Final Adjustment Algorithm}
+Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in pseudo-code, which performs the following steps:
 %
 \begin{enumerate}
 	\item Define the necessary parameters: \texttt{kTarget}, \texttt{kStart}, \texttt{maxPreAdjustK}, and \texttt{num\_iterations}
@@ -523,6 +317,7 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in 
 	\item Train a regression model with training data $R$ to predict $\alpha_{c_r}$ for $\texttt{kTarget}$.
 	\item Use binary search (Algorithm~\ref{alg:mult_binary}) to find $\alphaadj$ for parameters $k,p_G, \alpha_{c_r}$.
 \end{enumerate}
+%
 \begin{algorithm}[t!]
 	\caption{Algorithm \algoReg estimates the corrected significance level $\alphaadj$ such that the mTree $m(\alphaadj , k, p_G)$ has the probability of rejecting a fair ranking $\alpha$}
 	\label{alg:regression_search} % But whenever possible refer to this algo. by name not number
@@ -548,10 +343,116 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment procedure in 
     $\alphaadj \leftarrow \textsc{MultinomialBinarySearchAdjustment}(\alpha_{c_r},k,p_G)$ \\
     \Return{$\alphaadj$}
 \end{algorithm}
-%
-Once we found $\alphaadj$ we can recompute the mTrees from  Figures~\ref{fig:mtree-symmetric-unadjusted} and~\ref{fig:mtree-asymmetric-unadjusted} to obtain an overall significance level of $\alpha$.
-%
-Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
-\input{pics/mTreesAdjusted.tex}
 
+\subsection{Further Optimizations}
+In addition to the optimizations \emph{during} mTree calculation which we presented in Subsection~\ref{subsec:mtree-optimization}, our implementation caches already computed mTrees and their components to never do the same computation twice.
+%
+We denote that a mTree has to be computed only once for a particular combination of $k, p_G, \alpha$. 
+
+\subsubsection{MCDF Cache}\label{subsubsec:mcdf-cache}
+Table~\ref{tbl:time-space} shows that the highest computational cost arises from computing the multinomial cumulative distribution function $F$.
+%
+In the worst case Algorithm~\ref{alg:imcdf} computes it $|G|+1$ times for each group $g$ in $m_g(i)$ and each position $i\leq k$.
+%
+However, the same calculation may be done many times:
+%
+As an example consider the (fictive) mTree nodes $[2,1]$ and $[1,2]$ at position $k=3$.
+%
+To compute the successors of node $[2,1]$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$.
+%
+We store the results of these calculation in a map that we call MCDF cache with the algorithm arguments ($k$ and the minimum protected candidates of each group) as key and the corresponding mcdf as value.
+%
+Next we compute the successors of node $[1,2]$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
+%
+We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
+
+%Furthermore, if our example has symmetric minimum proportions $p_1 = p_1$, the mcdf of $(4,[2,1])$ is equal to $(4,[1,2])$ and $\textit{mcdf}(4,[1,3]) = \textit{mcdf}(4,[3,1])$.
+%%
+%Generally, if $p_1 = p_2 = \cdots = p_{|G|}$, we can make use of the mTree's symmetry: we calculate the mcdf only for node $m(i)$ and store it in the cache \emph{as well as its mirror} (see Subsection~\ref{subsubsec:reducing-space-requirements}), because their mcdf values are the same.
+
+Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
+%
+We can therefore persists the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
+
+\subsubsection{Stored mTrees}
+\label{subsubsec:stored-mtrees}
+During the computation of an adjusted mTree with parameters $k,p_G , \alpha$ we calculate many temporary mTrees (first the unadjusted ones, then the ones for the regression algorithm, then the ones for the binary search steps).
+%
+We persist all of the temporary mTrees plus the final tree in files for later usage.
+%
+The filenames contain the tree parameters, whether or not it is adjusted, and its probability to fail a fair ranking $\failprob$.
+%
+If any of these trees is needed at a later point in time it can be loaded from disc instead of being recomputed, be it as input for multinomial \algoFAIR or as temporary tree during a new adjusted mTree computation.
+
+\subsection{Complexity Analysis}
+\begin{table}[b!]
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoImcdf & $\mathcal{O}(|G|) \cdot \mathcal{O}(\text{MCDF}(k,p,\alpha ))$ & $\mathcal{O}(|G|^2)$ \\
+			\algoComputeMTree & $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\text{\algoImcdf})$ & $\mathcal{O}(|G|^{k})$\\
+			\rowcolor[HTML]{C0C0C0}
+			\algoMultBinary & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\text{\algoComputeMTree}))$  & $\mathcal{O}(|G|^k)$\\
+			\algoReg & $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\text{\algoComputeMTree}))$ & $\mathcal{O}(|G|^k)$\\
+			\rowcolor[HTML]{C0C0C0}
+			\algoFAIR & $\mathcal{O}(n \log{} n) + \mathcal{O} (\text{\algoMultBinary}) + \mathcal{O}(k)$ & $\mathcal{O}(|G|^k + n + k)$ \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+This section presents time and space complexity analyses for all algorithms from this section.
+%
+Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without any pre-computed data (i.e. no mTree exists and the MCDF cache is empty).
+%
+The complexity analysis for \algoFAIR is done in Subsection~\ref{subsec:FAIR-complexity}, but Table~\ref{tbl:time-space} already contains the summary, such that it shows time and space complexity for all algorithms in this paper.
+
+\subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
+The complexity of the multinomial cdf is dependant on the current position $i$ (also understood as \textit{number of trials}), $|G|$ the number of protected groups, and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$ (also \textit{number of successes}).
+%
+We will write $\mathcal{O}(\text{MCDF}(i,p_G,\alpha))$ as the asymptotic complexity of this function. 
+%
+In the library we used for our implementation, the time complexity to calculate the multinomial CDF at position $i$ is in $\mathcal{O}(\text{MCDF}(i,p_G,\alpha)) = \mathcal{O}(i^{|G|})$. 
+%
+Thus the most expensive position to calculate the multinomial CDF for is $k$.
+%
+For the overall time complexity of \algoImcdf we get $\mathcal{O}(|G|) \cdot \mathcal{O}(\text{MCDF}(k,p,\alpha ))$ with $|G|$ being the number of protected groups.
+%
+The space complexity is $\mathcal{O}(|G|^2)$ because we store $|G|$ nodes, with each node being an array of length $|G|$.
+%
+\subsubsection{\algoComputeMTree complexity}\label{subsubsec:mtree-complexity}
+Algorithm \algoComputeMTree constructs an mTree of depth $k$.
+%
+There may be up to $|G|$ possible children for each node in the tree resulting in $|G|^{k-1} +1$ nodes, leading to a time complexity of $\mathcal{O}(|G|^{k}) \cdot \mathcal{O}(\text{\algoImcdf})$.
+%
+We store $|G|^{k-1} +1$ nodes with arrays of length $|G|$, leading to space complexity of $\mathcal{O}(|G|^{k})$.
+%
+\subsubsection{\algoMultBinary complexity}\label{subsubsec:multBinary-complexity}
+Also in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic.
+%
+However there is no discrete measure for mTrees as was in case of the mTable mass.
+%
+Therefore the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria.
+%
+As we are searching on the interval $\left[0,\alpha\right[$ the resulting number of possible mTrees is $\frac{\alpha}{\epsilon}$.
+%
+Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its fail probability for each step.
+%
+The fail probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree.
+%
+This process needs $\mathcal{O}(10.000 \cdot k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them.
+%
+Hence the overall time complexity becomes $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\text{\algoComputeMTree}))$.
+%
+The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and their fail probability.
+%
+\subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
+Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
+%
+However a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
 \FloatBarrier

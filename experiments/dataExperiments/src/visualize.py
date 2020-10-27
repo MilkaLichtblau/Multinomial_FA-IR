@@ -32,9 +32,9 @@ def visualizeOrigCompasData():
     data = pd.read_csv("../data/COMPAS/compas_age_java.csv", header=0, skipinitialspace=True)
     # invert scores for plots
     data["score"] = 1 - data["score"]
-    labels = {"0": "older 45",
-              "2": "younger 25",
-              "1": "25 - 45"}
+    labels = {"0": "$> 45$",
+              "2": "$< 25$",
+              "1": "$25 - 45$"}
     plotKDEPerGroup(data, "Recidivism Risk", "../data/COMPAS/compas_age_kde.png", colNames=labels)
 
     data = pd.read_csv("../data/COMPAS/compas_worstThreeGroups_java.csv", header=0, skipinitialspace=True)
@@ -347,7 +347,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
 
 def main():
-#     visualizeOrigCompasData()
+    visualizeOrigCompasData()
 #     visualizeOrigGermanCreditData()
 #     visualizeOrigLSATData()
 
