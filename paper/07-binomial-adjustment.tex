@@ -1,7 +1,7 @@
 \section{Verifying ranked group fairness for a single protected group. }
 \label{sec:adjustment-binomial}
 \begin{table}[t]
-	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space-binom}}
+	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
 	\vspace{-4mm}
 	\scalebox{0.75}{
 		\begin{tabular}{lll}
@@ -184,7 +184,7 @@ A $k$-dimensional vector (e.g. $(0,0,1,2,3)$) has to have two properties in orde
 %
 \begin{definition}[Valid mTable]
 	\label{def:05:valid-mtable}
-	The $\text{mTable}_{p,k,\alpha}=(m(1) , m(2) , \ldots , m(k))$ is \emph{valid} if and only if, $m(i) \leq m(j)$ for all $i,j \in \lbrace 1, \ldots, k \rbrace$ with $i < j$ and $m(i)=n \Rightarrow m(i+1) \leq n+1$.
+	The $\text{mTable}_{p,k,\alpha}=(m(1) , m(2) , \ldots , m(k))$ is \emph{valid} if and only if, $m(i) \leq m(j)$ for all $i,j \in \lbrace 0, \ldots, k \rbrace$ with $i < j$ and $m(i)=n \Rightarrow m(i+1) \leq n+1$.
 \end{definition}
 \noindent It is easy to see that many valid mTables exist.
 %
@@ -237,6 +237,27 @@ Now, we have to relate the continuous $\alpha$ space to the mass of a mTable.
 	Every $\text{mTable}_{p,k,\alpha}=\texttt{constructMTable}(p,k,\alpha)=(m(1) , m(2) , \ldots , m(k))$ is non-decreasing with $\alpha$. This means that
 	$\texttt{constructMTable}(p,k,\alpha - \epsilon) = (m(1)' , m(2)' , \ldots , m(k)')$ will result in $m(i)' \leq m(i)$ for $i=1,\ldots,k$ and $\epsilon > 0$.
 \end{lemma}
+\begin{proof}
+\label{proof:05:non-decreasing-with-alpha-mtable}
+Every entry $m(i)$ for $i=1,\ldots,k$ is computed by line 3 of algorithm \ref{alg:constructMTable}. Specifically every entry is the inverse binomial cdf $F^{-1}(i,p,\alphaadj)$. In other words $m(i)$ is the smallest integer such that\\
+\begin{equation}
+\alphaadj \leq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j} = F^{-1}(i,p,\alphaadj)
+\end{equation}
+Now if
+\begin{equation}\label{eq:smaller m}
+\alphaadj - \epsilon \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} = F^{-1}(i,p,\alphaadj-\epsilon)
+\end{equation}
+\begin{equation}
+\Leftrightarrow \alphaadj \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon
+\end{equation}
+Now suppose that $m'(i) > m(i)$ in contradiction to lemma \ref{lemma:05:non-decreasing-with-alpha-mtable}. Then it is that
+\[m'(i)>m(i) \Rightarrow \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} \geq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j}\]
+because $\binom{i}{j}p^i (1-p)^{i-j} \geq 0 \forall i,j,p$. It follows for $\epsilon >0$ that
+\begin{equation}
+\alphaadj \leq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon
+\end{equation}
+But then $m'(i)\neq F^{-1}(i,p,\alphaadj-\epsilon)$ because $m(i)$ would be the smaller integer that satisfies equation \ref{eq:smaller m}. Thus it has to be that $m'(i)\leq m(i)$.
+\end{proof}
 %
 \noindent This property shows that, if we reduce $\alpha$ in our binary search, the mass of the corresponding mTable is also reduced or stays the same.
 %
@@ -281,15 +302,16 @@ This is basically the number of non-decreasing sequences of integers that start 
 	With the proof above we can count the number of legal mTables for fix $p,k$ as follows: The maximum mass of a legal mTable of length $k$ is by construction
 	$L_1 ((m(1) = 1,m(2) = 2, \ldots, m(k) = k)) = \sum_{i=1}^k m(i) = \frac{k(k-1)}{2}$
 	%
-	Following definition~\ref{def:05:valid-mtable} the entry $m(1)$ is either $0$ or $1$.
+	Following definition~\ref{def:05:valid-mtable} the 	    entry $m(1)$ is the smallest entry or equal to all other entries. Furthermore, because this mTable is legal and following definition \ref{def:05:legal-mtable}, the mTable is a result of algorithm \ref{alg:constructMTable}. Thus $m(1) = F^{-1}(1,p,\alpha) \in \lbrace 0,1\rbrace$. In other words, $m(1)$ can only be $0$ or $1$.
+	
 	%
 	In turn $m(2)$ can only be $2$, if $m(1)$ was $1$ (otherwise $m(2)<2$).
 	%
 	Accordingly, the minimum mass of a legal mTable is $L_1((m(1),m(2), \ldots, m(k))) = 0$, if all $m(i)=0$.
 	%
-	We have shown that exactly one legal mTable exists for each mass.
+	Following lemma \ref{lemma:05:non-decreasing-with-alpha-mtable}, we can create mTables with higher masses by increasing $\alpha$. Furthermore, following theorem \ref{theorem:05:mtable-mass-injection}, if a legal mTable exists for a mass and parameters $k,p$, then this is the only legal mTable with that mass that exists. In summary, we have shown that there is a theoretical minimum mass for legal mTables ($L_1 =0$) which would occur for example if we set $\alpha = 0$ assuming $p<1$) and there exists a theoretical maximum mass for legal mTables which is $\frac{k(k-1)}{2}$. At best, we can achieve every possible mass between those two to extremes. 
 	%
-	It follows directly that there are at most $\frac{k(k-1)}{2}$ masses and therewith legal mTables.
+	It follows that there are at most $\frac{k(k-1)}{2}$ masses for legal mTables of size $k$ for a fix $p$.
 \end{proof}
 
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
