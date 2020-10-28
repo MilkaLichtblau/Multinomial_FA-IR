@@ -1,4 +1,4 @@
-\section{Verifying ranked group fairness for a single protected group. }
+\section{Ranked group fairness for a single protected group. }
 \label{sec:adjustment-binomial}
 \begin{table}[t]
 	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
@@ -18,7 +18,10 @@
 	}
 \end{table}
 
+In this section we describe extensions for the significance adjustment from~\cite{zehlike2017fair}.
 %
+We also provide a correction of the procedure which did not work for very small $k$ and $\alpha$. 
+
 For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF can be stored as a simple table. Analogous to the multinomial case, we will call such a table \textit{mTable}.
 %
 Table~\ref{tbl:ranked_group_fairness_table} shows an example of such a pre-computed table with different $ k $ and $ p $, using $\alpha=0.1$.
