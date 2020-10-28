@@ -36,8 +36,10 @@
 		]]]]]]
 		\draw (parentDoubled1.east)--(doubled1.west);
 	\end{forest}
+	\CaptionMargin
 	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=[1/3, 1/3] $ and $ \alphaadj=0.1 $. Compared to figure~\ref{fig:mtree-symmetric-unadjusted} this tree is less strict such that its \emph{total} probability $ \alphaadj $ of rejecting a fair ranking (i.e. a type-1-error) is 0.1.
 	\label{fig:mtree-symmetric-adjusted}}
+	\tablemargin
 \end{figure}
 
 \begin{figure}[h]
@@ -93,10 +95,12 @@
 		\draw (parentDoubled2.east)--(doubled2.west);
 		\draw (parentDoubled3.east)--(doubled3.west);
 	\end{forest}
+	\CaptionMargin
 	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=[0.2, 0.4] $ and a corrected $ \alpha_c=0.1 $. 
 	%
 	The tree is less strict than the mTree in Figure~\ref{fig:mtree-asymmetric-unadjusted}.
 	%
 	The adjusted tree yields an overall false-negative rate of $ \alpha_c=0.1 $ when testing rankings for ranked group fairness.
 	\label{fig:mtree-asymmetric-adjusted}}
+	\tablemargin
 \end{figure}

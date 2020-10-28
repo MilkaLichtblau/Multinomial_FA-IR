@@ -47,16 +47,19 @@ Let $\textit{cb}|_k = \langle \textit{cb}(1), \textit{cb}(2), \ldots, \textit{cb
 
 \begin{table}[t]
 \caption{Notation.}
+\CaptionMargin
 \label{tbl:notation}
 \small
 \begin{tabular}{R{.2\linewidth}L{.75\linewidth}}\toprule
 \multicolumn{2}{c}{Candidates} \\
+\midrule
 $[n]$ & Set of candidates \\
 $q_c$ & Qualifications of candidate $c$ \\
 $g_c \in G$ & 0 if candidate $c$ is in the non-protected group, $ >0 $ otherwise\\
 $|G|$ & The number of protected groups \\
 \midrule
 \multicolumn{2}{c}{Rankings} \\
+\midrule
 ${\mathcal T}_{k,n}$ & All permutations of $k$ elements of $[n]$ \\
 $\tau$ & One such permutation \\
 $r(c,\tau)$ & The position of candidate $c$ in $\tau$, or $|\tau|+1$ if $c \notin \tau$ \\
@@ -64,18 +67,22 @@ $ \tau_G~=~\left(\tau_1, \tau_2, \ldots, \tau_{|G|}\right)$ & Vector of number o
 $\textit{cb}$ & The ``color-blind'' ranking of $[n]$ by decreasing $q_c$ \\
 \midrule
 \multicolumn{2}{c}{Group fairness criteria} \\
+\midrule
 $p_G~=~\left(p_1, p_2, \ldots, p_{|G|}\right)$ & Vector of minimum proportions for candidates of each protected group $ g > 0 $ \\
 $\alpha$ & Significance value for ranked group fairness test \\
 $\alphaadj$ & Adjusted significance for each fair representation test \\
 \midrule
 \multicolumn{2}{c}{Individual fairness criteria} \\
+\midrule
 $	\texttt{utility}(c,\tau)$ & Qualification difference between candidate $c$ and the least qualified candidate ranked above $c$ while $q_c > q_d$ \\
 \midrule
 \multicolumn{2}{c}{Model Adjustment} \\
+\midrule
 $ \failprob $ & Probability that our test fails on a fair ranking \\
 $ m_{\alpha, p}(k)$ & Minimum number of protected candidates in top $k$ positions; a vector of integers in case of $|G| > 1$ \\
 \bottomrule
 \end{tabular}
+\tablemargin
 \end{table}
 
 \spara{Fair top-$k$ ranking criteria.}\label{concept:criteria}

@@ -129,14 +129,12 @@ The probability of considering a ranking of $k$ elements (i.e. $m(k)$ blocks) un
 	1 - \sum_{v \in I_{m(k)}} \prod_{j=1}^{m(k)} f(v_j; b(j), p)
 \end{equation}
 %
-\noindent where $f(x;b(j),p) = Pr(X = x)$ is the probability density function (pdf) of a binomially distributed variable $X \sim Bin(b(j), p)$.
+\noindent where $f(x;b(j),p) = Pr(X = x)$ is the probability density function (PDF) of a binomially distributed variable $X \sim Bin(b(j), p)$.
 %
-However, if calculated naively this expression is intractable because of the large number of combinations in $I_{m(k)}$.
-%
-Because of the combinatorial complexity of the problem a simple closed-form expression to compute $\alphaadj$ does not exist.
+However, if calculated naively this expression is intractable because of the large number of combinations in $I_{m(k)}$ and because of the combinatorial complexity of the problem a simple closed-form expression to compute $\alphaadj$ does not exist.
 
 \input{algos/05-successProb.tex}
-We therefore propose Algorithm~\ref{alg:05:successProb}, which computes the probability that a fair ranking passes the ranked group fairness test (i.e. the right term of Equation~\ref{eq:05:failureProb}) \emph{recursively}.
+We therefore propose a dynamic programming method, Algorithm~\ref{alg:05:successProb}, which computes the probability that a fair ranking passes the ranked group fairness test (i.e. the right term of Equation~\ref{eq:05:failureProb}) \emph{recursively}.
 %
 %With this algorithm however, we have to account for an important pitfall: we may choose a combination of $k, p, \alpha$ where the last block ``reaches beyond'' $k$.
 %
