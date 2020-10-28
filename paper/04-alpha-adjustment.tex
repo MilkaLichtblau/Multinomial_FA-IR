@@ -142,11 +142,11 @@ We improve the mTree data structure by excluding the calculation and storage of 
 %
 First we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
 
-Second, in case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_|G|$ the mTree shows a convenient property that we can use to reduce additional space, as well as computation time.
+Second, in case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_{|G|}$ the mTree shows a convenient property that we can use to reduce additional space, as well as computation time.
 %
 Remember that whenever the multinomial CDF value falls below $\alpha$ for a particular position $i$, we have to put a protected candidate onto $i$.
 %
-For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $m(i)$ of the same likelyhood.
+For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $m(i)$ of the same likelihood.
 %
 As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6.
 %
