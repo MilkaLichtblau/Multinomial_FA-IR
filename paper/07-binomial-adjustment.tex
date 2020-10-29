@@ -379,9 +379,9 @@ The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate res
 \subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
 The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}.
 %
-Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity.
+Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity.
 %
-Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
+Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
 For the sake of readability we will write $\mathcal{O}($\algoMtable$) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
@@ -390,8 +390,8 @@ The space complexity is $\mathcal{O}(k)$ for the maximum number of blocks plus $
 \subsubsection{\algoBinomBinary complexity}\label{subsubsec:binom-binary-complexity}
 The binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2)$, because maximum $\frac{k(k-1)}{2}$ different valid mTables exist.
 %
-For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
+For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
 %
-Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$.
+Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\texttt{\algoRecursive}))$.
 %
 The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.
