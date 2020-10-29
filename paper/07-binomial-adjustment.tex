@@ -1,23 +1,5 @@
-\section{Ranked group fairness for a single protected group. }
+\section{Corrections for the Significance Adjustment in~\cite{zehlike2017fair}. }
 \label{sec:adjustment-binomial}
-\begin{table}[t]
-	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
-	\vspace{-4mm}
-	\scalebox{0.75}{
-		\begin{tabular}{lll}
-			\toprule
-			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
-			\midrule
-			\rowcolor[HTML]{C0C0C0}
-			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
-			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
-			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
-
 In this section we describe extensions for the significance adjustment from~\cite{zehlike2017fair}.
 %
 We also provide a correction of the procedure which did not work for very small $k$ and $\alpha$. 
@@ -48,9 +30,9 @@ For instance, for $p=0.5$ we see that at least 1 candidate from the protected gr
 	\end{tabular}
 \end{table}
 
-Figure~\ref{fig:why-adjustment-is-needed-binomial} shows, even though the slope is not as steep as in the multinomial case, that we still need a correction for $\alpha$.
+Figure~\ref{fig:why-adjustment-is-needed-binomial} shows that we need a correction for $\alpha$ also in the binomial case (note that the scale is logarithmic).
 %
-In the following section, we will show that the special case of one protected group offers new possibilities for verifying ranked group fairness. A key improvement is that we can calculate the exact probability with which a fair ranking gets rejected by the ranked group fairness test in the binomial setting. Note that in the multinomial case, we can only estimate this probability by testing 10,000 rankings. This will not only make the resulting $\alphaadj$ the best possible, it will also result in a more efficient binary search for it. 
+In the following, we show that the special case of having only one protected group offers new possibilities for verifying ranked group fairness. A key improvement is that we can calculate the exact probability with which a fair ranking gets rejected by the ranked group fairness test in the binomial setting. Note that in the multinomial case, we can only estimate this probability by testing 10,000 rankings. This will not only make the resulting $\alphaadj$ the best possible, it will also result in a more efficient binary search for it. 
 %
 In section \ref{subsubsec:adjustment-binomial} we introduce the necessary notation for the binomial case and describe how we calculate the exact probability that a fair ranking gets rejected (hence accepted) by the ranked group fairness test with one protected group.
 In section \ref{subsec:finding-mtable} we show that we can divide the continuum of possible $\alpha$ values in discrete parts in order to be able to apply efficient binary search for the most accurate $\alphaadj$.
@@ -290,7 +272,26 @@ Of course this only works if there exists exactly one legal mTable for each mass
 	The only possibility left is hence that $\alpha_1 = \alpha_2$, which contradicts $MT \neq MT'$, as both are created using function \texttt{constructMTable}.
 \end{proof}
 
-\subsection{Complexity in the Binomial Case} In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
+\subsection{Complexity in the Binomial Case} 
+\begin{table}[t!]
+	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
+			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
+			\rowcolor[HTML]{C0C0C0}
+			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
 %
 %\note[ChaTo]{@Tom: please check if the following sentence that I added is correct, I thought it would make this more understandable.}
 This is basically the number of non-decreasing sequences of integers that start with a $0$, end with a number smaller or equal to $k$, and have length $k$.
