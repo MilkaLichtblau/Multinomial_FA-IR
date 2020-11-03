@@ -366,8 +366,6 @@ This is the number of non-decreasing sequences of integers that end with a numbe
 	It follows that there are at most $\frac{k(k-1)}{2}$ masses for legal mTables of size $k$ for a fix~$p$.
 \end{proof}
 %
-Table \ref{tbl:time-space-binom} shows space and time complexities for the algorithms of the binomial case. 
-%
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
 \algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values.
 %
@@ -380,7 +378,7 @@ The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate res
 \subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
 The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}.
 %
-Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity.
+Before we compute the success probability, we have to calculate the corresponding mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$ and $\mathcal{O}(k)$ to the time complexity of \algoRecursive.
 %
 Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
@@ -389,7 +387,8 @@ For the sake of readability we will write $\mathcal{O}($\algoMtable$) + \mathcal
 The space complexity is $\mathcal{O}(k)$ for the maximum number of blocks plus $\mathcal{O}(k)$ for the stored probabilities at each position.
 %
 \subsubsection{\algoBinomBinary complexity}\label{subsubsec:binom-binary-complexity}
-The binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2) = \mathcal{O}(\log{}k)$, because maximum $\frac{k(k-1)}{2}$ different valid mTables exist.
+A general binary search on a list of $n$ items has a time complexity of $\mathcal{O}(\log{}n)$. We showed with theorem \ref{theorem:05:number-of-mtables} that the list of mTables on which we will search binary, has a maximum size of $\frac{k(k-1)}{2}$.
+Thus the binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2) = \mathcal{O}(\log{}k)$.
 %
 For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
 %
