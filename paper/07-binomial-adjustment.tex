@@ -178,7 +178,9 @@ To reduce computation time the algorithm stores the binomial probability density
 Thus the overall computational complexity becomes $O(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 
 \subsection{Finding the Correct mTable}\label{subsec:finding-mtable}
-To find the correct mTable, that is the mTable with an overall success probability of $\successprob = 1-\alpha$, we propose Algorithm~\ref{alg:05:binarySearch} that takes  parameters $k, p, \alphaadj$ as input.
+We call an mTable \textit{correct} if it has an overall success probability of $\successprob = 1-\alpha$. 
+However, given parameters $k,p,\alpha$, $\successprob$ will be greater or equal to $1-\alpha$. Thus, we need a corrected $\alphaadj \leq \alpha$ in order to compute the correct mTable. Unfortunately there is no way to compute $\alphaadj$ directly, which is why we have to search for the correct mTable, hence $\alphaadj$. 
+We propose Algorithm~\ref{alg:05:binarySearch} that takes  parameters $k, p, \alphaadj$ as input and returns the correct mTable and $\alphaadj$.
 %
 %We use Algorithm~\ref{alg:05:successProb} to determine the adjusted significance level $\alphaadj$ for the ranked group fairness test, such that the overall acceptance probability for the mTable with parameters $k, p, \alphaadj$ becomes $1-\alpha$.
 %
@@ -187,7 +189,7 @@ It sequentially creates mTables (recall that these are $k$-dimensional vectors o
 Our goal is to use binary search to select possible candidates for $\alphaadj$ systematically.
 
 %\note[ChaTo]{Perhaps the definition of the mass of an mTable can wait a few more paragraphs, until you need it.}
-However, to be able to do binary search, we need a discrete measure for the $\alpha$-space to search on, otherwise the search would never stop.
+However, to be able to do binary search, we need a discrete measure for the $\alpha$-space to search on, otherwise the search would never stop. Specifically, we could never be sure if we found the mTable with the minimum difference of $\successprob$ to $1-\alpha$. A binary search would further and further divide an interval between two $\alpha$ values. The only chance to verify that we do not have to search further is by comparing the resulting mTables of different $\alpha$ values. We will see, that we can do that by comparing the sum of the entries in the mTable and that there exist only a limited number of them.
 %
 Furthermore, to reduce complexity we only want to consider mTables with certain properties, which we define in the following paragraph. 
 %
@@ -211,7 +213,7 @@ We call these \textit{legal mTables}.
 	$\texttt{constructMTable}(p,k,\alpha)=\text{mTable}_{p,\alpha,k}$.
 \end{definition}
 %
-\meike{@Tom: add an explanation paragraph here.}
+Definition \ref{def:05:legal-mtable} restricts the space of k-dimensional arrays to those which are computed by a specific function. Since the mTable is a datastructure that should represent the minimum proportions required for a specific dice roll, we have to define $\texttt{constructMTable}$ such that it represents this process. Otherwise we could think of various ways to define processes to compute possible mTables.
 \begin{definition}[constructMTable]
 	\label{def:05:construct-mtable-single-test}
 	For $p\in [0,1], k \in \mathbb{N}, \alpha \in [0,1]$ we define a function to construct a mTable from input parameters $p, k, \alpha$ according to \cite{yang2016measuring}.
