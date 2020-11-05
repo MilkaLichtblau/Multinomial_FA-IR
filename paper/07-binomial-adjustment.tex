@@ -308,7 +308,7 @@ With these mathematical properties we can perform a binary search on the continu
 This corrected significance is used to compute a final mTable with an overall failure probability $\failprob = \alpha$.
 \input{algos/05-binarySearchForMtable.tex}
 
-\subsection{Complexity in the Binomial Case} 
+\subsection{Complexity Analysis} 
 \begin{table}[t!]
 	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
 	\vspace{-4mm}
@@ -367,13 +367,15 @@ This is the number of non-decreasing sequences of integers that end with a numbe
 \end{proof}
 %
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
-\algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values.
+\algoMtable computes the inverse binomial cdf for $k$ positions of the ranking and stores each of the computed values in the MCDF Cache.
 %
-This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$.  Assuming a constant time for the calculation of the binomial probability mass function, the time complexity of the implementation for the inverse binomial cdf which we used is in $\mathcal{O}(i^2)$ where $i$ is the position we calculate the inverse binomial cdf for.
+This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$.  
 %
-Note that the complexity of the inverse binomial cdf is dependent on how accurate the computation is.
+Assuming a constant time for the calculation of the binomial probability mass function, the time complexity of $F^{-1}(p,k,\alpha)$ for our implementation is $\mathcal{O}(i^2)$, where $i$ is the current position we calculate $F^{-1}$ for.
 %
-The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate results for future calculations.
+Note that the complexity of $F^{-1}$ depends on the desired accuracy of the computation.
+%
+The space complexity is $\mathcal{O}(k)$, if we do not store any intermediate results for future calculations.
 %
 \subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
 The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}.
@@ -390,8 +392,8 @@ The space complexity is $\mathcal{O}(k)$ for the maximum number of blocks plus $
 A general binary search on a list of $n$ items has a time complexity of $\mathcal{O}(\log{}n)$. We showed with theorem \ref{theorem:05:number-of-mtables} that the list of mTables on which we will search binary, has a maximum size of $\frac{k(k-1)}{2}$.
 Thus the binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2) = \mathcal{O}(\log{}k)$.
 %
-For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
+For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)))$ to compute the new mTable, as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
 %
 Overall we get $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\texttt{\algoRecursive}))$.
 %
-The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.
+The space complexity is $\mathcal{O}(k)$ since we only store the three mTables with their respective fail probability at a time.
