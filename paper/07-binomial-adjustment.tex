@@ -1,34 +1,31 @@
-\section{Verifying ranked group fairness for a single protected group. }
+\section{Corrections for the Significance Adjustment in~\cite{zehlike2017fair}. }
 \label{sec:adjustment-binomial}
-\begin{table}[t]
-	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
-	\vspace{-4mm}
-	\scalebox{0.75}{
-		\begin{tabular}{lll}
-			\toprule
-			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
-			\midrule
-			\rowcolor[HTML]{C0C0C0}
-			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
-			\algoRecursive & $\mathcal{O}(\algoMtable) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
-			\rowcolor[HTML]{C0C0C0}
-			\algoBinomBinary & $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$ & $\mathcal{O}(k)$  \\
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
-
 %
-For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF can be stored as a simple table. Analogous to the multinomial case, we will call such a table \textit{mTable}.
+In this section we describe extensions for the significance adjustment from~\cite{zehlike2017fair}.
+%
+We also provide a correction of the procedure which did not work for very small $k$ and $\alpha$. 
+
+For binomial distributions, i.e. where only one protected and one non-protected group is present, the inverse CDF can be stored as a simple table, which we compute using Algorithm~\ref{alg:constructMTable}. 
+%
+Analogous to the multinomial case, we will call such a table \textit{mTable}.
 %
 Table~\ref{tbl:ranked_group_fairness_table} shows an example of such a pre-computed table with different $ k $ and $ p $, using $\alpha=0.1$.
 %
 For instance, for $p=0.5$ we see that at least 1 candidate from the protected group is needed in the top 4 positions, and 2 protected candidates in the top 7 positions.
+\begin{algorithm}[h]
+	\caption{Algorithm \algoMtable computes the data structure to efficiently verify or construct a ranking that satisfies binomial ranked group fairness.}
+	\label{alg:constructMTable}
+	\small
+	\AlgInput{$k$, the size of the ranking to produce; $p$, the expected proportion of protected elements; $\alphaadj$, the significance for each individual test.}
+	\AlgOutput{$ \mtable $: A list that contains the minimum number of protected candidates required at each position of a ranking of size $k$.}
+	$\mtable \leftarrow [k]$ \AlgComment{list of size $k$} 
+	\For{$i \leftarrow 1$ \KwTo $k$}{
+		$\mtable[i] \leftarrow F^{-1}(i,p,\alphaadj)$ \AlgComment{the inverse binomial cdf}
+	}
+	\Return{$ \mtable $ }
+\end{algorithm}
 
-\begin{table}[t!]
-	\caption{Example values of $m_{\alpha,p}(k)$, the minimum number of candidates in the protected group that must appear in the top $k$ positions to pass the ranked group fairness criteria with $\alpha=0.1$ in a binomial setting.}
-	\vspace{-3mm}
-	\label{tbl:ranked_group_fairness_table}
+\begin{table}[h!]
 	\small\begin{tabular}{r|cccccccccccc}
 		\diaghead{some text}%
 		{p}{k}&
@@ -43,18 +40,27 @@ For instance, for $p=0.5$ we see that at least 1 candidate from the protected gr
 		0.7      & 0 & 1 & 1 & 2 & 2 & 3 & 3 & 4 & 5 & 5  &  6 &  6 \\
 		\bottomrule
 	\end{tabular}
+	\caption{Example values of $m_{\alpha,p}(k)$, the minimum number of candidates in the protected group that must appear in the top $k$ positions to pass the ranked group fairness criteria with $\alpha=0.1$ in a binomial setting.}
+	\label{tbl:ranked_group_fairness_table}
 \end{table}
 
-Figure~\ref{fig:why-adjustment-is-needed-binomial} shows, even though the slope is not as steep as in the multinomial case, that we still need a correction for $\alpha$.
+Figure~\ref{fig:why-adjustment-is-needed-binomial} shows that we need a correction for $\alpha$ also in the binomial case (note that the scale is logarithmic).
 %
-In the following section, we will show that the special case of one protected group offers new possibilities for verifying ranked group fairness. A key improvement is that we can calculate the exact probability with which a fair ranking gets rejected by the ranked group fairness test in the binomial setting. Note that in the multinomial case, we can only estimate this probability by testing 10,000 rankings. This will not only make the resulting $\alphaadj$ the best possible, it will also result in a more efficient binary search for it. 
+In the following, we show that the special case of having only one protected group offers new possibilities for verifying ranked group fairness. 
 %
-In section \ref{subsubsec:adjustment-binomial} we introduce the necessary notation for the binomial case and describe how we calculate the exact probability that a fair ranking gets rejected (hence accepted) by the ranked group fairness test with one protected group.
-In section \ref{subsec:finding-mtable} we show that we can divide the continuum of possible $\alpha$ values in discrete parts in order to be able to apply efficient binary search for the most accurate $\alphaadj$
+A key improvement is that in the binomial setting we can calculate the exact failure probability $\failprob$ (i.e. a fair ranking gets rejected by the ranked group fairness test), which results in a much more efficient binary search for $\alphaadj$. 
 %
+Remember that in we had to estimate this probability for mTrees (see Section~\ref{sec:model-adjustment}) using an experimental procedure. 
+%
+First we introduce the necessary notation for the binomial case and describe how we calculate the exact $\failprob$.
+%
+Then we show that we can divide the continuum of possible $\alpha$ values in discrete parts in order to be able to apply efficient binary search for the most accurate $\alphaadj$.
+%
+Last we analyze the complexity of the proposed algorithms.
 %This figure is generated by simulation, generating rankings using the process described above and showing the probability of those rankings being rejected by our ranked group fairness test with $\alphaadj=0.1$.
 %
 %The figure suggests that depending on $k$ we would need to change the value of $\alpha$ if we want to achieve a rejection rate of $0.1$.
+
 
 \begin{figure}[h]
 	\centering
@@ -76,7 +82,7 @@ In section \ref{subsec:finding-mtable} we show that we can divide the continuum 
 
 \subsection{Success Probability for One Protected Group}\label{subsubsec:adjustment-binomial}
 
-The probability that a fair ranking, created by the process of~\citet{yang2016measuring}, passes the ranked group fairness test (success probability) with parameters $(p,\alpha)$ can be computed as follows:
+The probability $\successprob$ that a fair ranking, created by the process of~\citet{yang2016measuring}, passes the ranked group fairness test (i.e. the success probability) with parameters $(p,\alpha)$ can be computed as follows:
 %
 Let $m(k) = m_{\alpha,p}(k) = F^{-1}(k,p,\alpha)$ be the number of protected elements required up to position $k$.
 %
@@ -88,7 +94,7 @@ We call the $k$-dimensional vector $(m(1), m(2), \ldots , m(k))$ a \emph{mTable}
 %
 An example is shown on Table~\ref{tbl:05:example_blocks}.
 %
-\begin{table}[h]
+\begin{table}[b!]
 	\centering
 	\begin{tabular}{cccccccccccccc}\toprule
 		$k$    & 1 & 2 & 3 & \textbf{{4}} & 5 & 6 & \textbf{7} & 8 & \textbf{9} & 10 & 11 & \textbf{12} \\
@@ -116,23 +122,23 @@ An example is shown on Table~\ref{tbl:05:example_blocks}.
 %
 represent all possible ways in which a fair ranking\footnote{Note that we do not consider rankings of size 0, which always pass the test.} generated by the method of \citet{yang2016measuring} can pass the ranked group fairness test, with $i_j$ corresponding to the number of protected elements in block $j \; (\text{with } 1 \le j \le k)$.
 %
-As an example consider again Table~\ref{tbl:05:example_blocks}: the first block contains four positions, i.e. $b(1)=4$ and this block passes the ranked group fairness test, if it contains at least one protected candidate.
+As an example consider again Table~\ref{tbl:05:example_blocks}: the first block contains four positions, i.e. $b(1)=4$ and this block passes the ranked group fairness test, if it contains at least one protected candidate, hence $i_1 \in \{1, 2, 3, 4\}$.
 %
-It also passes the test, if it contains more protected candidates, hence $i_1 \in \{1, 2, 3, 4\}$.
-
 The probability of considering a ranking of $k$ elements (i.e. $m(k)$ blocks) unfair, is:
 \begin{equation}
 	\label{eq:05:failureProb}
-	1 - \sum_{v \in I_{m(k)}} \prod_{j=1}^{m(k)} f(v_j; b(j), p)
+	\failprob = 1 - \successprob = 1 - \sum_{v \in I_{m(k)}} \prod_{j=1}^{m(k)} f(v_j; b(j), p)
 \end{equation}
 %
-\noindent where $f(x;b(j),p) = Pr(X = x)$ is the probability density function (pdf) of a binomially distributed variable $X \sim Bin(b(j), p)$.
+\noindent where $f(x;b(j),p) = Pr(X = x)$ is the probability density function (PDF) of a binomially distributed variable $X \sim Bin(b(j), p)$.
 %
 However, if calculated naively this expression is intractable because of the large number of combinations in $I_{m(k)}$.
+%
 
 \input{algos/05-successProb.tex}
-We therefore propose Algorithm~\ref{alg:05:successProb}, which computes the probability that a fair ranking passes the ranked group fairness test (i.e. the right term of Equation~\ref{eq:05:failureProb}) \emph{recursively}.
+We therefore propose a dynamic programming method, Algorithm~\ref{alg:05:successProb}, which computes the probability that a fair ranking passes the ranked group fairness test (i.e. the right term of Equation~\ref{eq:05:failureProb}) \emph{recursively}.
 %
+Note that because of the combinatorial complexity of the problem a \emph{simple closed-form expression} to compute $\failprob$ is unlikely to exist.
 %With this algorithm however, we have to account for an important pitfall: we may choose a combination of $k, p, \alpha$ where the last block ``reaches beyond'' $k$.
 %
 %Consider again Table~\ref{tbl:05:example_blocks} with $k=8, \minpro$p=$0.5, \alpha=0.1$: the second block reaches until position 7, while the third block reaches until position 9.
@@ -149,15 +155,19 @@ The algorithm starts with a prefix and calculates all possible suffixes, that pa
 %
 Consider the following example: for the first prefix $i_1 = 1$ the algorithm computes all possible suffixes, where we rank exactly one protected candidate in the first block.
 %
-For this prefix $i_1$ combined with each possible suffix $v \setminus i_1$ we calculate $\prod_{j=1}^{m(k)} f(v_j; b(j), p)$ (Line~\ref{algoline:05:pdf}), which is the probability that one particular instance of $v$ passes the ranked group fairness test (for short, we refer to it as the ``success probability'').
+For this prefix $i_1$, combined with each possible suffix $v \setminus i_1$, we calculate the success probability $\prod_{j=1}^{m(k)} f(v_j; b(j), p)$ for each instance of $v$ (Line~\ref{algoline:05:pdf}).
 %
-In the next recursion the prefix is $i_1=1, i_2 =1$ and the algorithm computes all possible suffixes, i.e. all rankings where we rank exactly one protected candidates in the first block and one protected candidate in the second block, and the respective success probabilities.
+In the next recursion level we start with a new prefix, let us say $i_1=1, i_2 =1$.
+%
+The algorithm computes all possible suffixes, i.e. all rankings where we rank exactly one protected candidates in the first block and one protected candidate in the second block.
+%
+Then it computes the respective success probabilities.
 %
 This procedure continues for $m(k)$ iterations.
 %
-After that the entire procedure starts again with $i_1=2$ and is repeated until the maximum number of protected candidates is reached, in our case $b(1)=4$.
+After that the whole program starts again with $i_1=2$ and is repeated until the maximum number of protected candidates is reached, in our case $b(1)=4$.
 %
-All intermediate success probabilities are added up (Line~\ref{algoline:05:pdf}) to the total success probability of the mTable that was created with the given setting of $k, p, \alpha$.
+All intermediate success probabilities are added up (Line~\ref{algoline:05:pdf}) to the total success probability (see Eq.~\ref{eq:05:failureProb}) of the mTable that was created given $k, p, \alpha$.
 
 Note that there are at most $\prod_{j=1}^{m(k)}b(j)$ possible combinations to distribute the protected candidates within the blocks.
 %
@@ -168,17 +178,20 @@ To reduce computation time the algorithm stores the binomial probability density
 Thus the overall computational complexity becomes $O(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 
 \subsection{Finding the Correct mTable}\label{subsec:finding-mtable}
-To find the correct mTable, that is the mTable with an overall acceptance probability of $1-\alpha$, we propose Algorithm~\ref{alg:05:binarySearch} that takes  parameters $k, p, \alphaadj$ as input.
+We call an mTable \textit{correct} if it has an overall success probability of $\successprob = 1-\alpha$. 
+However, given parameters $k,p,\alpha$, $\successprob$ will be greater or equal to $1-\alpha$. Thus, we need a corrected $\alphaadj \leq \alpha$ in order to compute the correct mTable. Unfortunately there is no way to compute $\alphaadj$ directly, which is why we have to search for the correct mTable, hence $\alphaadj$. 
+We propose Algorithm~\ref{alg:05:binarySearch} that takes  parameters $k, p, \alphaadj$ as input and returns the correct mTable and $\alphaadj$.
 %
 %We use Algorithm~\ref{alg:05:successProb} to determine the adjusted significance level $\alphaadj$ for the ranked group fairness test, such that the overall acceptance probability for the mTable with parameters $k, p, \alphaadj$ becomes $1-\alpha$.
 %
-It sequentially creates mTables (recall that these are $k$-dimensional vectors of the form $(m(1), m(2), \ldots , m(k))$) for different values of $\alphaadj$, and then calls Algorithm~\ref{alg:05:successProb} to calculate their success probability until it finds the correct mTable with overall failure probability $\alpha$ . Our goal is to use binary search to select possible candidates for $\alphaadj$ systematically.
-
-\input{algos/05-binarySearchForMtable.tex}
-%\note[ChaTo]{Perhaps the definition of the mass of an mTable can wait a few more paragraphs, until you need it.}
-However, to be able to do binary search, we need a discrete measure for the $\alpha$ space to search on. Otherwise, if we would perform binary search only on the interval $[0,1]$, the search would never stop.
+It sequentially creates mTables (recall that these are $k$-dimensional vectors of the form $(m(1), m(2), \ldots , m(k))$) for different values of $\alphaadj$, and then calls Algorithm~\ref{alg:05:successProb} to calculate their success probability until it finds the correct mTable with overall failure probability $\failprob = \alpha$ . 
 %
-Furthermore we only want to consider mTables with certain properties, which we define in the following paragraph. 
+Our goal is to use binary search to select possible candidates for $\alphaadj$ systematically.
+
+%\note[ChaTo]{Perhaps the definition of the mass of an mTable can wait a few more paragraphs, until you need it.}
+However, to be able to do binary search, we need a discrete measure for the $\alpha$-space to search on, otherwise the search would never stop. Specifically, we could never be sure if we found the mTable with the minimum difference of $\successprob$ to $1-\alpha$. A binary search would further and further divide an interval between two $\alpha$ values. The only chance to verify that we do not have to search further is by comparing the resulting mTables of different $\alpha$ values. We will see, that we can do that by comparing the sum of the entries in the mTable and that there exist only a limited number of them.
+%
+Furthermore, to reduce complexity we only want to consider mTables with certain properties, which we define in the following paragraph. 
 %
 A $k$-dimensional vector (e.g. $(0,0,1,2,3)$) has to have two properties in order to constitute a mTable, rather than just a vector of natural numbers: it has to be \emph{valid} and \emph{legal}.
 %
@@ -190,7 +203,7 @@ A $k$-dimensional vector (e.g. $(0,0,1,2,3)$) has to have two properties in orde
 %
 They correspond to all $k$-dimensional arrays with integers monotonically increasing by array indices.
 %
-However we only want to consider those valid mTables for our ranked group fairness test that have been created by the statistical process in~\citet{yang2017measuring}.
+However we only want to consider those valid mTables for our ranked group fairness test that have been created by the statistical process in~\citet{yang2016measuring}.
 %
 We call these \textit{legal mTables}.
 %
@@ -200,9 +213,10 @@ We call these \textit{legal mTables}.
 	$\texttt{constructMTable}(p,k,\alpha)=\text{mTable}_{p,\alpha,k}$.
 \end{definition}
 %
+Definition \ref{def:05:legal-mtable} restricts the space of k-dimensional arrays to those which are computed by a specific function. Since the mTable is a datastructure that should represent the minimum proportions required for a specific dice roll, we have to define $\texttt{constructMTable}$ such that it represents this process. Otherwise we could think of various ways to define processes to compute possible mTables.
 \begin{definition}[constructMTable]
 	\label{def:05:construct-mtable-single-test}
-	For $p\in [0,1], k \in \mathbb{N}, \alpha \in [0,1]$ we define a function to construct a mTable from input parameters $p, k, \alpha$ according to \cite{yang2017measuring}.
+	For $p\in [0,1], k \in \mathbb{N}, \alpha \in [0,1]$ we define a function to construct a mTable from input parameters $p, k, \alpha$ according to \cite{yang2016measuring}.
 	
 	\noindent$\texttt{constructMTable} : \\ (0,1) \times \mathbb{N} \times [0,1] \longrightarrow \lbrace (m(1) ,\ldots, m(k)): m(i) = F^{-1}(i,p,\alpha), \, i = \{1,\ldots,k\}\rbrace$ \\
 	with $\texttt{constructMTable}(p,k,\alpha)=\text{mTable}_{p,k,\alpha}$.
@@ -214,8 +228,10 @@ We call these \textit{legal mTables}.
 \end{lemma}
 %
 \noindent Lemma \ref{lemma:05:legal-valid-mtable} follows directly by construction.
-
-Now that we have defined what constitutes an mTable, we can go on and find a discrete partition of the $\alpha$ space. The challenge is that this measure has to correspond to exactly one legal mTable for a given set of parameters $k,p,\alpha$. Fortunately, there is a simple solution which we call \textit{mass of a mTable}.
+%
+Now we need a discrete partition of the continuous $\alpha$ space, that is a discrete measure that corresponds to exactly one legal mTable for a given set of parameters $k,p,\alpha$. 
+%
+We call this measure the \emph{mass} of a mTable.
 %The definition of a legal mTable together with its corresponding mass enables us to perform a binary search, which helps us to find $\alphaadj$ and hence the correct mTable with an overall failure probability of $\alpha$.
 %
 %Note that for any value of $\alpha$ there exists exactly one \emph{legal} mTable.
@@ -230,7 +246,7 @@ Now that we have defined what constitutes an mTable, we can go on and find a dis
 	$L_1(\text{mTable}_{p,k,\alpha})=\sum_{i=1}^k m(i)$ the \textit{mass of $\text{mTable}_{p,\alpha,k}$}.
 \end{definition}
 %
-Now, we have to relate the continuous $\alpha$ space to the mass of a mTable.
+In the following we relate the continuous $\alpha$-space to the discrete mass of a mTable.
 %
 \begin{lemma}
 	\label{lemma:05:non-decreasing-with-alpha-mtable}
@@ -239,29 +255,29 @@ Now, we have to relate the continuous $\alpha$ space to the mass of a mTable.
 \end{lemma}
 \begin{proof}
 \label{proof:05:non-decreasing-with-alpha-mtable}
-Every entry $m(i)$ for $i=1,\ldots,k$ is computed by line 3 of algorithm \ref{alg:constructMTable}. Specifically every entry is the inverse binomial cdf $F^{-1}(i,p,\alphaadj)$. In other words $m(i)$ is the smallest integer such that\\
+Every entry $m(i)$ for $i=1,\ldots,k$ is computed by line 3 of Algorithm~\ref{alg:constructMTable}, i.e. every entry is the inverse binomial cdf $F^{-1}(i,p,\alphaadj)$. In other words $m(i)$ is the smallest integer such that\\
 \begin{equation}
 \alphaadj \leq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j} = F^{-1}(i,p,\alphaadj)
 \end{equation}
-Now if
+The following equivalence holds:
 \begin{equation}\label{eq:smaller m}
 \alphaadj - \epsilon \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} = F^{-1}(i,p,\alphaadj-\epsilon)
+	\Leftrightarrow \alphaadj \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon
 \end{equation}
-\begin{equation}
-\Leftrightarrow \alphaadj \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon
-\end{equation}
-Now suppose that $m'(i) > m(i)$ in contradiction to lemma \ref{lemma:05:non-decreasing-with-alpha-mtable}. Then it is that
+Now suppose that $m'(i) > m(i)$ which contradicts lemma \ref{lemma:05:non-decreasing-with-alpha-mtable}. 
+%
+Then it is that
 \[m'(i)>m(i) \Rightarrow \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} \geq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j}\]
-because $\binom{i}{j}p^i (1-p)^{i-j} \geq 0 \forall i,j,p$. It follows for $\epsilon >0$ that
+because $\binom{i}{j}p^i (1-p)^{i-j} \geq 0 \; \forall i,j,p$. It follows for $\epsilon >0$ that
 \begin{equation}
 \alphaadj \leq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon \leq \sum_{j=0}^{m'(i)}\binom{i}{j}p^i (1-p)^{i-j} + \epsilon
 \end{equation}
-But then $m'(i)\neq F^{-1}(i,p,\alphaadj-\epsilon)$ because $m(i)$ would be the smaller integer that satisfies equation \ref{eq:smaller m}. Thus it has to be that $m'(i)\leq m(i)$.
+But then $m'(i)\neq F^{-1}(i,p,\alphaadj-\epsilon)$ because $m(i)$ would be the smaller integer that satisfies Equation~\ref{eq:smaller m}. Thus it has to be that $m'(i)\leq m(i)$.
 \end{proof}
 %
 \noindent This property shows that, if we reduce $\alpha$ in our binary search, the mass of the corresponding mTable is also reduced or stays the same.
 %
-It very usefully implies a criterion to stop the binary search: namely we stop the calculation when the mass of the mTable of the left search boundary equals the right search boundary.
+It very usefully implies a criterion to stop the binary search: namely we stop the calculation when the mass of the mTable at the left search boundary equals the right search boundary.
 %
 Of course this only works if there exists exactly one legal mTable for each mass, which we proof in the following.
 \begin{theorem}
@@ -286,11 +302,35 @@ Of course this only works if there exists exactly one legal mTable for each mass
 	%
 	The only possibility left is hence that $\alpha_1 = \alpha_2$, which contradicts $MT \neq MT'$, as both are created using function \texttt{constructMTable}.
 \end{proof}
+%
+With these mathematical properties we can perform a binary search on the continuous $\alpha$-space to find the corrected significance level $\alphaadj$.
+%
+This corrected significance is used to compute a final mTable with an overall failure probability $\failprob = \alpha$.
+\input{algos/05-binarySearchForMtable.tex}
 
-\subsection{Complexity in the Binomial Case} In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
+\subsection{Complexity in the Binomial Case} 
+\begin{table}[t!]
+	\caption{Time complexity for all algorithms for one protected group without pre-computed results.\label{tbl:time-space-binom}}
+	\vspace{-4mm}
+	\scalebox{0.75}{
+		\begin{tabular}{lll}
+			\toprule
+			\textbf{Algorithm} & \textbf{Time Complexity} & \textbf{Space Complexity}\\
+			\midrule
+			\rowcolor[HTML]{C0C0C0}
+			\algoMtable & $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$ & $\mathcal{O}(k)$ \\
+			\algoRecursive & $\mathcal{O}(\texttt{\algoMtable}) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ & $\mathcal{O}(k)$ \\
+			\rowcolor[HTML]{C0C0C0}
+			\algoBinomBinary & $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\texttt{\algoRecursive}))$ & $\mathcal{O}(k)$  \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+In order to estimate the complexity of the whole procedure (and hence understand its computational feasibility), we need to know how many mTables exist for fix $k$ and $p$.
 %
 %\note[ChaTo]{@Tom: please check if the following sentence that I added is correct, I thought it would make this more understandable.}
-This is basically the number of non-decreasing sequences of integers that start with a $0$, end with a number smaller or equal to $k$, and have length $k$.
+This is the number of non-decreasing sequences of integers that end with a number smaller or equal to $k$ and have length $k$.
 %
 \begin{theorem}
 	\label{theorem:05:number-of-mtables}
@@ -299,21 +339,33 @@ This is basically the number of non-decreasing sequences of integers that start 
 
 \begin{proof}
 	\label{proof:05:number-of-mtables}
-	With the proof above we can count the number of legal mTables for fix $p,k$ as follows: The maximum mass of a legal mTable of length $k$ is by construction
-	$L_1 ((m(1) = 1,m(2) = 2, \ldots, m(k) = k)) = \sum_{i=1}^k m(i) = \frac{k(k-1)}{2}$
+	Given the proof of Theorem~\ref{theorem:05:mtable-mass-injection} we can count the number of legal mTables for fix $p,k$ as follows: The maximum mass of a legal mTable of length $k$ is by construction
+	$L_1 ((m(1) = 1,m(2) = 2, \ldots, m(k) = k)) = \sum_{i=1}^k m(i) = \frac{k(k-1)}{2}$. 
 	%
-	Following definition~\ref{def:05:valid-mtable} the 	    entry $m(1)$ is the smallest entry or equal to all other entries. Furthermore, because this mTable is legal and following definition \ref{def:05:legal-mtable}, the mTable is a result of algorithm \ref{alg:constructMTable}. Thus $m(1) = F^{-1}(1,p,\alpha) \in \lbrace 0,1\rbrace$. In other words, $m(1)$ can only be $0$ or $1$.
+	Following definition~\ref{def:05:valid-mtable} the 	    entry $m(1)$ is the smallest entry or equal to all other entries. 
+	%
+	Furthermore, because this mTable is legal and following Definition~\ref{def:05:legal-mtable}, the mTable is a result of Algorithm~\ref{alg:constructMTable}. 
+	%
+	Thus $m(1) = F^{-1}(1,p,\alpha) \in \lbrace 0,1\rbrace$. In other words, $m(1)$ can only be $0$ or $1$.
 	
 	%
 	In turn $m(2)$ can only be $2$, if $m(1)$ was $1$ (otherwise $m(2)<2$).
 	%
 	Accordingly, the minimum mass of a legal mTable is $L_1((m(1),m(2), \ldots, m(k))) = 0$, if all $m(i)=0$.
 	%
-	Following lemma \ref{lemma:05:non-decreasing-with-alpha-mtable}, we can create mTables with higher masses by increasing $\alpha$. Furthermore, following theorem \ref{theorem:05:mtable-mass-injection}, if a legal mTable exists for a mass and parameters $k,p$, then this is the only legal mTable with that mass that exists. In summary, we have shown that there is a theoretical minimum mass for legal mTables ($L_1 =0$) which would occur for example if we set $\alpha = 0$ assuming $p<1$) and there exists a theoretical maximum mass for legal mTables which is $\frac{k(k-1)}{2}$. At best, we can achieve every possible mass between those two to extremes. 
+	Following Lemma~\ref{lemma:05:non-decreasing-with-alpha-mtable}, we can create mTables with higher masses by increasing $\alpha$. 
 	%
-	It follows that there are at most $\frac{k(k-1)}{2}$ masses for legal mTables of size $k$ for a fix $p$.
+	Furthermore, following Theorem~\ref{theorem:05:mtable-mass-injection}, if a legal mTable exists for a given mass and parameters $k,p$, then this is the only existing legal mTable with that mass.
+	%
+	We know that there is a theoretical minimum mass for legal mTables ($L_1 =0$) which would occur, for example, if we set $\alpha = 0$ assuming $p<1$.
+	%
+	There also exists a theoretical maximum mass for legal mTables which is $\frac{k(k-1)}{2}$. 
+	%
+	At best, we can achieve every possible mass between those two to extremes. 
+	%
+	It follows that there are at most $\frac{k(k-1)}{2}$ masses for legal mTables of size $k$ for a fix~$p$.
 \end{proof}
-
+%
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
 \algoMtable computes the inverse binomial cdf for k positions of the ranking and stores each of the computed values.
 %
@@ -326,19 +378,20 @@ The space complexity is $\mathcal{O}(k)$ if we do not store any intermediate res
 \subsubsection{\algoRecursive complexity}\label{subsubsec:success-prob-complexity}
 The algorithm \algoRecursive has time complexity $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ as explained in section \ref{subsubsec:adjustment-binomial}.
 %
-Before that we have to calculate the mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))$ and $\mathcal{O}(k)$ respectively to the complexity.
+Before we compute the success probability, we have to calculate the corresponding mTable and blocks $b$ which adds $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$ and $\mathcal{O}(k)$ to the time complexity of \algoRecursive.
 %
-Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
+Overall we get $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
 For the sake of readability we will write $\mathcal{O}($\algoMtable$) + \mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 %
 The space complexity is $\mathcal{O}(k)$ for the maximum number of blocks plus $\mathcal{O}(k)$ for the stored probabilities at each position.
 %
 \subsubsection{\algoBinomBinary complexity}\label{subsubsec:binom-binary-complexity}
-The binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2)$, because maximum $\frac{k(k-1)}{2}$ different valid mTables exist.
+A general binary search on a list of $n$ items has a time complexity of $\mathcal{O}(\log{}n)$. We showed with theorem \ref{theorem:05:number-of-mtables} that the list of mTables on which we will search binary, has a maximum size of $\frac{k(k-1)}{2}$.
+Thus the binary search for $\alpha_c$ has a complexity of $\mathcal{O}(\log{}\frac{k(k-1)}{2}) = \mathcal{O}(\log{}k^2) = \mathcal{O}(\log{}k)$.
 %
-For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
+For each binary search step we need $\mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha)))$ to compute the new mTable as well as $\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$ for its fail probability.
 %
-Overall we get $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(inverseBinomialCDF(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k^2) \cdot (\mathcal{O}(\algoRecursive))$.
+Overall we get $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF})) + \mathcal{O}(\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))))$, which we will write as $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\texttt{\algoRecursive}))$.
 %
 The space complexity is $\mathcal{O}(k)$ since we only store the three MTables with their respective fail probability.

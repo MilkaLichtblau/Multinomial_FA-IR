@@ -3,6 +3,49 @@
 \section{The Multinomial \algoFAIR Algorithm}\label{sec:multinom-fair-algo}
 In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:algorithm-description}) and determine its complexity~(\S\ref{subsec:FAIR-complexity}).
 
+\begin{algorithm}[h]
+	%\caption{Algorithm \algoFAIR, finding a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints.}
+	\caption{Algorithm \algoFAIR finds a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints. Checks for special cases (e.g., insufficient candidates of a class) are not included for clarity.}
+	\label{alg:fair}  % But whenever possible refer to this algo. by name not number
+	\small
+	\AlgInput{$k \in [n]$, the size of the list to return; $\forall~c \in [n]$: $q_c$, the qualifications for candidate $c$, and $g_c$ an indicator that is $>0$ iff candidate $c$ is protected; $p_G$ with $\forall p \in p_G \in ]0,1[$, the vector of minimum proportions for each group of protected elements; $\alphaadj \in ]0,1[$, the adjusted significance for each fair representation test.}
+	\AlgOutput{$\tau$ satisfying the group fairness condition with parameters $p, \sigma$, and maximizing utility.}
+	%\AlgComment{compute min. protected candidates per position}
+	$P_0, P_1, \ldots P_{|G|} \leftarrow$ empty priority queues with bounded capacity $k$\\
+	\For{$c \leftarrow 1$ \KwTo $n$}{
+		insert $c$ with value $q_c$ in priority queue $P_{g_c}$ \\
+	}
+	
+	$\texttt{mtree}(i) \leftarrow \texttt{\algoComputeMTree}(k, p_G, \alphaadj)$  \label{alg:fair:mtree}\\
+	
+	%\AlgComment{create fair ranking}
+	$(t_0, t_1, \ldots, t_{|G|}) \leftarrow (0, \ldots, 0)$ \\
+	$i \leftarrow 0 $ \\
+	\While{$i < k$}{
+		\texttt{noCandidateAdded = True} \\
+		\AlgComment{get next node in tree path}
+		$m_{G, i} = [m_1(i), \ldots, m_{|G|}(i)] \leftarrow \texttt{findNextNode(mtree, i)}$ \label{alg:fair:childNode}\\
+		\AlgComment{find which group needs a new candidate}
+		\For{\texttt{g = 1; g} $\leq$ \texttt{|G|; g++}}{
+			
+			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
+				\AlgComment{add a protected candidate}
+				$t_g \leftarrow t_g + 1$ \\
+				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\
+				\texttt{noCandidateAdded = False}
+			}\label{alg:fair:pend}
+		}
+		\If{\texttt{noCandidateAdded}}{ \label{alg:fair:anystart}
+			\AlgComment{no protected candidate needed: add the best available}
+			$P_g \leftarrow$ \texttt{findBestCandidateQueue()} \\
+			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
+			$t_g \leftarrow t_g + 1$
+		}\label{alg:fair:anyend}
+		
+	}
+	\Return{$\tau$}
+\end{algorithm}
+
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
 Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
 %
@@ -29,50 +72,6 @@ Given this the algorithm has to find the correct child $m_{G,i}$ for a given par
 %
 If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the best candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
-
-\begin{algorithm}[h]
-	%\caption{Algorithm \algoFAIR, finding a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints.}
-	\caption{Algorithm \algoFAIR finds a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints. Checks for special cases (e.g., insufficient candidates of a class) are not included for clarity.}
-	\label{alg:fair}  % But whenever possible refer to this algo. by name not number
-	\small
-	\AlgInput{$k \in [n]$, the size of the list to return; $\forall~c \in [n]$: $q_c$, the qualifications for candidate $c$, and $g_c$ an indicator that is $>0$ iff candidate $c$ is protected; $p_G$ with $\forall p \in p_G \in ]0,1[$, the vector of minimum proportions for each group of protected elements; $\alphaadj \in ]0,1[$, the adjusted significance for each fair representation test.}
-	\AlgOutput{$\tau$ satisfying the group fairness condition with parameters $p, \sigma$, and maximizing utility.}
-	%\AlgComment{compute min. protected candidates per position}
-	$P_0, P_1, \ldots P_{|G|} \leftarrow$ empty priority queues with bounded capacity $k$\\
-	\For{$c \leftarrow 1$ \KwTo $n$}{
-		insert $c$ with value $q_c$ in priority queue $P_{g_c}$ \\
-	}
-
-	$\texttt{mtree}(i) \leftarrow \texttt{\algoComputeMTree}(k, p_G, \alphaadj)$  \label{alg:fair:mtree}\\
-
-	%\AlgComment{create fair ranking}
-	$(t_0, t_1, \ldots, t_{|G|}) \leftarrow (0, \ldots, 0)$ \\
-	$i \leftarrow 0 $ \\
-	\While{$i < k$}{
-		\texttt{noCandidateAdded = True} \\
-		\AlgComment{get next node in tree path}
-		$m_{G, i} = [m_1(i), \ldots, m_{|G|}(i)] \leftarrow \texttt{findNextNode(mtree, i)}$ \label{alg:fair:childNode}\\
-		\AlgComment{find which group needs a new candidate}
-		\For{\texttt{g = 1; g} $\leq$ \texttt{|G|; g++}}{
-
-			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
-				\AlgComment{add a protected candidate}
-				$t_g \leftarrow t_g + 1$ \\
-				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\
-				\texttt{noCandidateAdded = False}
-			}\label{alg:fair:pend}
-		}
-		\If{\texttt{noCandidateAdded}}{ \label{alg:fair:anystart}
-			\AlgComment{no protected candidate needed: add the best available}
-			$P_g \leftarrow$ \texttt{findBestCandidateQueue()} \\
-			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
-			$t_g \leftarrow t_g + 1$
-		}\label{alg:fair:anyend}
-
-	}
-	\Return{$\tau$}
-\end{algorithm}
-\vspace{-3mm}
 
 \subsection{Algorithm Complexity}\label{subsec:FAIR-complexity}
 Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$.
