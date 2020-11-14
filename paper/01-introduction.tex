@@ -33,11 +33,11 @@ As shown in earlier research, a machine learning model trained on datasets incor
 
 Based on this observation, in this paper we study the problem of producing a ranking that we will consider fair given legally-protected attributes.
 %
-A formal definition can be found in Section~\ref{sec:problem}; in short, we will try to produce a ranking in which the proportion of different minority groups in any prefix of the ranking does not fall below minimum proportions $p_G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
+A formal definition \textcolor[rgb]{0.00,0.00,1.00}{of the problem studied} can be found in Section~\ref{sec:problem}: \textcolor[rgb]{0.00,0.00,1.00}{intuitively, our aim is} to produce a ranking in which the proportion of different minority groups in any prefix of the ranking does not fall below minimum proportions $p_G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
 %
 %We denote however the motivating assumption of our method which is that utility measures \emph{are not comparable across groups} because said bias manifests differently for each group.
 
-We propose a post-processing method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper.
+We propose a \textcolor[rgb]{0.00,0.07,1.00}{re-ranking} method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper.
 %
 We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not.
 %
@@ -57,15 +57,17 @@ The ranked group fairness criterion compares the number of protected elements in
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking in this test.
 
 \medskip
-\textit{Example.} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both sexes are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
+\begin{example} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both sexes are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
 %
 This outcome systematically disadvantages individuals of one sex by preferring the other at the top-$k$ positions, a clear instance of bias in a computer system~\cite{friedman1996bias}. As we do not know the learning model behind the ranking, we assume that the result is at least partly based on the protected attribute \emph{sex}.
+
+\note{Why do we need this assumption? Imposing group-fairness constraint makes sense in any case. This assumption sounds like a not-needed justification to me.}
 
 Let $k = 10$. Our notion of \textit{ranked group fairness} imposes a fair representation with proportion $p$ and significance $\alpha$ at each top-$i$ position with $i \in [1,10]$ (formal definitions are given in section~\ref{sec:problem}).
 Consider for instance $\alpha = 0.1$ and suppose that the required proportion is $p = 0.4$.  This translates (see Table \ref{tbl:ranked_group_fairness_table}) to having at least one individual from the protected minority class in the first 5 positions: therefore the ranking for  ``copywriter'' would be rejected as unfair. However, it also requires to have at least 2 individuals from the protected group in the first 9 positions: therefore also the ranking for ``economist'' is rejected as unfair, while the ranking for ``market research analyst'' is fair for  $p = 0.4$. However, if we would require $p = 0.5$ then this translates in having at least 3 individuals from the minority group in the top-10, and thus even the ranking for ``market research analyst'' would be considered unfair.
 %
 We note that for simplicity, in this example we have not adjusted the significance $\alpha$ to account for multiple statistical tests; this is not trivial, and is one of the key contributions of this paper.
-
+\end{example}
 \medskip
 
 \begin{table}[t]
@@ -73,8 +75,6 @@ We note that for simplicity, in this example we have not adjusted the significan
 		%``economist,'' ``market research analyst,'' and ``copywriter'' in XING (Jan 2017). We %do not claim anything about the merits of these proportions, but simply
 		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
 		\label{tbl:xing_intro_example}}
-
-	\CaptionMargin
 
 	\centering\small\begin{tabular}{lccccc}\toprule
 		& Position					  & top 10 & top 10  & top 40 & top 40 \\
@@ -87,19 +87,19 @@ We note that for simplicity, in this example we have not adjusted the significan
 		\bottomrule
 	\end{tabular}
 
-	\tablemargin
+
 \end{table}
 %
-We remark that our method is suitable for concerns about intersectionality, which refers to the fact that a person's political and social identities can combine to form unique modes of discrimination.
+We remark that our method is suitable for concerns about \emph{intersectionality}, which refers to the fact that \textcolor[rgb]{0.00,0.00,1.00}{the personal}, political, and social identities \textcolor[rgb]{0.00,0.00,1.00}{of an individual can be combined to form a unique profile that can be discriminated}.
 %
 Consider as an example the case DeGraffenreid v. General Motors in 1976: here Emma DeGraffenreid wanted to challenge General Motors for being discriminated in the promotion procedure for being a black woman.
 %
 However the court found that GM had neither discriminated against blacks, nor against women and therefore ruled that DeGraffenreid ``could not combine the claims'' of race and sex discrimination.
 %
-Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one category.
+Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one protected \textcolor[rgb]{0.00,0.00,1.00}{attribute}.
 
-\spara{Our contributions.}
-In this paper, we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups as an extension of~\cite{zehlike2017fair}, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria.
+\textcolor[rgb]{0.00,0.00,1.00}{\subsection{Contributions and Roadmap}}
+\textcolor[rgb]{0.00,0.00,1.00}{This work presents an extension of our previous paper~\cite{zehlike2017fair}, which was published at the CIKM 2017 conference. In this extended version} we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria.
 %
 The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
 
@@ -147,6 +147,8 @@ Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top
 %
 We also present extensive experiments to evaluate the performance of our approach compared to the so-called ``color-blind'' ranking with respect to both the expected utility of a ranking and the fairness degree measured in terms of expected exposure.
 
+\medskip
+
 Summarizing, the main contributions of this paper are:
 \begin{compactenum}
 	\item the principled definition of \emph{ranked group fairness} for multiple protected groups, and the associated  {\sc Fair Top-$k$ Ranking problem};
@@ -160,7 +162,9 @@ Our method can be used within an anti-discrimination framework such as \emph{pos
 We do not claim these are the only way of achieving fairness, but we provide \emph{an algorithm grounded in statistical tests that enables the implementation of a positive action policy in the context of ranking}.
 
 The rest of this paper is organized as follows.
-%
+
+\todo{The roadmap below should be revised and extended a bit once we're totally sure about the structure of the paper.}
+
 The next section presents a brief survey of related literature, while Section~\ref{sec:problem} introduces our ranked group fairness and utility criteria, our model adjustment approach, and a formal problem statement.
 %
 Section~\ref{sec:multinom-fair-algo} describes the \algoFAIR\ algorithm and the model adjustment algorithm.
