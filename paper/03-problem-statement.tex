@@ -165,19 +165,6 @@ In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do
 %
 This can also be understood as a measure of individual unfairness, as it calculates the largest score difference between a high-scoring candidate ranked below a low-scoring candidate.
 
-The qualifications may have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
-%
-However, we denote again that due to different manifestations of bias we believe that measures of qualification are not comparable across groups of candidates.
-%
-This means that for the entire fair solution space we can guarantee maximized utility only within groups but not across and we want to stress again that maximizing utility over the entire set of candidates comes with a change in one's believe system in which candidate utilities are indeed comparable.
-%
-In such a case we would question the usage of a post-processing algorithm in the first place.
-%
-However we want to operationalize the selection and ordering utility criterion from Section~\ref{subsec:preliminaries} and provide means for the user of our algorithm to estimate the loss of ranking relevance w.r.t. the colorblind ranking and hence define the following utility measures.
-
-\note[Meike]{The whole paragraph above is unclear. It should be rephrased. 
-	Relate to old paper and say that optimality proof is no longer possible. Give black and white females example. } 
-
 \spara{Ranked utility.}
 The ranked individual utility associated to a candidate $c$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
 

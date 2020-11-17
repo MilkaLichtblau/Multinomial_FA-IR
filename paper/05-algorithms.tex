@@ -85,3 +85,42 @@ In this case \algoFAIR has a complexity of $\mathcal{O}(n \log{} n) + \mathcal{O
 The space complexity is $\mathcal{O}(n)$ for the candidates we want to rank, plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(n + k)$ (plus that of \algoMultBinary, if we have to calculate the mTree first, then leading to $\mathcal{O}(|G|^k + n + k)$).
 %
 The complexity is summarized in Table~\ref{tbl:time-space}.
+
+\subsection{A Note about Algorithm Optimality}
+
+Our understanding of utility as individual unfairness brings another layer of complexity to the problem of fair top-$k$ ranking compared to the previous version of the paper:
+%
+In~\cite{zehlike2017fair} published at CIKM2017, we prove that \algoFAIR for binary protected groups finds the optimal solution w.r.t. selection and ordering utility. 
+%
+This optimality was given because losses in utility could only occur due to a high-scoring non-protected candidate being ranked below a low-scoring protected candidate, but not vice versa.
+%
+When multiple groups are present it may happen that a high-scoring candidate from a \emph{better-performing protected} group is ranked below a low-scoring candidate from \emph{low-performing protected} group.
+%
+This means that ordering inversions can no longer happen only w.r.t. the non-protected group, but also inter-group-wise among the protected groups.
+%
+Additionally, as the ranked group fairness criterion for multiple groups can be expressed as a tree-structure and \emph{any} path satisfies the constraint, we have multiple choice which path to choose.
+%
+\algoFAIR for multiple groups is implemented in a way that it always chooses the path that is ``most likely'', i.e., has the highest MCDF value.
+%
+However this may lead to picking a low-performing protected candidate over a better-performing protected candidate from another group.
+
+We believe that any attempt to optimize for utility when choosing which path in the tree to follow is not in line with our idea of fairness and we therefore explicitly decide to pick the ``most likely'' node instead of the one with the next best-performing protected candidate.
+%
+We elect this implementation because we believe that measures of qualification are not comparable across groups of candidates, due to different manifestations of bias in the score distributions.
+%
+Scores have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but this bias manifests differently across groups (as an example see Fig.~\ref{fig:dataset:compas:age}).
+
+Let us consider an example to clarify what could happen, if we optimized \algoFAIR to always choose the path in the mTree that yields the highest selection and ordering utility:
+%
+Let us assume that we have two protected groups, namely white female and black female candidates.
+%
+All others are categorized as non-protected.
+%
+Let us further assume that the degree of bias in the scores for black females is significantly higher than for white females, i.e., black females obtain lower scores for the same performance as white females (note that this is a very likely scenario due to the intersectional discrimination which black females face).
+%
+In this case, choosing the mTree path that optimizes utility would result in unfairly preferring white females over black females.
+%
+We want to stress our belief that scores are only comparable within groups and not across and therefore choose an implementation that is agnostic of scores in its implementation, but rather obeys the framework of fairness as a probabilistic process, in our case, the roll of a dice.
+
+\note[Meike]{The whole paragraph above is unclear. It should be rephrased. 
+	Relate to old paper and say that optimality proof is no longer possible. Give black and white females example. } 
