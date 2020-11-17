@@ -163,7 +163,7 @@ Our notion of utility reflects the desire to select candidates that are potentia
 %
 In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity.
 
-\note{Sentence above is unclear. Non-monotonicity of what? Losses of what?} 
+\note[Chato]{Sentence above is unclear. Non-monotonicity of what? Losses of what?} 
 
 The qualifications may have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
 %
@@ -175,7 +175,8 @@ In such a case we would question the usage of a post-processing algorithm in the
 %
 However we want to operationalize the selection and ordering utility criterion from Section~\ref{subsec:preliminaries} and provide means for the user of our algorithm to estimate the loss of ranking relevance w.r.t. the colorblind ranking and hence define the following utility measures.
 
-\note{The whole paragraph above is unclear. It should be rephrased.} 
+\note[Meike]{The whole paragraph above is unclear. It should be rephrased. 
+	Relate to old paper and say that optimality proof is no longer possible. Give black and white females example. } 
 
 \spara{Ranked utility.}
 The ranked individual utility associated to a candidate $c$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
@@ -191,7 +192,7 @@ The ranked individual utility associated to a candidate $c$ in a ranking $\tau$,
 	\]
 \end{definition}
 %
-\noindent By this definition, the maximum ranked individual utility that can be attained by an element is zero. \note{It's weird to have something called utility which has its maximum in zero. It would have been more appropriate to call it something like \emph{individual unfairness}, but I guess it's too late to change terminology (same applies to several other notions).}
+\noindent By this definition, the maximum ranked individual utility that can be attained by an element is zero. %\note{It's weird to have something called utility which has its maximum in zero. It would have been more appropriate to call it something like \emph{individual unfairness}, but I guess it's too late to change terminology (same applies to several other notions).}
 %
 %Next, we apply the definition of ranked individual utility to two separate cases: when an element $i$ is included in the ranking, and when it is not included.
 
