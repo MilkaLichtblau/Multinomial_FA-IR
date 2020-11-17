@@ -161,9 +161,9 @@ Larger values indicate a stricter adherence to the required number of protected 
 \label{subsec:individual-fairness}
 Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
 %
-In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity.
-
-\note[Chato]{Sentence above is unclear. Non-monotonicity of what? Losses of what?} 
+In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity (i.e., due to candidates not being ordered by decreasing scores anymore to satisfy the ranked group fairness constraint).
+%
+This can also be understood as a measure of individual unfairness, as it calculates the largest score difference between a high-scoring candidate ranked below a low-scoring candidate.
 
 The qualifications may have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but our approach can bound the effect of that bias, because the utility maximization is subject to the multinomial ranked group fairness constraint.
 %
