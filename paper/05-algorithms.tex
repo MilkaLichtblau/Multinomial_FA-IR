@@ -15,9 +15,9 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 	\For{$c \leftarrow 1$ \KwTo $n$}{
 		insert $c$ with value $q_c$ in priority queue $P_{g_c}$ \\
 	}
-	
+
 	$\texttt{mtree}(i) \leftarrow \texttt{\algoComputeMTree}(k, p_G, \alphaadj)$  \label{alg:fair:mtree}\\
-	
+
 	%\AlgComment{create fair ranking}
 	$(t_0, t_1, \ldots, t_{|G|}) \leftarrow (0, \ldots, 0)$ \\
 	$i \leftarrow 0 $ \\
@@ -27,7 +27,7 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 		$m_{G, i} = [m_1(i), \ldots, m_{|G|}(i)] \leftarrow \texttt{findNextNode(mtree, i)}$ \label{alg:fair:childNode}\\
 		\AlgComment{find which group needs a new candidate}
 		\For{\texttt{g = 1; g} $\leq$ \texttt{|G|; g++}}{
-			
+
 			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
 				\AlgComment{add a protected candidate}
 				$t_g \leftarrow t_g + 1$ \\
@@ -41,7 +41,7 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
 			$t_g \leftarrow t_g + 1$
 		}\label{alg:fair:anyend}
-		
+
 	}
 	\Return{$\tau$}
 \end{algorithm}
@@ -66,17 +66,18 @@ Note that the right choice of a tree node on level $i$ depends on the path chose
 %
 In case \texttt{mtree} branches into different possibilities to satisfy ranked group fairness (as an example see Fig.~\ref{fig:mtree-asymmetric-adjusted} for $k=4$), the algorithm chooses the branch that has a higher value for $F$, meaning it chooses the branch that has a higher probability.
 %
-If two branches are equally likely, which happens for $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
+If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
 %
+\inote{Next sentence is a little bit unclear, perhaps rephrase? -- ChaTo}
 Given this the algorithm has to find the correct child $m_{G,i}$ for a given parent from the previous level (Line~\ref{alg:fair:childNode}).
 %
-If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the best candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the ``best'' (maximum qualifications) candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
 
 \subsection{Algorithm Complexity}\label{subsec:FAIR-complexity}
 Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$.
 %
-In sum we have to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\text{\algoMultBinary}) + \mathcal{O}(k)$.
+We need to run \algoMultBinary once and then follow one path through the mTree up to level $k$, leading to $\mathcal{O}(n \log{} n) + \mathcal{O} (\text{\algoMultBinary}) + \mathcal{O}(k)$.
 %
 Note however, that if we used parameters $(k, p_G, \alpha)$ at any point in the past, we can obtain a previously calculated tree from disc.
 %
@@ -85,3 +86,55 @@ In this case \algoFAIR has a complexity of $\mathcal{O}(n \log{} n) + \mathcal{O
 The space complexity is $\mathcal{O}(n)$ for the candidates we want to rank, plus $\mathcal{O}(k)$ for the ranking itself, in summary $\mathcal{O}(n + k)$ (plus that of \algoMultBinary, if we have to calculate the mTree first, then leading to $\mathcal{O}(|G|^k + n + k)$).
 %
 The complexity is summarized in Table~\ref{tbl:time-space}.
+
+\subsection{Partial Ordering of Solutions}
+
+When there is a single protected group,
+top-$k$ rankings that have a given utility form a total ordering with respect to group fairness, and
+top-$k$ rankings that have a given ranked group fairness form a total ordering with respect to utility.
+%
+This allowed us to prove that \algoFAIR for a single protected group finds the optimal solution w.r.t. selection and ordering utility~\cite{zehlike2017fair}.
+%
+The proof comes from the observation that decreases in utility that maintain ranked group fairness can only occur when a high-scoring non-protected candidate is ranked below a low-scoring protected candidate, but not vice versa.
+%
+
+When multiple groups are present there is no total ordering as some rankings cannot be compared.
+%
+It may happen that a high-scoring candidate from a \emph{better-performing protected} group is ranked below a low-scoring candidate from a \emph{low-performing protected} group.
+%
+This means that ordering inversions can no longer happen only w.r.t. the non-protected group, but also among the protected groups.
+%
+As the ranked group fairness criterion for multiple groups can be expressed as a tree-structure and \emph{any} path satisfies the constraint, we have multiple choices of which path to choose to satisfy the same ranked group fairness.
+%
+Hence, multiple solutions (rankings) are equivalent.
+%
+
+The way in which we decided to choose among these equivalent rankings is in line with the probabilistic nature of the design of \algoFAIR.
+%
+We decided to pick the path that is ``most likely'', i.e., that has the highest MCDF value.
+%
+An alternative implementation could select the highest utility path, picking the candidate with the highest qualifications when multiple choices exist.
+%
+This would avoid having to rank a protected candidate with lower utility above a protected candidate with a higher utility from another protected group.
+%
+However, that would require to assume that measures of qualification are comparable across groups of candidates.
+%
+This would be a strong assumption due to different manifestations of bias in score distributions seen in practice.
+%
+Scores have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but this bias manifests differently across groups (as an example see Fig.~\ref{fig:dataset:compas:age}).
+%
+
+\note[ChaTo]{I think the point is clear. The example is good but could be omitted (or kept, I'm indifferent).}
+
+Let us consider an example to clarify this point.
+%what could happen, if we optimized \algoFAIR to always choose the path in the mTree that yields the highest selection and ordering utility:
+%
+Suppose that we had two protected groups, namely white female and black female candidates, and all other candidates were non-protected.
+%
+%Suppose all others are categorized as non-protected.
+%
+Suppose that the degree of bias in the scores for black females is substantially higher than for white females, i.e., black females obtain lower scores for the same performance as white females. This is a plausible scenario due to the intersectional discrimination which black females face.
+%
+In this case, choosing among equivalent solutions the mTree path that maximizes utility would result in unfairly preferring white females over black females.
+%
+Instead, chosing the most likely path follows a probabilistic design, and only requires that scores are comparable within groups, but not across.

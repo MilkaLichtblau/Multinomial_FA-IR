@@ -10,7 +10,7 @@
 % - Change [show] to [hide] in "\usepackage[show]{chato-notes}"
 \usepackage[show]{chato-notes}  % \note, \todo, \inote, \citemissing
 % - Remove next line, which deletes margins for easier visualization
-\usepackage[a4,center,noinfo,cross,width=14.5cm,height=21.5cm]{crop}
+%\usepackage[a4,center,noinfo,cross,width=14.5cm,height=21.5cm]{crop}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PACKAGES
@@ -137,8 +137,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TITLE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title{Group Fairness for Rankings with Multiple Protected Groups using \methodname}
-\titlenote{This is an extended version of \citet{zehlike2017fair}, in which \methodname was introduced for a single protected attribute. This extended version includes multiple protected attributes.}
+%\title{Group Fairness for Rankings with Multiple Protected Groups using \methodname}
+%\titlenote{This is an extended version of \citet{zehlike2017fair}, in which \methodname was introduced for a single protected attribute. This extended version includes multiple protected attributes.}
+
+\title{Fair Top-k Ranking with Multiple Protected Groups}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % AUTHORS
@@ -175,9 +178,10 @@
 \renewcommand{\shortauthors}{Zehlike et al.}
 
 \begin{abstract}
-	In this work, we define and solve the Fair Top-$k$ Ranking problem, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, maximizing utility (i.e., select the ``best'' candidates) subject to group fairness criteria.
+\textcolor[rgb]{0.00,0.00,1.00}{Ranking items or people is a fundamental operation at the basis of several tasks in on-line and off-line world, including selection, personalization, recommendation, and search. While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of the potential impacts on the elements to rank has captured the attention of researchers, which have thus started devising ranking systems which are \emph{fair}  for the items being ranked. In particular, researchers so far have mostly focused on \emph{group fairness}, which is usually expressed in form of constraints on the number of elements from some protected groups should be included in the top-$k$ positions, for any relevant $k$. These constraints are needed in order to correct the implicit bias existing in society and reflected in the input relevance or fitness score.}
 
-	Our ranked group fairness definition extends group fairness using the standard notion of protected groups and is based on ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above or indistinguishable from a given minimum.
+In this work, we \textcolor[rgb]{0.00,0.00,1.00}{study} the Fair Top-$k$ Ranking problem, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, maximizing utility (i.e., select the ``best'' candidates) subject to group-fairness criteria.
+Our ranked group-fairness definition extends group fairness using the standard notion of protected groups and is based on ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable, from a given minimum \textcolor[rgb]{0.00,0.00,1.00}{threshold}.
 	%
 	Utility is operationalized in two ways:
 	\begin{inparaenum}[(i)]
@@ -185,14 +189,14 @@
 		\item for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
 	\end{inparaenum}
 
-	We present an efficient algorithm for producing the Fair Top-$k$ Ranking, and tested experimentally on existing datasets as well as new datasets released with this paper, showing that our approach yields small distortions with respect to rankings that maximize utility without considering fairness criteria.
-	%
-	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
-
-	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
-  we consider that more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution.
-	%
-	This poses an important technical challenge and increases both the space and time complexity of the re-ranking algorithm.
+We present an efficient algorithm for producing the Fair Top-$k$ Ranking.
+\textcolor[rgb]{0.00,0.00,1.00}{Our experimental assessment on real-world datasets shows }that our approach yields small distortions with respect to rankings that maximize utility without considering fairness criteria.
+%	%
+%	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
+%
+%	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
+ 
+ \textcolor[rgb]{0.00,0.00,1.00}{We then extend our contribution by consider the case in which} more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both the space and time complexity of the re-ranking algorithm.
 \end{abstract}
 
 
@@ -233,7 +237,7 @@
 %%
 %% Keywords. The author(s) should pick words that accurately describe
 %% the work being presented. Separate the keywords with commas.
-\keywords{datasets, neural networks, gaze detection, text tagging}
+%\keywords{datasets, neural networks, gaze detection, text tagging}
 
 
 \maketitle
