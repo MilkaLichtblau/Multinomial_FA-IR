@@ -79,13 +79,15 @@ Given that we use a statistical test for this comparison, we include a significa
 	\centering\small\begin{tabular}{lcccc}\toprule
 		& Position					  & top 10 & top 10  & top 10 \\
 		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40 \\
-		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & not-white & young and not-white \\
+		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & not-white & y\& \\
+		&                               &  (y)  & (nw)  &  \nw \\
 		\midrule
-		Young  & \texttt{O/W O/W O/W Y/W O/W O/W O/W O/W O/W O/W} & 10\% & 0\% & 0\% \\
-		not-white & \texttt{O/W O/W O/W Y/W O/W O/NW O/W O/W O/W O/W} & 10\% & 10\% & 0\% \\
-		young and not-white & \texttt{O/W O/W O/W Y/W O/W Y/NW O/W O/W O/W O/W} & 20\% & 10\% & 10\% \\
+		Young  & \texttt{o/w o/w o/w y/w o/w o/w o/w o/w o/w o/w} & 10\% & 0\% & 0\% \\
+		not-white & \texttt{o/w o/w o/w y/w o/w o/nw o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
+		young and not-white & \texttt{o/w o/w o/w o/w o/w y/nw o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
 		\bottomrule
-	\end{tabular}	
+	\end{tabular}
+	
 \end{table}
 
 
