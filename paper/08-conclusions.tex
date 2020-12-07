@@ -30,16 +30,14 @@ Additionally one could provide a script that fills the MCDF Cache with various c
 %
 This calculation can continuously run as a separate process on a server which then provides the obtained caches to users who want to compute new mTrees.
 
-One of the main challenges for fair ranking algorithms in general is that there is not yet any empirical evidence that re-ordering items actually helps to overcome the bias in click-probability across groups.
+One of the main challenges for fair ranking algorithms in general is that there is not yet much empirical evidence that re-ordering items actually helps to overcome the bias in click-probability across groups.
 %
-Very recent research \meike{cite Tom's project with Hima} suggests that there are several settings in which optimizing for exposure equity (as done by~\cite{biega2018equity, singh2019policy}) shows no effect on user biases in click through rates. 
+Very recent research however \cite{suhr2020does} suggests that guarantees for a minimum representation of underrepresented groups yield to higher selection rates in different hiring contexts, but does not mitigate user biases completely. For example if a user prefers male candidates for a moving assistance task over female candidates, ranking female candidates higher will not mitigate users' biases completely.
 %
-Indeed early research indicates that when a protected group, such as women, receive equity of exposure in a ranking, the users searching for e.g. experts in certain domains still prefer men even when they are ranked to lower positions by a fairness algorithm.
-%
-A method that can increase the visibility beyond equity of exposure is needed to compensate for such persistent biases, such as \algoFAIR.
+Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups. Furthermore, setting the values for $p_G$ higher than desired may mitigate user biases. For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group.
 %
 However further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
-
+%
 Experimentally, there are several directions. 
 %
 For instance, we have used real datasets that exhibit some differences among protected and non-protected groups; experiments with synthetic datasets would allow to test with more extreme differences that are more rarely found in real data.
