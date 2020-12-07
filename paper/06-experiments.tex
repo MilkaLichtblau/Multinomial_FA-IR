@@ -41,7 +41,7 @@ In this section, we consider several reference datasets for evaluating the multi
 	\label{fig:dataset:compas:sex}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_sex_kde.png}}\hfill
 	\subfloat
-	[Score distribution of white and non-white candidates in the COMPAS dataset. Experiment D1.
+	[Score distribution of white candidates and people of color in the COMPAS dataset. Experiment D1.
 	\label{fig:dataset:compas:race}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
 	\subfloat
@@ -49,7 +49,7 @@ In this section, we consider several reference datasets for evaluating the multi
 	\label{fig:dataset:compas:age}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_age_kde.png}}\hfill
 	\subfloat
-	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young non-white males, young non-white females and young white females, which are the three groups with lowest average exposure in the colorblind ranking. Experiment D3.
+	[Score distribution protected and non-protected candidates in the COMPAS dataset. Protected groups are young male PoC, young female PoC and young white females, which are the three groups with lowest average exposure in the colorblind ranking. Experiment D3.
 	\label{fig:dataset:compas:worstThree}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_worstThreeGroups_kde.png}}\hfill
 	\vspace{-3mm}
@@ -75,7 +75,7 @@ Similarly, the minimum proportion can always be provided by regulation or volunt
 %
 An experiment consists of generating a ranking from the set of candidates using multinomial \algoFAIR and then comparing it with baseline rankings according to the metrics introduced in the next section.
 %
-We use the three publicly-available datasets: COMPAS~\cite{angwin_2016_machine}, German Credit~\cite{lichman_2013_uci}) and LSAC~\cite{wightman1998lsac}.
+We use the three publicly-available datasets: COMPAS~\cite{angwin_2016_machine}, German Credit~\cite{lichman_2013_uci} and LSAC~\cite{wightman1998lsac}.
 
 \spara{COMPAS} (Correctional Offender Management Profiling for Alternative Sanctions) is an assessment tool for predicting recidivism based on 137 items/questions. It is used in several jurisdictions in the US, and has been accused of racial discrimination by having a larger false positive rate for African Americans~\cite{angwin_2016_machine}.
 %
@@ -85,9 +85,9 @@ We calculated a candidate's overall score as a weighted summation of the columns
 %
 To break ties we added normally distributed random noise with $\mu=0, \sigma=0.00001$ to the score of each candidate.
 %
-Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``non-white'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
+Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``person of color'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
-We observe in Figure~\ref{fig:dataset:compas} that non-white people (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
+We observe in Figure~\ref{fig:dataset:compas} that PoC (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
 %
 However we see in Figure~\ref{fig:dataset:compas:age} that the protected attribute ``age'' has the strongest impact on recidivism risk.
 %
@@ -108,7 +108,7 @@ In dataset D3 we divided the candidates into 12 different groups that we constru
 %
 Then we calculated the average group exposure for each group and considered as protected the three groups that were placed lowest in the colorblind ranking.
 %
-These are young non-white females, young white females and young non-white males.
+These are young female persons of color, young white females and young male PoC.
 %
 Interestingly, despite the fact that females have higher scores on average, two of the three groups with lowest exposure values are female (Figure~\ref{fig:dataset:compas:worstThree}).
 %
@@ -205,7 +205,7 @@ We show that large increases in average group exposure can be achieved with rela
 		We write $\pm 0$, if the group appears neither in the colorblind, nor in the fairly re-ranked top-$k$.
 		\label{tbl:results-part-one}
 	}
-	\vspace{-5mm}
+	\vspace{-4mm}
 	\centering\begin{tabular}{llccc}\toprule
    					&			& Exposure gain 	& Exposure gain		&   total   \\
 		Experiment	& Method 	& per prot. group 	& non-prot. group 	& NDCG loss  \\
@@ -337,7 +337,7 @@ As two of the protected groups are very small, they are not ranked into the top-
 %
 In contrast, \algoFAIR $p_{\text{stat}}$ can handle very small groups, and gives them sufficient exposure that is in line with the minimum proportions $p_G$.
 %
-The same is true for experiment D4: while CFA$\theta$ can not handle the smaller groups well.
+The same is true for experiment D4: CFA$\theta$ can not handle the smaller groups well.
 %
 It increases the exposure of the non-protected group while decreasing it for the oldest males and youngest females.
 

@@ -26,7 +26,7 @@ def visualizeOrigCompasData():
     # invert scores for plots
     data["score"] = 1 - data["score"]
     labels = {"0": "white",
-              "1": "non-white"}
+              "1": "PoC"}
     plotKDEPerGroup(data, "Recidivism Risk", "../data/COMPAS/compas_race_kde.png", colNames=labels)
 
     data = pd.read_csv("../data/COMPAS/compas_age_java.csv", header=0, skipinitialspace=True)
@@ -41,9 +41,9 @@ def visualizeOrigCompasData():
     # invert scores for plots
     data["score"] = 1 - data["score"]
     labels = {"0": "others",
-              "1": "Y NW F",
-              "2": "Y W F",
-              "3": "Y NW M"}
+              "1": "Y F PoC",
+              "2": "Y F W",
+              "3": "Y M PoC"}
     plotKDEPerGroup(data, "Recidivism Risk", "../data/COMPAS/compas_worstThreeGroups_kde.png", colNames=labels)
 
 
@@ -64,8 +64,8 @@ def visualizeOrigLSATData():
     data = pd.read_csv("../data/LSAT/LSAT_sexRace_java.csv", header=0, skipinitialspace=True)
     labels = {"0": "white males",
               "1": "white females",
-              "2": "non-white males",
-              "3": "non-white females"}
+              "2": "PoC males",
+              "3": "PoC females"}
     plotKDEPerGroup(data, "LSAT Score\n(higher is better)", "../data/LSAT/LSAT_sexRace_kde.png", colNames=labels)
 
 
@@ -95,8 +95,8 @@ def plot3DFigure(xPos, yPos, zHeight, zLabel, filename):
     mpl.rcParams['ps.useafm'] = True
     mpl.rcParams['pdf.use14corefonts'] = True
     mpl.rcParams['text.usetex'] = True
-    plt = plt.figure()
-    ax1 = plt.add_subplot(111, projection='3d')
+    plott = plt.figure()
+    ax1 = plott.add_subplot(111, projection='3d')
     xpos = xPos
     ypos = yPos
     num_elements = len(xpos)
@@ -205,12 +205,12 @@ def plotHeatmap(dataToPlot, heatmapValueStr, cbarlabel, filename, **annotationKW
             else:
                 heatmapFrame.at[rowName, colName] = val[0]
 
-    plt = plt.figure(figsize=(11, 11))
-    ax = plt.add_subplot(111)
+    plott = plt.figure(figsize=(11, 11))
+    ax = plott.add_subplot(111)
     im = heatmap(heatmapFrame, heatmapFrame.index, heatmapFrame.columns, ax=ax,
                     cmap="coolwarm", cbarlabel=cbarlabel, vmin=-1, vmax=1)
     annotate_heatmap(im, thresholds=[-0.8, 0.8], **annotationKW)
-    plt.savefig(filename, dpi=100, bbox_inches='tight')
+    plott.savefig(filename, dpi=100, bbox_inches='tight')
 
 
 def heatmap(data, row_labels, col_labels, ax=None,
@@ -348,11 +348,11 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
 def main():
     visualizeOrigCompasData()
-#     visualizeOrigGermanCreditData()
-#     visualizeOrigLSATData()
+    visualizeOrigGermanCreditData()
+    visualizeOrigLSATData()
 
-#     kString = "k=200"
-#     prepareAndSaveFigures("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
+    kString = "k=200"
+    prepareAndSaveFigures("../results/COMPAS/evalAndPlots/age/" + kString + "*_multiFairResult.csv", kString)
     plotFailProbs("../../FailProbabilityExperiments/FailProbK=5000p=[05]Binomial.csv", "../../FailProbabilityExperiments/failProbPlotBinom.png")
     plotFailProbs("../../FailProbabilityExperiments/FailProbK=5000p=[03,03]Multinomial.csv", "../../FailProbabilityExperiments/failProbPlotMultinom.png")
 
