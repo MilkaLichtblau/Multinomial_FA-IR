@@ -56,18 +56,24 @@ The ranked group fairness criterion compares the number of protected elements in
 %
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking in this test.
 
-\begin{example} Consider the three rankings in Table \ref{tbl:multinomial_intro_example} corresponding to top 10 ranking applicants in a credit approval process. The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration and credit amount. 
-	We also present to which protected group each individual belonged for their demographics features such as age and race. As observed, the above rankings show that individuals belonged to protected groups have less exposure in the top 10 results which can lead to systematically disadvantages individuals of one protected group (e.g., not-white) to other groups (white) in accessing credit. More importantly, we can observe that individuals belonged to multiple protected groups (both younger than 30 and not-white) have the least exposure in the top 10 results.
+\begin{example} Consider the three rankings in Table \ref{tbl:multinomial_intro_example} corresponding to a top-10 ranking of applicants in a credit approval process. The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration and credit amount. 
+	%
+	We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.'' We observe that in the above rankings individuals belonging to the group of young or black applicants receive less visibility in the top-10 results than those of the non-protected group. This can lead to systematical disadvantages in accessing credit. More importantly, we see that individuals belonging to multiple protected groups (young \emph{and } black) receive the least exposure in the top-10 results.
 	
-	More specifically, we show if the first ranking in Table \ref{tbl:multinomial_intro_example} can pass the test of \textit{ranked group fairness} proposed in ~\cite{zehlike2017fair} for younger than 25 protected group or not. Suppose that the required proportion for this group is $p = 0.4$ and significant value is $\alpha = 0.1$, this translates to having at least one individual from younger than 25 group in the first 5 positions: therefore the first ranking in table 1 would be accepted as fair for young age group but would be rejected as unfair for not-white group and also younger than 25 and not-white group for the same value of $p$ and $a$.
-	
-	Now we consider the second ranking in Table \ref{tbl:multinomial_intro_example} for not-white protected group. Suppose that the required proportion for this group is $p = X$ and significant value is $\alpha = Y$. This translates to having at least one individual from the not-white group in the first 6 positions: therefore the second ranking in table 1 would be accepted as fair for not-white group. Moreover, assume that 
-	the required proportion for young than 30 group is $p = 0.4$, it would be also accepted as fair for younger than 25 group, however, it would be rejected as unfair for not-white and young group for either value of p.
-	
-	From the above we can conclude that providing the fair ranking results for each protected group separately could not necessarily guarantee the fair ranking for multiple protected groups. This highlights the need for a ranked group fairness notion for multiple protected groups (i.e., multinomial). The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of the top 10 ranking that achieves fair ranking for multiple protected groups: young, not-white, and also young and not-white using our \textit{multinomial ranked group fairness} criteria and algorithm proposed in this paper. 
+	Considering the definition of \textit{ranked group fairness} proposed in ~\cite{zehlike2017fair} with minimum proportion $p=0.4$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-5 positions of a ranking.
+	Therefore the first ranking in Table \ref{tbl:multinomial_intro_example} will be considered as fair for the group of young individuals. 
+	%
+	However the same ranking will be rejected as unfair for black individuals, as well as for the intersectional group definition of young and black.
+	%
+	Next, suppose that the required minimum proportion is $p = 0.3$ and $\alpha = 0.1$. This translates to having at least one protected candidate in the top-7 positions.
+	When considering the second ranking in Table \ref{tbl:multinomial_intro_example} it will be accepted as fair for black individuals. Moreover, it will be also accepted as fair for young candidates but rejected as unfair for young black ones.
+	%
+	From the above we conclude that providing a fairness definition for rankings that treats protected groups separately can not guarantee a fair ranking for multiple protected groups at the same time. This highlights the need for a ranked group fairness notion for multiple protected groups (i.e., multinomial). 
+	%
+	The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of a fair top-10 ranking for multiple protected groups young, not-white, and also young and not-white. It is created using our \textit{multinomial ranked group fairness} criteria and algorithm proposed in this paper. 
 	
 \end{example}
-\medskip
+%\medskip
 
 \begin{table}[t]
 	\caption{Example of top-10 results for different protected groups in a credit approval process.
@@ -78,54 +84,54 @@ Given that we use a statistical test for this comparison, we include a significa
 	\centering\small\begin{tabular}{lcccc}\toprule
 		& Position					  & top 10 & top 10  & top 10 \\
 		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40 \\
-		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & not-white & y \& \\
-		&                               &  (y)  & (nw)  &  nw \\
+		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & black & y \& \\
+		&                               &  (y)  & (b)  &  b \\
 		\midrule
 		Young  & \texttt{o/w o/w o/w y/w o/w o/w o/w o/w o/w o/w} & 10\% & 0\% & 0\% \\
-		not-white & \texttt{o/w o/w o/w y/w o/w o/nw o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
-		young and not-white & \texttt{o/w o/w o/w o/w o/w y/nw o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
+		not-white & \texttt{o/w o/w o/w y/w o/w o/b o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
+		young and not-white & \texttt{o/w o/w o/w o/w o/w y/b o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
 		\bottomrule
 	\end{tabular}
 	
 \end{table}
 
 
-\medskip
-\begin{example} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both sexes are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
+%\medskip
+%\begin{example} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both sexes are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
+%%
+%This outcome systematically disadvantages individuals of one sex by preferring the other at the top-$k$ positions, a clear instance of bias in a computer system~\cite{friedman1996bias}. As we do not know the learning model behind the ranking, we assume that the result is at least partly based on the protected attribute \emph{sex}.
 %
-This outcome systematically disadvantages individuals of one sex by preferring the other at the top-$k$ positions, a clear instance of bias in a computer system~\cite{friedman1996bias}. As we do not know the learning model behind the ranking, we assume that the result is at least partly based on the protected attribute \emph{sex}.
-
-\note{Why do we need this assumption? Imposing group-fairness constraint makes sense in any case. This assumption sounds like a not-needed justification to me.}
-
-Let $k = 10$. Our notion of \textit{ranked group fairness} imposes a fair representation with proportion $p$ and significance $\alpha$ at each top-$i$ position with $i \in [1,10]$ (formal definitions are given in section~\ref{sec:problem}).
-Consider for instance $\alpha = 0.1$ and suppose that the required proportion is $p = 0.4$.  This translates (see Table \ref{tbl:ranked_group_fairness_table}) to having at least one individual from the protected minority class in the first 5 positions: therefore the ranking for  ``copywriter'' would be rejected as unfair. However, it also requires to have at least 2 individuals from the protected group in the first 9 positions: therefore also the ranking for ``economist'' is rejected as unfair, while the ranking for ``market research analyst'' is fair for  $p = 0.4$. However, if we would require $p = 0.5$ then this translates in having at least 3 individuals from the minority group in the top-10, and thus even the ranking for ``market research analyst'' would be considered unfair.
+%\note{Why do we need this assumption? Imposing group-fairness constraint makes sense in any case. This assumption sounds like a not-needed justification to me.}
 %
-We note that for simplicity, in this example we have not adjusted the significance $\alpha$ to account for multiple statistical tests; this is not trivial, and is one of the key contributions of this paper.
-\end{example}
-\medskip
-
-\begin{table}[t]
-	\caption{Example of non-uniformity of the top-10 vs. the top-40 results for different queries in XING (Jan 2017).
-		%``economist,'' ``market research analyst,'' and ``copywriter'' in XING (Jan 2017). We %do not claim anything about the merits of these proportions, but simply
-		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
-		\label{tbl:xing_intro_example}}
-
-	\centering\small\begin{tabular}{lccccc}\toprule
-		& Position					  & top 10 & top 10  & top 40 & top 40 \\
-		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40   & 40 \\
-		& \texttt{1 2 3 4 5 6 7 8 9 10} & male & female & male & female \\
-		\midrule
-		Econ.  & \texttt{f m m m m m m m m m} & 90\% & 10\% & 73\% & 27\% \\
-		Analyst& \texttt{f m f f f f f m f f} & 20\% & 80\% & 43\% & 57\% \\
-		Copywr.& \texttt{m m m m m m f m m m} & 90\% & 10\% & 73\% & 27\% \\
-		\bottomrule
-	\end{tabular}
-
-
-\end{table}
-
-\todo{We would need another example with multiple protected attributes.}
-
+%Let $k = 10$. Our notion of \textit{ranked group fairness} imposes a fair representation with proportion $p$ and significance $\alpha$ at each top-$i$ position with $i \in [1,10]$ (formal definitions are given in section~\ref{sec:problem}).
+%Consider for instance $\alpha = 0.1$ and suppose that the required proportion is $p = 0.4$.  This translates (see Table \ref{tbl:ranked_group_fairness_table}) to having at least one individual from the protected minority class in the first 5 positions: therefore the ranking for  ``copywriter'' would be rejected as unfair. However, it also requires to have at least 2 individuals from the protected group in the first 9 positions: therefore also the ranking for ``economist'' is rejected as unfair, while the ranking for ``market research analyst'' is fair for  $p = 0.4$. However, if we would require $p = 0.5$ then this translates in having at least 3 individuals from the minority group in the top-10, and thus even the ranking for ``market research analyst'' would be considered unfair.
+%%
+%We note that for simplicity, in this example we have not adjusted the significance $\alpha$ to account for multiple statistical tests; this is not trivial, and is one of the key contributions of this paper.
+%\end{example}
+%\medskip
+%
+%\begin{table}[t]
+%	\caption{Example of non-uniformity of the top-10 vs. the top-40 results for different queries in XING (Jan 2017).
+%		%``economist,'' ``market research analyst,'' and ``copywriter'' in XING (Jan 2017). We %do not claim anything about the merits of these proportions, but simply
+%		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
+%		\label{tbl:xing_intro_example}}
+%
+%	\centering\small\begin{tabular}{lccccc}\toprule
+%		& Position					  & top 10 & top 10  & top 40 & top 40 \\
+%		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40   & 40 \\
+%		& \texttt{1 2 3 4 5 6 7 8 9 10} & male & female & male & female \\
+%		\midrule
+%		Econ.  & \texttt{f m m m m m m m m m} & 90\% & 10\% & 73\% & 27\% \\
+%		Analyst& \texttt{f m f f f f f m f f} & 20\% & 80\% & 43\% & 57\% \\
+%		Copywr.& \texttt{m m m m m m f m m m} & 90\% & 10\% & 73\% & 27\% \\
+%		\bottomrule
+%	\end{tabular}
+%
+%
+%\end{table}
+%
+%\todo{We would need another example with multiple protected attributes.}
+%
 
 
 We remark that our method is suitable for concerns about \emph{intersectionality}, which refers to the fact that \textcolor[rgb]{0.00,0.00,1.00}{the personal}, political, and social identities \textcolor[rgb]{0.00,0.00,1.00}{of an individual can be combined to form a unique profile that can be discriminated}.
