@@ -149,18 +149,24 @@ However the court found that GM had neither discriminated against blacks, nor ag
 %
 Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one protected attribute.
 
-\textcolor[rgb]{0.00,0.00,1.00}{\subsection{Contributions and Roadmap}}
-\textcolor[rgb]{0.00,0.00,1.00}{This work presents an extension of our previous paper~\cite{zehlike2017fair}, which was published at the CIKM 2017 conference. In this extended version} we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multinomial groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria.
+\subsection{Contributions and Roadmap}
+This work presents an extension of our previous paper~\cite{zehlike2017fair}, which was published at the CIKM 2017 conference.
+%
+In this extended version we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to group fairness criteria.
+%
+The algorithm that addresses multiple protected groups is completely different from the simpler algorithm that we used for the case of a single protected group.
 %
 The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
+%
 
 Our notion of utility assumes that we want to invite the most qualified candidates from each group, while their qualification is equal to a relevance score calculated by a ranking algorithm.
 %
-This score is assumed to be based on relevant metrics for evaluating candidates for a position, which depending on the specific skills required for the job could be their grades (e.g., Grade Point Average), their results in a standardized knowledge/skills test specific for a job, their typing speed in words per minute for typists, or their number of hours of flight in the case of pilots.
+This score is assumed to be based on relevant metrics for evaluating candidates for a position, which depending on the specific skills required for the job could be their grades (e.g., Grade Point Average), their results in a standardized knowledge/skills test specific for a job, such as their typing speed in words per minute for typists, or their number of hours of flight in the case of pilots.
 %
 We note that this measurement will embody \emph{pre-existing bias} (e.g. if black pilots are given less opportunities to flight they accumulate less flight hours), as well as \emph{technical bias}, as learning algorithms are known to be susceptible to direct and indirect discrimination~\cite{tuto2016,HajianFerrer12}.
 %
 We furthermore note that different manifestations of such bias exists for each group and are usually stronger for intersectional groups, i.e. the pre-existing bias against black women is stronger than the one for women or blacks in general.
+%
 
 This utility principle is operationalized in two ways.
 %
@@ -177,6 +183,7 @@ We want to stress that trying to find this point of optimal utility corresponds 
 We believe that the group skew unawareness is a necessary condition for the justification of post-processing algorithms in general and we therefore explicitly do not search for the optimal solution in terms of utility.
 %
 We will go into more depth on this in Section~\ref{subsec:individual-fairness}.
+%
 
 Our definition of \emph{ranked group fairness} reflects the legal principle of group under-representation in obtaining a benefit \cite{ellis2012eu,lerner2003group}.
 %
@@ -193,10 +200,11 @@ We also show that the verification of the ranked group fairness criterion can be
 This tree contains all possibilities to create a ranking that satisfies ranked group fairness and we provide an algorithm to build and persist it.
 %
 We also provide an algorithm \algoCorrect for the mTree adjustment due to multiple dependent hypothesis testing, where we compute $\alphaadj$ such that the type-I-error is less or equal to $\alpha$ for the \emph{entire tree}.
+%
 
 Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
-We also present extensive experiments to evaluate the performance of our approach compared to the so-called ``color-blind'' ranking with respect to both the expected utility of a ranking and the fairness degree measured in terms of expected exposure.
+We also present extensive experiments to evaluate the performance of our approach compared to a group-unaware method (the so-called ``color-blind'' method) with respect to both the expected utility of a ranking and the fairness degree measured in terms of expected exposure.
 
 \medskip
 
@@ -212,19 +220,20 @@ Our method can be used within an anti-discrimination framework such as \emph{pos
 %
 We do not claim these are the only way of achieving fairness, but we provide \emph{an algorithm grounded in statistical tests that enables the implementation of a positive action policy in the context of ranking}.
 
-
-\todo{Summarise in details the differences between the conference version and this extended one.}
-
-
-
 The rest of this paper is organized as follows.
-
-\todo{The roadmap below should be revised and extended a bit once we're totally sure about the structure of the paper.}
-
-The next section presents a brief survey of related literature, while Section~\ref{sec:problem} introduces our ranked group fairness and utility criteria, our model adjustment approach, and a formal problem statement.
 %
-Section~\ref{sec:multinom-fair-algo} describes the \algoFAIR\ algorithm and the model adjustment algorithm.
+The next section presents a brief survey of related literature,
+%
+while Section~\ref{sec:problem} introduces our ranked group fairness and utility criteria and a formal problem statement.
+%
+Section~\ref{sec:fairness-verification} presents a data structure (mTree) that allows fast verification of the ranked group fairness criterion.
+%
+Section~\ref{sec:model-adjustment} presents a procedure for statistical test significance adjustment, which is required due to multiple hypotheses testing.
+%
+Section~\ref{sec:multinom-fair-algo} describes the \algoFAIR\ algorithm for fair rankings.
 %
 Section~\ref{sec:experiments} presents experimental results.
+%
+Section~\ref{sec:adjustment-binomial} describes a significance adjustment procedure for a single protected group (a correction of the method shown in \cite{zehlike2017fair}), which is faster and simpler than for multiple protected groups.
 %
 Section~\ref{sec:conclusions} presents our conclusions and future work.
