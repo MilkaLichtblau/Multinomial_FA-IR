@@ -194,16 +194,15 @@
 \begin{abstract}
 Ranking items or people is a fundamental operation at the basis of several processes and services, not all of them happening online.
 %
-Ranking is required for tasks including selection, personalization, recommendation, and search.
+Ranking is required for different tasks, including search, personalization, recommendation, and selection.
 %
-While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of the potential impacts on the elements to rank has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair}  for the items being ranked.
+While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of potential discrimination for some of the elements to rank, has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair} for the items being ranked.
 %
-In particular, researchers so far have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
+So far, researchers have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
 %
-These constraints are needed in order to correct implicit biases existing in society and reflected in the input relevance or fitness score.
+These constraints are needed in order to correct implicit societal biases existing in the inpur data and reflected in the relevance or fitness score computed.
 %
-
-In this work, we study the Fair Top-$k$ Ranking problem, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, maximizing utility (i.e., select the ``best'' candidates) subject to group-fairness criteria.
+In this work, we study the Fair Top-$k$ Ranking problem, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, maximizing utility ({\em i.e.}, select the ``best'' candidates) subject to a group-fairness criteria.
 %
 Our ranked group-fairness definition extends group fairness using the standard notion of protected groups and is based on ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable, from a given minimum threshold.
 %
@@ -212,9 +211,9 @@ Utility is operationalized in two ways:
 		\item every candidate included in the top-$k$ should be more qualified than every candidate not included; and
 		\item for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
 	\end{inparaenum}
-
-We present an efficient algorithm for producing the Fair Top-$k$ Ranking.
-Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering fairness criteria.
+%
+Our main result is an efficient algorithm for producing a fair top-$k$ Ranking.
+Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
 %	%
 %	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
 %
@@ -222,7 +221,7 @@ Our experimental assessment on real-world datasets shows that our approach yield
 %
 We consider cases in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution.
 %
-This poses important technical challenges and increases both the space and time complexity of the re-ranking algorithm.
+This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
 \end{abstract}
 
 
