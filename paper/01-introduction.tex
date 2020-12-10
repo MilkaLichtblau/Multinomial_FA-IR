@@ -36,8 +36,7 @@ Based on this observation, in this paper we study the problem of producing a ran
 %
 A formal definition of the problem studied can be found in Section~\ref{sec:problem}.
 %
-Intuitively, our aim is to produce a ranking in which the proportion of different minority groups in any prefix of the ranking does not fall below minimum proportions $p_G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
-% RIC: "a minimum proportion"? What is G? Groups? Can we just say "a minimum proportion"? G is not really needed and can be confusing
+Intuitively, given a set $G$ of different minority groups, our aim is to produce a ranking in which the proportion of each group in $G$ in any ranking prefix does not fall below given minimum proportions $p_G$, where $p_G$ is a vector containing the respective minimum proportion~$p_g$ per group $g \in G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
 %
 %We denote however the motivating assumption of our method which is that utility measures \emph{are not comparable across groups} because said bias manifests differently for each group.
 %
@@ -46,8 +45,7 @@ We propose a re-ranking method to remove the systematic bias by means of a \emph
 %
 We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not.
 %
-Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide $p_G$ as input. This parameter can originate in a legal mandate or in voluntary affirmative actions.
-% RIC: provide the proportion $p$
+Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide the vector of proportions $p_G$ as input. This parameter can originate in a legal mandate or in voluntary affirmative actions.
 %
 For instance, the US Equal Employment Opportunity Commission sets a goal of 12\% of workers with disabilities in federal agencies in the US,\footnote{US EEOC: \url{https://www1.eeoc.gov/eeoc/newsroom/release/1-3-17.cfm}, Jan 2017.}
 %
@@ -59,12 +57,11 @@ In general these measures do not mandate perfect parity, as distributions of qua
 %
 
 The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $j$ of the dice representing a group, and having success probability $p_j \in p_G$).
-% RIC: What it means that a probability belongs to a proportion? Is p_G a set? (that is not clear before)
 %
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking.
 %
 
-\begin{example} Consider the three rankings in Table \ref{tbl:multinomial_intro_example} corresponding to a top-10 ranking of applicants in a credit approval process. The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration, and credit amount.
+\paragraph{Example.} Consider the three rankings in Table \ref{tbl:multinomial_intro_example} corresponding to a top-10 ranking of applicants in a credit approval process. The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration, and credit amount.
 %
 We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.'' We observe that in the above rankings individuals belonging to the group of young or black applicants receive less visibility in the top-10 results than those of the non-protected group. This can lead to systematical disadvantages in accessing credit. 
 More importantly, we see that individuals belonging to multiple protected groups (young \emph{and } black) receive the least exposure in the top-10 results.
@@ -80,26 +77,21 @@ More importantly, we see that individuals belonging to multiple protected groups
 	From the above we conclude that providing a fairness definition for rankings that treats protected groups separately can not guarantee a fair ranking for multiple protected groups at the same time. This highlights the need for a ranked group fairness notion for multiple protected groups ({\em i.e.}, multinomial).
 	%
 	The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of a fair top-10 ranking for multiple protected groups young, non-white, and also young and non-white. It is created using our \textit{multinomial ranked group fairness} criteria and the algorithm proposed in this paper.
-\end{example}
-%\medskip
-
-
+\medskip
 \begin{table}[t]
 	\caption{Three possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''. The first ranking would be considered fair for young people, but not for black people; the second ranking would be considered fair for black people, but not for young people; the third ranking would satisfy both criteria.
 		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
 		%
 		\label{tbl:multinomial_intro_example}}
-  \note[ChaTo]{Table in its current version is inconsistent: says non-white and black.}
-
 	\centering\small\begin{tabular}{lcccc}\toprule
-		& Position					  & top 10 & top 10  & top 10 \\
+		Protected group & Position					  & top-10 & top-10  & top-10 \\
 		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40 \\
 		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & black & y. and b. \\
 		&                               &  (y)  & (b)  &  (y $\wedge$ b)\\
 		\midrule
 		Young  & \texttt{o/w o/w o/w y/w o/w o/w o/w o/w o/w o/w} & 10\% & 0\% & 0\% \\
-		Non-white & \texttt{o/w o/w o/w y/w o/w o/b o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
-		Young and non-white & \texttt{o/w o/w o/w o/w o/w y/b o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
+		Black & \texttt{o/w o/w o/w y/w o/w o/b o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
+		Young and Black & \texttt{o/w o/w o/w o/w o/w y/b o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
 		\bottomrule
 	\end{tabular}
 
@@ -208,18 +200,17 @@ We also provide an algorithm \algoCorrect for the mTree adjustment due to multip
 
 Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
+Note that if a group of protected candidates is too small to satisfy ranked group fairness, the ranking is necessarily bound to under-represent them.
+%
 We also present extensive experiments to evaluate the performance of our approach compared to a group-unaware method (the so-called ``color-blind'' method) with respect to both, the expected utility of a ranking and the fairness degree measured, in terms of expected exposure.
-
-\medskip
 
 Summarizing, the main contributions of this paper are:
 \begin{compactenum}
 	\item the principled definition of \emph{ranked group fairness} for multiple protected groups, and the associated  {\sc Fair Top-$k$ Ranking problem};
-	\item the \algoComputeMTree algorithm to provide the mTree, a data structure that \algoFAIR needs as input;
-	\item the \algoCorrect algorithm to find the adjusted mTree, which has a maximum probability for a type-1-error of $\alpha$; and
-	\item the \algoFAIR\ algorithm for producing a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
+	\item the \algoFAIR\ algorithm for multiple protected groups to produce a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
+	\item a mathematical framework to solve the problem of multiple \emph{dependent} hypotheses testing, which is to adjust the significance level $\alphaadj$ such that the  maximum probability for a type-1-error is the given significance level $\alpha$. 
+	\item the algorithms \algoComputeMTree and \algoCorrect which translate ranked group fairness into a pre-computed data structure. This will enable efficient verification of ranked group fairness at testing time and efficient creation of fair rankings.
 \end{compactenum}
-% RIC: I would not claim that a parts of an algorithm that is also a contribution is a different contribution, less if no other algorithm we use them
 
 Our method can be used within an anti-discrimination framework such as \emph{affirmative actions}~\cite{sowell2005affirmative}.
 %
@@ -239,7 +230,6 @@ Section~\ref{sec:multinom-fair-algo} describes the \algoFAIR\ algorithm for fair
 %
 Section~\ref{sec:experiments} presents experimental results.
 %
-Section~\ref{sec:adjustment-binomial} describes a significance adjustment procedure for a single protected group (a correction of the method shown in \cite{zehlike2017fair}), which is faster and simpler than for multiple protected groups.
-% RIC: A correction or an improvement? Would be better to say the second
+Section~\ref{sec:adjustment-binomial} describes a significance adjustment procedure for a single protected group (a improvement of the method shown in \cite{zehlike2017fair}), which is faster and simpler than for multiple protected groups.
 %
 Section~\ref{sec:conclusions} presents our conclusions and future work.
