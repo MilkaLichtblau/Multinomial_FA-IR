@@ -40,7 +40,7 @@ For simplicity of exposition, we will assume all utilities $q_c$ are different, 
 %
 We call this the \emph{color-blind} ranking of elements in $[n]$, because it simply focuses on the utility and ignores whether elements are protected or non-protected.
 %
-Let $\textit{cb}|_k = \langle \textit{cb}(1), \textit{cb}(2), \ldots, \textit{cb}(k) \rangle$ be a prefix of size $k$ of this ranking. \label{concept:color-blind-ranking} 
+Let $\textit{cb}|_k = \langle \textit{cb}(1), \textit{cb}(2), \ldots, \textit{cb}(k) \rangle$ be a prefix of size $k$ of this ranking. \label{concept:color-blind-ranking}
 %
 
 \begin{table}[t]
@@ -226,8 +226,8 @@ This is connected to the notion of individual fairness, which requires people to
 The criteria we have described allow for different problem statements, depending on whether we use ranked group fairness as a constraint and maximize ranked utility, or vice versa.
 %In this paper, we study in depth the following problem statement (an algorithm is presented in Section~\ref{sec:algorithms}).
 
-\newtheorem*{problem*}{Problem}
-\begin{problem*}[Fair top-k ranking]
+
+\begin{problem}[Fair top-k ranking]
 	Given a set of candidates $[n]$, \textcolor[rgb]{0.00,0.00,1.00}{a partition of $[n]$ in groups $G = \left\{g_0, g_1, \ldots, g_{|G|}\right\}$, the vector $p_G$ of minimum proportions per group,  and parameters $k \in \mathbb{N}^+$ and $\alpha \in [0,1]$}, produce a ranking $\tau \in {\mathcal T}_{k,n}$ that:
 	\begin{compactenum}[(i)]
 		\item \label{problem:constraint-monotonicity} satisfies the in-group monotonicity constraint;
@@ -235,7 +235,7 @@ The criteria we have described allow for different problem statements, depending
 		\item \label{problem:optimal-sel} achieves high selection utility subject to (\ref{problem:constraint-monotonicity}) and (\ref{problem:constraint-rank}); and
 		\item \label{problem:maximum-ord} achieves high ordering utility subject to (\ref{problem:constraint-monotonicity}), (\ref{problem:constraint-rank}), and (\ref{problem:optimal-sel}).
 	\end{compactenum}
-\end{problem*}
+\end{problem}
 
 \spara{Related problems.}\label{concept:related-problems}
 %
