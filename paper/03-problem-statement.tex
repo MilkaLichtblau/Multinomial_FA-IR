@@ -158,14 +158,16 @@ Larger values indicate a stricter adherence to the required number of protected 
 
 \subsection{Utility}
 \label{subsec:individual-fairness}
-Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
+Notions of utility aim to measure desiderata of rankings like ranking well qualified candidates as high as possible.
+%Our notion of utility reflects the desire to select candidates that are potentially better qualified, and to rank them as high as possible.
 %
-In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity (i.e., due to candidates not being ordered by decreasing scores anymore to satisfy the ranked group fairness constraint).
+Previous works ~\cite{yang2016measuring,celis2017ranking} assumed to know the exact utility contribution of a candidate at a specific position. In contrast to that, we base our utility calculation on losses due to non-monotonicity (i.e., due to candidates not being ordered by decreasing scores anymore to satisfy the ranked group fairness constraint).
+%In contrast with previous works~\cite{yang2016measuring,celis2017ranking}, we do not assume to know the utility contribution of a given candidate at a particular position, but instead we base our utility calculation on losses due to non-monotonicity (i.e., due to candidates not being ordered by decreasing scores anymore to satisfy the ranked group fairness constraint).
 %
 This can also be understood as a measure of individual unfairness, as it calculates the largest score difference between a high-scoring candidate ranked below a low-scoring candidate.
 
 \spara{Ranked utility.}
-The ranked individual utility associated to a candidate $c$ in a ranking $\tau$, compares it against the least qualified candidate ranked above it.
+The ranked individual utility loss of a candidate $c$ in a ranking $\tau$ is high, if another candidate with a low score was ranked at a better position.
 
 \begin{definition}[Ranked utility of an element]
 	\label{def:rankedIndividualFairness}
@@ -178,13 +180,15 @@ The ranked individual utility associated to a candidate $c$ in a ranking $\tau$,
 	\]
 \end{definition}
 %
-\noindent By this definition, the maximum ranked individual utility that can be attained by an element is zero. %\note{It's weird to have something called utility which has its maximum in zero. It would have been more appropriate to call it something like \emph{individual unfairness}, but I guess it's too late to change terminology (same applies to several other notions).}
+\noindent Thus, a candidate $c$ achieves the maximum ranked individual utility of zero, if there was no candidate with a lower score ranked at a better position in the ranking. 
+%\note{It's weird to have something called utility which has its maximum in zero. It would have been more appropriate to call it something like \emph{individual unfairness}, but I guess it's too late to change terminology (same applies to several other notions).}
 %
 %Next, we apply the definition of ranked individual utility to two separate cases: when an element $i$ is included in the ranking, and when it is not included.
 
 \spara{Selection utility.}
 %
-We operationalize Criterion~\ref{cond:selection} by means of a \emph{selection utility} objective, which we will use to prefer rankings in which the more qualified candidates are included, and the less qualified, excluded.
+%We operationalize Criterion~\ref{cond:selection} by means of a \emph{selection utility} objective, which we will use to prefer rankings in which the more qualified candidates are included, and the less qualified, excluded.
+In order to satisfy Criterion ~\ref{cond:selection} we define \emph{selection utility} of a ranking. We will use this objective to prefer rankings in which more qualified candidates are included and less qualified are excluded.
 %
 \begin{definition}[Selection utility]
 	\label{def:selectionFairness}
@@ -192,37 +196,38 @@ We operationalize Criterion~\ref{cond:selection} by means of a \emph{selection u
 	$\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in [n], c \notin \tau} \texttt{utility}(c,\tau)\].
 \end{definition}
 %
-\noindent Naturally, a ``color-blind'' top-k ranking $\textit{cb}|_k$ maximizes selection utility, i.e., has selection utility zero.
+\noindent Analogous to the ranked utility of an element, a ``color-blind'' ranking of k items $\textit{cb}|_k$ has a maximum selection utility of zero, if all candidates included in the ranking have higher scores than the candidates excluded from the ranking.
 
 \spara{Ordering utility and in-group monotonicity.}
 %
-We operationalize Criterion~\ref{cond:ordering} of Section \ref{concept:criteria} by means of an \emph{ordering utility} objective and an \emph{in-group monotonicity constraint}, which we will use to prefer top-$k$ lists in which the more qualified candidates are ranked above the less qualified ones.
+In order to satisfy Criterion~\ref{cond:ordering} of Section \ref{concept:criteria} we introduce \emph{ordering utility} and an \emph{in-group monotonicity constraint} as objectives. Both are necessary in order to prefer rankings in which candidates with higher scores are ranked above candidates with lower scores.
 
 \begin{definition}[Ordering utility]
 	\label{def:orderingFairness}
 	The ordering utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in \tau} \texttt{utility}(c,\tau)\].
 \end{definition}
 
-\noindent The ordering utility of a ranking is only concerned with the candidate attaining the worst (minimum) ranked individual utility. Instead, the in-group monotonicity constraints refer to all elements, and specifies that within groups candidates must be sorted by decreasing qualifications.
+\noindent A rankings' ordering utility is only concerned with the worst ranked individual utility a candidate attains in it. In contrast to that, we define the in-group monotonicity constraint with respect to all elements in the ranking. The constraint guarantees, that, within groups, all candidates must be sorted by their scores.
 
 \begin{definition}[In-group monotonicity]
 	\label{def:inGroupMonotonicity}
 	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the in-group monotonicity condition if $\forall c,d$ s.t. $g_c = g_d$, $r(c,\tau) < r(d,\tau) \Rightarrow q_c \ge q_d$.
 \end{definition}
 
-\noindent Again, the ``color-blind'' top-k ranking $\textit{cb}|_k$ maximizes ordering utility, i.e., has ordering utility zero; it also satisfies the in-group monotonicity constraint.
+\noindent  A ``color-blind'' ranking of length $k$, $\textit{cb}|_k$ has a maximum ordering utility of zero and it also satisfies the in-group monotonicity constraint.
 
 \spara{Connection to the individual fairness notion.}\label{concept:our-utility-individual-fairness}
 %
-Our notion of utility is centered on individuals, for instance by taking the minima instead of averaging.
+In contrast to taking distributive measures like the average utility, our notion of utility focuses on individuals by using the ``worst-off'' candidates.
 %
-While other choices are possible, this has the advantage that we can trace loss of utility to specific individuals. These are the people who are ranked below a less qualified candidate, or excluded from the ranking, due to the ranked group fairness constraint.
+While other choices are possible, this has the advantage that we can only maximize utility through improving the outcome of specific individuals. Those people are the ``worst-off'' because they are excluded from a ranking in which others have lower scores or because they a ranked below other candidates with lower scores.
 %
-This is connected to the notion of individual fairness, which requires people to be treated consistently~\cite{Dwork2012}. Under this interpretation, a consistent treatment should require that two people with the same qualifications be treated equally, and any deviation from this is in our framework a utility loss. This allows trade-offs to be made explicit.
+Our definitions connect to notions of individual fairness, which require consistent treatment of individuals ~\cite{Dwork2012}. Two candidates with equal scores or qualifications should be treated equally. In our framework, a deviation from this equal treatment will end in a loss of utility. Thus, any trade-off can be measured explicitly and traced back to an individual.
+%This is connected to the notion of individual fairness, which requires people to be treated consistently~\cite{Dwork2012}. Under this interpretation, a consistent treatment should require that two people with the same qualifications be treated equally, and any deviation from this is in our framework a utility loss. This allows trade-offs to be made explicit.
 
 \subsection{Formal Problem Statement}
 \label{subsec:problem-statement}
-The criteria we have described allow for different problem statements, depending on whether we use ranked group fairness as a constraint and maximize ranked utility, or vice versa.
+The criteria we have described enable two different problem statements. First, we can use ranked group fairness as a constraint and maximize ranked utility. Second we can use ranked utility as a constraint and then maximize ranked group fairness.
 %In this paper, we study in depth the following problem statement (an algorithm is presented in Section~\ref{sec:algorithms}).
 
 
@@ -238,7 +243,7 @@ The criteria we have described allow for different problem statements, depending
 
 \spara{Related problems.}\label{concept:related-problems}
 %
-Alternative problem definitions are possible with the general criteria described in Section~\ref{concept:criteria}.
+Other problem definitions with respect to the general criteria described in Section~\ref{concept:criteria} are possible.
 %
 For instance, instead of maintaining high selection and ordering utility, we may seek to always find the one ranking $\tau^*$ from all possible rankings that satisfy ranked group fairness that maximizes selection and ordering utility.
 %
