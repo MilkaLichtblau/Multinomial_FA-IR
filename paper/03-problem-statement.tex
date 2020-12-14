@@ -204,10 +204,10 @@ In order to satisfy Criterion ~\ref{cond:selection} we define \emph{selection ut
 \begin{definition}[Selection utility]
 	\label{def:selectionFairness}
 	The selection utility of a ranking
-	$\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in [n], c \notin \tau} \texttt{utility}(c,\tau)\].
+	$\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in [n], c \notin \tau} \texttt{utility}(c,\tau).\]
 \end{definition}
 %
-\noindent Analogous to the ranked utility of an element, a ``color-blind'' ranking of k items $\textit{cb}|_k$ has a maximum selection utility of zero, if all candidates included in the ranking have higher scores than the candidates excluded from the ranking.
+\noindent Analogous to the ranked utility of an element, a ``color-blind'' ranking of $k$ items $\textit{cb}|_k$ has a maximum selection utility of zero, if all candidates included in the ranking have higher scores than the candidates excluded from the ranking.
 
 \spara{Ordering utility and in-group monotonicity.}
 %
@@ -215,7 +215,7 @@ In order to satisfy Criterion~\ref{cond:ordering} of Section \ref{concept:criter
 
 \begin{definition}[Ordering utility]
 	\label{def:orderingFairness}
-	The ordering utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in \tau} \texttt{utility}(c,\tau)\].
+	The ordering utility of a ranking $\tau \in {\mathcal T}_{k,n}$ is \[\min_{c \in \tau} \texttt{utility}(c,\tau).\]
 \end{definition}
 
 \noindent A rankings' ordering utility is only concerned with the worst ranked individual utility a candidate attains in it. In contrast to that, we define the in-group monotonicity constraint with respect to all elements in the ranking. The constraint guarantees, that, within groups, all candidates must be sorted by their scores.
