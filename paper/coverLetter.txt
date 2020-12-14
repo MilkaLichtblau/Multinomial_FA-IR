@@ -1,0 +1,1 @@
+This is a paper on ranked group fairness for multiple protected groups, written by Meike Zehlike, Tom Sühr, Carlos Castillo, Ricardo Baeza-Yates, Francesco Bonchi and Sara Hajian. 
