@@ -1,23 +1,28 @@
 %!TEX root = main.tex
 
-\section{The Fair Top-k Ranking Problem}\label{sec:problem}
+\section{The Fair Top-k Ranking Problem for Multiple Protected Groups}\label{sec:problem}
 
-In this section, we first present the needed notation (\S\ref{subsec:preliminaries}), then the ranked group fairness criterion (\S\ref{subsec:group-fairness}) and criteria for utility (\S\ref{subsec:individual-fairness}). Finally we provide a formal problem statement (\S\ref{subsec:problem-statement}).
+In the following, we introduce the needed notation (\S\ref{subsec:preliminaries}), and present the definition of ranked group fairness (\S\ref{subsec:group-fairness}), as well as definitions of utility (\S\ref{subsec:individual-fairness}). Lastly we present a formal problem statement (\S\ref{subsec:problem-statement}).
 %
-This formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting.
+Our formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting. 
+%
+We explicitly frame this as an extension rather than an entirely new framework, and hence the definitions in this paper strongly correlate with those from~\cite{zehlike2017fair}.
+%
+The notation used in this paper is summarized on Table~\ref{tbl:notation}.
 
 \subsection{Preliminaries and Notation}
 \label{subsec:preliminaries}
-We consider a set of candidates $[n] = \{ 1, 2, \dots, n \}$  out of which $k$ candidates will be selected. We are also given $q_c$ for each $c \in [n]$, denoting the ``utility'' of candidate $c$: this can be interpreted as an overall summary of the fitness of candidate $c$ for the specific job, task, or search query, and it could be obtained by the combination of several different attributes.
-If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases with respect to a protected group to be embodied in the model (see, e.g., \cite{Sweeney2013}).
+For our setting we examine a set of candidates $[n] = \{ 1, 2, \dots, n \}$, where $k$ of them will be selected based on their respective qualification. We denote this ``utility'' of candidate $c$ for each $c \in [n]$ by $q_c$, which can be viewed as the fitness of candidate $c$ for the task at hand, or e.g. a search query. We assume this score to be given nd denote that it may be a weighted combination of several different attributes.
+%
+If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases towards a protected group to be embodied in the model (see, e.g., \cite{Sweeney2013}).
 %
 We define a set of candidate groups $G = \left\{g_0, g_1, \ldots g_{|G|}\right\}$ that form a partition of $[n]$. We will consider $g_0$ as non-protected (or privileged) and all remaining groups as protected (or disadvantaged).
 %
-To simplify the presentation of the algorithms, we will assume there are at least $k$ candidates in each group. % enough candidates of each group, i.e., at least $k$ of each kind.
+We assume there are at least $k$ candidates in each group. % enough candidates of each group, i.e., at least $k$ of each kind.
 
-Let ${\mathcal P}_{k,n}$ represent all the subsets of $[n]$ containing exactly $k$ elements.
+Let ${\mathcal P}_{k,n}$ denote all subsets of $[n]$ with exactly $k$ elements and let ${\mathcal T}_{k,n}$ represent the union of all permutations of sets in ${\mathcal P}_{k,n}$.
 %
-Let ${\mathcal T}_{k,n}$ represent the union of all permutations of sets in ${\mathcal P}_{k,n}$, i.e., the solution space of the top-$k$ ranking problem.
+Thus ${\mathcal T}_{k,n}$ forms the solution space of the top-$k$ ranking problem.
 %
 For a permutation $\tau \in {\mathcal T}_{k,n}$ and an element $c \in [n]$, let
 \[
@@ -28,7 +33,7 @@ k + 1 & \mathrm{otherwise}.
 \end{cases}
 \]
 
-We further define $\tau_g$ to be the number of elements of group $ g $ that are present in $\tau$, i.e. $\tau_g = | \{ c \in \tau \wedge c \in g \} |$.
+By $\tau_g$ we denote the number of elements of group $ g $ that are present in $\tau$, i.e. $\tau_g = | \{ c \in \tau \wedge c \in g \} |$.
 %
 We set $ \tau_G = \langle\tau_g\rangle_{g \in G}$, i.e., the vector that contains these numbers for each group.
 %
@@ -37,7 +42,7 @@ Let $cb \in {\mathcal T}_{n,n}$ be the total ranking of all candidates by decrea
 %
 For simplicity of exposition, we will assume all utilities $q_c$ are different, although our algorithms do not require this to be the case.
 %
-We call this the \emph{color-blind} ranking of elements in $[n]$, because it simply focuses on the utility and ignores whether elements are protected or non-protected.
+We refer to this as the \emph{color-blind} ranking of candidates in $[n]$, because it simply focuses on their utility but ignores their protection status.
 %
 Let $\textit{cb}|_k = \langle \textit{cb}(1), \textit{cb}(2), \ldots, \textit{cb}(k) \rangle$ be a prefix of size $k$ of this ranking. \label{concept:color-blind-ranking}
 %
@@ -83,33 +88,34 @@ $ m_{\alpha, p}(k)$ & Minimum number of protected candidates in top $k$ position
 \end{table}
 
 \spara{Fair top-$k$ ranking criteria.}\label{concept:criteria}
-We would like to obtain $\tau \in {\mathcal T}_{k,n}$ with the following objectives, which we describe formally next: %\S\ref{subsec:group-fairness} and \S\ref{subsec:individual-fairness}:
+To solve the fair top-$k$ ranking problem, our method searches for a particular ranking $\tau \in {\mathcal T}_{k,n}$ that maximizes the following objectives: %, which we describe formally next: %\S\ref{subsec:group-fairness} and \S\ref{subsec:individual-fairness}:
 
 \begin{enumerate}[{Criterion} 1.]
-	\item Ranked group fairness: $\tau$ should fairly represent each protected group; \label{cond:ranking}
+	\item Ranked group fairness: $\tau$ should fairly represent each protected group $g \in G$; \label{cond:ranking}
 
 	\item Expected selection utility: $\tau$ should contain the most qualified candidates; and \label{cond:selection}
 
 	\item Expected ordering utility: $\tau$ should be ordered by decreasing qualifications.\label{cond:ordering}
 \end{enumerate}
-
-We will provide a formal problem statement in \S\ref{subsec:problem-statement}, but first, we need to provide a formal definition of each of the criteria, which we do in the next sections.
-The notation used in this paper is summarized on Table~\ref{tbl:notation}.
-
+%
+The formal problem statement is given in \S\ref{subsec:problem-statement}, but first, we need to formally define each criterion, which we do in the next sections.
 
 \subsection{Group Fairness for Rankings}
 \label{subsec:group-fairness}
 
-We operationalize Criterion~\ref{cond:ranking} of Section~\ref{concept:criteria} by means of a \emph{ranked group fairness criterion}, which takes as input
+Criterion~\ref{cond:ranking} of Section~\ref{concept:criteria} is operationalized as a \emph{ranked group fairness criterion} with two input parameters:
 \begin{inparaenum}[(i)]
 	\item $ \tau_G $, the vector containing the number of candidates from each protected group in ranking $ \tau $, and
 	\item $ p_G $, a vector containing minimum target proportions for each protected group.
 \end{inparaenum}
-Intuitively, this criterion declares the ranking as unfair if candidates in a protected group is far below the required number according to the target proportions.
 %
-Additionally, this criterion looks at the ordering in which those candidates appear.
+Instinctively, a ranking is said to not fulfill the ranked group fairness condition, if the number $\tau_g$ of candidates from a protected group $g$ falls far below the required number according to the given target proportions.
 %
-Specifically, the ranked group fairness criterion compares the number of protected elements from each group \emph{in every prefix} of the ranking, with the expected number of protected elements if they were picked at random using a stochastic process with a multinomial distribution, such as the roll of a dice.
+Additionally, this criterion looks at the ordering in which those candidates appear within the ranking by comparing the actual number of protected elements from each group $\tau_G$ with their expected number.
+%
+This number is calculated using the stochastic process of a multinomial distribution (i.e. the roll of a $|G|$-sided dice), and simulates that candidates were picked at random at each position if the dice shows the side of their group. 
+%
+This comparison is repeated for \emph{every prefix} of the ranking.
 
 \begin{definition}[Multinomial Cumulative Distribution Function]
 	\label{def:multinomialCDF}
@@ -122,7 +128,9 @@ Specifically, the ranked group fairness criterion compares the number of protect
 	%
 	We then define $ F\left(X; n, p\right) = P\left(E_1 \leq X_1, E_2 \leq X_2, \ldots, E_{|G|} \leq X_{|G|}\right)$ the multinomial cumulative distribution function which computes the probability that each event $ E_j $ occurs at most $ X_j $ times in $ n $ trials given probabilities $ p $.
 \end{definition}
-With the multinomial CDF the ranked group fairness criterion is formulated as a statistical significance test, and we include a significance parameter ($\alpha \in [0,1]$) corresponding to the probability of rejecting a fair ranking (i.e., a Type I error).
+With the multinomial CDF the ranked group fairness criterion is formalized as a statistical significance test.
+%
+To express the probability of rejecting a fair ranking (i.e., a Type I error) we include a significance parameter ($\alpha \in [0,1]$).
 
 \begin{definition}[Fair representation condition]
 	\label{def:fair-representation-condition}
@@ -134,11 +142,15 @@ With the multinomial CDF the ranked group fairness criterion is formulated as a 
 	if $F(\tau_G;k,p_G) > \alpha$.
 \end{definition}
 
-This is equivalent to using a statistical test where the null hypothesis $H_0$ is that the protected elements of each group are represented with a sufficient proportion $p_t$ ($\forall g \in G, p_t \ge p_g$), and the alternative hypothesis $H_a$ is that the proportion of protected elements is insufficient ($\exists g \in G: p_t < p_g$). In this test, the p-value is $F(\tau_G; k, p_G)$ and we reject the null hypothesis, and thus declare the ranking as unfair, if the p-value is less than or equal to the threshold $\alpha$.
+The fair representation condition implements a statistical test, with null hypothesis $H_0$ assuming that all protected groups are represented with a minimal proportion $p_t$ ($\forall g \in G, p_t \ge p_g$).
+%
+The alternative hypothesis $H_a$ translates into an insufficient proportion of protected elements ($\exists g \in G: p_t < p_g$). 
+%
+Our test setup sets the p-value to $F(\tau_G; k, p_G)$ and we reject $H_0$, hence announce the ranking under test to be unfair, if the p-value is less than or equal to the threshold $\alpha$.
 %
 Note that according to this definition, in the case of a set of size one, either the element is in the protected group, and then we satisfy fair representation, or the element is not in the protected group, and then we satisfy fair representation if $1 - F > \alpha$.
 
-The ranked group fairness criterion enforces the fair representation condition over all prefixes of the ranking:
+To obtain the ranked group fairness condition, we require the fair representation condition to be met for all prefixes of the ranking:
 
 \begin{definition}[Ranked group fairness condition]
 	\label{def:ranked-group-fairness-condition}
@@ -148,13 +160,12 @@ The ranked group fairness criterion enforces the fair representation condition o
 \end{definition}
 
 We note there exists a solution space of rankings that satisfy this condition for a given 3-tuple $(k, p_G, \alpha)$, instead of just a single ranking as it is the case when only one protected group is present.
-We further note that a larger $\alpha$ means a larger probability of declaring a fair ranking as unfair.
 %
-In our experiments (Section~\ref{sec:experiments}), we use a relatively conservative setting of $\alpha=0.1$.
+We further note that a lower significance $\alpha$ translates into a lower probability of wrongly declaring a fair ranking as unfair, and we therefore use a relatively conservative setting of $\alpha=0.1$ in our experiments (Section~\ref{sec:experiments}).
 %
-The ranked group fairness condition can be used to create a \emph{ranked group fairness measure}. For a ranking $\tau$ and probabilities $p_G$, the ranked group fairness measure is the maximum $\alpha \in [0,1]$ for which $\tau$ satisfies the ranked group fairness condition.
+It is possible to convert the binary choice (fair vs. unfair) of the ranked group fairness condition into a \emph{ranked group fairness metric}. This metric would be the the maximum $\alpha \in [0,1]$ for which a ranking $\tau$ satisfies the ranked group fairness condition, given minimum proportions $p_G$.
 %
-Larger values indicate a stricter adherence to the required number of protected elements at each position.
+In this metric space, larger values imply a stronger compliance with the required number of protected elements from the top-positions onward.
 
 \subsection{Utility}
 \label{subsec:individual-fairness}
