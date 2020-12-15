@@ -2,23 +2,23 @@
 \section{Related Work}\label{sec:related-work}
 
 %Discrimination analysis is a multi-disciplinary problem, involving sociological causes, legal reasoning, economic models, statistical techniques~\cite{Romeimulti}.
-Anti-discrimination has only recently been considered from an algorithmic perspective~\cite{tuto2016}. Some proposals are oriented to discovering and measuring discrimination (e.g., \cite{peder2008,Bonchi2015,angwin_2016_machine}); while others deal with mitigating or removing discrimination to ensure that the results of different algorithms do not lead to discriminatory decisions
+Anti-discrimination has only recently been considered from an algorithmic perspective~\cite{tuto2016}. Some proposals are oriented to discovering and measuring discrimination ({\em e.g.}, \cite{peder2008,Bonchi2015,angwin_2016_machine}); while others deal with mitigating or removing discrimination to ensure that the results of different algorithms do not lead to discriminatory decisions
 %even if the training dataset reflects the historical bias against members of a protected group
-(e.g., \cite{CaldersICDM,HajianFerrer12,hajian2014,Dwork2012,Zemel2013}).
+({\em e.g.}, \cite{CaldersICDM,HajianFerrer12,hajian2014,Dwork2012,Zemel2013}).
 %
 All these methods are known as \emph{fairness-aware algorithms}.
 
 \subsection{Group fairness and individual fairness}
 Two basic frameworks have been adopted in recent studies on algorithmic discrimination: \begin{inparaenum}[(i)]
 	\item \emph{individual fairness}, a requirement that individuals should be treated consistently~\cite{Dwork2012, zliobaite2015survey}; and
-	\item \emph{group fairness}, also known as statistical parity, a requirement that the protected groups should be treated similarly to the advantaged group or the populations as a whole \cite{peder2008,pederruggi2009}.
+	\item \emph{group fairness}, also known as statistical parity, a requirement that the protected groups should be treated similarly to the advantaged group or the population as a whole \cite{peder2008,pederruggi2009}.
 \end{inparaenum}
 
 Different fairness-aware algorithms have been proposed to achieve group and/or individual fairness, mostly for predictive tasks. \citet{Calders2010} consider three approaches to deal with naive Bayes models by modifying the learning algorithm.
 %, two of which consist in modifying the learning algorithm: training a separate model for each protected group; and adding a
 %latent variable to model the class value in the absence of discrimination.
 \citet{CaldersICDM} modify the entropy-based splitting criterion in decision tree induction to account for attributes denoting protected groups.
-\citet{Kamishima2012}  apply a regularization (i.e., a
+\citet{Kamishima2012}  apply a regularization ({\em i.e.}, a
 change in the objective minimization function) to probabilistic discriminative models, such
 as logistic regression. \citet{zafar2015} describe fairness constraints for several classification methods.
 
@@ -34,11 +34,11 @@ It also enables a ``continuous interpolation'' that generates protected group sc
 %
 Recently, other fairness-aware algorithms have been proposed for mostly supervised learning algorithms and different bias mitigation strategies \cite{hardt2016equality, jabbari2016fair, friedler2016possibility, celis2016fair, corbett2017algorithmic}.
 %
-\citet{hardt2016equality} study fairness in terms of \emph{equalized odds} and propose methods to ensure equal precision across groups.
+\citet{hardt2016equality} study fairness in terms of \emph{equalized odds} and proposes methods to ensure equal precision across groups.
 %
-\citet{zafar2017fairness} introduce a new concept called \emph{disparate mistreatment} and propose a method that seeks to reduce differences in error rates.
+\citet{zafar2017fairness} introduces a new concept called \emph{disparate mistreatment} and proposes a method that seeks to reduce differences in error rates.
 
-In contrast, our paper considers the more general setting by achieving fairness in ranking algorithms and it even can be reduced to other problems such as classification (see section~\ref{concept:related-problems}). Our framework provides an evaluation criterion, ranked group fairness, and offers guarantees under this criterion, which can be directly controlled by a external parameter. Moreover, it takes into account both frameworks of group and individual fairness.
+In contrast, our paper considers the more general setting by achieving fairness in ranking algorithms and it even can be reduced to other problems such as classification (see Section~\ref{concept:related-problems}). Our framework provides an evaluation criterion, ranked group fairness, and offers guarantees under this criterion, which can be directly controlled by a external parameter. Moreover, it takes into account both frameworks of group and individual fairness.
 
 \subsection{Fair Ranking}
 %
@@ -57,18 +57,18 @@ Moreover, we also take into account the individual fairness criteria.
 %
 \citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
 %
-\citet{kulshrestha_2017_quantifying} determine search bias in rankings, proposing a quantification framework that measures the bias of the results of a search engine.
+\citet{kulshrestha_2017_quantifying} proposes a quantification framework that measures the bias of the results in a search engine.
 This framework discerns to what extent this output bias is due to the input dataset that feeds into the ranking system, and how much is due to the bias introduced by the system itself.
 %
 \citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
 %
 Another quantification and bias mitigation framework is presented by~\citet{geyik2019fairness}, which can be tuned towards different definitions of fairness such as demographic parity and so-called equal opportunity.
 
-\citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
+\citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ being the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
 
 \citet{singh2018fairness} introduce the concept of exposure of a group that incorporates the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
 %
-Parallel with~\citet{biega2018equity} they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. \cite{biega2018equity} additionally introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
+Parallel with~\citet{biega2018equity}, they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. \citet{biega2018equity} additionally introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
 
 \citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
 
@@ -76,10 +76,9 @@ Parallel with~\citet{biega2018equity} they propose an integer linear program tha
 %
 The learning objective is concerned with disparate impact, whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
 
-
 \subsection{Diversity}
 
-To avoid showing only items of the same class has been studied in the Information Retrieval community for many years. The motivation there is that the user query may have different intents and we want to cover several of them with results.
+To avoid showing only items of the same class has been studied in the Information Retrieval community for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
 %
 The most common approach, since \citet{carbonell1998use}, is to consider distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is too similar to an element already appearing at a higher position.
 %
@@ -87,7 +86,7 @@ Another often-used definition is that diversity should be understood as a way of
 %
 \citet{kunaver2017diversity} and \citet{channamsetty2017recommender} deal with different kinds of bias such as presentation bias, where, only a few items are shown and most of the items are not shown, and also popularity bias and a negative bias towards new items.
 %
-An exception is \citet{sakai2011evaluating}, that provides a framework for per-intent NDCG for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} that we describe before, and not with a construction of such ranking, as we do in this paper.
+An exception is \citet{sakai2011evaluating}, that provides a framework per-intent for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} and that we described before, and not with a construction of such ranking, as we do in this paper.
 
 In contrast with most of the research on diversity of ranking results or recommendation systems, our work operates on a discrete set of classes (not based on similarity to previous items).
 %

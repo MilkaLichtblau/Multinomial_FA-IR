@@ -68,8 +68,7 @@ In case \texttt{mtree} branches into different possibilities to satisfy ranked g
 %
 If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
 %
-\inote{Next sentence is a little bit unclear, perhaps rephrase? -- ChaTo}
-Given this the algorithm has to find the correct child $m_{G,i}$ for a given parent from the previous level (Line~\ref{alg:fair:childNode}).
+Thus, the algorithm returns the most-likely child $m_{G,i}$ for a given parent (Line~\ref{alg:fair:childNode}).
 %
 If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the ``best'' (maximum qualifications) candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
@@ -123,9 +122,6 @@ This would be a strong assumption due to different manifestations of bias in sco
 %
 Scores have been even proven to be biased against protected groups, as is the case with the COMPAS scores~\cite{angwin_2016_machine} that we use in the experiments of Section~\ref{sec:experiments}, but this bias manifests differently across groups (as an example see Fig.~\ref{fig:dataset:compas:age}).
 %
-
-\note[ChaTo]{I think the point is clear. The example is good but could be omitted (or kept, I'm indifferent).}
-
 Let us consider an example to clarify this point.
 %what could happen, if we optimized \algoFAIR to always choose the path in the mTree that yields the highest selection and ordering utility:
 %
@@ -135,6 +131,6 @@ Suppose that we had two protected groups, namely white female and black female c
 %
 Suppose that the degree of bias in the scores for black females is substantially higher than for white females, i.e., black females obtain lower scores for the same performance as white females. This is a plausible scenario due to the intersectional discrimination which black females face.
 %
-In this case, choosing among equivalent solutions the mTree path that maximizes utility would result in unfairly preferring white females over black females.
+In this case, choosing among equivalent solutions, the mTree path that maximizes utility would result in unfairly preferring white females over black females.
 %
 Instead, chosing the most likely path follows a probabilistic design, and only requires that scores are comparable within groups, but not across.
