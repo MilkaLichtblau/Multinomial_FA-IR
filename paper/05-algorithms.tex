@@ -47,31 +47,38 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 \end{algorithm}
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
-Multinomial \algoFAIR, presented in Algorithm~\ref{alg:fair}, solves the {\sc Fair Top-$k$ Ranking} problem for multinomial protected groups and intersectional group settings.
-%
-As input, multinomial \algoFAIR takes
-the expected size $k$ of the ranking to be returned,
-the qualifications $q_c$,
-indicator variables $g_c$ indicating if candidate $c$ is protected,
-the vector of minimum target proportions $p_G$, and
-the adjusted significance level $\alphaadj$.
 
-First, the algorithm uses $q_c$ to create priority queues with up to $k$ candidates each: $P_0$ for the non-protected candidates and $P_g$ for the protected candidates of group $g$.
+Algorithm~\ref{alg:fair} presents Multinomial \algoFAIR, our solution to the {\sc Fair Top-$k$ Ranking} problem for multiple protected groups.
 %
-Next (line \ref{alg:fair:mtree}), the algorithm derives a ranked group fairness tree (mTree) similar to Figure~\ref{fig:mtree-asymmetric-adjusted}, i.e., for each position it computes the minimum number of protected candidates per group, given $p_G$, $k$ and $\alphaadj$.
+The input of multinomial \algoFAIR is
+the target size $k$ of the ranking to be produced,
+the scores or qualifications $q_c$,
+indicator variables $g_c$ marking protected candidates,
+the minimum target probabilities $p_G$, and
+the test significance after adjustment $\alphaadj$.
 %
-Then, multinomial \algoFAIR greedily constructs a ranking subject to candidate qualifications, and minimum protected elements required.
+
+The algorithm works as follows.
 %
-Note that the right choice of a tree node on level $i$ depends on the path chosen along the tree and therefore on its concrete parent at level $i-1$.
+In the initialization, qualifications $q_c$ are used to create one ranked list of up to $k$ candidates for each of the protected groups ($P_g$) and for the non-protected group ($P_0$).
 %
-In case \texttt{mtree} branches into different possibilities to satisfy ranked group fairness (as an example see Fig.~\ref{fig:mtree-asymmetric-adjusted} for $k=4$), the algorithm chooses the branch that has a higher value for $F$, meaning it chooses the branch that has a higher probability.
+On line \ref{alg:fair:mtree}, the algorithm creates a ranked group fairness tree (mTree) similar to the one shown on Figure~\ref{fig:mtree-asymmetric-adjusted}, indicating the minimum number of protected candidates needed at every position. % group, given $p_G$, $k$ and $\alphaadj$.
 %
-If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
+Then, the algorithm greedily merges the per-group rankings, making sure to satisfy the minimum number of protected elements required at each position.
 %
-Thus, the algorithm returns the most-likely child $m_{G,i}$ for a given parent (Line~\ref{alg:fair:childNode}).
+If we require a protected candidate from group $g$, the algorithm picks the highest ranked element in $P_g$ (lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it picks the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
-If the node demands a protected candidate from group $g$ at the current position $i$, the algorithm appends the ``best'' (maximum qualifications) candidate from $P_g$ to the ranking (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it appends the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+
+We observe that the
+choice of the group from which the element at position $i$ should be drawn, i.e., the node selected at level $i$, depends on the path chosen along the \texttt{mtree}. % and therefore on its concrete parent at level $i-1$.
 %
+In case there are multiple possibilities that satisfy ranked group fairness (as we saw in the example of Fig.~\ref{fig:mtree-asymmetric-adjusted} at level $k=4$), the algorithm selects the branch that has the higher probability (larger $F$), breaking ties at random.
+%
+%If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
+%
+Thus, the algorithm returns the most-likely child $m_{G,i}$ for a given parent (line~\ref{alg:fair:childNode}).
+%
+
 
 \subsection{Algorithm Complexity}\label{subsec:FAIR-complexity}
 Assuming a computational cost of $\mathcal{O}(n \log{} n)$ for creating the sorted lists of candidates, \algoFAIR ranks exactly $k$ items using an adjusted mTree of height $k$.

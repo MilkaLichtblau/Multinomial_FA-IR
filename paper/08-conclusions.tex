@@ -2,11 +2,11 @@
 
 In this paper we presented the extension of \algoFAIR to multiple groups, where we guarantee ranked group fairness, without introducing a large utility loss.
 %
-Especially when groups largely have the same utility score in the top positions (as is the case in the COMPAS experiments) no ranking utility at all is lost in terms of NDCG or individual fairness. 
+Especially when groups largely have the same utility score in the top positions (as is the case in the COMPAS experiments) no ranking utility at all is lost in terms of NDCG or individual fairness.
 %
 In this case \algoFAIR only benefits the protected groups without skewing the ranking result.
 %
-If a protected group already receives advantageous exposure in the colorblind ranking and the ranked group fairness condition is already met via the ranking scores of the candidates, \algoFAIR preserves this. 
+If a protected group already receives advantageous exposure in the colorblind ranking and the ranked group fairness condition is already met via the ranking scores of the candidates, \algoFAIR preserves this.
 %
 A protected candidate can only lose exposure due to a protected candidate from another group being ranked up, but not due to a non-protected one.
 %
@@ -22,7 +22,7 @@ Though we already implemented improvements to reduce complexity, calculating an 
 %
 Of course this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration these calculation times are currently unavoidable.
 %
-A significant speed-up could be achieved by programming a customized mcdf-function which can store the results of repetitive computation steps. 
+A significant speed-up could be achieved by programming a customized mcdf-function which can store the results of repetitive computation steps.
 %
 This is however very memory-intensive and the algorithm then needs to run on large computer clusters.
 %
@@ -38,11 +38,9 @@ Thus, a method such as \algoFAIR may be able to increase the click probability f
 %
 However further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
 %
-Experimentally, there are several directions. 
+Additionally, further experimental research using synthetic data could allow us to test with a wider range of differences across groups, larger than the one that real datasets exhibit.
 %
-For instance, we have used real datasets that exhibit some differences among protected and non-protected groups; experiments with synthetic datasets would allow to test with more extreme differences that are more rarely found in real data.
-%
-Further experimental work may be done to measure robustness to noise in qualifications, and later to evaluate the impact of this in a real application.
+Finally, robustness tests to measure the sensitivity of the rankings to noise in the qualification/score inputs could be helpful to determine to what extent they may affect our fairness objectives.
 
 \spara{Reproducibility.}
-All the code and data used of this paper is available online at \url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}.
+Code and data that can be used to reproduce the experiments on this paper is available: \url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}.
