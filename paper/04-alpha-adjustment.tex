@@ -2,7 +2,6 @@
 
 \section{Ranked Group Fairness Verification}
 \label{sec:fairness-verification}
-\input{pics/mTrees}
 To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the \emph{inverse multinomial CDF} with parameters $k, p_G$ and $ \alpha $.
 %
 The inverse CDF takes as input a probability (in our case multiple probabilities $p_G$) and returns that value of a random variable, at which to the probability of the random variable being less than or equal to the returned value equals the input probability.
@@ -11,6 +10,7 @@ As the multinomial CDF is not injective and has hence no inverse, there is no qu
 %
 Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $.
 %
+\input{pics/mTrees}
 Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = [1/3, 1/3]$.
 %
 Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, i.e. the root level corresponds to the first ranking position and so forth.

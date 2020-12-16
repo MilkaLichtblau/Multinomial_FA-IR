@@ -254,22 +254,8 @@ The criteria we have described enable two different problem statements. First, w
 
 \spara{Related problems.}\label{concept:related-problems}
 %
-Other problem definitions with respect to the general criteria described in Section~\ref{concept:criteria} are possible.
+Other problem definitions with respect to the general criteria described in Section~\ref{concept:criteria} are possible, however one has to carefully consider their implications on a probabilistic fairness assumption.
 %
-For instance, instead of maintaining high selection and ordering utility, we may seek to always find the one ranking $\tau^*$ from all possible rankings that satisfy ranked group fairness that maximizes selection and ordering utility.
+For instance, instead of maintaining high selection and ordering utility, we may seek to always find the one ranking $\tau^*$ from all possible fair rankings that \emph{maximizes} selection and ordering utility.
 %
-We acknowledge that this seems to be a tempting ``optimization'' of \algoFAIR but we believe that such a strategy is not fully compliant with multinomial ranked group fairness anymore.
-%
-As ranked group fairness is defined through a statistical process that corresponds to the roll of a dice, all possible ``fair'' solutions must have a chance $>0$ to be picked as the final result ranking.
-%
-As soon as $\tau^*$ becomes the only solution the algorithm finds, we will render true ranked group fairness obsolete.
-%
-Consider as a real world example again the case of different biases across groups in an intersectional setting:
-%
-Assuming we have a dataset with white, upper-class and black, lower-class people in which the utility criterion is lightly correlation with gender and strongly correlating with income class.
-%
-The protected group would be white women, black men and black women.
-%
-If we were to always choose the ranking that satisfies ranked group fairness and maximizes utility, we would \emph{always} reorder the result in favor of white women, while black men and particularly black women would fall behind.
-%
-Instead \algoFAIR should truly implement ranked group fairness in which all solutions (also those that favor blacks) have a certain chance to be accepted.
+We acknowledge that this seems to be a tempting ``optimization'' of \algoFAIR but we believe that such a strategy is not fully compliant with multinomial ranked group fairness anymore (see Section~\ref{sec:algo:partialOrdering} for more details). 
