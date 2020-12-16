@@ -352,6 +352,25 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 \algoFAIR, in contrast, ranks candidates based on their scores, as soon as the ranked group fairness conditions are met for each group.
 %
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HAD TO MOVE FIGURE FROM EXPERIMENTS HERE, OTHERWISE HALF OF A PAGE IS BLANK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+	\vspace{-5mm}
+	\centering
+	\subfloat[Exposure loss for the non-protected group. \label{fig:experiments:compasAge:expGain:groupNP}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroupNP.png}}
+	\subfloat[Exposure gain/loss for group ``age 25 -- 45''. \label{fig:experiments:compasAge:expGain:group1}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup1.png}}\hfill
+	\subfloat[Exposure gain for group ``age < 25''. \label{fig:experiments:compasAge:expGain:group2}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup2.png}}
+	\subfloat[NDCG loss. \label{fig:experiments:compasAge:ndcgloss}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-ndcgLoss.png}}
+	\vspace{-3mm}
+	\caption{Normalized exposure gain/loss and NDCG loss w.r.t. the colorblind ranking in experiment D2 (COMPAS with age as protected category) for different values of $p_1$ and $p_2$ ($k=200, \alpha=0.1$).
+		%
+		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
+		%
+		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
+	}
+	\label{fig:results-moving-p}
+\end{figure}
 
 \spara{A wide range of possibilities to set $p_G$.}
 %
@@ -376,22 +395,4 @@ This experiment shows that \algoFAIR allows a wide range of positive actions, fo
 In this case, the Figure~\ref{fig:experiments:compasAge:ndcgloss} shows that we can double the proportion of young people in the top-$k$ ranking (e.g. from 0\% in the original up to 40\% in the fair ranking) without introducing a large drop for the other protected group loss: in the colorblind ranking they received exposure equivalent to $0.4 > p_1 > 0.5$, so setting $p_1 = p_2 = 0.4$ only causes an exposure drop of 5.8\%.
 %
 At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when favoring young people with $p_2=0.8$.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HAD TO MOVE FIGURE FROM EXPERIMENTS HERE, OTHERWISE HALF OF A PAGE IS BLANK
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t!]
-	\vspace{-5mm}
-	\centering
-	\subfloat[Exposure loss for the non-protected group. \label{fig:experiments:compasAge:expGain:groupNP}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroupNP.png}}
-	\subfloat[Exposure gain/loss for group ``age 25 -- 45''. \label{fig:experiments:compasAge:expGain:group1}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup1.png}}\hfill
-	\subfloat[Exposure gain for group ``age < 25''. \label{fig:experiments:compasAge:expGain:group2}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup2.png}}
-	\subfloat[NDCG loss. \label{fig:experiments:compasAge:ndcgloss}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-ndcgLoss.png}}
-	\vspace{-3mm}
-	\caption{Normalized exposure gain/loss and NDCG loss w.r.t. the colorblind ranking in experiment D2 (COMPAS with age as protected category) for different values of $p_1$ and $p_2$ ($k=200, \alpha=0.1$).
-		%
-		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
-		%
-		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
-	}
-	\label{fig:results-moving-p}
-\end{figure}
+
