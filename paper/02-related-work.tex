@@ -79,18 +79,22 @@ The learning objective is concerned with disparate impact, whereas~\citet{beutel
 
 \subsection{Diversity}
 
-To avoid showing only items of the same class has been studied in Information Retrieval for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
+%To avoid showing only items of the same class has been studied in Information Retrieval for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
+The Information Retrieval community has studied for many years how to avoid showing only items of the same class. A motivation to investigate this problem is that user queries may have different intents and the system should cover several of them with answers.
 %
-The most common approach, since \citet{carbonell1998use}, is to consider distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is similar to an element already appearing at a higher position.
+%A common approach, since \citet{carbonell1998use}, is to consider the distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is similar to an element already appearing at a higher position.
+A common approach to solve this, since \citet{carbonell1998use}, is to retrieve a "diverse" but relevant set of items. This is achieved through on one side, maximizing the overall relevance (utility) and on the other side, considering the distances between elements and adding a penalty for selecting an item that is too similar to an item already ranked at a higher position.
 %
-Another often-used definition is that diversity should be understood as a way of incorporating uncertainty over user intents, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
+%Another often-used definition is that diversity should be understood as a way of incorporating uncertainty over user intents, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
+Another commonly used definition is that diversity should be understood as a way to incorporate uncertainty about user intent, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
 %
-Other works \citet{kunaver2017diversity,channamsetty2017recommender} deal with different kinds of bias such as presentation bias, where, only a few items are shown and most of the items are not shown, and also popularity bias and a negative bias towards new items.
+Other works \citet{kunaver2017diversity,channamsetty2017recommender} are concerned with different types of bias such as presentation bias, where only a few items are shown and most of the items are not shown, as well as popularity bias and a negative bias towards new items.
 %
-An exception is \citet{sakai2011evaluating}, that provides a framework per-intent for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} and that we described before, and not with a construction of such ranking, as we do in this paper.
+%An exception is the work of\citet{sakai2011evaluating}, which provides a framework per-intent for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} and that we described before, and not with a construction of such ranking, as we do in this paper.
+An exception is the work of\citet{sakai2011evaluating}, which provides a framework per-intent for evaluating diversity. In this framework, an ``intent'' can be mapped to a protected/non-protected group in the fairness ranking setting. However, their method is concerned with evaluating a ranking, similar to the NDCG-based measures described by~\citet{yang2016measuring} and that we described before, and not with the construction of such a ranking, as we do in this work.
 
-In contrast with most of the research on diversity of ranking results or recommendation systems, our work operates on a discrete set of classes (not based on similarity to previous items).
+In contrast to most of the research on diversity of ranking results or recommendation systems, our work operates on a set of discrete classes and not on similarity measures to previous items.
 %
-Furthermore, \emph{we are not only concerned with the utility that search system users receive}, but also with the exposure of the items being ranked, which can represent individual, organizations, or places.
+Furthermore, \emph{we are not only concerned with the utility that search- and recommendation system users receive}, but also with the exposure received by the ranked items, which can represent individuals, places or organizations.
 %
-Another key difference is that diversification is usually symmetric yielding interchangeable groups, while \emph{fairness-aware algorithms are usually asymmetric}, as they focus on increasing the overall benefit received by a disadvantaged or protected group.
+Another main difference is that diversification is usually symmetric yielding interchangeable groups, while \emph{fairness-aware algorithms are mostly asymmetric}, because they focus on increasing the overall benefit received by a protected or disadvantaged group.
