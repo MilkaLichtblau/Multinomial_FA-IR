@@ -72,16 +72,16 @@ Parallel with~\citet{biega2018equity}, they propose an integer linear program th
 
 Lahoti {\em et al.} \citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
 
-\citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
+Zehline and Castillo \citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
 % RIC: I thought that was Joachims in WSDM 2017
 %
 The learning objective is concerned with disparate impact, whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
 
 \subsection{Diversity}
 
-To avoid showing only items of the same class has been studied in the Information Retrieval community for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
+To avoid showing only items of the same class has been studied in Information Retrieval for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
 %
-The most common approach, since \citet{carbonell1998use}, is to consider distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is too similar to an element already appearing at a higher position.
+The most common approach, since \citet{carbonell1998use}, is to consider distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is similar to an element already appearing at a higher position.
 %
 Another often-used definition is that diversity should be understood as a way of incorporating uncertainty over user intents, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
 %
