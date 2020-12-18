@@ -55,24 +55,25 @@ This leads to the motivation of producing rankings that do not systematically pl
 We use the synthetic ranking generation procedure of~\citet{yang2016measuring} to calibrate our method, and optimize directly the utility of a ranking that has statistical properties (ranked group fairness) resembling the ones of a ranking generated using that procedure; in other words, unlike them, we connect the creation of the ranking with the metric used for assessing fairness.
 Moreover, we also take into account the individual fairness criteria.
 %
-\citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
+Yang {\em et al.} \citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
 %
-\citet{kulshrestha_2017_quantifying} proposes a quantification framework that measures the bias of the results in a search engine.
+Kulshrestha {\em et al.} \citet{kulshrestha_2017_quantifying} proposes a quantification framework that measures the bias of the results in a search engine.
 This framework discerns to what extent this output bias is due to the input dataset that feeds into the ranking system, and how much is due to the bias introduced by the system itself.
 %
-\citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
+Kuhlman {\em et al.} \citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
 %
 Another quantification and bias mitigation framework is presented by~\citet{geyik2019fairness}, which can be tuned towards different definitions of fairness such as demographic parity and so-called equal opportunity.
 
-\citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ being the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
+Celis {\em et al.} \citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ being the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
 
-\citet{singh2018fairness} introduce the concept of exposure of a group that incorporates the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
+Singh and Joachims \citet{singh2018fairness} introduce the concept of exposure of a group that incorporates the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
 %
-Parallel with~\citet{biega2018equity}, they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. \citet{biega2018equity} additionally introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
+Parallel with~\citet{biega2018equity}, they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. They also introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
 
-\citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
+Lahoti {\em et al.} \citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
 
 \citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
+% RIC: I thought that was Joachims in WSDM 2017
 %
 The learning objective is concerned with disparate impact, whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
 
@@ -84,7 +85,7 @@ The most common approach, since \citet{carbonell1998use}, is to consider distanc
 %
 Another often-used definition is that diversity should be understood as a way of incorporating uncertainty over user intents, in the sense that all queries have some degree of ambiguity~\cite{agrawal2009diversifying}.
 %
-\citet{kunaver2017diversity} and \citet{channamsetty2017recommender} deal with different kinds of bias such as presentation bias, where, only a few items are shown and most of the items are not shown, and also popularity bias and a negative bias towards new items.
+Other works \citet{kunaver2017diversity,channamsetty2017recommender} deal with different kinds of bias such as presentation bias, where, only a few items are shown and most of the items are not shown, and also popularity bias and a negative bias towards new items.
 %
 An exception is \citet{sakai2011evaluating}, that provides a framework per-intent for evaluating diversity, in which an ``intent'' could be mapped to a protected/non-protected group in the fairness ranking setting. Their method, however, is concerned with evaluating a ranking, similar to the NDCG-based metrics described by~\citet{yang2016measuring} and that we described before, and not with a construction of such ranking, as we do in this paper.
 
