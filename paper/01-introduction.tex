@@ -151,17 +151,14 @@ However the court found that GM was neither discriminated against blacks, nor ag
 Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one protected attribute.
 
 \subsection{Contributions and Roadmap}
-This work is the extended version of our previous conference paper~\cite{zehlike2017fair}.
-In this extended version we define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criteria.
-%
-The algorithm that addresses multiple protected groups is completely different from the simpler algorithm that we used for the case of a single protected group.
+We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criteria. This work addresses multiple protected groups extending our previous conference paper~\cite{zehlike2017fair} that only considered the single protected group case.
 %
 %The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
 %
 
 Our notion of utility assumes that we want to invite the most qualified candidates from each group, while their qualification is equal to a relevance score calculated by a ranking algorithm.
 %
-This score is assumed to be based on relevant metrics for evaluating candidates for a position, which depending on the specific skills required for the job could be their grades ({\em e.g.}, Grade Point Average), their results in a standardized knowledge/skills test specific for a job, such as their typing speed in words per minute for typists, or their number of hours of flight in the case of pilots.
+This score is assumed to be based on relevant metrics for evaluating candidates for a work position, which depending on the specific skills required for the job could be their grades ({\em e.g.}, Grade Point Average), their results in a standardized knowledge/skills test specific for a job, such as their typing speed in words per minute for typists, or their number of hours of flight in the case of pilots.
 %
 We note that this measurement will embody \emph{pre-existing bias} ({\em e.g.}, if black pilots are given less opportunities to flight they accumulate less flight hours), as well as \emph{technical bias}, as learning algorithms are known to be susceptible to direct and indirect discrimination~\cite{tuto2016,HajianFerrer12}.
 %
