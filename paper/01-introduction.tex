@@ -72,17 +72,17 @@ Given that we use a statistical test for this comparison, we include a significa
 We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.'' We observe that in the above rankings individuals belonging to the group of young or black applicants receive less visibility in the top-10 results than those of the non-protected group. This can lead to systematical disadvantages in accessing credit.
 More importantly, we see that individuals belonging to multiple protected groups (young \emph{and } black) receive the least exposure in the top-10 results.
 
-	Considering the definition of \textit{ranked group fairness} proposed in \cite{zehlike2017fair} with minimum proportion $p=0.4$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-5 positions of a ranking.
-	Therefore the first ranking in Table \ref{tbl:multinomial_intro_example} will be considered as fair for the group of young individuals.
-	%
-	However the same ranking will be rejected as unfair for black individuals, as well as for the intersectional group definition of young and black.
-	%
-	Next, suppose that the required minimum proportion is $p = 0.3$ and $\alpha = 0.1$. This translates to having at least one protected candidate in the top-7 positions.
-	When considering the second ranking in Table \ref{tbl:multinomial_intro_example} it will be accepted as fair for black individuals. Moreover, it will be also accepted as fair for young candidates but rejected as unfair for young black ones.
-	%
-	From the above we conclude that providing a fairness definition for rankings that treats protected groups separately can not guarantee a fair ranking for multiple protected groups at the same time. This highlights the need for a ranked group fairness notion for multiple protected groups ({\em i.e.}, multinomial).
-	%
-	The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of a fair top-10 ranking for multiple protected groups young, non-white, and also young and non-white. It is created using our \textit{multinomial ranked group fairness} criteria and the algorithm proposed in this paper.
+Considering the definition of \textit{ranked group fairness} proposed in \cite{zehlike2017fair} with minimum proportion $p=0.4$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-5 positions of a ranking.
+Therefore the first ranking in Table \ref{tbl:multinomial_intro_example} will be considered as fair for the group of young individuals.
+%
+However the same ranking will be rejected as unfair for black individuals, as well as for the intersectional group definition of young and black.
+%
+Next, suppose that the required minimum proportion is $p = 0.3$ and $\alpha = 0.1$. This translates to having at least one protected candidate in the top-7 positions.
+When considering the second ranking in Table \ref{tbl:multinomial_intro_example} it will be accepted as fair for black individuals. Moreover, it will be also accepted as fair for young candidates but rejected as unfair for young black ones.
+%
+From the above we conclude that providing a fairness definition for rankings that treats protected groups separately can not guarantee a fair ranking for multiple protected groups at the same time. This highlights the need for a ranked group fairness notion for multiple protected groups ({\em i.e.}, multinomial).
+%
+The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of a fair top-10 ranking for multiple protected groups young, non-white, and also young and non-white. It is created using our \textit{multinomial ranked group fairness} criteria and the algorithm proposed in this paper.
 \medskip
 \begin{table}[t]
 	\caption{Three possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''. The first ranking would be considered fair for young people, but not for black people; the second ranking would be considered fair for black people, but not for young people; the third ranking would satisfy both criteria.

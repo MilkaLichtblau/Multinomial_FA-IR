@@ -1,1 +1,3 @@
-This is a paper on ranked group fairness for multiple protected groups, written by Meike Zehlike, Tom Sühr, Carlos Castillo, Ricardo Baeza-Yates, Francesco Bonchi and Sara Hajian. 
+This is a paper on ranked group fairness for multiple protected groups, written by Meike Zehlike, Tom Sühr, Carlos Castillo, Ricardo Baeza-Yates, Francesco Bonchi and Sara Hajian. It is an extension of Zehlike, Meike, et al. "Fa* ir: A fair top-k ranking algorithm." Proceedings of the 2017 ACM on Conference on Information and Knowledge Management. 2017.
+
+Note: This submission is meant to be for the VSI Fairness of IPM.
