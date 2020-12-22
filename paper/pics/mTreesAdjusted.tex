@@ -1,4 +1,4 @@
-\begin{figure}[h]
+\begin{figure}[t!]
 	\centering
 	\begin{forest}
 		for tree={
@@ -39,67 +39,66 @@
 	\CaptionMargin
 	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=[1/3, 1/3] $ and $ \alphaadj=0.1 $. Compared to figure~\ref{fig:mtree-symmetric-unadjusted} this tree is less strict such that its \emph{total} probability $ \alphaadj $ of rejecting a fair ranking (i.e. a type-1-error) is 0.1.
 	\label{fig:mtree-symmetric-adjusted}}
-	\tablemargin
 \end{figure}
 
-\begin{figure}[h]
-	\centering
-	\begin{forest}
-		for tree={
-			child anchor=west,
-			parent anchor=east,
-			grow'=east,
-			draw,
-			anchor=west,
-		}
-		[{[0, 0]}
-			[{[0, 0]}
-				[{[0, 0]}
-					[{[1, 0]}
-						[{[1, 0]}
-							[{[2, 0]}
-								[{[2, 1]}
-									[{[2, 1]}, name=doubled2, before drawing tree={y-=1em}
-										[{[2, 1]}, before drawing tree={y-=1em}
-											[{[3, 1]}, before drawing tree={y-=1em}]
-											[{[2, 2]}, before drawing tree={y-=1em}]
-										]
-									]
-								]
-							]
-							[{[1, 1]}, name=doubled1
-								[{[1, 1]}, name=parentDoubled2
-									[{[1, 2]}, name=doubled3, before drawing tree={y-=1em}
-										[{[1, 2]}, before drawing tree={y-=1em}
-											[{[1, 2]}, before drawing tree={y-=1em}]
-										]
-									]
-								]
-							]
-						]]							
-					[{[0, 1]}
-						[{[0, 1]}, name=parentDoubled1
-							[{[0, 2]}
-								[{[0, 2]}, name=parentDoubled3
-									[{[0, 3]}, before drawing tree={y-=1em}
-										[{[0, 3]}, before drawing tree={y-=1em}
-											[{[1, 3]}, before drawing tree={y-=1em}]
-											[{[0, 4]}, before drawing tree={y-=1em}]
-										]
-									]
-								]
-							]
-						]]
-					]]]
-		\draw (parentDoubled1.east)--(doubled1.west);
-		\draw (parentDoubled2.east)--(doubled2.west);
-		\draw (parentDoubled3.east)--(doubled3.west);
-	\end{forest}
-	\CaptionMargin
-	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=[0.2, 0.4] $ and a corrected $ \alpha_c=0.1 $. 
-	%
-	The tree is less strict than the mTree in Figure~\ref{fig:mtree-asymmetric-unadjusted}.
-	%
-	The adjusted tree yields an overall false-negative rate of $ \alpha_c=0.1 $ when testing rankings for ranked group fairness.
-	\label{fig:mtree-asymmetric-adjusted}}
-\end{figure}
+%\begin{figure}[h]
+%	\centering
+%	\begin{forest}
+%		for tree={
+%			child anchor=west,
+%			parent anchor=east,
+%			grow'=east,
+%			draw,
+%			anchor=west,
+%		}
+%		[{[0, 0]}
+%			[{[0, 0]}
+%				[{[0, 0]}
+%					[{[1, 0]}
+%						[{[1, 0]}
+%							[{[2, 0]}
+%								[{[2, 1]}
+%									[{[2, 1]}, name=doubled2, before drawing tree={y-=1em}
+%										[{[2, 1]}, before drawing tree={y-=1em}
+%											[{[3, 1]}, before drawing tree={y-=1em}]
+%											[{[2, 2]}, before drawing tree={y-=1em}]
+%										]
+%									]
+%								]
+%							]
+%							[{[1, 1]}, name=doubled1
+%								[{[1, 1]}, name=parentDoubled2
+%									[{[1, 2]}, name=doubled3, before drawing tree={y-=1em}
+%										[{[1, 2]}, before drawing tree={y-=1em}
+%											[{[1, 2]}, before drawing tree={y-=1em}]
+%										]
+%									]
+%								]
+%							]
+%						]]							
+%					[{[0, 1]}
+%						[{[0, 1]}, name=parentDoubled1
+%							[{[0, 2]}
+%								[{[0, 2]}, name=parentDoubled3
+%									[{[0, 3]}, before drawing tree={y-=1em}
+%										[{[0, 3]}, before drawing tree={y-=1em}
+%											[{[1, 3]}, before drawing tree={y-=1em}]
+%											[{[0, 4]}, before drawing tree={y-=1em}]
+%										]
+%									]
+%								]
+%							]
+%						]]
+%					]]]
+%		\draw (parentDoubled1.east)--(doubled1.west);
+%		\draw (parentDoubled2.east)--(doubled2.west);
+%		\draw (parentDoubled3.east)--(doubled3.west);
+%	\end{forest}
+%	\CaptionMargin
+%	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=[0.2, 0.4] $ and a corrected $ \alpha_c=0.1 $. 
+%	%
+%	The tree is less strict than the mTree in Figure~\ref{fig:mtree-asymmetric-unadjusted}.
+%	%
+%	The adjusted tree yields an overall false-negative rate of $ \alpha_c=0.1 $ when testing rankings for ranked group fairness.
+%	\label{fig:mtree-asymmetric-adjusted}}
+%\end{figure}
