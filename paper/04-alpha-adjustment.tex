@@ -27,9 +27,9 @@ Thus, if at level 4 we rank two candidates from protected group 1, thus satisfyi
 %
 The other nodes ``[1,1],'' ``[1,2],'' and ``[0,3]'' are not a child of node ``[2,0]'' and therefore cannot be considered to satisfy the ranked group fairness condition anymore.
 %
-The tree is symmetric when the minimum proportions are equal.
+The tree is symmetric when the minimum proportions are equal, and asymmetric when the $p_g \in p_G$ are different.
 %
-Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
+%Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ALGORITHM COMPUTE MTREE
@@ -67,7 +67,7 @@ The process of determining the adjusted significance $\alphaadj$ is done by assu
 In that generative model, we rank items from each group separately, and then merge lists by iteratively selecting the highest ranked candidate from protected group $g$ with probability $p_g$, or the highest ranked candidate from the non-protected group with probability $p_0 = 1-\sum_{j=1}^{|G|} p_j$.
 %
 
-\begin{figure}[t]
+\begin{figure}[t!]
 	\centering
 	{\includegraphics[width=.48\textwidth]{pics/failProbPlotMultinom.png}}
 	\CaptionMargin
@@ -104,7 +104,9 @@ However, the tests are not independent, as the tests with prefixes $k_1, k_2$ (f
 %
 With the presence of more than one protected group, the analytical extension of the model adjustment to a multinomial setting is too complex to be written into a closed formula.
 %
-In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair} (see also Section~\ref{sec:adjustment-binomial}), we found no analytical way to calculate all permutations which pass or fail the test.
+In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair}, 
+%(see also Section~\ref{sec:adjustment-binomial})
+we found no analytical way to calculate all permutations which pass or fail the test.
 %
 Therefore we develop an experimental procedure to adjust $ \alpha $:
 %
@@ -119,9 +121,12 @@ Therefore we develop an experimental procedure to adjust $ \alpha $:
 	\item Now we build a new mTree using $ \alphaadj $ and repeat the procedure until $ \failprob \approx \alpha $.
 \end{enumerate}
 %
-Once we found $\alphaadj$ we can recompute the mTrees from Figures~\ref{fig:mtree-symmetric-unadjusted} and~\ref{fig:mtree-asymmetric-unadjusted} to obtain an overall significance level of $\alpha = 0.1$.
+Once we found $\alphaadj$ we can recompute the mTree from Figure~\ref{fig:mtree-symmetric-unadjusted} %and~\ref{fig:mtree-asymmetric-unadjusted}
+ to obtain an overall significance level of $\alpha = 0.1$.
 %
-Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the adjusted mTrees with the same parameters $p_G$.
+Figure~\ref{fig:mtree-symmetric-adjusted} 
+%and~\ref{fig:mtree-asymmetric-adjusted} 
+shows the adjusted mTree with the same parameters $p_G$.
 \input{pics/mTreesAdjusted.tex}
 
 \subsection{Optimizations for the MTree Calculation}
@@ -348,7 +353,6 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in 
     $\alphaadj \leftarrow \textsc{MultinomialBinarySearchAdjustment}(\alpha_{c_r},k,p_G)$ \\
     \Return{$\alphaadj$}
 \end{algorithm}
-
 \subsection{Further Optimizations}
 In addition to the optimizations \emph{during} mTree calculation which we presented in Subsection~\ref{subsec:mtree-optimization}, our implementation caches already computed mTrees and their components to never do the same computation twice.
 %
@@ -390,10 +394,7 @@ The filenames contain the tree parameters, whether or not it is adjusted, and it
 If any of these trees is needed at a later point in time it can be loaded from disc instead of being recomputed, be it as input for multinomial \algoFAIR or as temporary tree during a new adjusted mTree computation.
 
 \subsection{Complexity Analysis}
-\begin{table}[t!]
-	\tablemargin
-	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
-	\vspace{-4mm}
+\begin{table}[b!]
 	\scalebox{0.75}{
 		\begin{tabular}{lll}
 			\toprule
@@ -410,6 +411,7 @@ If any of these trees is needed at a later point in time it can be loaded from d
 			\bottomrule
 		\end{tabular}
 	}
+	\caption{Time complexity for all algorithms without pre-computed results.\label{tbl:time-space}}
 \end{table}
 
 This section presents time and space complexity analyses for all algorithms from this section.
@@ -461,4 +463,6 @@ The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and the
 Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
 %
 However a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
-\FloatBarrier
+%
+\subsection{Exact Solution for the Binomial Case}
+In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact fail probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level. The implementation can be found in our Github \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.

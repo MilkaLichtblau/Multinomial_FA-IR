@@ -51,11 +51,11 @@
 %% values in them; it is your responsibility as an author to replace
 %% the commands and values with those provided to you when you
 %% complete the rights form.
-\setcopyright{acmcopyright}
-\copyrightyear{2019}
-\acmYear{2019}
-\acmDOI{tba}
-
+\setcopyright{iw3c2w3}
+\copyrightyear{2020}
+%\acmYear{2019}
+%\acmDOI{tba}
+\settopmatter{printacmref=false}
 
 %%
 %% These commands are for a JOURNAL article.
@@ -146,7 +146,7 @@
 %\title{Group Fairness for Rankings with Multiple Protected Groups using \methodname}
 %\titlenote{This is an extended version of \citet{zehlike2017fair}, in which \methodname was introduced for a single protected attribute. This extended version includes multiple protected attributes.}
 
-\title{Fair Top-k Ranking with Multiple Protected Groups}
+\title{A Note on the Significance Adjustment for FA*IR with Two Protected Groups}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,37 +171,12 @@
 \country{Germany}}
 \email{tom.suehr@googlemail.com}
 
-\author{Ricardo Baeza-Yates}
-\affiliation{
-	\institution{Northeastern University, Silicon Valley campus}
-\city{CA}
-\country{USA}}
- \email{rbaeza@acm.org}
-
-\author{Francesco Bonchi}
-\affiliation{
-\institution{ISI Foundation}
-\city{Turin}
-\country{Italy}}
-\affiliation{
-\institution{Eurecat}
-\city{Barcelona}
-\country{Spain}}
-\email{francesco.bonchi@isi.it}
-
 \author{Carlos Castillo}
 \affiliation{
 	\institution{Universitat Pompeu Fabra}
 \city{Barcelona}
 \country{Spain}}
 \email{chato@acm.org}
-
-\author{Sara Hajian}
-\affiliation{
-	\institution{Nets Group}
-\city{Copenaghen}
-\country{Denmark}}
-\email{sara.hajian@gmail.com}
 %%
 %% By default, the full list of authors will be used in the page
 %% headers. Often, this list is too long, and will overlap
@@ -210,33 +185,33 @@
 %% of authors' names for this purpose.
 \renewcommand{\shortauthors}{Zehlike et al.}
 
-\begin{abstract}
-Ranking items or people is a fundamental operation at the basis of several processes and services, not all of them happening online.
+%\begin{abstract}
+%Ranking items or people is a fundamental operation at the basis of several processes and services, not all of them happening online.
+%%
+%Ranking is required for different tasks, including search, personalization, recommendation, and filtering.
+%%
+%While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of potential discrimination for some of the elements to rank, has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair} for the items being ranked.
+%%
+%So far, researchers have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
+%%
+%These constraints are needed in order to correct implicit societal biases existing in the input data and reflected in the relevance or fitness score computed.
+%%
+%In this article, we tackle the problem of selecting a subset of $k$ individuals from a pool of $n \gg k$ candidates, maximizing global utility ({\em i.e.}, select the ``best'' candidates) while respecting a given group-fairness criteria. In particular, to tackle this \emph{Fair Top-$k$ Ranking} problem, we adopt a ranked group-fairness definition which extends the standard notion of  group fairness based on protected groups, by
+%ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable from, a given minimum threshold.
 %
-Ranking is required for different tasks, including search, personalization, recommendation, and filtering.
+%Our notion of utility requires, intuitively, that every individual included in the top-$k$ should be more qualified than every candidate not included; and that for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
 %
-While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of potential discrimination for some of the elements to rank, has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair} for the items being ranked.
+%Our main result is an efficient algorithm for producing a fair top-$k$ Ranking.
+%We also consider the case in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
 %
-So far, researchers have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
+%Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
+%%	%
+%%	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
+%%
+%%	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
+%%
 %
-These constraints are needed in order to correct implicit societal biases existing in the input data and reflected in the relevance or fitness score computed.
-%
-In this article, we tackle the problem of selecting a subset of $k$ individuals from a pool of $n \gg k$ candidates, maximizing global utility ({\em i.e.}, select the ``best'' candidates) while respecting a given group-fairness criteria. In particular, to tackle this \emph{Fair Top-$k$ Ranking} problem, we adopt a ranked group-fairness definition which extends the standard notion of  group fairness based on protected groups, by
-ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable from, a given minimum threshold.
-
-Our notion of utility requires, intuitively, that every individual included in the top-$k$ should be more qualified than every candidate not included; and that for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
-
-Our main result is an efficient algorithm for producing a fair top-$k$ Ranking.
-We also consider the case in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
-
-Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
-%	%
-%	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
-%
-%	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
-%
-
-\end{abstract}
+%\end{abstract}
 
 
 %%
@@ -281,15 +256,7 @@ Our experimental assessment on real-world datasets shows that our approach yield
 
 \maketitle
 
-\input{01-introduction}
-\input{02-related-work}
-\input{03-problem-statement}
-\input{04-alpha-adjustment}
-\input{05-algorithms}
-\input{06-experiments}
-%\input{07-binomial-adjustment}
-\input{08-conclusions}
-\input{09-acknowledgements}
+\input{07-binomial-adjustment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BIBLIOGRAPHY
@@ -302,8 +269,7 @@ Our experimental assessment on real-world datasets shows that our approach yield
 % Bibliography style and items
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{main}
-\appendix
-\input{10-appendix}
+%\appendix
 \end{document}
-\endinput
+%\endinput
 %%
