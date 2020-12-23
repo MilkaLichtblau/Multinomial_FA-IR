@@ -185,33 +185,12 @@
 %% of authors' names for this purpose.
 \renewcommand{\shortauthors}{Zehlike et al.}
 
-%\begin{abstract}
-%Ranking items or people is a fundamental operation at the basis of several processes and services, not all of them happening online.
-%%
-%Ranking is required for different tasks, including search, personalization, recommendation, and filtering.
-%%
-%While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of potential discrimination for some of the elements to rank, has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair} for the items being ranked.
-%%
-%So far, researchers have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
-%%
-%These constraints are needed in order to correct implicit societal biases existing in the input data and reflected in the relevance or fitness score computed.
-%%
-%In this article, we tackle the problem of selecting a subset of $k$ individuals from a pool of $n \gg k$ candidates, maximizing global utility ({\em i.e.}, select the ``best'' candidates) while respecting a given group-fairness criteria. In particular, to tackle this \emph{Fair Top-$k$ Ranking} problem, we adopt a ranked group-fairness definition which extends the standard notion of  group fairness based on protected groups, by
-%ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable from, a given minimum threshold.
+\begin{abstract}
+\textbf{Abstract: }In this report we provide an improvement of the significance adjustment from the FA*IR algorithm in \citet{zehlike2017fair}, which did not work for very short rankings in combination with a low minimum proportion $p$ for the protected group.
 %
-%Our notion of utility requires, intuitively, that every individual included in the top-$k$ should be more qualified than every candidate not included; and that for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
-%
-%Our main result is an efficient algorithm for producing a fair top-$k$ Ranking.
-%We also consider the case in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
-%
-%Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
-%%	%
-%%	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
-%%
-%%	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
-%%
-%
-%\end{abstract}
+We show how the minimum number of protected candidates per ranking position can be calculated exactly and provide a mapping from the continuous space of significance levels ($\alpha$) to a discrete space of tables, which allows us to find $\alphaadj$ using a binary search heuristic.
+
+\end{abstract}
 
 
 %%

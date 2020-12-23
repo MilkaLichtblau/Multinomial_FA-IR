@@ -18,7 +18,7 @@ We will call such a table \textit{mTable}.
 	\Return{$ \mtable $ }
 \end{algorithm}
 
-Table~\ref{tbl:ranked_group_fairness_table} shows an example of such a pre-computed table with different $ k $ and $ p $, using $\alpha=0.1$.
+Table~\ref{tbl:ranked_group_fairness_table} shows an example of mTables for different $ k $ and $ p $, using $\alpha=0.1$.
 %
 For instance, for $p=0.5$ we see that at least 1 candidate from the protected group is needed in the top 4 positions, and 2 protected candidates in the top 7 positions.
 \begin{table}[h!]
@@ -44,7 +44,7 @@ Figure~\ref{fig:why-adjustment-is-needed-binomial} shows that we need a correcti
 %
 In the following, we show that the special case of having only one protected group offers possibilities for verifying ranked group fairness efficiently.
 %
-A key improvement w.r.t. the more general, multinomial case is that in the binomial setting we can calculate the exact failure probability $\failprob$ (i.e. a fair ranking gets rejected by the ranked group fairness test), which results in an efficient binary search for $\alphaadj$.
+A key advantage of considering just one protected group, rather than multiple, is that we can calculate the exact failure probability $\failprob$ (i.e. a fair ranking gets rejected by the ranked group fairness test), which results in an efficient binary search for $\alphaadj$.
 %
 %Remember that in we had to estimate this probability for mTrees (see Section~\ref{sec:model-adjustment}) using an experimental procedure.
 
@@ -393,3 +393,7 @@ Overall we get $\mathcal{O}(\log{}k) \cdot (\mathcal{O}(\prod_{j=1}^{m(k)}b(j) \
 %
 The space complexity is $\mathcal{O}(k)$ since we only store the three mTables with their respective fail probability at a time.
 
+\section{Implementation}
+We implemented the presented correction and algorithms into \textsc{FairSearch}, an open-source API for fairness in ranked search results~\cite{zehlike2020fairsearch}. 
+%
+The code can be found at \url{https://github.com/fair-search}.
