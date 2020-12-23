@@ -2375,8 +2375,6 @@ Computing Machinery]
       \fancyhead[RE]{\@headfootfont\@shortauthors}%
       \fancyhead[LO]{\ACM@linecountL\@headfootfont\shorttitle}%
       \if@ACM@nonacm\else%
-        \fancyfoot[RO,LE]{\footnotesize \@journalNameShort, Vol. \@acmVolume, No.
-        \@acmNumber, Article \@acmArticle.  Publication date: \@acmPubDate.}%
       \fi
     \or % acmlarge
       \fancyhead[LE]{\ACM@linecountL\@headfootfont
@@ -2385,8 +2383,6 @@ Computing Machinery]
       \fancyhead[RO]{\@headfootfont
         \shorttitle\quad\textbullet\quad\@acmArticlePage}%
       \if@ACM@nonacm\else%
-        \fancyfoot[RO,LE]{\footnotesize \@journalNameShort, Vol. \@acmVolume, No.
-        \@acmNumber, Article \@acmArticle.  Publication date: \@acmPubDate.}%
       \fi
     \or % acmtog
       \fancyhead[LE]{\ACM@linecountL\@headfootfont
@@ -2396,8 +2392,6 @@ Computing Machinery]
       \fancyhead[RO]{\@headfootfont
         \shorttitle\quad\textbullet\quad\@acmArticlePage\ACM@linecountR}%
       \if@ACM@nonacm\else%
-        \fancyfoot[RO,LE]{\footnotesize \@journalNameShort, Vol. \@acmVolume, No.
-        \@acmNumber, Article \@acmArticle.  Publication date: \@acmPubDate.}%
       \fi
     \else % Proceedings
       \fancyfoot[C]{\if@ACM@printfolios\footnotesize\thepage\fi}%
@@ -2489,9 +2483,6 @@ Computing Machinery]
       \fi%
     \or % acmsmall
       \if@ACM@nonacm\else%
-        \fancyfoot[RO,LE]{\footnotesize \@journalNameShort, Vol. \@acmVolume, No.
-        \@acmNumber, Article \@acmArticle.  Publication date:
-        \@acmPubDate.}%
       \fi%
       \fancyhead[LE]{\ACM@linecountL\@folioblob}%
       \fancyhead[LO]{\ACM@linecountL}%
