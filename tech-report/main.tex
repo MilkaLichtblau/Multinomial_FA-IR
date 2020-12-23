@@ -1,0 +1,275 @@
+\documentclass[acmsmall]{acmart}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BEFORE SUBMITTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Before submitting for review
+% - Spellcheck
+% - Check CCS concepts
+% - Change [show] to [hide] in "\usepackage[show]{chato-notes}"
+\usepackage[show]{chato-notes}  % \note, \todo, \inote, \citemissing
+%% - Remove next two lines, which disable compression and speed up compilation
+%\pdfcompresslevel=0
+%\pdfobjcompresslevel=0
+%% - Remove next line, which deletes margins for easier visualization
+%\usepackage[a4,center,noinfo,cross,width=14.5cm,height=21.5cm]{crop}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{lipsum}
+\usepackage{array}
+\usepackage{paralist} % compact itemizations and enumerations
+\usepackage{subfig}% sub-figures
+\usepackage{makecell,amsmath}
+\usepackage{forest} %drawing trees
+% Algorithms
+\usepackage[ruled,lined,linesnumbered]{algorithm2e}
+% Hyperlinked references
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{color, colortbl}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[section]{placeins}
+\hypersetup{
+	colorlinks=false,
+	linkcolor={red!20!black},
+	citecolor={green!20!black},
+	urlcolor={blue!20!black}
+}
+
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+
+%% Rights management information.  This information is sent to you
+%% when you complete the rights form.  These commands have SAMPLE
+%% values in them; it is your responsibility as an author to replace
+%% the commands and values with those provided to you when you
+%% complete the rights form.
+\setcopyright{iw3c2w3}
+\copyrightyear{2020}
+%\acmYear{2019}
+%\acmDOI{tba}
+\settopmatter{printacmref=false}
+
+%%
+%% These commands are for a JOURNAL article.
+%\acmJournal{JACM}
+%\acmVolume{37}
+%\acmNumber{4}
+%\acmArticle{111}
+%\acmMonth{8}
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NEW COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALIASES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\methodname}{\textsc{FA*IR}\xspace}
+\newcommand{\algoFAIR}[0]{{\textsc{FA*IR}}\xspace}
+\newcommand{\algoFAIRBF}[0]{{\textsc{\textbf{FA*IR}}}\xspace}
+\newcommand{\adj}[0]{\ensuremath{\operatorname{c}}}
+\newcommand{\alphaadj}[0]{\ensuremath{\alpha_\textit{corr}}}
+\newcommand{\mfail}{\ensuremath{\operatorname{fail}}}
+\newcommand{\msucc}{\ensuremath{\operatorname{succ}}}
+\newcommand{\minv}{\ensuremath{m^{-1}}}
+\newcommand{\mtree}{\ensuremath{\operatorname{mtree}}}
+\newcommand{\mtable}{\ensuremath{\operatorname{mTable}}}
+\newcommand{\spara}[1]{\smallskip\noindent{\bf #1}}
+\newcommand{\failprob}{\ensuremath{P_{\operatorname{fail}}}}
+\newcommand{\successprob}{\ensuremath{P_{\operatorname{succ}}}}
+\newcommand{\algoCorrect}[0]{{\sc AdjustSignificance}\xspace}
+\newcommand{\algoRecursive}[0]{{\sc SuccessProbability}\xspace}
+\newcommand{\algoBinomBinary}[0]{{\sc AlphaAdjustment}\xspace}
+\newcommand{\algoComputeMTree}[0]{{\sc ComputeMTree}\xspace}
+\newcommand{\algoImcdf}[0]{{\sc InverseMultinomialCDF}\xspace}
+\newcommand{\algoReg}[0]{{\sc RegressionAdjustment}\xspace}
+\newcommand{\algoMtable}[0]{{\sc ConstructMTable}\xspace}
+\newcommand{\algoMultBinary}[0]{{\sc MultinomialAlphaAdjustment}\xspace}
+\newcommand\mycommfont[1]{\scriptsize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\SetKwInOut{AlgInput}{input}
+\SetKwInOut{AlgOutput}{output}
+\SetKwComment{AlgComment}{// }{}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\footnotesize}
+\newcommand{\nosemic}{\renewcommand{\@endalgocfline}{\relax}}% Drop semi-colon ;
+\newcommand{\dosemic}{\renewcommand{\@endalgocfline}{\algocf@endline}}% Reinstate semi-colon ;
+\newcommand{\pushline}{\Indp}% Indent
+\newcommand{\popline}{\Indm}% Undent
+
+\newcommand{\meike}[1]{\textcolor{magenta}{{\bf [MZ: }{\em #1}{\bf ]}}}
+\newcommand{\tablemargin}{\vspace{-5mm}}
+\newcommand{\tablemargintop}{\vspace{-3mm}}
+\newcommand{\CaptionMargin}{\vspace{-3mm}}
+
+\newtheorem{problem}{Problem}
+
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TITLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\title{Group Fairness for Rankings with Multiple Protected Groups using \methodname}
+%\titlenote{This is an extended version of \citet{zehlike2017fair}, in which \methodname was introduced for a single protected attribute. This extended version includes multiple protected attributes.}
+
+\title{A Note on the Significance Adjustment for FA*IR with Two Protected Groups}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AUTHORS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\author{Meike Zehlike}
+\affiliation{
+	\institution{Humboldt Universit\"at zu Berlin}
+}
+\affiliation{
+	\institution{Max-Planck-Inst. for Software Systems}
+	\streetaddress{Campus E1 5}
+	\postcode{66123}
+	\city{Saarbr\"ucken}
+	\country{Germany}
+}
+\email{meikezehlike@mpi-sws.org}
+
+\author{Tom S\"uhr}
+\affiliation{
+	\institution{Technische Universit\"at Berlin}
+\country{Germany}}
+\email{tom.suehr@googlemail.com}
+
+\author{Carlos Castillo}
+\affiliation{
+	\institution{Universitat Pompeu Fabra}
+\city{Barcelona}
+\country{Spain}}
+\email{chato@acm.org}
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+\renewcommand{\shortauthors}{Zehlike et al.}
+
+%\begin{abstract}
+%Ranking items or people is a fundamental operation at the basis of several processes and services, not all of them happening online.
+%%
+%Ranking is required for different tasks, including search, personalization, recommendation, and filtering.
+%%
+%While traditionally ranking has been aimed solely at maximizing some global utility function, recently the awareness of potential discrimination for some of the elements to rank, has captured the attention of researchers, which have thus started devising ranking systems which are non-discriminatory or \emph{fair} for the items being ranked.
+%%
+%So far, researchers have mostly focused on \emph{group fairness}, which is usually expressed in the form of constraints on the fraction of elements from some protected groups that should be included in the top-$k$ positions, for any relevant $k$.
+%%
+%These constraints are needed in order to correct implicit societal biases existing in the input data and reflected in the relevance or fitness score computed.
+%%
+%In this article, we tackle the problem of selecting a subset of $k$ individuals from a pool of $n \gg k$ candidates, maximizing global utility ({\em i.e.}, select the ``best'' candidates) while respecting a given group-fairness criteria. In particular, to tackle this \emph{Fair Top-$k$ Ranking} problem, we adopt a ranked group-fairness definition which extends the standard notion of  group fairness based on protected groups, by
+%ensuring that the proportion of protected candidates in every prefix of the top-$k$ ranking remains statistically above, or indistinguishable from, a given minimum threshold.
+%
+%Our notion of utility requires, intuitively, that every individual included in the top-$k$ should be more qualified than every candidate not included; and that for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
+%
+%Our main result is an efficient algorithm for producing a fair top-$k$ Ranking.
+%We also consider the case in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
+%
+%Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
+%%	%
+%%	%To the best of our knowledge, this is the first algorithm grounded in statistical tests that can mitigate biases in the representation of an under-represented group along a ranked list.
+%%
+%%	Unlike the first version of FA*IR described in Zehlike et al. (2017), %write the citation like this, so the abstract is self-contained
+%%
+%
+%\end{abstract}
+
+
+%%
+%% The code below is generated by the tool at http://dl.acm.org/ccs.cfm.
+%% Please copy and paste the code instead of the example below.
+%%
+%\begin{CCSXML}
+%<ccs2012>
+% <concept>
+%  <concept_id>10010520.10010553.10010562</concept_id>
+%  <concept_desc>Computer systems organization~Embedded systems</concept_desc>
+%  <concept_significance>500</concept_significance>
+% </concept>
+% <concept>
+%  <concept_id>10010520.10010575.10010755</concept_id>
+%  <concept_desc>Computer systems organization~Redundancy</concept_desc>
+%  <concept_significance>300</concept_significance>
+% </concept>
+% <concept>
+%  <concept_id>10010520.10010553.10010554</concept_id>
+%  <concept_desc>Computer systems organization~Robotics</concept_desc>
+%  <concept_significance>100</concept_significance>
+% </concept>
+% <concept>
+%  <concept_id>10003033.10003083.10003095</concept_id>
+%  <concept_desc>Networks~Network reliability</concept_desc>
+%  <concept_significance>100</concept_significance>
+% </concept>
+%</ccs2012>
+%\end{CCSXML}
+
+%\ccsdesc[500]{Computer systems organization~Embedded systems}
+%\ccsdesc[300]{Computer systems organization~Redundancy}
+%\ccsdesc{Computer systems organization~Robotics}
+%\ccsdesc[100]{Networks~Network reliability}
+
+%%
+%% Keywords. The author(s) should pick words that accurately describe
+%% the work being presented. Separate the keywords with commas.
+%\keywords{datasets, neural networks, gaze detection, text tagging}
+
+
+\maketitle
+
+\input{07-binomial-adjustment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This must be close to the FIRST column of the last page
+% Otherwise it's too late to balance
+%\balance
+
+% Bibliography style and items
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{main}
+%\appendix
+\end{document}
+%\endinput
+%%
