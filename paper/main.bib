@@ -26,15 +26,16 @@
 @inproceedings{beutel2019fairness,
 	title={Fairness in recommendation ranking through pairwise comparisons},
 	author={Beutel, Alex and Chen, Jilin and Doshi, Tulsee and Qian, Hai and Wei, Li and Wu, Yi and Heldt, Lukasz and Zhao, Zhe and Hong, Lichan and Chi, Ed H and others},
-	booktitle={Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+	booktitle={Proc. of {KDD}},
 	pages={2212--2220},
+	publisher={ACM},
 	year={2019}
 }
 
 @inproceedings{singh2019policy,
 	title={Policy learning for fairness in ranking},
 	author={Singh, Ashudeep and Joachims, Thorsten},
-	booktitle={Advances in Neural Information Processing Systems},
+	booktitle={Proc. {NeurIPS}},
 	pages={5427--5437},
 	year={2019}
 }
@@ -42,7 +43,7 @@
 @inproceedings{channamsetty2017recommender,
 	title={Recommender Response to Diversity and Popularity Bias in User Profiles (short paper)},
 	author={Channamsetty, Sushma and Ekstrand, Michael D},
-	booktitle={30th International Florida Artificial Intelligence Research Society Conference},
+	booktitle={Proc. of {Florida Artificial Intelligence Research Society Conference}},
 	year={2017}
 }
 
@@ -58,7 +59,9 @@
 	posted-at = {2016-12-25 14:59:33},
 	priority = {0},
 	title = {Quantifying search bias: Investigating sources of bias for political searches in social media},
-	year = {2017}
+	year = {2017},
+	publisher = {ACM},
+
 }
 
 @article{friedman1996bias,
@@ -79,8 +82,6 @@
 	journal = {ProPublica},
 	keywords = {discrimination},
 	month = may,
-	posted-at = {2016-12-28 09:56:51},
-	priority = {0},
 	title = {Machine Bias},
 	REMOVED-url = {https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing},
 	year = {2016}
@@ -106,7 +107,8 @@
 	author={Zemel, Richard S and Wu, Yu and Swersky, Kevin and Pitassi, Toniann and Dwork, Cynthia},
 	booktitle={Proc. of {ICML}},
 	pages={325--333},
-	year={2013}
+	year={2013},
+	publisher={PMLR}
 }
 
 @inproceedings{kumar2010generalized,
@@ -151,11 +153,15 @@
 }
 
 @article{Barocas2014,
-	title={Big data's disparate impact},
-	author={Barocas, Solon and Selbst, Andrew D},
-	journal={SSRN 2477899},
-	year={2014}
+  title={Big data's disparate impact},
+  author={Barocas, Solon and Selbst, Andrew D},
+  journal={California Law Review},
+  volume={104},
+  pages={671},
+  year={2016},
+  publisher={HeinOnline}
 }
+
 
 @misc{Hardt2014,
 	title={How big data is unfair: Understanding sources of unfairness in data driven decision making},
@@ -374,7 +380,7 @@
 @article{HajianFerrer12,
 	title={A methodology for direct and indirect discrimination prevention in data mining},
 	author={Hajian, Sara and Domingo-Ferrer, Josep},
-	journal={IEEE TKDE},
+	journal={IEEE Transactions on Knowledge and Data Engineering},
 	volume={25},
 	number={7},
 	removed-pages={1445--1459},
@@ -485,7 +491,7 @@
 @incollection{Kamishima2012,
 	title={Fairness-aware classifier with prejudice remover regularizer},
 	author={Kamishima, Toshihiro and Akaho, Shotaro and Asoh, Hideki and Sakuma, Jun},
-	booktitle={Machine Learning and Knowledge Discovery in Databases},
+	booktitle={Proc. of {ECML/PKDD}},
 	pages={35--50},
 	year={2012},
 	publisher={Springer}
@@ -614,16 +620,16 @@
 @inproceedings{agrawal2009diversifying,
 	title={Diversifying search results},
 	author={Agrawal, Rakesh and Gollapudi, Sreenivas and Halverson, Alan and Ieong, Samuel},
-	booktitle={Proceedings of the second ACM international conference on web search and data mining},
+	booktitle={Proc. of {WSDM}},
 	pages={5--14},
 	year={2009},
-	organization={ACM}
+	publisher={ACM}
 }
 
 @inproceedings{biega2018equity,
 	title={Equity of attention: Amortizing individual fairness in rankings},
 	author={Biega, Asia J and Gummadi, Krishna P and Weikum, Gerhard},
-	booktitle={The 41st International ACM SIGIR Conference on Research \& Development in Information Retrieval},
+	booktitle={},
 	pages={405--414},
 	year={2018},
 	organization={ACM}
@@ -667,19 +673,30 @@
 	year={2016}
 }
 
-@article{celis2017ranking,
-	title={Ranking with Fairness Constraints},
-	author={Celis, L Elisa and Straszak, Damian and Vishnoi, Nisheeth K},
-	journal={arXiv:1704.06840},
-	year={2017}
+@inproceedings{celis2017ranking,
+  author    = {L. Elisa Celis and
+               Damian Straszak and
+               Nisheeth K. Vishnoi},
+  title     = {Ranking with Fairness Constraints},
+  booktitle = {Proc. of {ICALP}},
+  volume    = {107},
+  pages     = {28:1--28:15},
+  publisher = {Schloss Dagstuhl},
+  year      = {2018},
+  url-omitted       = {https://doi.org/10.4230/LIPIcs.ICALP.2018.28},
+  doi-omitted       = {10.4230/LIPIcs.ICALP.2018.28},
+  biburl    = {https://dblp.org/rec/conf/icalp/CelisSV18.bib},
 }
 
-@article{corbett2017algorithmic,
-	title={Algorithmic decision making and the cost of fairness},
-	author={Corbett-Davies, Sam and Pierson, Emma and Feller, Avi and Goel, Sharad and Huq, Aziz},
-	journal={arXiv:1701.08230},
-	year={2017}
+@inproceedings{corbett2017algorithmic,
+  title={Algorithmic decision making and the cost of fairness},
+  author={Corbett-Davies, Sam and Pierson, Emma and Feller, Avi and Goel, Sharad and Huq, Aziz},
+  booktitle={Proc. of {KDD}},
+  pages={797--806},
+	publisher={ACM},
+  year={2017}
 }
+
 
 @inproceedings{CraswellZTR08,
 	author    = {Nick Craswell and
@@ -707,12 +724,16 @@
 	year={2016}
 }
 
-@article{geyik2019fairness,
-	title={Fairness-Aware Ranking in Search \& Recommendation Systems with Application to LinkedIn Talent Search},
-	author={Geyik, Sahin Cem and Ambler, Stuart and Kenthapadi, Krishnaram},
-	journal={arXiv preprint arXiv:1905.01989},
-	year={2019}
+@inproceedings{geyik2019fairness,
+  title={Fairness-aware ranking in search \& recommendation systems with application to linkedin talent search},
+  author={Geyik, Sahin Cem and Ambler, Stuart and Kenthapadi, Krishnaram},
+  booktitle={Proce. of {KDD}},
+	publisher={ACM},
+  pages={2221--2231},
+  year={2019}
 }
+
+
 
 @inproceedings{hardt2016equality,
 	title={Equality of opportunity in supervised learning},
@@ -723,10 +744,10 @@
 	publisher={Curran Associates, Inc.}
 }
 
-@article{jabbari2016fair,
+@inproceedings{jabbari2016fair,
 	title={Fair Learning in Markovian Environments},
 	author={Jabbari, Shahin and Joseph, Matthew and Kearns, Michael and Morgenstern, Jamie and Roth, Aaron},
-	journal={arXiv:1611.03071},
+	booktitle={Proc. of {FATML}},
 	year={2016}
 }
 
@@ -758,10 +779,10 @@
 @inproceedings{kuhlman2019fare,
 	title={FARE: Diagnostics for Fair Ranking using Pairwise Error Metrics},
 	author={Kuhlman, Caitlin and VanValkenburg, MaryAnn and Rundensteiner, Elke},
-	booktitle={The World Wide Web Conference},
+	booktitle={Proc. of {The Web Conference}},
 	pages={2936--2942},
 	year={2019},
-	organization={ACM}
+	publisher={ACM}
 }
 
 @article{kunaver2017diversity,
@@ -774,12 +795,22 @@
 	publisher={Elsevier}
 }
 
-@article{lahoti2019operationalizing,
-	title={Operationalizing Individual Fairness with Pairwise Fair Representations},
-	author={Lahoti, Preethi and Gummadi, Krishna P and Weikum, Gerhard},
-	journal={arXiv preprint arXiv:1907.01439},
-	year={2019}
+@inproceedings{lahoti2019operationalizing,
+  author    = {Preethi Lahoti and
+               Krishna P. Gummadi and
+               Gerhard Weikum},
+  title     = {Operationalizing Individual Fairness with Pairwise Fair Representations},
+  booktitle   = {Proc. {VLDB} Endow.},
+  volume    = {13},
+  number    = {4},
+  pages     = {506--518},
+  year      = {2019},
+  url-removed       = {http://www.vldb.org/pvldb/vol13/p506-lahoti.pdf},
+  timestamp = {Sat, 25 Apr 2020 13:58:58 +0200},
+  biburl    = {https://dblp.org/rec/journals/pvldb/LahotiGW19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
 
 @book{lerner2003group,
 	title={Group rights and discrimination in international law},
@@ -862,10 +893,10 @@
 @inproceedings{singh2018fairness,
 	title={Fairness of exposure in rankings},
 	author={Singh, Ashudeep and Joachims, Thorsten},
-	booktitle={Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+	booktitle={Proc. of {KDD}},
 	pages={2219--2228},
 	year={2018},
-	organization={ACM}
+	publisher={ACM}
 }
 
 @book{sowell2005affirmative,
@@ -882,13 +913,14 @@
 	title     = {Algorithmic Bias: From Discrimination Discovery to Fairness-aware
 	Data Mining},
 	booktitle = {{KDD} Tutorials},
+	publisher={ACM},
 	year = {2016}
 }
 
 @article{verge2010gendering,
 	title={Gendering representation in Spain: Opportunities and limits of gender quotas},
 	author={Verge, T{\`a}nia},
-	journal={J. of Women, Politics \& Policy},
+	journal={Journal of Women, Politics and Policy},
 	volume={31},
 	number={2},
 	pages={166--190},
@@ -922,28 +954,30 @@
 @inproceedings{zafar2017fairness,
 	title={Fairness beyond disparate treatment \& disparate impact: Learning classification without disparate mistreatment},
 	author={Zafar, Muhammad Bilal and Valera, Isabel and Gomez Rodriguez, Manuel and Gummadi, Krishna P},
-	booktitle={Proceedings of the 26th International Conference on World Wide Web},
+	booktitle={Proc. of {The Web Conference}},
 	pages={1171--1180},
 	year={2017},
-	organization={International World Wide Web Conferences Steering Committee}
+	publisher={IW3C2},
 }
 
 
 @inproceedings{zehlike2017fair,
 	title={{FA*IR}: A fair top-k ranking algorithm},
 	author={Zehlike, Meike and Bonchi, Francesco and Castillo, Carlos and Hajian, Sara and Megahed, Mohamed and Baeza-Yates, Ricardo},
-	booktitle={Proceedings of the 2017 ACM on Conference on Information and Knowledge Management},
+	booktitle={Proc. of {CIKM}},
 	pages={1569--1578},
 	year={2017},
-	organization={ACM}
+	publisher={ACM}
 }
 
-@article{zehlike2018reducing,
-	title={Reducing disparate exposure in ranking: A learning to rank approach},
-	author={Zehlike, Meike and Castillo, Carlos},
-	journal={arXiv preprint arXiv:1805.08716},
-	year={2018}
+@inproceedings{zehlike2018reducing,
+  title={Reducing disparate exposure in ranking: A learning to rank approach},
+  author={Zehlike, Meike and Castillo, Carlos},
+  booktitle={Proc. of {The Web Conference}},
+  pages={2849--2855},
+  year={2020}
 }
+
 
 @inproceedings{zliobaite2011handling,
 	title={Handling conditional discrimination},
