@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 \section{Introduction}\label{sec:introduction}
 Ranking is a fundamental task at the basis of several processes and services in on-line and off-line world, including search, personalization, recommendation, and filtering. The position that an item (or a person, as in our case of interest) receives in a ranking can have a substantial economic impact.
-For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making the top-$k$ will have a null utility. In on-line search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. As people search engines are increasingly common for job recruiting and even for finding companionship or friendship, top-$k$ ranking algorithms
+For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making the top-$k$ will have a null utility. In on-line search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. As people search engines are increasingly common for job recruiting~\cite{raghavan2020mitigating} and even for finding companionship or friendship, top-$k$ ranking algorithms
 might have a direct and tangible impact on people's life.
 
 % A top-$k$ ranking algorithm is typically used to find the most suitable way of ordering items (or persons, as in our case of interest), considering that if the number of people matching a query is large, most users will not scan the entire list.
@@ -50,7 +50,7 @@ We propose a re-ranking method to remove the systematic bias by means of a \emph
 %%
 %We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not.
 %%
-%Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide 
+%Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide
 the vector of proportions $p_G$, which we assume given as input. This parameter can originate in a legal mandate or in voluntary affirmative actions.
 %
 For instance, the US Equal Employment Opportunity Commission sets a goal of 12\% of workers with disabilities in federal agencies in the US,\footnote{US EEOC: \url{https://www1.eeoc.gov/eeoc/newsroom/release/1-3-17.cfm}, Jan 2017.}

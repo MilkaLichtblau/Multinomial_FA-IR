@@ -2,7 +2,7 @@
 \section{Related Work}\label{sec:related-work}
 
 %Discrimination analysis is a multi-disciplinary problem, involving sociological causes, legal reasoning, economic models, statistical techniques~\cite{Romeimulti}.
-Anti-discrimination has only recently been considered from an algorithmic perspective~\cite{tuto2016}. Some proposals are oriented to discovering and measuring discrimination ({\em e.g.}, \cite{peder2008,Bonchi2015,angwin_2016_machine}); while others deal with mitigating or removing discrimination to ensure that the results of different algorithms do not lead to discriminatory decisions
+Anti-discrimination has only recently been considered from an algorithmic perspective~\cite{tuto2016,rosenbaum2019algorithmic}. Some proposals are oriented to discovering and measuring discrimination ({\em e.g.}, \cite{peder2008,Bonchi2015,angwin_2016_machine}); while others deal with mitigating or removing discrimination to ensure that the results of different algorithms do not lead to discriminatory decisions
 %even if the training dataset reflects the historical bias against members of a protected group
 ({\em e.g.}, \cite{CaldersICDM,HajianFerrer12,hajian2014,Dwork2012,Zemel2013}).
 %
@@ -54,28 +54,35 @@ This leads to the motivation of producing rankings that do not systematically pl
 %
 We use the synthetic ranking generation procedure of~\citet{yang2016measuring} to calibrate our method, and optimize directly the utility of a ranking that has statistical properties (ranked group fairness) resembling the ones of a ranking generated using that procedure; in other words, unlike them, we connect the creation of the ranking with the metric used for assessing fairness.
 Moreover, we also take into account the individual fairness criteria.
-%
-Yang {\em et al.} \citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
-%
-Kulshrestha {\em et al.} \citet{kulshrestha_2017_quantifying} proposes a quantification framework that measures the bias of the results in a search engine.
+
+Regarding how to evaluate fairness/bias in a ranking,
+\citet{kulshrestha_2017_quantifying} propose a quantification framework that measures the bias of the results in a search engine.
 This framework discerns to what extent this output bias is due to the input dataset that feeds into the ranking system, and how much is due to the bias introduced by the system itself.
 %
-Kuhlman {\em et al.} \citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
+\citet{kuhlman2019fare} also propose a quantification and diagnostics framework using pairwise error metrics as means of evaluation for fairness in rankings.
 %
 Another quantification and bias mitigation framework is presented by~\citet{geyik2019fairness}, which can be tuned towards different definitions of fairness such as demographic parity and so-called equal opportunity.
+%
+\citet{yang2018nutritional} present a collection of metrics for fairness in ranked outputs which is inspired by nutrition labels.
+%
 
-Celis {\em et al.} \citet{celis2017ranking} propose algorithms for constrained ranking, in which the constraint is a $k \times \ell$ matrix with $k$ being the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
+As a general framework for constrained ranking, \citet{celis2017ranking} propose algorithms in which the constraint is a $k \times \ell$ matrix with $k$ being the length of the ranking and $\ell$ the number of classes, indicating the maximum number of elements of each class (protected or non-protected in the binary case) that can appear at any given position in the ranking.
+%
+\citet{kuhlman2020rank} propose algorithms for rank aggregation, in which we are given various rankings on the same items (e.g., rankings of the same candidates by each member of a committee) and we would like to produce a consensus ranking that guarantees fairness for disadvantaged groups of candidates.
 
-Singh and Joachims \citet{singh2018fairness} introduce the concept of exposure of a group that incorporates the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
+\citet{singh2018fairness} introduce the concept of exposure or attention given to a group, incorporating the empirical observation that the probability for items to be examined by a searcher decreases quickly with each lower position.
 %
 Parallel with~\citet{biega2018equity}, they propose an integer linear program that receives a vector of relevance scores and ranks items accordingly subject to constraints in disparate attention across groups. They also introduce a time component into their optimization problem, such that their notion of disparate attention is to be considered over time.
 
-Lahoti {\em et al.} \citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
+\citet{lahoti2019operationalizing} focus on \emph{individual fairness} for rankings and propose an advancement of its definition by~\citet{Dwork2012} in such way that it no longer relies on a human specification of a distance metric.
 
-Zehline and Castillo \citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
+\citet{zehlike2018reducing} introduce the first bias mitigation algorithm within a learning to rank framework, by defining the learning objective in terms of accuracy as well as in terms of exposure fairness of the result ranking.
 % RIC: I thought that was Joachims in WSDM 2017
+% CHATO: Our pre-print was earlier than their pre-print
 %
-The learning objective is concerned with disparate impact, whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
+The learning objective is concerned with disparate impact,
+as in the work by~\citet{shang2020list},
+whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
 
 \subsection{Diversity}
 
