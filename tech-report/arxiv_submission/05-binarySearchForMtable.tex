@@ -1,0 +1,58 @@
+\begin{algorithm}[t!]
+	\caption{Algorithm \algoBinomBinary calculates the corrected significance level $\alpha_c$ and the mTable $m_{\alpha_c , k, p)}$ with an overall probability $\alpha$ of rejecting a fair ranking.}
+	\label{alg:05:binarySearch} % But whenever possible refer to this algo. by name not number
+	\footnotesize
+	\AlgInput{$k$, the size of the ranking to produce; $p$, the expected proportion of protected elements; $\alpha$, the desired significance level.}
+	\AlgOutput{$\alphaadj$ the adjusted significance level; \texttt{m\_{adjusted}} the adjusted mTable}
+	\AlgComment{initialize all needed variables}
+	\texttt{aMin $\leftarrow$ 0};
+	\texttt{aMax $\leftarrow \alpha$ };
+	\texttt{aMid} $\leftarrow \frac{(\texttt{aMin + aMax})}{2}$ \\
+	\texttt{m\_min} $\leftarrow$ \texttt{constructMTable(k,p,aMin)}; 
+	\texttt{m\_max} $\leftarrow$ \texttt{constructMTable(k,p,aMax)}; \\
+	\texttt{m\_mid} $\leftarrow$ \texttt{constructMTable(k,p,aMid)} \\
+	\texttt{maxMass} $\leftarrow$ \texttt{m\_max.getMass()};
+	\texttt{minMass} $\leftarrow$ \texttt{m\_min.getMass()};
+	\texttt{midMass} $\leftarrow$ \texttt{m\_mid.getMass()}\\
+	
+	\While{\texttt{minMass} $<$ \texttt{maxMass} AND \texttt{m\_mid.getFailProb()} $\neq \alpha$ }{
+		\If{\texttt{m\_mid.getFailProb()} $< \alpha$}{
+			\texttt{aMin} $\leftarrow$ \texttt{aMid}
+			\texttt{m\_min} $\leftarrow$ \texttt{constructMTable(k,p,aMin)} \\
+		}
+		\If{\texttt{m\_mid.getFailProb()} $> \alpha$}{
+			\texttt{aMax} $\leftarrow$ \texttt{aMid} \\
+			\texttt{m\_max} $\leftarrow$ \texttt{constructMTable(k,p,aMax)} \\
+		}
+		\texttt{aMid} $\leftarrow \frac{(\texttt{aMin + aMax})}{2}$ \\
+		\tcp{stop criteria if midMass equals maxMass or midMass equals minMass}
+		\If{\texttt{maxMass - minMass == 1}}{
+			\texttt{minDiff} $\leftarrow |$\texttt{m\_min.getFailProb() - }$\alpha|$ \\
+			\texttt{maxDiff} $\leftarrow |$\texttt{m\_max.getFailProb() - }$\alpha|$ \\
+			\tcp{return the $\alpha_c$ which has the lowest difference from the desired significance}			
+			\If{\texttt{minDiff} $<$ \texttt{maxDiff}}{
+				\Return{\texttt{aMin, m\_min}}
+			}
+			\Else{
+				\Return{\texttt{aMax, m\_max}}
+			}
+		}
+		\tcp{stop criteria if midMaxx is exactly the mass between minMass and maxMass}
+		\If{\texttt{maxMass - midMass == 1} AND \texttt{midMass - minMass == 1}}{
+			\texttt{minDiff} $\leftarrow |$\texttt{m\_min.getFailProb() - }$\alpha|$ \\
+			\texttt{maxDiff} $\leftarrow |$\texttt{m\_max.getFailProb() - }$\alpha|$ \\
+			\texttt{midDiff} $\leftarrow |$\texttt{m\_mid.getFailProb() - }$\alpha|$ \\
+			\tcp{return the $\alpha_c$ which has the lowest difference from the desired significance}			
+			\If{\texttt{midDiff} $\leq$ \texttt{maxDiff} AND \texttt{midDiff} $\leq$ \texttt{minDiff}}{
+				\Return{\texttt{aMid, m\_mid}}
+			}
+			\If{\texttt{minDiff} $\leq$ \texttt{midDiff} AND \texttt{minDiff} $\leq$ \texttt{maxDiff}}{
+				\Return{\texttt{aMin, m\_min}}
+			}
+			\Else{
+				\Return{\texttt{aMax, m\_max}}
+			}
+		}
+	}
+	\Return{\texttt{aMid, m\_mid}}
+\end{algorithm}
