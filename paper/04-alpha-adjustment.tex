@@ -92,7 +92,10 @@ For each value of $k$, we generate a set of rankings and perform $k$ tests with 
 Then, we plot the probability of a Type-I error (declaring this fair ranking as unfair), and observe it is higher than $\alpha = 0.1$.
 %
 
-Our objective in this case would be to ensure that the overall rejection rate of fair rankings is $\alpha$.
+Our objective in this 
+
+
+ would be to ensure that the overall rejection rate of fair rankings is $\alpha$.
 %
 If each of the $k$ tests performed on a ranking were independent, we could use {\v S}id{\'a}k's correction, and set $\alphaadj = 1 - (1 - \alpha)^{1/k}$.
 %
@@ -248,7 +251,7 @@ iff there exists a valid path from the root of $MT$ to a leaf of $MT$.
 	or
 	(2.2) $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ and $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$.
 	%
-	Case (2.1) means because of $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1 < \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ that the mTree accepts a ranking with one more protected candidate than required by the actual child of $m_{G,h}$, which contradicts our hypothesis that the ranking included the exact amount of required protected candidates. It follows that if we test $\tau_g (h+1)$ successfully with $m_{G,h+1}$ it would also satisfy ${m'}_{G,h+1}$.
+	Case (2.1) means because of $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1 > \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ that the mTree accepts a ranking with one more protected candidate than required by the actual child of $m_{G,h}$, which contradicts our hypothesis that the ranking included the exact amount of required protected candidates. It follows that if we test $\tau_g (h+1)$ successfully with $m_{G,h+1}$ it would also satisfy ${m'}_{G,h+1}$.
 Case (2.2) is impossible according to algorithm \ref{alg:imcdf}.
 In detail, if $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ it means that $ m_g(h+1) = m_{g}(h)$ and therefore, $F(m_{g}(h);h+1,p_G) > \alpha$ (line $4$ of algorithm \ref{alg:imcdf}). But if for the child of $m_{G,h}$, namely ${m'}_{G,h+1}$ it holds that $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it means that
 $F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) can not occur.
