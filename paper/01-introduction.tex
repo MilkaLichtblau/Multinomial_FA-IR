@@ -1,21 +1,17 @@
 %!TEX root = main.tex
 \section{Introduction}\label{sec:introduction}
-Ranking is a fundamental task at the basis of several processes and services in on-line and off-line world, including search, personalization, recommendation, and filtering. The position that an item (or a person, as in our case of interest) receives in a ranking can have a substantial economic impact.
-For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making the top-$k$ will have a null utility. In on-line search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. As people search engines are increasingly common for job recruiting~\cite{raghavan2020mitigating} and even for finding companionship or friendship, top-$k$ ranking algorithms
-might have a direct and tangible impact on people's life.
+Ranking is a fundamental task at the basis of several processes and services in on-line and off-line world, including search, personalization, recommendation, and filtering. 
+%
+The position that an item (or a person, as in our case of interest) receives in a ranking can have a substantial economic impact.
+%
+For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making the top-$k$ will have a null utility. 
+%
+In on-line search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. 
+%
+As people search engines are increasingly common for job recruiting~\cite{raghavan2020mitigating} and even for finding companionship or friendship, top-$k$ ranking algorithms might have a direct and tangible impact on people's life.
 
 % A top-$k$ ranking algorithm is typically used to find the most suitable way of ordering items (or persons, as in our case of interest), considering that if the number of people matching a query is large, most users will not scan the entire list.
 %Conventionally, these lists are ranked in descending order of some measure of the relative fitness of items, according to the \emph{probability ranking principle}~\cite{robertson1977probability}.
-
-
-
-%
-
-%
-
-%
-
-
 
 The main concern motivating this work is that a machine learning ranking algorithms may produce ranked lists that can systematically reduce the visibility of already disadvantaged groups~\cite{peder2008,Dwork2012} and legally protected categories such as people with disabilities, racial or ethnic minorities, or an under-represented gender in a specific professional domain.
 
@@ -67,88 +63,90 @@ The ranked group fairness criterion compares the number of protected elements in
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking.
 %
 
-\paragraph{Example.} Consider the three rankings in Table \ref{tbl:multinomial_intro_example} corresponding to a top-10 ranking of applicants in a credit approval process. The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration, and credit amount.
+\paragraph{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just for each group consecutively applying binomial \algoFAIR to a ranking. 
 %
-We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.'' We observe that in the above rankings individuals belonging to the group of young or black applicants receive less visibility in the top-10 results than those of the non-protected group. This can lead to systematical disadvantages in accessing credit.
-More importantly, we see that individuals belonging to multiple protected groups (young \emph{and } black) receive the least exposure in the top-10 results.
+Consider the rankings in Table~\ref{tbl:multinomial_intro_example} corresponding to a number of top-10 rankings of applicants in a credit approval process. 
+%
+The rankings are obtained based on the credit worthiness of each applicant taking into account different features such as account status, credit duration, and credit amount.
+%
+We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.'' 
+%
+In this example we consider people as protected, if they are either young, or black, or both.
+%
+Suppose we have two protected groups, namely young white candidates and old black candidates, and one non-protected group, old white candidates (for now, we do not consider young black candidates on purpose).
 
-Considering the definition of \textit{ranked group fairness} proposed in \cite{zehlike2017fair} with minimum proportion $p=0.4$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-5 positions of a ranking.
-Therefore the first ranking in Table \ref{tbl:multinomial_intro_example} will be considered as fair for the group of young individuals.
-%
-However the same ranking will be rejected as unfair for black individuals, as well as for the intersectional group definition of young and black.
-%
-Next, suppose that the required minimum proportion is $p = 0.3$ and $\alpha = 0.1$. This translates to having at least one protected candidate in the top-7 positions.
-When considering the second ranking in Table \ref{tbl:multinomial_intro_example} it will be accepted as fair for black individuals. Moreover, it will be also accepted as fair for young candidates but rejected as unfair for young black ones.
-%
-From the above we conclude that providing a fairness definition for rankings that treats protected groups separately can not guarantee a fair ranking for multiple protected groups at the same time. This highlights the need for a ranked group fairness notion for multiple protected groups ({\em i.e.}, multinomial).
-%
-The third ranking in Table \ref{tbl:multinomial_intro_example} is an example of a fair top-10 ranking for multiple protected groups young, non-white, and also young and non-white. It is created using our \textit{multinomial ranked group fairness} criteria and the algorithm proposed in this paper.
-\medskip
 \begin{table}[t]
-	\caption{Three possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''. The first ranking would be considered fair for young people, but not for black people; the second ranking would be considered fair for black people, but not for young people; the third ranking would satisfy both criteria.
-		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
+	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''. 
 		%
-		\label{tbl:multinomial_intro_example}}
-	\centering\small\begin{tabular}{lcccc}\toprule
-		Protected group & Position					  & top-10 & top-10  & top-10 \\
-		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40 \\
-		& \texttt{1 2 3 4 5 6 7 8 9 10} & young & black & y. and b. \\
-		&                               &  (y)  & (b)  &  (y $\wedge$ b)\\
+		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$, which translates into having at least one protected person in the first seven positions.
+		%
+		The first ranking shows the colorblind ranking, which is unfair for both groups. 
+		%
+		The second ranking would be considered fair for young people, but not for black people; the third ranking would be considered fair for black people, but not for young people; the fourth ranking combines black and young people into one protected group, but because the group-specific bias is higher for young people, they are ranked below all black candidates; the fifth ranking was created using the multinomial extension of \algoFAIR and would satisfy the multinomial ranked group fairness condition for both young and black people.
+		%
+		Note that this is only one fair ranking out of many possibilities.
+		\label{tbl:multinomial_intro_example}}	
+	\centering\begin{tabular}{lcccccccccc}\toprule
+		Position & 1 &2 & 3 &4& 5& 6& 7& 8& 9& 10  \\
 		\midrule
-		Young  & \texttt{o/w o/w o/w y/w o/w o/w o/w o/w o/w o/w} & 10\% & 0\% & 0\% \\
-		Black & \texttt{o/w o/w o/w y/w o/w o/b o/w o/w o/w o/w} & 10\% & 10\% & 0\% \\
-		Young and Black & \texttt{o/w o/w o/w o/w o/w y/b o/w o/w o/w o/w} & 20\% & 10\% & 10\% \\
+		\rowcolor[HTML]{C0C0C0}
+		Colorblind & o/w & o/w & o/w & o/w & o/w & o/w & o/w & o/w & \textcolor{blue}{o/b} & \textcolor{red}{y/w} \\
+		Young $\minprop_\textit{y}=0.3$ & o/w &o/w& o/w& o/w& o/w& o/w& \textcolor{red}{y/w}& o/w & o/w & \textcolor{blue}{o/b} \\
+		\rowcolor[HTML]{C0C0C0}
+		Black $\minprop_b=0.3$ & o/w &o/w &o/w& o/w &o/w &o/w& \textcolor{blue}{o/b}& o/w& o/w& \textcolor{red}{y/w} \\
+		Young and Black $p_{\textit{yb}}=0.6$& o/w &o/w& \textcolor{blue}{o/b} & o/w& \textcolor{blue}{o/b}& o/w & \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& o/w \\
+		\algoFAIR from~\cite{zehlike2017fair} &&&&&&&&&&\\
+		\rowcolor[HTML]{C0C0C0}
+		Young and Black $\minprop_{\textit{y}} = \minprop_{\textit{b}} = 0.3$& o/w& o/w &\textcolor{red}{y/w}& \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w} &\textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& \textcolor{blue}{o/b} \\
+		\rowcolor[HTML]{C0C0C0}
+		multinomial \algoFAIR &&&&&&&&&&\\
 		\bottomrule
 	\end{tabular}
-
 \end{table}
 
+Considering the definition of \textit{ranked group fairness} for one protected group (Definition~3.1 and~3.2 in~\cite{zehlike2017fair}) with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-7 positions of a ranking with ten positions in total (see Table 2 in~\cite{zehlike2017fair}).
+%
+Suppose we set the same minimum proportions for both protected groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$ and we assume that the colorblind ranking (upper most ranking in Table~\ref{tbl:multinomial_intro_example}) does not meet ranked group fairness with these requirements.
+%
+The next two rankings have been obtained using \algoFAIR for one protected group, each focusing either on the protected group of old blacks or young whites, while treating the rest as non-protected.
+%
+We see directly why this is problematic: equal minimum proportions $\minprop$ result in exactly the same requirements of protected candidates for each group. 
+%
+It is not clear whether a black or a young candidate should be preferred at position 7.
+%
+More importantly, it is also not clear how to proceed with the one, that is not chosen. 
+%
+Suppose the young candidate is chosen to be ranked to position 7. 
+%
+If old black candidates are not considered as protected by this mTable, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).
 
-%\medskip
-%\begin{example} Consider the three rankings in Table \ref{tbl:xing_intro_example} corresponding to searches for an ``economist,'' ``market research analyst,'' and ``copywriter'' in XING\footnote{\url{https://www.xing.com/}}, an online platform for jobs that is used by recruiters and headhunters, mostly in German-speaking countries, to find suitable candidates in diverse fields (data collection is reported in detail in~\cite{zehlike2017fair}). While analyzing  the extent to which candidates of both sexes are represented as we go down these lists,  we can observe that such proportion keep changing and is not uniform (see, for instance, the top-10 vs. the top-40). As a consequence, recruiters examining these lists will see different proportions depending on the point at which they decide to stop.
-%%
-%This outcome systematically disadvantages individuals of one sex by preferring the other at the top-$k$ positions, a clear instance of bias in a computer system~\cite{friedman1996bias}. As we do not know the learning model behind the ranking, we assume that the result is at least partly based on the protected attribute \emph{sex}.
+To overcome this, suppose we aggregated all protected groups together into one big protected group and add up the minimum proportions to one that fits the total share of protected candidates. 
 %
-%\note{Why do we need this assumption? Imposing group-fairness constraint makes sense in any case. This assumption sounds like a not-needed justification to me.}
+Following our example, we combine the group of young whites and old blacks into one group with minimum proportion $\minprop=0.6$.
 %
-%Let $k = 10$. Our notion of \textit{ranked group fairness} imposes a fair representation with proportion $p$ and significance $\alpha$ at each top-$i$ position with $i \in [1,10]$ (formal definitions are given in section~\ref{sec:problem}).
-%Consider for instance $\alpha = 0.1$ and suppose that the required proportion is $p = 0.4$.  This translates (see Table \ref{tbl:ranked_group_fairness_table}) to having at least one individual from the protected minority class in the first 5 positions: therefore the ranking for  ``copywriter'' would be rejected as unfair. However, it also requires to have at least 2 individuals from the protected group in the first 9 positions: therefore also the ranking for ``economist'' is rejected as unfair, while the ranking for ``market research analyst'' is fair for  $p = 0.4$. However, if we would require $p = 0.5$ then this translates in having at least 3 individuals from the minority group in the top-10, and thus even the ranking for ``market research analyst'' would be considered unfair.
-%%
-%We note that for simplicity, in this example we have not adjusted the significance $\alpha$ to account for multiple statistical tests; this is not trivial, and is one of the key contributions of this paper.
-%\end{example}
-%\medskip
+This however, neglects to account for bias that manifests differently across protected groups.
 %
-%\begin{table}[t]
-%	\caption{Example of non-uniformity of the top-10 vs. the top-40 results for different queries in XING (Jan 2017).
-%		%``economist,'' ``market research analyst,'' and ``copywriter'' in XING (Jan 2017). We %do not claim anything about the merits of these proportions, but simply
-%		%observe that the top-10 results under-represent the least represented gender, in comparison with top-40 results.
-%		\label{tbl:xing_intro_example}}
+Following our example, if the bias in credit scores of young people is significantly higher than for black people, then all young whites will be ranked below the old blacks in the fair ranking.
 %
-%	\centering\small\begin{tabular}{lccccc}\toprule
-%		& Position					  & top 10 & top 10  & top 40 & top 40 \\
-%		%          & \multicolumn{1}{c}{Position}                      & 10   & 10     & 40   & 40 \\
-%		& \texttt{1 2 3 4 5 6 7 8 9 10} & male & female & male & female \\
-%		\midrule
-%		Econ.  & \texttt{f m m m m m m m m m} & 90\% & 10\% & 73\% & 27\% \\
-%		Analyst& \texttt{f m f f f f f m f f} & 20\% & 80\% & 43\% & 57\% \\
-%		Copywr.& \texttt{m m m m m m f m m m} & 90\% & 10\% & 73\% & 27\% \\
-%		\bottomrule
-%	\end{tabular}
+Additionally, combining all protected groups into one group ignores the problem of \emph{intersectional discrimination}.
 %
+Intersectional discrimination refers to the fact that personal, political, and social identities of an individual can be combined to form a unique profile that can be discriminated.
 %
-%\end{table}
+If we additionally considered young black people as a third protected group, the bias in their scores would manifest itself through two dimensions of discrimination, namely through age \emph{and} race, which commonly leads to even more bias in their scores, and thus potentially to the lowest positions, even when applying \algoFAIR.
 %
-%\todo{We would need another example with multiple protected attributes.}
-%
+Therefore young black candidates should be considered as their own group whose scores are not comparable with the ones of young whites, or old blacks.
 
-
-We remark that our method is suitable for concerns about \emph{intersectionality}, which refers to the fact that the personal, political, and social identities of an individual can be combined to form a unique profile that can be discriminated.
+From the above we conclude that providing a fairness definition for rankings that either treats protected groups consecutively, or assembles all groups into one big group, can not guarantee a fair ranking for multiple protected groups with different bias manifestations. 
 %
-Consider as an example the case DeGraffenreid v. General Motors in the US in 1976: here Emma DeGraffenreid wanted to challenge General Motors for being discriminated in the promotion procedure for being a black woman.
+This highlights the need for a ranked group fairness notion for multiple protected groups that is based on a multinomial distribution.
 %
-However the court found that GM was neither discriminated against blacks, nor against women and therefore ruled that DeGraffenreid ``could not combine the claims'' of race and sex discrimination.
+The fifth ranking in Table~\ref{tbl:06:multinomial_intro_example} is an example of a multinomially fair top-10 ranking for the protected groups young and black.
 %
-Yet many cases of intersectional discrimination demand for a method like ours that is capable of dealing with biases against groups that are oppressed based on more than one protected attribute.
+It is created using our \textit{multinomial ranked group fairness criteria} and the multinomial \algofair algorithm proposed in this paper.
+%
+Note that this is only one fair ranking out of many possibilities.
+%
+We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.
 
 \subsection{Contributions and Roadmap}
 We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criteria. This work addresses multiple protected groups extending our previous conference paper~\cite{zehlike2017fair} that only considered the single protected group case.
