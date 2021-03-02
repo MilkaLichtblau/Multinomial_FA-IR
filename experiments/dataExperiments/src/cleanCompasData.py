@@ -41,7 +41,7 @@ def main():
     data = data[data["score_text"] != "N/A"]
 
     # drop irrelevant columns
-    keep_cols = ["sex", "age_cat", "race", "decile_score", "v_decile_score", "priors_count"]
+    keep_cols = ["sex", "age_cat", "race", "decile_score", "v_decile_score", "priors_count", "two_year_recid"]
     data = data[keep_cols]
     data["sex"] = data["sex"].replace({"Male":1,
                                        "Female":0})
@@ -101,24 +101,6 @@ def main():
     groups.to_csv("../data/COMPAS/compas_age_groups.csv", header=True, index=False)
     with open("../data/COMPAS/compas_age_doc.txt", "w") as text_file:
         text_file.write(docString)
-
-#     resultData, groups, docString = prepareForJavaCode(data, ["sex", "race"])
-#     resultData.to_csv("../data/COMPAS/compas_sexRace_java.csv", header=True, index=False)
-#     groups.to_csv("../data/COMPAS/compas_sexRace_groups.csv", header=True, index=False)
-#     with open("../data/COMPAS/compas_sexRace_doc.txt", "w") as text_file:
-#         text_file.write(docString)
-#
-#     resultData, groups, docString = prepareForJavaCode(data, ["sex", "age_cat"])
-#     resultData.to_csv("../data/COMPAS/compas_sexAge_java.csv", header=True, index=False)
-#     groups.to_csv("../data/COMPAS/compas_sexAge_groups.csv", header=True, index=False)
-#     with open("../data/COMPAS/compas_sexAge_doc.txt", "w") as text_file:
-#         text_file.write(docString)
-#
-#     resultData, groups, docString = prepareForJavaCode(data, ["age_cat", "race"])
-#     resultData.to_csv("../data/COMPAS/compas_ageRace_java.csv", header=True, index=False)
-#     groups.to_csv("../data/COMPAS/compas_ageRace_groups.csv", header=True, index=False)
-#     with open("../data/COMPAS/compas_ageRace_doc.txt", "w") as text_file:
-#         text_file.write(docString)
 
     resultData, _, docString = prepareForJavaCode(data, ["age_cat", "race", "sex"])
     resultData, groups, docString = makeWorstThreeGroupsProtected(resultData, docString)

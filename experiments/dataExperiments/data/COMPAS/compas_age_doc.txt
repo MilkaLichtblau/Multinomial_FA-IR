@@ -12,6 +12,6 @@ Name: group, dtype: float64
 
 Exposure Per Groups
    group  exposure
-1      0  0.103554
-0      1  0.091466
-2      2  0.082765
+1      0  0.104686
+0      1  0.091051
+2      2  0.082767

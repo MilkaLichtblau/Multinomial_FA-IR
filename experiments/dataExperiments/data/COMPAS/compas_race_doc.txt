@@ -1,6 +1,6 @@
 ['race']
-1 --> 1
 0 --> 0
+1 --> 1
 
 
 Percentages of Groups
@@ -10,5 +10,5 @@ Name: group, dtype: float64
 
 Exposure Per Groups
    group  exposure
-1      0  0.096105
-0      1  0.090029
+0      0  0.096385
+1      1  0.089884
