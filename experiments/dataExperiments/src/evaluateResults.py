@@ -7,7 +7,9 @@ Created on Jul 15, 2020
 import pandas as pd
 import glob
 # from sklearn.metrics import ndcg_score
-from src.util import selectionUtilityLossPerGroup, ndcg_score, orderingUtilityLossPerGroup, averageGroupExposureGain
+from src.util import *
+import sklearn.metrics
+import scipy.stats
 
 
 def main():
@@ -62,11 +64,19 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             kay = len(fairRanking)
             multi_fair_result = pd.DataFrame()
             multi_fair_result["group"] = fairRanking['group'].unique()
+
+            # individual fairness metrics
             multi_fair_result = selectionUtilityLossPerGroup(remainingRanking, fairRanking, multi_fair_result)
             multi_fair_result = orderingUtilityLossPerGroup(colorblindRanking, fairRanking, multi_fair_result)
+
+            # performance metrics
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                            fairRanking["score"].to_numpy(),
                                                            k=kay)
+            multi_fair_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+                                                                             fairRanking["score"].to_numpy())[0]
+
+            # group fairness metrics
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result = multi_fair_result.sort_values(by=['group'])
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
@@ -76,11 +86,19 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             tailLength = len(thetaHalfSorted) - kay
             cfaHalf_result = pd.DataFrame()
             cfaHalf_result["group"] = fairRanking['group'].unique()
+
+            # individual fairness metrics
             cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(tailLength), thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfSorted.head(kay), cfaHalf_result)
+
+            # performance metrics
             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                         thetaHalfSorted.head(kay)["score"].to_numpy(),
                                                         k=kay)
+            cfaHalf_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+                                                                          thetaHalfSorted.head(kay)["score"].to_numpy())[0]
+
+            # group fairness metrics
             cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaHalfSorted.head(kay), cfaHalf_result)
             cfaHalf_result = cfaHalf_result.sort_values(by=['group'])
             cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_cfaHalfResult.csv")
@@ -90,11 +108,19 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             tailLength = len(thetaOneSorted) - kay
             cfaOne_result = pd.DataFrame()
             cfaOne_result["group"] = fairRanking['group'].unique()
+
+            # individual fairness metrics
             cfaOne_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(tailLength), thetaOneSorted.head(kay), cfaOne_result)
             cfaOne_result = orderingUtilityLossPerGroup(colorblindRanking, thetaOneSorted.head(kay), cfaOne_result)
+
+            # performance metrics
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                thetaOneSorted.head(kay)["score"].to_numpy(),
-                                                k=kay)
+                                                       thetaOneSorted.head(kay)["score"].to_numpy(),
+                                                       k=kay)
+            cfaOne_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+                                                                         thetaOneSorted.head(kay)["score"].to_numpy())[0]
+
+            # group fairness metrics
             cfaOne_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaOneSorted.head(kay), cfaOne_result)
             cfaOne_result = cfaOne_result.sort_values(by=['group'])
             cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_cfaOneResult.csv")
