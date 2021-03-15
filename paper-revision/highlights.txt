@@ -1,0 +1,4 @@
+- Ranked group fairness for multiple protected groups
+- multiple dependent hypothesis testing
+- probabilistic fairness for rankings
+- extension of FA*IR to multiple groups
