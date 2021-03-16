@@ -145,7 +145,9 @@ The baseline methods for comparison that we use are the following:
 
 \spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}).
 
-\spara{Baseline 2: \citet{zehlike2020matching}.} This is a post-processing method named Continuous Fairness Algorithm (CFA$\theta$). It aligns the score distributions of the protected candidates with the Wasserstein-barycenter of all group distributions.
+\spara{Baseline 2: \citet{zehlike2020matching}.} This is a post-processing method named Continuous Fairness Algorithm (CFA$\theta$)\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
+%
+It aligns the score distributions of the protected candidates with the Wasserstein-barycenter of all group distributions.
 %
 To achieve this the algorithm finds a new distribution of scores for each group, the "fair representation", by interpolating between the barycenter and the group distribution, subject to a given fairness parameter $\theta$.
 %
@@ -396,4 +398,3 @@ This experiment shows that \algoFAIR allows a wide range of positive actions, fo
 In this case, the Figure~\ref{fig:experiments:compasAge:ndcgloss} shows that we can double the proportion of young people in the top-$k$ ranking (e.g. from 0\% in the original up to 40\% in the fair ranking) without introducing a large drop for the other protected group loss: in the colorblind ranking they received exposure equivalent to $0.4 > p_1 > 0.5$, so setting $p_1 = p_2 = 0.4$ only causes an exposure drop of 5.8\%.
 %
 At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when favoring young people with $p_2=0.8$.
-

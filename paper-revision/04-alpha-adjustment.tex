@@ -29,6 +29,8 @@ The other nodes ``[1,1],'' ``[1,2],'' and ``[0,3]'' are not a child of node ``[2
 %
 The tree is symmetric when the minimum proportions are equal, and asymmetric when the $p_g \in p_G$ are different.
 %
+\changed{In the asymmetric case, we note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.}
+%
 %Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +94,7 @@ For each value of $k$, we generate a set of rankings and perform $k$ tests with 
 Then, we plot the probability of a Type-I error (declaring this fair ranking as unfair), and observe it is higher than $\alpha = 0.1$.
 %
 
-Our objective in this 
+Our objective in this
 
 
  would be to ensure that the overall rejection rate of fair rankings is $\alpha$.
@@ -107,7 +109,7 @@ However, the tests are not independent, as the tests with prefixes $k_1, k_2$ (f
 %
 With the presence of more than one protected group, the analytical extension of the model adjustment to a multinomial setting is too complex to be written into a closed formula.
 %
-In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair}, 
+In contrast to the model adjustment for one protected group which we used in~\cite{zehlike2017fair},
 %(see also Section~\ref{sec:adjustment-binomial})
 we found no analytical way to calculate all permutations which pass or fail the test.
 %
@@ -127,8 +129,8 @@ Therefore we develop an experimental procedure to adjust $ \alpha $:
 Once we found $\alphaadj$ we can recompute the mTree from Figure~\ref{fig:mtree-symmetric-unadjusted} %and~\ref{fig:mtree-asymmetric-unadjusted}
  to obtain an overall significance level of $\alpha = 0.1$.
 %
-Figure~\ref{fig:mtree-symmetric-adjusted} 
-%and~\ref{fig:mtree-asymmetric-adjusted} 
+Figure~\ref{fig:mtree-symmetric-adjusted}
+%and~\ref{fig:mtree-asymmetric-adjusted}
 shows the adjusted mTree with the same parameters $p_G$.
 \input{pics/mTreesAdjusted.tex}
 

@@ -1,3 +1,4 @@
+%!TeX root=main.tex
 \section{Conclusions}\label{sec:conclusions}
 
 In this paper we presented the extension of \algoFAIR to multiple groups, where we guarantee ranked group fairness, without introducing a large utility loss.
@@ -37,6 +38,8 @@ Recent research \cite{suhr2020does}, however,  suggests that guarantees for a mi
 Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups. Furthermore, setting the values for $p_G$ higher than desired may mitigate user biases. For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group.
 %
 However further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
+%
+\changed{This is an empirical question that needs to be addressed through user studies; approaches based on simulating clicks using pre-existing user preferences, such as the one used by \citet{abdollahpouri2021user}, may not uncover the actual interplay between the displayed ranking and latent user preferences.}
 %
 Additionally, further experimental research using synthetic data could allow us to test with a wider range of differences across groups, larger than the one that real datasets exhibit.
 %

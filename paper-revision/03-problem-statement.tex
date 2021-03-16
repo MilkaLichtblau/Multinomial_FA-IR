@@ -4,7 +4,7 @@
 
 In the following, we introduce the needed notation (\S\ref{subsec:preliminaries}), and present the definition of ranked group fairness (\S\ref{subsec:group-fairness}), as well as definitions of utility (\S\ref{subsec:individual-fairness}). Lastly we present a formal problem statement (\S\ref{subsec:problem-statement}).
 %
-Our formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting. 
+Our formalization extends the one previously presented for a binomial setting (one protected group)~\cite{zehlike2017fair} into a multinomial setting.
 %
 We explicitly frame this as an extension rather than an entirely new framework, and hence the definitions in this paper strongly correlate with those from~\cite{zehlike2017fair}.
 %
@@ -40,7 +40,7 @@ We set $ \tau_G = \langle\tau_g\rangle_{g \in G}$, i.e., the vector that contain
 
 Let $cb \in {\mathcal T}_{n,n}$ be the total ranking of all candidates by decreasing utility: $\forall u,v \in [n], u=cb(i), v = cb(j), i < j \implies q_u \ge q_v$.
 %
-For simplicity of exposition, we will assume all utilities $q_c$ are different, although our algorithms do not require this to be the case.
+\changed{If some utilities $q_c$ are equal, we break ties arbitrarily.}
 %
 We refer to this as the \emph{color-blind} ranking of candidates in $[n]$, because it simply focuses on their utility but ignores their protection status.
 %
@@ -113,9 +113,11 @@ Instinctively, a ranking is said to not fulfill the ranked group fairness condit
 %
 Additionally, this criterion looks at the ordering in which those candidates appear within the ranking by comparing the actual number of protected elements from each group $\tau_G$ with their expected number.
 %
-This number is calculated using the stochastic process of a multinomial distribution (i.e. the roll of a $|G|$-sided dice), and simulates that candidates were picked at random at each position if the dice shows the side of their group. 
+This number is calculated using the stochastic process of a multinomial distribution (i.e. the roll of a $|G|$-sided dice), and simulates that candidates were picked at random at each position if the dice shows the side of their group.
 %
-This comparison is repeated for \emph{every prefix} of the ranking.
+\changed{This is a translation of the idea of luck egalitarianism, which is a subcategory of substantive equality of opportunity (see, e.g., \citet{heidari2019moral}).}
+%
+The process is repeated for \emph{every prefix} of the ranking.
 
 \begin{definition}[Multinomial Cumulative Distribution Function]
 	\label{def:multinomialCDF}
@@ -144,7 +146,7 @@ To express the probability of rejecting a fair ranking (i.e., a Type I error) we
 
 The fair representation condition implements a statistical test, with null hypothesis $H_0$ assuming that all protected groups are represented with a minimal proportion $p_t$ ($\forall g \in G, p_t \ge p_g$).
 %
-The alternative hypothesis $H_a$ translates into an insufficient proportion of protected elements ($\exists g \in G: p_t < p_g$). 
+The alternative hypothesis $H_a$ translates into an insufficient proportion of protected elements ($\exists g \in G: p_t < p_g$).
 %
 Our test setup sets the p-value to $F(\tau_G; k, p_G)$ and we reject $H_0$, hence announce the ranking under test to be unfair, if the p-value is less than or equal to the threshold $\alpha$.
 %
@@ -191,7 +193,7 @@ The ranked individual utility loss of a candidate $c$ in a ranking $\tau$ is hig
 	\]
 \end{definition}
 %
-\noindent Thus, a candidate $c$ achieves the maximum ranked individual utility of zero, if there was no candidate with a lower score ranked at a better position in the ranking. 
+\noindent Thus, a candidate $c$ achieves the maximum ranked individual utility of zero, if there was no candidate with a lower score ranked at a better position in the ranking.
 %\note{It's weird to have something called utility which has its maximum in zero. It would have been more appropriate to call it something like \emph{individual unfairness}, but I guess it's too late to change terminology (same applies to several other notions).}
 %
 %Next, we apply the definition of ranked individual utility to two separate cases: when an element $i$ is included in the ranking, and when it is not included.
@@ -258,4 +260,4 @@ Other problem definitions with respect to the general criteria described in Sect
 %
 For instance, instead of maintaining high selection and ordering utility, we may seek to always find the one ranking $\tau^*$ from all possible fair rankings that \emph{maximizes} selection and ordering utility.
 %
-We acknowledge that this seems to be a tempting ``optimization'' of \algoFAIR but we believe that such a strategy is not fully compliant with multinomial ranked group fairness anymore (see Section~\ref{sec:algo:partialOrdering} for more details). 
+We acknowledge that this seems to be a tempting ``optimization'' of \algoFAIR but we believe that such a strategy is not fully compliant with multinomial ranked group fairness anymore (see Section~\ref{sec:algo:partialOrdering} for more details).
