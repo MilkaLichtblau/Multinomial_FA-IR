@@ -1,12 +1,12 @@
 %!TEX root = main.tex
 \section{Introduction}\label{sec:introduction}
-Ranking is a fundamental task at the basis of several processes and services in on-line and off-line world, including search, personalization, recommendation, and filtering. 
+Ranking is a fundamental task at the basis of several processes and services in online and offline world, including search, personalization, recommendation, and filtering. 
 %
 The position that an item (or a person, as in our case of interest) receives in a ranking can have a substantial economic impact.
 %
-For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making the top-$k$ will have a null utility. 
+For instance, in a university admission only the top-$k$ ranked applicants will be admitted, so that those ones not making it into the top-$k$ will have zero utility. 
 %
-In on-line search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. 
+In online search platforms, the position in a ranking influences to a large extent the attention that an item receives: only the top-$k$ items will be shown in the first results page (due to the physical limits of the screen), moreover it is well known that the users inspecting the results are susceptible to \emph{position bias}, i.e., they pay attention mostly to the top of the page and thus to the top-ranked items \cite{CraswellZTR08}. 
 %
 As people search engines are increasingly common for job recruiting~\cite{raghavan2020mitigating} and even for finding companionship or friendship, top-$k$ ranking algorithms might have a direct and tangible impact on people's life.
 
@@ -14,9 +14,8 @@ As people search engines are increasingly common for job recruiting~\cite{raghav
 %Conventionally, these lists are ranked in descending order of some measure of the relative fitness of items, according to the \emph{probability ranking principle}~\cite{robertson1977probability}.
 
 The main concern motivating this work is that a machine learning ranking algorithms may produce ranked lists that can systematically reduce the visibility of already disadvantaged groups~\cite{peder2008,Dwork2012} and legally protected categories such as people with disabilities, racial or ethnic minorities, or an under-represented gender in a specific professional domain.
-
-Furthermore, it is assumed that this bias manifests differently across groups, rendering inter-group relevance scores incomparable with each other.
 %
+Furthermore, it is assumed that this bias manifests differently across groups, rendering inter-group relevance scores incomparable with each other.
 
 According to \citet{friedman1996bias} a computer system is \emph{biased} ``if it systematically and unfairly discriminate[s] against certain individuals or groups of individuals in favor of others.
 %
@@ -24,30 +23,26 @@ A system discriminates unfairly if it denies an opportunity or a good or if it a
 %
 Yet ``unfair discrimination alone does not give rise to bias unless it occurs systematically'' and ``systematic discrimination does not establish bias unless it is joined with an unfair outcome.''
 %
-In a ranking, the desired outcome for an individual is to be ranked as high as possible. In the cases in which there is a complete or big drop in utility after the $k$-th position, the desired outcome is to be ranked amongst the top-$k$. A ranking outcome can be deemed unfair if members of one or more protected groups are systematically ranked below those of a privileged group.
+In a ranking, the desired outcome for an individual is to be ranked as high as possible. In the cases in which there is a complete or big drop in utility after the $k$-th position, the desired outcome is to be ranked amongst the top-$k$. A ranking outcome can be deemed unfair, if members of one or more protected groups are systematically ranked below those of a privileged group.
 %
 %The ranking algorithm discriminates unfairly if this ranking decision is based fully or partially on the protected feature.
 %%
 %This discrimination is systematic when it is embodied in the algorithm's ranking model.
 %
-In this regard, the main issue is that machine learning models trained on datasets incorporating \textit{preexisting societal biases} will learn and structure such biases, eventually producing biased results, which once deployed in decision making in the real world, can reinforcing existing biases and strenghten inequalities~\cite{oneil2016weapons}.
+In this regard, the main issue is that machine learning models trained on datasets incorporating \textit{preexisting societal biases} will learn and structure such biases, eventually producing biased results, which once deployed in decision making in the real world, can reinforcing existing biases and strengthen inequalities~\cite{oneil2016weapons}.
 %
 
 Based on this observation, in this article we study the problem of producing a ranking that we will consider fair given legally-protected attributes.
 %
-A formal definition of the problem studied can be found in Section~\ref{sec:problem}.
+Here, we extend the fair top-$k$ ranking algorithm \algoFAIR ~\cite{zehlike2017fair} and its \emph{ranked group fairness criterion} to handle multiple protected groups.
 %
-Intuitively, given a set $G$ of different minority groups, our aim is to produce a ranking in which the proportion of each group in $G$ in any ranking prefix does not fall below given minimum proportions $p_G$, where $p_G$ is a vector containing the respective minimum proportion~$p_g$ per group $g \in G$. In this ranking, we also would like to preserve relevance/utility as much as possible.
+Intuitively, given a set $G$ of different minority groups, our aim is to produce a ranking in which the proportion of each group $g \in G$ in any ranking prefix does not fall below given minimum proportions $p_G$, where $p_G$ is a vector containing the respective minimum proportion~$p_g$ per group $g$. 
 %
-%We denote however the motivating assumption of our method which is that utility measures \emph{are not comparable across groups} because said bias manifests differently for each group.
+In this ranking, we also would like to preserve relevance/utility as much as possible.
 %
+A formal definition of the problem can be found in Section~\ref{sec:problem}.
 
-We propose a re-ranking method to remove the systematic bias by means of a \emph{ranked group fairness criterion}, that we introduce in this paper, and which is based on
-%%
-%We assume a ranking algorithm has given an undesirable outcome to one ore more groups of individuals, but the algorithm itself cannot determine if the grounds were appropriate or not.
-%%
-%Hence we expect the user of our method to know that the outcome is based on unreasonable or inappropriate grounds and provide
-the vector of proportions $p_G$, which we assume given as input. This parameter can originate in a legal mandate or in voluntary affirmative actions.
+The input vector $p_G$ of minimum proportions can originate from a legal mandate or from voluntary affirmative actions.
 %
 For instance, the US Equal Employment Opportunity Commission sets a goal of 12\% of workers with disabilities in federal agencies in the US,\footnote{US EEOC: \url{https://www1.eeoc.gov/eeoc/newsroom/release/1-3-17.cfm}, Jan 2017.}
 %
@@ -57,13 +52,12 @@ In other cases, such quotas might be adopted voluntarily, for instance through a
 %
 In general these measures do not mandate perfect parity, as distributions of qualifications across groups can be unbalanced for legitimate, explainable reasons~\cite{zliobaite2011handling,pedreschi2009integrating}. % pedreschi2009integrating has the truck driver license example }
 %
-
-The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $j$ of the dice representing a group, and having success probability $p_j \in p_G$).
+The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $g$ of the dice representing a group, and having success probability $p_g \in p_G$).
 %
-Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a Type I error, which means rejecting a fair ranking.
+Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a type-I-error, which means rejecting a fair ranking.
 %
 
-\paragraph{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just for each group consecutively applying binomial \algoFAIR to a ranking. 
+\paragraph{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just applying binomial \algoFAIR to a ranking for each group consecutively. 
 %
 Consider the rankings in Table~\ref{tbl:multinomial_intro_example} corresponding to a number of top-10 rankings of applicants in a credit approval process. 
 %
@@ -78,9 +72,9 @@ Suppose we have two protected groups, namely young white candidates and old blac
 \begin{table}[t]
 	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''. 
 		%
-		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$, which translates into having at least one protected person in the first seven positions.
+		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$, which translates into having at least one protected person in the first seven positions. 
 		%
-		The first ranking shows the colorblind ranking, which is unfair for both groups. 
+		The first ranking shows the colorblind ranking, which is unfair for both groups (note that the remaining protected candidates have been ranked outside of the top-10 and are not shown).
 		%
 		The second ranking would be considered fair for young people, but not for black people; the third ranking would be considered fair for black people, but not for young people; the fourth ranking combines black and young people into one protected group, but because the group-specific bias is higher for young people, they are ranked below all black candidates; the fifth ranking was created using the multinomial extension of \algoFAIR and would satisfy the multinomial ranked group fairness condition for both young and black people.
 		%
@@ -118,7 +112,7 @@ More importantly, it is also not clear how to proceed with the one, that is not 
 %
 Suppose the young candidate is chosen to be ranked to position 7. 
 %
-If old black candidates are not considered as protected by this mTable, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).
+As old black candidates are not considered as protected by this mTable, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).
 
 To overcome this, suppose we aggregated all protected groups together into one big protected group and add up the minimum proportions to one that fits the total share of protected candidates. 
 %
@@ -126,7 +120,7 @@ Following our example, we combine the group of young whites and old blacks into 
 %
 This however, neglects to account for bias that manifests differently across protected groups.
 %
-Following our example, if the bias in credit scores of young people is significantly higher than for black people, then all young whites will be ranked below the old blacks in the fair ranking.
+Following our example, if the bias in credit scores of young people is significantly higher than for black people, then all young whites will be ranked below the old blacks in the fair ranking (observe the fourth ranking in Table~\ref{tbl:multinomial_intro_example}).
 %
 Additionally, combining all protected groups into one group ignores the problem of \emph{intersectional discrimination}.
 %
@@ -149,7 +143,9 @@ Note that this is only one fair ranking out of many possibilities.
 We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.
 
 \subsection{Contributions and Roadmap}
-We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criteria. This work addresses multiple protected groups extending our previous conference paper~\cite{zehlike2017fair} that only considered the single protected group case.
+We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criterion. 
+%
+This work addresses multiple protected groups extending our previous conference paper~\cite{zehlike2017fair} that only considered the single protected group case.
 %
 %The running example we use in this paper is that of selecting automatically, from a large pool of potential candidates, a smaller group that will be interviewed for a position.
 %
@@ -160,10 +156,10 @@ This score is assumed to be based on relevant metrics for evaluating candidates 
 %
 We note that this measurement will embody \emph{pre-existing bias} ({\em e.g.}, if black pilots are given less opportunities to flight they accumulate less flight hours), as well as \emph{technical bias}, as learning algorithms are known to be susceptible to direct and indirect discrimination~\cite{tuto2016,HajianFerrer12}.
 %
-We furthermore note that different manifestations of such bias exists for each group and are usually stronger for intersectional groups, that is, the pre-existing bias against black women is stronger than the one for women or blacks in general.
+We furthermore note that different manifestations of such bias exist for each group and are usually stronger for intersectional groups, that is, the pre-existing bias against black women is stronger than the one for women or blacks in general.
 %
 
-This utility principle is operationalized in two ways.
+Our utility principle is operationalized in two ways.
 %
 First, we prefer rankings in which every individual in the top-$k$ is more qualified than every candidate not included in the top-$k$ (or in which the difference in their qualifications is small). We call this criterion \emph{selection utility}.
 %
