@@ -32,7 +32,6 @@ def evaluate(rankingsDir, evalDir, experimentNames):
         allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_fair.csv")
         allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
         allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_remaining.csv")
-        CFAHalfFilename = glob.glob(rankingsDir + experiment + "/" + "*_theta=05.csv")[0]
         CFAOneFilename = glob.glob(rankingsDir + experiment + "/" + "*_theta=1.csv")[0]
         # get all files with corresponding k
         for fairRankingFilename in allFairRankingFilenames:
@@ -50,11 +49,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
                                            skipinitialspace=True)
 
             # load baseline rankings
-            thetaHalfRanking = pd.read_csv(CFAHalfFilename, header=0)
             thetaOneRanking = pd.read_csv(CFAOneFilename, header=0)
-
-            thetaHalfSorted = thetaHalfRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
-            thetaHalfSorted = thetaHalfSorted.reset_index(drop=True)
 
             thetaOneSorted = thetaOneRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
             thetaOneSorted = thetaOneSorted.reset_index(drop=True)
@@ -80,28 +75,6 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result = multi_fair_result.sort_values(by=['group'])
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
-
-#             # eval for CFA algorithm with theta=0.5
-#             print("\nCFA 0.5 eval")
-#             tailLength = len(thetaHalfSorted) - kay
-#             cfaHalf_result = pd.DataFrame()
-#             cfaHalf_result["group"] = fairRanking['group'].unique()
-#
-#             # individual fairness metrics
-#             cfaHalf_result = selectionUtilityLossPerGroup(thetaHalfSorted.tail(tailLength), thetaHalfSorted.head(kay), cfaHalf_result)
-#             cfaHalf_result = orderingUtilityLossPerGroup(colorblindRanking, thetaHalfSorted.head(kay), cfaHalf_result)
-#
-#             # performance metrics
-#             cfaHalf_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-#                                                         thetaHalfSorted.head(kay)["score"].to_numpy(),
-#                                                         k=kay)
-#             cfaHalf_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
-#                                                                           thetaHalfSorted.head(kay)["score"].to_numpy())[0]
-#
-#             # group fairness metrics
-#             cfaHalf_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaHalfSorted.head(kay), cfaHalf_result)
-#             cfaHalf_result = cfaHalf_result.sort_values(by=['group'])
-#             cfaHalf_result.to_csv(evalDir + experiment + "/" + kString + "_cfaHalfResult.csv")
 
             # eval for CFA algorithm with theta=1
             print("\nCFA 1.0 eval")
