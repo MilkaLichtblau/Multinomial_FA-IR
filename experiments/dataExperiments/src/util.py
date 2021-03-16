@@ -106,6 +106,13 @@ def positionBias(ranking):
     return totalPositionBias
 
 
+def aucLossWRTColorblind(colorblindRanking, fairRanking, inputData):
+
+    result = 1
+
+    return result
+
+
 def selectionUtilityLossPerGroup(remainingRanking, fairRanking, result):
     # add column to result frame
     result["selectUtilLoss"] = 0.0

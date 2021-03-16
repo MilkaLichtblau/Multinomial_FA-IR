@@ -54,7 +54,9 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             thetaOneSorted = thetaOneRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
             thetaOneSorted = thetaOneSorted.reset_index(drop=True)
 
+            #####################################################
             # eval for Multinomial FA*IR
+            #####################################################
             print("\nFA*IR Eval")
             kay = len(fairRanking)
             multi_fair_result = pd.DataFrame()
@@ -71,12 +73,22 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
                                                                              fairRanking["score"].to_numpy())[0]
 
+            if "compas" in fairRankingFilename:
+                # calculate AUC loss for compas experiments
+                inputData = pd.read_csv("", header=0, skipinitialspace=True)
+                multi_fair_result["aucLoss"] = aucLossWRTColorblind(colorblindRanking["score"].to_numpy(),
+                                                                    fairRanking["score"].to_numpy(),
+                                                                    k=kay,
+                                                                    inputData)
+
             # group fairness metrics
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
             multi_fair_result = multi_fair_result.sort_values(by=['group'])
             multi_fair_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_multiFairResult.csv")
 
+            #####################################################
             # eval for CFA algorithm with theta=1
+            #####################################################
             print("\nCFA 1.0 eval")
             tailLength = len(thetaOneSorted) - kay
             cfaOne_result = pd.DataFrame()

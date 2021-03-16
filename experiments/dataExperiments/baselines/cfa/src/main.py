@@ -157,8 +157,8 @@ def main():
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/COMPAS/compas_age_java.csv',
-                        '../../data/COMPAS/compas_age_groups.csv',
+                        '../../../data/COMPAS/compas_age_java.csv',
+                        '../../../data/COMPAS/compas_age_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'compas_race':
@@ -167,8 +167,8 @@ def main():
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/COMPAS/compas_race_java.csv',
-                        '../../data/COMPAS/compas_race_groups.csv',
+                        '../../../data/COMPAS/compas_race_java.csv',
+                        '../../../data/COMPAS/compas_race_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'compas_worstThreeGroups':
@@ -179,8 +179,8 @@ def main():
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/COMPAS/compas_worstThreeGroups_java.csv',
-                        '../../data/COMPAS/compas_worstThreeGroups_groups.csv',
+                        '../../../data/COMPAS/compas_worstThreeGroups_java.csv',
+                        '../../../data/COMPAS/compas_worstThreeGroups_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'LSAT_sexRace':
@@ -191,8 +191,8 @@ def main():
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/LSAT/LSAT_sexRace_java.csv',
-                        '../../data/LSAT/LSAT_sexRace_groups.csv',
+                        '../../../data/LSAT/LSAT_sexRace_java.csv',
+                        '../../../data/LSAT/LSAT_sexRace_groups.csv',
                         'score',
                         groupNames)
     elif sys.argv[1] == 'germanCredit_sexAge':
@@ -205,8 +205,8 @@ def main():
         rerank_with_cfa(score_stepsize,
                         thetas,
                         result_dir,
-                        '../../data/GermanCredit/germanCredit_sexAge_java.csv',
-                        '../../data/GermanCredit/germanCredit_sexAge_groups.csv',
+                        '../../../data/GermanCredit/germanCredit_sexAge_java.csv',
+                        '../../../data/GermanCredit/germanCredit_sexAge_groups.csv',
                         'score',
                         groupNames)
     else:
