@@ -15,17 +15,6 @@ def parseMinprops(minpropString):
     return floatMinProps
 
 
-def rollDice(massDist):
-    randRoll = random.random()  # in [0,1]
-    summ = 0
-    result = 0
-    for mass in massDist:
-        summ += mass
-        if randRoll < summ:
-            return result
-        result += 1
-
-
 def main():
     origRanking = pd.read_csv(sys.argv[1], header=0, skipinitialspace=True)
     minProps = parseMinprops(sys.argv[2])
@@ -46,11 +35,7 @@ def main():
         groupArrays[groupToPut] = groupArrays.get(groupToPut)[1:]
         fairRanking = fairRanking.append(candidate)
 
-    # save remaining candidates for later evaluation in colorblind ranking
-    remainings = pd.concat(groupArrays.values(), ignore_index=True)
-
     fairRanking.to_csv(outputFilename, header=True, index=False)
-    remainings.to_csv(outputFilename[:-4] + "_remaining" + outputFilename[-4:], header=True, index=False)
 
 
 if __name__ == '__main__':
