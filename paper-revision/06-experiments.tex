@@ -143,7 +143,9 @@ We set the vectors $p_G$ to $p_{\text{stat}}=[0.353,0.084,0.076]$ and $p_{\text{
 
 The baseline methods for comparison that we use are the following:
 
-\spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}).
+\spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}) \textcolor{blue}{and therefore maximizes selection and ordering utility.
+	%
+	We evaluate all methods relative to the metrics achieved by the colorblind ranking, i.e. we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
 
 \spara{Baseline 2: \citet{zehlike2020matching}.} This is a post-processing method named Continuous Fairness Algorithm (CFA$\theta$)\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
 %
@@ -161,6 +163,18 @@ Hence this method is comparable to our method only if all values in $p_G$ are le
 %
 In our experiments we therefore only compare \algoFAIR with $p_{\text{stat}}$ to CFA$\theta$ with $\theta=1$, as higher $p$-values are not comparable.
 
+\textcolor{blue}{\spara{Baseline 3: Rolling a $|G|$-sided dice at each position.} We adopt the statistical binomial process by~\cite{yang2016measuring} to a setting in which more than one protected group is present. 
+	%
+	Each side of the dice represents one group $g \in G$ and shows with probability $p_g$.
+	%
+	Starting with the first position, we roll the dice, put the best available candidate from the group whose side is showing and repeat the process for each of the top-$k$.
+	%
+	We note that this procedure, if repeated many times, will approximate the results of our methods. 
+	%
+	The difference is that our method is deterministic and therefore guarantees a certain share of visibility for each group.
+%
+We further not that the results we report are only taken w.r.t. one dice rolling experiment, hence another instance may show different utility losses and fairness gains.
+}
 
 \spara{Utility (Performance Measure). } We report the loss in ranked utility after score normalization, in which all $q_i$ are normalized to be within $[0, 1]$.
 %
