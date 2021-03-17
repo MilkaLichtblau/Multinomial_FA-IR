@@ -14,4 +14,4 @@ cd $PATH_TO_JAR
 
 # p matches percentages of groups in dataset (statistical parity)
 echo "Multi FAIR with p as statistical parity"
-java -jar Multinomial_FA-IR.jar data $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv 200 0.49,0.35,0.084,0.076 0.1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace
+java -jar Multinomial_FA-IR.jar data $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv 300 0.49,0.35,0.084,0.076 0.1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace

@@ -28,12 +28,13 @@ def main():
 
 def evaluate(rankingsDir, evalDir, experimentNames):
     for experiment in experimentNames:
-        print(experiment)
-        allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_fair.csv")
+        print("\nEXPERIMENT: " + experiment)
+        allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*alpha*" + "*_fair.csv")
         allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
-        allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_remaining.csv")
+        allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*alpha*" + "*_remaining.csv")
         CFAOneFilename = glob.glob(rankingsDir + experiment + "/" + "*_theta=1.csv")[0]
-        allDiceRollFilenames = glob.glob(rankingsDir + experiment + "/" + "*_dice_*")[0]
+        allDiceRollFairFilenames = glob.glob(rankingsDir + experiment + "/" + "*_dice_" + "*_fair.csv")
+        allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_dice_" + "*_remaining.csv")
 
         # get all files with corresponding k
         for fairRankingFilename in allFairRankingFilenames:
@@ -52,10 +53,6 @@ def evaluate(rankingsDir, evalDir, experimentNames):
                                             skipinitialspace=True)
 
             # load baseline rankings
-            diceRollRanking = pd.read_csv([string for string in allDiceRollFilenames if ((pString in string) and (kString in string))][0],
-                                           header=0,
-                                           skipinitialspace=True)
-
             thetaOneRanking = pd.read_csv(CFAOneFilename, header=0)
             thetaOneSorted = thetaOneRanking.sort_values(by=['fairScore', 'uuid'], ascending=[False, True])
             thetaOneSorted = thetaOneSorted.reset_index(drop=True)
@@ -79,13 +76,13 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
                                                                              fairRanking["score"].to_numpy())[0]
 
-            if "compas" in fairRankingFilename:
-                # calculate AUC loss for compas experiments
-                inputData = pd.read_csv("", header=0, skipinitialspace=True)
-                multi_fair_result["aucLoss"] = aucLossWRTColorblind(colorblindRanking["score"].to_numpy(),
-                                                                    fairRanking["score"].to_numpy(),
-                                                                    k=kay,
-                                                                    inputData)
+#             if "compas" in fairRankingFilename:
+#                 # calculate AUC loss for compas experiments
+#                 inputData = pd.read_csv("", header=0, skipinitialspace=True)
+#                 multi_fair_result["aucLoss"] = aucLossWRTColorblind(colorblindRanking["score"].to_numpy(),
+#                                                                     fairRanking["score"].to_numpy(),
+#                                                                     k=kay,
+#                                                                     inputData)
 
             # group fairness metrics
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
@@ -119,23 +116,36 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             #####################################################
             # eval for dice roll algorithm
             #####################################################
+
+            # do this evaluation only if dice roll experiments exists for given k
+            try:
+                diceRollFairRanking = pd.read_csv([string for string in allDiceRollFairFilenames if ((pString in string) and (kString in string))][0],
+                                               header=0,
+                                               skipinitialspace=True)
+                diceRollRemainingRanking = pd.read_csv([string for string in allDiceRollRemainingFilenames if ((pString in string) and (kString in string))][0],
+                                               header=0,
+                                               skipinitialspace=True)
+            except:
+                # no dice roll experiment results found for current k and p, so we don't want to evaluate
+                continue
+
             print("\ndice roll eval")
             diceRoll_result = pd.DataFrame()
             diceRoll_result["group"] = fairRanking['group'].unique()
 
             # individual fairness metrics
-            diceRoll_result = selectionUtilityLossPerGroup(thetaOneSorted.tail(tailLength), thetaOneSorted.head(kay), diceRoll_result)
-            diceRoll_result = orderingUtilityLossPerGroup(colorblindRanking, thetaOneSorted.head(kay), diceRoll_result)
+            diceRoll_result = selectionUtilityLossPerGroup(diceRollRemainingRanking, diceRollFairRanking, diceRoll_result)
+            diceRoll_result = orderingUtilityLossPerGroup(colorblindRanking, diceRollFairRanking, diceRoll_result)
 
             # performance metrics
             diceRoll_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                       thetaOneSorted.head(kay)["score"].to_numpy(),
-                                                       k=kay)
+                                                         diceRollFairRanking["score"].to_numpy(),
+                                                         k=kay)
             diceRoll_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
-                                                                         thetaOneSorted.head(kay)["score"].to_numpy())[0]
+                                                                         diceRollFairRanking.head(kay)["score"].to_numpy())[0]
 
             # group fairness metrics
-            diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), thetaOneSorted.head(kay), diceRoll_result)
+            diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), diceRollFairRanking.head(kay), diceRoll_result)
             diceRoll_result = diceRoll_result.sort_values(by=['group'])
             diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_diceRollResult.csv")
 

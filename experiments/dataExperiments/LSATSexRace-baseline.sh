@@ -7,7 +7,7 @@ PATH_TO_DICEROLL_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/dicer
 PATH_TO_LSAT_DATA=$GIT_ROOT/experiments/dataExperiments/data/LSAT
 PATH_TO_LSAT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/LSAT/rankings
 
-k=200
+k=300
 minpropsParity=0.49,0.35,0.084,0.076
 minpropsEqual=0.25,0.25,0.25,0.25
 

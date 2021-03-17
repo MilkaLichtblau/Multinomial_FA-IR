@@ -48,8 +48,9 @@ def main():
 
     # save remaining candidates for later evaluation in colorblind ranking
     remainings = pd.concat(groupArrays.values(), ignore_index=True)
+    remainings = remainings.sort_values(by=['score', 'uuid'], ascending=[False, True])
 
-    fairRanking.to_csv(outputFilename, header=True, index=False)
+    fairRanking.to_csv(outputFilename[:-4] + "_fair" + outputFilename[-4:], header=True, index=False)
     remainings.to_csv(outputFilename[:-4] + "_remaining" + outputFilename[-4:], header=True, index=False)
 
 
