@@ -1,5 +1,24 @@
 %!TeX root=main.tex
 \section{Conclusions}\label{sec:conclusions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HAD TO MOVE FIGURE FROM EXPERIMENTS HERE, OTHERWISE HALF OF A PAGE IS BLANK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+	\vspace{-5mm}
+	\centering
+	\subfloat[Exposure loss for the non-protected group. \label{fig:experiments:compasAge:expGain:groupNP}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroupNP.png}}
+	\subfloat[Exposure gain/loss for group ``age 25 -- 45''. \label{fig:experiments:compasAge:expGain:group1}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup1.png}}\hfill
+	\subfloat[Exposure gain for group ``age < 25''. \label{fig:experiments:compasAge:expGain:group2}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup2.png}}
+	\subfloat[NDCG loss. \label{fig:experiments:compasAge:ndcgloss}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-ndcgLoss.png}}
+	\vspace{-3mm}
+	\caption{Normalized exposure gain/loss and NDCG loss w.r.t. the colorblind ranking in experiment D2 (COMPAS with age as protected category) for different values of $p_1$ and $p_2$ ($k=200, \alpha=0.1$).
+		%
+		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
+		%
+		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
+	}
+	\label{fig:results-moving-p}
+\end{figure}
 
 In this paper we presented the extension of \algoFAIR to multiple groups, where we guarantee ranked group fairness, without introducing a large utility loss.
 %

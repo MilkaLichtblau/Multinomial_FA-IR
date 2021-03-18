@@ -292,16 +292,18 @@ Also remember that results of CFA$\theta$ are only comparable to a \algoFAIR $p_
 %
 We therefore group those results together that allow for a meaningful comparison.
 %
-With the $p_{\text{eq}}$ setting, we illustrate the flexibility of our approach compared to CFA$\theta$.
+With the $p_{\text{eq}}$ setting, we illustrate the flexibility of our approach compared to CFA$\theta$, which can achieve statistical parity at maximum.
 
 First, we observe that, for \algoFAIR $p_{\text{stat}}$ and CFA$\theta$, in general changes in NDCG with respect to the color-blind ranking are minor.
 %
 This can be explained as the utility is dominated by the top positions, which usually do not change dramatically.
+%
+However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of Kendall's tau, which means that the fair rankings constructed by CFA$\theta$ have a lot more ordering inversions w.r.t. the colorblind ranking than those constructed by \algoFAIR. 
 
 Second we see that in experiments D1 and D5 \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well at first glance.
 %
 While the former yields better numbers in terms of utility, with the latter the protected groups gain higher exposure.
-
+%
 \begin{table}[t!]
 	\caption{Experimental results, changes of individual utility loss respect to colorblind results.
 		%
@@ -347,8 +349,8 @@ While the former yields better numbers in terms of utility, with the latter the 
 			D3 -- COMPAS, 			& \algoFAIR  $p_{\text{eq}}$ 	& $[0.60, 0.26, 0.00, 0.37]$ 	& $[206, 0, 0, 0]$ 		& $[0.60, 0.26, 0.00, 0.37]$ \\
 			k=300,					& dice roll $p_{\text{eq}}$ 	& $[0.63, 0.37, 0.00, 0.49]$ & $[209, 0, 0, 0]$ 	& $[0.71, 0.37, 0.00, 0.49]$ \\
 									\cline{2-5}
-			3 worst off (3 prot.)	& \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03, 0.00, 0.02]$ 	& $[38, 0,0,0]$ 				& $[0.17, 0.01,0.01, 0.00] $  \\
-								 	& CFA$\theta$ 					& $[0.15, 0.01, 0.00, 0.00] $ & $[268, 0, ^0, 0]$ 	& $[0.15, 0.00, 0.00, 0.00]$   \\
+			3 worst off (3 prot.)	& \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03, 0.00, 0.02]$ & $[38, 0, 0, 0]$ 				& $[0.17, 0.01,0.01, 0.00] $  \\
+								 	& CFA$\theta$ 					& $[0.15, 0.01, 0.00, 0.00] $ & $[268, 0, 0, 0]$ 	& $[0.15, 0.00, 0.00, 0.00]$   \\
 									& dice roll $p_{\text{stat}}$ 	& $[0.20, 0.001, 0.006, 0.02]$ & $[62, 0, 0, 0]$ 		& $[0.20, 0.01, 0.03, 0.00]$ \\
 
 			\midrule
@@ -372,10 +374,10 @@ While the former yields better numbers in terms of utility, with the latter the 
 		\end{tabular}
 	}
 \end{table}
-
+%
 Nonetheless, we found a very important drawback in the results of CFA$\theta$ in experiment D2: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
-Consider Table~\ref{tbl:results-part-two} where we observe a maximum rank drop for the non-protected group of 159 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (266).
+Consider Table~\ref{tbl:results-part-two} where we observe a maximum rank drop for the non-protected group of 159 for CFA$\theta$, which at first glance is less than \algoFAIR with $p_{\text{stat}}$ (287).
 %
 However, we found the following problems when closely investigating the result: the candidate that experienced the drop in 159 ranks was the \emph{only non-protected} candidate left in the top-500 after applying CFA$\theta$, and their original ranking position was 341 (now 500).
 %
@@ -383,28 +385,22 @@ This means that the originally best candidate from the non-protected group (rank
 %
 We suspect that this is because the method can not handle ties well.
 %
-If lots of candidates have similar original scores, the fair representation scores may have large ties in which candidates are ordered randomly and not w.r.t. their original ordering.
+If lots of candidates have very similar original scores, the fair representation scores may have large ties in which candidates are ordered randomly and not w.r.t. their original ordering.
 %
-In such a setting, \algoFAIR has an important advantage: it guarantees in-group monotonicity, because candidates are separated into group rankings which are sorted by decreasing qualifications.
+In such a setting, \algoFAIR has an important advantage: it guarantees in-group monotonicity, because candidates are separated into group rankings which are sorted by decreasing \emph{original} qualifications.
 %
 No matter which group has to be picked at the current position, the respective candidate will always be the best available from that group.
 %
 This means while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
 %
-In their work this problem is not yet described as a weakness of CFA$\theta$ by~\citet{zehlike2020matching}.
+This problem also explains the large differences between the methods in Kendall's Tau.
 
-Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D3: it can not handle data sets with very small groups or groups that show low variance.
+Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D4: it can not handle data sets with very small groups or groups that show low variance.
 %
-For D3, note first that none of the protected candidates is part of the top-300 positions in the colorblind ranking.
-%
-As two of the protected groups are very small, they are not ranked into the top-300 fair ranking by CFA$\theta$, but only the largest protected group (young, male PoC) is ranked among the top-300.
+It increases the exposure of the non-protected group while decreasing it for the oldest males, and youngest males and females.
 %
 In contrast, \algoFAIR $p_{\text{stat}}$ can handle very small groups, and gives them sufficient exposure that is in line with the minimum proportions $p_G$.
 %
-The same is true for experiment D4: CFA$\theta$ can not handle the smaller groups well.
-%
-It increases the exposure of the non-protected group while decreasing it for the oldest males and youngest females.
-
 For experiment D4 we observe an interesting advantage of \algoFAIR: the youngest and oldest males experience a high rank drop (31 and 22) with CFA$\theta$ compared to \algoFAIR $p_{\text{stat}}$, even though they belong to the protected groups.
 %
 This is because they receive exposure values higher than average in the $cb|_k$, i.e. these two groups have the best scores.
@@ -414,25 +410,16 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 \algoFAIR, in contrast, ranks candidates based on their scores, as soon as the ranked group fairness conditions are met for each group.
 %
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HAD TO MOVE FIGURE FROM EXPERIMENTS HERE, OTHERWISE HALF OF A PAGE IS BLANK
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t!]
-	\vspace{-5mm}
-	\centering
-	\subfloat[Exposure loss for the non-protected group. \label{fig:experiments:compasAge:expGain:groupNP}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroupNP.png}}
-	\subfloat[Exposure gain/loss for group ``age 25 -- 45''. \label{fig:experiments:compasAge:expGain:group1}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup1.png}}\hfill
-	\subfloat[Exposure gain for group ``age < 25''. \label{fig:experiments:compasAge:expGain:group2}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup2.png}}
-	\subfloat[NDCG loss. \label{fig:experiments:compasAge:ndcgloss}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-ndcgLoss.png}}
-	\vspace{-3mm}
-	\caption{Normalized exposure gain/loss and NDCG loss w.r.t. the colorblind ranking in experiment D2 (COMPAS with age as protected category) for different values of $p_1$ and $p_2$ ($k=200, \alpha=0.1$).
-		%
-		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
-		%
-		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
-	}
-	\label{fig:results-moving-p}
-\end{figure}
+
+When considering the dice rolling experiments, we see our expectations of non-consistent behavior confirmed. 
+%
+This can be explained by the involved randomness of the dice rolling procedure. 
+%
+We observe that in experiments D2 and D3 \algoFAIR $p_\text{eq}$ and \emph{dice roll} $p_\text{eq}$ yield very similar results.
+%
+However in experiments D4 and D5 \algoFAIR $p_\text{stat}$ and \emph{dice roll} $p_\text{stat}$ yield very different results, even though the underlying stochastic process of the two methods is the same.
+%
+In contrast to a dice rolling process, \algoFAIR constructs fair rankings in a deterministic way and therefore always guarantees a minimum fairness for each protected group. 
 
 \spara{A wide range of possibilities to set $p_G$.}
 %
