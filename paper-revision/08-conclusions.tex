@@ -33,6 +33,8 @@ A protected candidate can only lose exposure due to a protected candidate from a
 Additionally the user can control the degree of fairness that is obtained in the result by setting $p_G$ to a value that is appropriate for the situation at hand.
 %
 This lets them transparently control the trade-off between fairness and utility, instead of having a less intuitive fairness parameter $\theta$ that operates on the barycenter of group distributions.
+%
+By reporting the largest utility loss and rank drop that an individual receives, we explicitly expressed trade-offs from our group fairness criterion to individual fairness as defined by~\citet{Dwork2012}. 
 
 \spara{Future work.}
 %
@@ -61,6 +63,12 @@ However further research has to be conducted to study the effect on users of re-
 \changed{This is an empirical question that needs to be addressed through user studies; approaches based on simulating clicks using pre-existing user preferences, such as the one used by \citet{abdollahpouri2021user}, may not uncover the actual interplay between the displayed ranking and latent user preferences.}
 %
 Additionally, further experimental research using synthetic data could allow us to test with a wider range of differences across groups, larger than the one that real datasets exhibit.
+%
+\changed{This can help us better understand the trade-offs between individual losses and increased group fairness. 
+%
+Our experiments show that, while decreases in NDCG are often neglectible, the rank drop for an unlucky individual candidate from the non-protected group can still be large. 
+%
+An interesting next step for our method would be to use individual rank drops as input for a second fairness-enhancing method, that could try to optimize for individual fairness, while maintaining the ordering of groups that is required by a given mTree.}
 %
 Finally, robustness tests to measure the sensitivity of the rankings to noise in the qualification/score inputs could be helpful to determine to what extent they may affect our fairness objectives.
 

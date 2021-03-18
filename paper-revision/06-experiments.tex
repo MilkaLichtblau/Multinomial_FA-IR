@@ -143,7 +143,7 @@ We set the vectors $p_G$ to $p_{\text{stat}}=[0.353,0.084,0.076]$ and $p_{\text{
 
 The baseline methods for comparison that we use are the following:
 
-\spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}) \textcolor{blue}{and therefore maximizes selection and ordering utility.
+\spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}) \changed{and therefore maximizes selection and ordering utility.
 	%
 	We evaluate all methods relative to the metrics achieved by the colorblind ranking, i.e. we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
 
@@ -163,7 +163,7 @@ Hence this method is comparable to our method only if all values in $p_G$ are le
 %
 In our experiments we therefore only compare \algoFAIR with $p_{\text{stat}}$ to CFA$\theta$ with $\theta=1$, as higher $p$-values are not comparable.
 
-\textcolor{blue}{\spara{Baseline 3: Rolling a $|G|$-sided dice at each position.} We adopt the statistical binomial process by~\cite{yang2016measuring} to a setting in which more than one protected group is present. 
+\changed{\spara{Baseline 3: Rolling a $|G|$-sided dice at each position.} We adopt the statistical binomial process by~\cite{yang2016measuring} to a setting in which more than one protected group is present. 
 	%
 	This corresponds to the roll of a $|G|$-sided dice at each position in the top-$k$, where we put the best available candidate from the group whose side is showing.
 	%
@@ -187,7 +187,7 @@ We report a normalized weighted summation (Normalized Discounted Cummulative Gai
 %%
 This is normalized so that the maximum value is $1.0$.
 
-\textcolor{blue}{\spara{Kendall's Tau (Performance Measure). } We report the similarity of the fair candidate orderings w.r.t. the colorblind ranking in terms of the Kendall Tau correlation coefficient. 
+\changed{\spara{Kendall's Tau (Performance Measure). } We report the similarity of the fair candidate orderings w.r.t. the colorblind ranking in terms of the Kendall Tau correlation coefficient. 
 	%
 	A value close to 1 indicates that the two rankings are very similar, while a value close to -1 indicates strong dissimilarity}.
 
@@ -229,8 +229,8 @@ We show that large increases in average group exposure can be achieved with rela
 	\vspace{-4mm}
 	\resizebox{1.02\columnwidth}{!}{%
 	\centering\begin{tabular}{llcccc}\toprule
-   					&			& Exposure gain 	& Exposure gain		&   total   	& Kendall\\
-		Experiment	& Method 	& per prot. group 	& non-prot. group 	& NDCG loss  	& Tau\\
+   					&			& Exposure gain 	& Exposure gain		&   total   	& \changed{Kendall}\\
+		Experiment	& Method 	& per prot. group 	& non-prot. group 	& NDCG loss  	& \changed{Tau}\\
 
 		\midrule
 		\midrule
@@ -284,7 +284,7 @@ Table~\ref{tbl:results-part-one} and~\ref{tbl:results-part-two} summarize the re
 %
 We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$).
 %
-We report experimental results for the dice rolling baseline using same probability vectors $p_G$ as for \algoFAIR.
+\changed{We report experimental results for the dice rolling baseline using same probability vectors $p_G$ as for \algoFAIR.}
 %
 The actual values for $p_G$ are given in the dataset descriptions in Section~\ref{sec:experiments-datasets}.
 %
@@ -298,7 +298,7 @@ First, we observe that, for \algoFAIR $p_{\text{stat}}$ and CFA$\theta$, in gene
 %
 This can be explained as the utility is dominated by the top positions, which usually do not change dramatically.
 %
-However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of Kendall's tau, which means that the fair rankings constructed by CFA$\theta$ have a lot more ordering inversions w.r.t. the colorblind ranking than those constructed by \algoFAIR. 
+\changed{However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of Kendall's tau, which means that the fair rankings constructed by CFA$\theta$ have a lot more ordering inversions w.r.t. the colorblind ranking than those constructed by \algoFAIR. }
 
 Second we see that in experiments D1 and D5 \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well at first glance.
 %
@@ -317,7 +317,7 @@ While the former yields better numbers in terms of utility, with the latter the 
 		%
 		%With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
 		%
-		Experiments that allow for meaningful comparisons are grouped together.
+		\changed{Experiments that allow for meaningful comparisons are grouped together.}
 	}
 	\vspace{-4mm}
 	\label{tbl:results-part-two}
@@ -393,7 +393,7 @@ No matter which group has to be picked at the current position, the respective c
 %
 This means while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
 %
-This problem also explains the large differences between the methods in Kendall's Tau.
+\changed{This problem also explains the large differences between the methods in Kendall's Tau.}
 
 Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D4: it can not handle data sets with very small groups or groups that show low variance.
 %
@@ -411,19 +411,19 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 %
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 
-When considering the dice rolling experiments, we see our expectations of non-consistent behavior confirmed. 
-%
-This can be explained by the involved randomness of the dice rolling procedure. 
-%
-We observe that in experiments D2 and D3 \algoFAIR $p_\text{eq}$ and \emph{dice roll} $p_\text{eq}$ yield very similar results.
-%
-However in experiments D4 and D5 \algoFAIR $p_\text{stat}$ and \emph{dice roll} $p_\text{stat}$ yield very different results, even though the underlying stochastic process of the two methods is the same.
-%
-In contrast to a dice rolling process, \algoFAIR constructs fair rankings in a deterministic way and therefore always guarantees a minimum fairness for each protected group. 
+\changed{When considering the dice rolling experiments, we see our expectations of non-consistent behavior confirmed. 
+	%
+	This can be explained by the involved randomness of the dice rolling procedure. 
+	%
+	We observe that in experiments D2 and D3 \algoFAIR $p_\text{eq}$ and \emph{dice roll} $p_\text{eq}$ yield very similar results.
+	%
+	However in experiments D4 and D5 \algoFAIR $p_\text{stat}$ and \emph{dice roll} $p_\text{stat}$ yield very different results, even though the underlying stochastic process of the two methods is the same.
+	%
+	In contrast to a dice rolling process, \algoFAIR constructs fair rankings in a deterministic way and therefore always guarantees a minimum fairness for each protected group. }
 
 \spara{A wide range of possibilities to set $p_G$.}
 %
-An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with the baseline (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
+An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with CFA$\theta$ (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
 
 Figure~\ref{fig:results-moving-p} shows results when varying $p_1$ and $p_2$ in data set D2: COMPAS, the protected groups are people of age 25--45 ($p_1$) and people under 25 years ($p_2$).
 %
@@ -444,3 +444,4 @@ This experiment shows that \algoFAIR allows a wide range of positive actions, fo
 In this case, the Figure~\ref{fig:experiments:compasAge:ndcgloss} shows that we can double the proportion of young people in the top-$k$ ranking (e.g. from 0\% in the original up to 40\% in the fair ranking) without introducing a large drop for the other protected group loss: in the colorblind ranking they received exposure equivalent to $0.4 > p_1 > 0.5$, so setting $p_1 = p_2 = 0.4$ only causes an exposure drop of 5.8\%.
 %
 At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when favoring young people with $p_2=0.8$.
+%
