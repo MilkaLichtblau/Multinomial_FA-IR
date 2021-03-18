@@ -73,16 +73,8 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             multi_fair_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                            fairRanking["score"].to_numpy(),
                                                            k=kay)
-            multi_fair_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+            multi_fair_result["kendallTau"] = scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
                                                                              fairRanking["score"].to_numpy())[0]
-
-#             if "compas" in fairRankingFilename:
-#                 # calculate AUC loss for compas experiments
-#                 inputData = pd.read_csv("", header=0, skipinitialspace=True)
-#                 multi_fair_result["aucLoss"] = aucLossWRTColorblind(colorblindRanking["score"].to_numpy(),
-#                                                                     fairRanking["score"].to_numpy(),
-#                                                                     k=kay,
-#                                                                     inputData)
 
             # group fairness metrics
             multi_fair_result = averageGroupExposureGain(colorblindRanking.head(kay), fairRanking, multi_fair_result)
@@ -105,7 +97,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaOne_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                        thetaOneSorted.head(kay)["score"].to_numpy(),
                                                        k=kay)
-            cfaOne_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+            cfaOne_result["kendallTau"] = scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
                                                                          thetaOneSorted.head(kay)["score"].to_numpy())[0]
 
             # group fairness metrics
@@ -141,13 +133,13 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             diceRoll_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
                                                          diceRollFairRanking["score"].to_numpy(),
                                                          k=kay)
-            diceRoll_result["kendallTauLoss"] = 1 - scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+            diceRoll_result["kendallTau"] = scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
                                                                          diceRollFairRanking.head(kay)["score"].to_numpy())[0]
 
             # group fairness metrics
             diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), diceRollFairRanking.head(kay), diceRoll_result)
             diceRoll_result = diceRoll_result.sort_values(by=['group'])
-            diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_diceRollResult.csv")
+            diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResult.csv")
 
 
 if __name__ == '__main__':
