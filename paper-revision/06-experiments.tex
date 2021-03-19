@@ -147,7 +147,7 @@ The baseline methods for comparison that we use are the following:
 	%
 	We evaluate all methods relative to the metrics achieved by the colorblind ranking, i.e. we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
 
-\spara{Baseline 2: \citet{zehlike2020matching}.} This is a post-processing method named Continuous Fairness Algorithm (CFA$\theta$)\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
+\spara{Baseline 2: Continuous Fairness Algorithm (CFA$\theta$).} This is a post-processing method introduced by \citet{zehlike2020matching}\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
 %
 It aligns the score distributions of the protected candidates with the Wasserstein-barycenter of all group distributions.
 %
@@ -163,13 +163,13 @@ Hence this method is comparable to our method only if all values in $p_G$ are le
 %
 In our experiments we therefore only compare \algoFAIR with $p_{\text{stat}}$ to CFA$\theta$ with $\theta=1$, as higher $p$-values are not comparable.
 
-\changed{\spara{Baseline 3: Rolling a $|G|$-sided dice at each position.} We adopt the statistical binomial process by~\cite{yang2016measuring} to a setting in which more than one protected group is present. 
+\noindent\changed{\spara{Baseline 3: Categorical sampling or ``dice roll''.} We adapt the Bernoulli process of~\citet{yang2016measuring} to a multinomial setting, in which more than one protected group is present.
+%
+This corresponds to sequentially rolling a $|G|$-sided dice for each of the ranking positions $i=1, 2, \dots, k$, placing at ranking position $i$ the best available candidate from the group whose side is showing (with each candidate appearing at most once in the ranking).
+%
+Each side of the dice represents one group $g \in G$ and shows with probability $p_g$.
 	%
-	This corresponds to the roll of a $|G|$-sided dice at each position in the top-$k$, where we put the best available candidate from the group whose side is showing.
-	%
-	Each side of the dice represents one group $g \in G$ and shows with probability $p_g$.
-	%
-	We note that this procedure, if repeated many times, will approximate the results of \algoFAIR. 
+	We note that this procedure, if repeated many times, will approximate the results of \algoFAIR.
 	%
 	The difference is that our method is deterministic and therefore guarantees a certain share of visibility for each group.
 %
@@ -187,9 +187,9 @@ We report a normalized weighted summation (Normalized Discounted Cummulative Gai
 %%
 This is normalized so that the maximum value is $1.0$.
 
-\changed{\spara{Kendall's Tau (Performance Measure). } We report the similarity of the fair candidate orderings w.r.t. the colorblind ranking in terms of the Kendall Tau correlation coefficient. 
-	%
-	A value close to 1 indicates that the two rankings are very similar, while a value close to -1 indicates strong dissimilarity}.
+\noindent\changed{\spara{Kendall's Tau (Performance Measure). } We report the similarity of the fair candidate orderings w.r.t. the colorblind ranking in terms of Kendall's $\tau$ correlation coefficient.
+%
+A value close to 1 indicates strong similarity between the two rankings (with 1 meaning perfect agreement), a value close to -1 indicates strong dissimilarity (with -1 meaning perfectly reversed ordering), and a value of 0 indicates there is no correlation between the two rankings.}
 
 \spara{Exposure (Fairness Measure). } We use a measure of average group exposure, which we define as the average position bias that a group is exposed to.
 %
@@ -229,7 +229,7 @@ We show that large increases in average group exposure can be achieved with rela
 	\vspace{-4mm}
 	\resizebox{1.02\columnwidth}{!}{%
 	\centering\begin{tabular}{llcccc}\toprule
-   					&			& Exposure gain 	& Exposure gain		&   total   	& \changed{Kendall}\\
+   					&			& Exposure gain 	& Exposure gain		&   total   	& \changed{Kendall's}\\
 		Experiment	& Method 	& per prot. group 	& non-prot. group 	& NDCG loss  	& \changed{Tau}\\
 
 		\midrule
@@ -265,7 +265,7 @@ We show that large increases in average group exposure can be achieved with rela
 		sex \& age (5 prot.)	& \algoFAIR $p_{\text{stat}}$ 	&  $[0.01, 0.23, 0.38, 0.20, 0.01]$		& -0.83 &	0.0185	& 0.84 \\
 								& CFA$\theta$ 					&  $[0.34, -0.93, -0.66, -0.03, 0.28]$ 	& 1.00	& 0.0426	& 0.74 \\
 								& dice roll $p_{\text{stat}}$	& $[0.89, -1.24, -0.38, -0.33, 0.26]$	& 0.80		& 0.0560 & 0.66 \\
-								
+
 		\midrule
 		\midrule
 		D5 -- LSAT, 			& \algoFAIR $p_{\text{eq}}$ 	& $[-0.32, 10.71, 10.96]$ 	& -21.35 	& 0.0207 	& 0.08 \\
@@ -280,7 +280,7 @@ We show that large increases in average group exposure can be achieved with rela
 	}
 \end{table}
 %
-Table~\ref{tbl:results-part-one} and~\ref{tbl:results-part-two} summarize the results. 
+Table~\ref{tbl:results-part-one} and~\ref{tbl:results-part-two} summarize the results.
 %
 We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$).
 %
@@ -411,9 +411,9 @@ CFA$\theta$ moves \emph{all} score distributions towards the barycenter and thus
 %
 As such, a protected group can only lose exposure for another protected group, but never for the non-protected one.
 
-\changed{When considering the dice rolling experiments, we see our expectations of non-consistent behavior confirmed. 
+\changed{When considering the categorical sampling or ``dice rolling'' baseline, we see our expectations of non-consistent behavior confirmed.
 	%
-	This can be explained by the involved randomness of the dice rolling procedure. 
+	This can be explained by the involved randomness of the dice rolling procedure.
 	%
 	We observe that in experiments D2 and D3 \algoFAIR $p_\text{eq}$ and \emph{dice roll} $p_\text{eq}$ yield very similar results.
 	%
