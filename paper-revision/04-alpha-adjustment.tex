@@ -4,9 +4,9 @@
 \label{sec:fairness-verification}
 To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the \emph{inverse multinomial CDF} with parameters $k, p_G$ and $ \alpha $.
 %
-The inverse CDF takes as input a probability (in our case multiple probabilities $p_G$) and returns that value of a random variable, at which to the probability of the random variable being less than or equal to the returned value equals the input probability.
+The inverse CDF takes as input a probability (in our case multiple probabilities $p_G$) and returns that value of a random variable, at which the probability of said random variable being less than or equal to the returned value equals the input probability.
 %
-As the multinomial CDF is not injective and has hence no inverse, there is no quantile function that tells us exactly how many candidates are needed at each $ k $.
+As the multinomial CDF is not injective and hence has no inverse, there is no quantile function that tells us exactly how many candidates are needed at each $ k $.
 %
 Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $.
 %
@@ -17,17 +17,17 @@ Each tree level corresponds to the $k$-th position in the ranking and are to be 
 %
 As an example, consider tree level 4 in Fig.~\ref{fig:mtree-symmetric-unadjusted}.
 %
-At this level, we have three nodes ``[2,0],'' ``[1,1],'' and ``[0,2],'' each of them containing a set of minima for elements of the protected groups (the nodes do not include any minima for the non-protected group).
+At this level, we have three nodes ``(4, [2,0]),'' ``(4, [1,1]),'' and ``(4, [0,2])'' each of them containing a set of minima for elements of the protected groups (the nodes do not include any minima for the non-protected group).
 %
 This means it is acceptable to have among the first four elements in the ranking either at least 2 elements from protected group 1, or at least 1 element from each protected group, or at least 2 elements from protected group 2.
 %
 Note however, that nodes have parental relationships and that each \emph{path} corresponds to a fair distribution of protected candidates in the ranking.
 %
-Thus, if at level 4 we rank two candidates from protected group 1, thus satisfying the node with the asterisk in Fig.~\ref{fig:mtree-symmetric-unadjusted}, at level 5 have to satisfy either node ``[2,1],'' or node ``[3,0].''
+Thus, if at level 4 we rank two candidates from protected group 1, thus satisfying the node with the asterisk in Fig.~\ref{fig:mtree-symmetric-unadjusted}, at level 5 have to satisfy either node ``(5, [2,1])'' or node ``(5, [3,0]).''
 %
-The other nodes ``[1,1],'' ``[1,2],'' and ``[0,3]'' are not a child of node ``[2,0]'' and therefore cannot be considered to satisfy the ranked group fairness condition anymore.
+The other nodes ``(5, [1,1]),'' ``(5, [1,2]),'' and ``(5, [0,3])'' are not a child of node ``(4, [2,0])'' and therefore cannot be considered to satisfy the ranked group fairness condition anymore.
 %
-The tree is symmetric when the minimum proportions are equal, and asymmetric when the $p_g \in p_G$ are different.
+The tree is symmetric when the minimum proportions $p_g \in p_G$ are equal, and asymmetric when they are different.
 %
 \changed{In the asymmetric case, we note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.}
 %
