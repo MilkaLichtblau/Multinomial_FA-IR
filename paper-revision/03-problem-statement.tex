@@ -12,7 +12,7 @@ The notation used in this paper is summarized on Table~\ref{tbl:notation}.
 
 \subsection{Preliminaries and Notation}
 \label{subsec:preliminaries}
-For our setting we examine a set of candidates $[n] = \{ 1, 2, \dots, n \}$, where $k$ of them will be selected based on their respective qualification. We denote this ``utility'' of candidate $c$ for each $c \in [n]$ by $q_c$, which can be viewed as the fitness of candidate $c$ for the task at hand, or e.g. a search query. We assume this score to be given nd denote that it may be a weighted combination of several different attributes.
+For our setting we examine a set of candidates $[n] = \{ 1, 2, \dots, n \}$, where $k$ of them will be selected based on their respective qualification. We denote this ``utility'' of candidate $c$ for each $c \in [n]$ by $q_c$, which can be viewed as the fitness of candidate $c$ for the task at hand, or e.g. a search query. We assume this score to be given and denote that it may be a weighted combination of several different attributes.
 %
 If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases towards a protected group to be embodied in the model (see, e.g., \cite{Sweeney2013}).
 %
@@ -52,7 +52,7 @@ Let $\textit{cb}|_k = \langle \textit{cb}(1), \textit{cb}(2), \ldots, \textit{cb
 \CaptionMargin
 \label{tbl:notation}
 \small
-\begin{tabular}{R{.2\linewidth}L{.75\linewidth}}\toprule
+\begin{tabular}{R{.25\linewidth}L{.7\linewidth}}\toprule
 \multicolumn{2}{c}{Candidates} \\
 \midrule
 $[n]$ & Set of candidates \\
@@ -70,7 +70,7 @@ $\textit{cb}$ & The ``color-blind'' ranking of $[n]$ by decreasing $q_c$ \\
 \midrule
 \multicolumn{2}{c}{Group fairness criteria} \\
 \midrule
-$p_G~=~\left(p_1, p_2, \ldots, p_{|G|}\right)$ & Vector of minimum proportions for candidates of each protected group $ g > 0 $ \\
+$p_G~=~\left(p_1, p_2, \ldots, p_{|G|}\right)$ & Vector of minimum proportions for candidates of each protected group $ g > 0 $. The proportion $p_0$ of the non-protected group is implicitly given by $p_0 = 1 - \sum_{g \in G} p_g$. \\
 $\alpha$ & Significance value for ranked group fairness test \\
 $\alphaadj$ & Adjusted significance for each fair representation test \\
 \midrule
@@ -123,30 +123,32 @@ The process is repeated for \emph{every prefix} of the ranking.
 	\label{def:multinomialCDF}
 	% We do not need to cite this -- ChaTo
   %	Adopting the notation from~\cite{multinomcdf}
-	Let $ n \in \mathbb{N}$ be a number of trials where each trial results in one of the events $ E_1, E_2, \ldots, E_{|G|} $ and on each trial $ E_j $ occurs with probability $ p_j $.
+	Let $ n \in \mathbb{N}$ be a number of trials where each trial results in one of the events $ E_0, E_1, E_2, \ldots, E_{|G|} $ and on each trial $ E_j $ occurs with probability $ p_j $.
 	%
 	Let then $X$ %=\left\{X_1, X_2, \ldots, X_k\right\} $
-	be a set of random variables that is multinomially distributed $ X \sim \operatorname{Mult}(n, p)$ with parameters $ n $ and $ p = \langle p_1, p_2, \ldots, p_{|G|} \rangle$, and let $ X_j $ be the number of trials in which event $ E_j $ occurs.
+	be a set of random variables that is multinomially distributed $ X \sim \operatorname{Mult}(n, p)$ with parameters $ n $ and $ p = \langle p_0, p_1, p_2, \ldots, p_{|G|} \rangle$, and let $ X_j $ be the number of trials in which event $ E_j $ occurs.
 	%
 	We then define $ F\left(X; n, p\right) = P\left(E_1 \leq X_1, E_2 \leq X_2, \ldots, E_{|G|} \leq X_{|G|}\right)$ the multinomial cumulative distribution function which computes the probability that each event $ E_j $ occurs at most $ X_j $ times in $ n $ trials given probabilities $ p $.
 \end{definition}
 With the multinomial CDF the ranked group fairness criterion is formalized as a statistical significance test.
 %
-To express the probability of rejecting a fair ranking (i.e., a Type I error) we include a significance parameter ($\alpha \in [0,1]$).
+To express the probability of rejecting a fair ranking (i.e. a type-I-error) we include a significance parameter ($\alpha \in [0,1]$).
 
 \begin{definition}[Fair representation condition]
 	\label{def:fair-representation-condition}
 	% Using n and p because they're standard notation for binomials
 	Let $F(X;n,p)$ be the multinomial cumulative distribution function as defined above.
 	%
-	A set $\tau \subseteq \mathcal{T}_{k,n}$, having $\tau_G$ protected candidates from each group fairly represents all protected groups with minimal proportions $p_G = (p_1, p_2, \ldots, p_{|G|})$ and significance $\alpha$,
+	A ranking $\tau \subseteq \mathcal{T}_{k,n}$, having $\tau_G$ protected candidates from each group fairly represents all protected groups with minimal proportions $p_G = \langle p_1, \ldots, p_{|G|}\rangle$ and significance $\alpha$,
 	%
-	if $F(\tau_G;k,p_G) > \alpha$.
+	if $F(\tau_G;k,p_G) > \alpha$. 
+	%
+	The minimum proportion $p_0$ of the non-protected group is implicitly given by $p_0 = 1 - \sum_{g \in G} p_g$ and we will not include it explicitly in $p_G$ to be consistent with $\tau_G$.
 \end{definition}
 
-The fair representation condition implements a statistical test, with null hypothesis $H_0$ assuming that all protected groups are represented with a minimal proportion $p_t$ ($\forall g \in G, p_t \ge p_g$).
+The fair representation condition implements a statistical test, with null hypothesis $H_0$ assuming that all protected groups are represented with a minimal proportion.
 %
-The alternative hypothesis $H_a$ translates into an insufficient proportion of protected elements ($\exists g \in G: p_t < p_g$).
+The alternative hypothesis $H_a$ translates into an insufficient proportion of protected elements.
 %
 Our test setup sets the p-value to $F(\tau_G; k, p_G)$ and we reject $H_0$, hence announce the ranking under test to be unfair, if the p-value is less than or equal to the threshold $\alpha$.
 %
@@ -156,9 +158,9 @@ To obtain the ranked group fairness condition, we require the fair representatio
 
 \begin{definition}[Ranked group fairness condition]
 	\label{def:ranked-group-fairness-condition}
-	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(\alpha, k, p_G)$.
+	A ranking $\tau \in {\mathcal T}_{k,n}$ satisfies the ranked group fairness condition with parameters $p_G$ and $\alpha$, if for every prefix $\tau|_i = \langle \tau(1), \tau(2), \dots, \tau(i) \rangle$ with $1 \le i \le k$, the set $\tau|_i$ satisfies the fair representation condition with group target proportions $p$ and significance $\alphaadj = \adj(k, p_G, \alpha)$.
 	%
-	Function $\adj(\alpha, k, p_G)$ is a corrected significance to account for multiple hypotheses testing (described in Section~\ref{sec:model-adjustment}).
+	Function $\adj(k, p_G, \alpha)$ is a corrected significance to account for multiple hypotheses testing (described in Section~\ref{sec:model-adjustment}).
 \end{definition}
 
 We note there exists a solution space of rankings that satisfy this condition for a given 3-tuple $(k, p_G, \alpha)$, instead of just a single ranking as it is the case when only one protected group is present.

@@ -11,7 +11,7 @@ As the multinomial CDF is not injective and hence has no inverse, there is no qu
 Instead, there are various manifestations of $ \tau_G $ that satisfy the fair representation condition $F(\tau_G;k,p_G) > \alpha$, which is why the verification data structure has the shape of a tree for each $ p_G, k $ and $ \alpha $.
 %
 \input{pics/mTrees}
-Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = [1/3, 1/3]$.
+Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = \langle 1/3, 1/3 \rangle$.
 %
 Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, i.e. the root level corresponds to the first ranking position and so forth.
 %
@@ -164,7 +164,7 @@ For equal minimum proportions the tree branches into $|G| - 1$ symmetric nodes $
 %
 As an example reconsider the mTree from Figure~\ref{fig:mtree-symmetric-adjusted} at level 6.
 %
-For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $[1, 0]$ and $[0,1]$.
+For two protected groups with minimum proportions $[1/3, 1/3]$ we see that the tree branches into two symmetric nodes $(6, [1, 0])$ and $(6, [0,1])$.
 %
 Both have the same multinomial CDF values.
 %
@@ -174,7 +174,8 @@ This way we save half of the space and computation time needed, without loosing 
 
 Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
-Figures~\ref{fig:mtree-symmetric-adjusted} and~\ref{fig:mtree-asymmetric-adjusted} show the mTree structure with all parent-child relations as edges.
+Figure~\ref{fig:mtree-symmetric-adjusted} %and~\ref{fig:mtree-asymmetric-adjusted} 
+shows the mTree structure with all parent-child relations as edges.
 %
 We leave out these edges, thus reducing space, because we can prove that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
 
@@ -184,7 +185,7 @@ Before we can prove this property, we need to introduce the following definition
 \label{def:valid-mtree-test}
 Let $\tau$ be a ranking of size $k$ and $\tau_{G,i}=(\tau_{1},\ldots,\tau_{|G|})$ the numbers of ranked protected elements from group $1,\ldots,|G|$ up to position $i$.
 %
-Let furthermore $MT$ be a $mTree$, with $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
+Let furthermore $MT$ be a $mTree$, with node $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ giving the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
 %
 We write $\tau_{G,i} \geq m_{G,i}$ if $\tau_g \geq m_g$ for all $g=1,\ldots,|G|$.
 %
@@ -197,15 +198,15 @@ We prove this by showing that, if a ranking passes the test for any two nodes $n
 %
 Furthermore we show that all nodes at level $h+1$ for which the ranking fails the test are part of a path that already rejected it as unfair at level $h$.
 %
-Consider an example from Figure~\ref{fig:mtree-symmetric-adjusted} : Let us assume a ranking passes the test at level $9$ with exactly the required protected items $[1,1]$.
+Consider an example from Figure~\ref{fig:mtree-symmetric-adjusted} : Let us assume a ranking passes the test at level $8$ with exactly the required protected items $(8, [1,1])$.
 %
-Now lets assume that at level $10$, the given ranking would pass the test for node $[2,1]$, which is not a successor of $[1,1]$.
+Now lets assume that at level $9$, the given ranking would pass the test for node $(9, [2,1])$, which is not a successor of $(9, [1,1])$.
 %
-In fact we see that the actual successor of $[1,1]$ is a node with the same configuration $[1,1]$.
+In fact we see that the actual successor of $(8, [1,1])$ is a node with the same requirements $(9, [1,1])$.
 %
-However, if our ranking passes the test for the stricter node $[2,1]$, it also passes for $[1,1]$ and thus we do not need to know the true parent of $[2,1]$.
+However, if our ranking passes the test for the stricter node $(9, [2,1])$, it also passes for $(9, [1,1])$ and thus we do not need to know the true parent of $(9, [2,1])$.
 %
-Note that the ranking would fail at node $[3,0]$, but with $[1,1]$ at level 9 it would have failed already at $[3,0]$'s predecessor $[2,0]$.
+Note that the ranking would fail at node $(9, [3,0])$, but with $\tau_G = (1,1)$ at level 8 it would have failed already at $(9, [3,0])$'s predecessor $(8, [2,0])$.
 %
 \begin{theorem}
 \label{theorem:lazy-mTree-test}
@@ -370,13 +371,13 @@ In the worst case Algorithm~\ref{alg:imcdf} computes it $|G|+1$ times for each g
 %
 However, the same calculation may be done many times:
 %
-As an example consider the (fictive) mTree nodes $[2,1]$ and $[1,2]$ at position $k=3$.
+As an example consider the (fictive) mTree nodes $(3, [2,1])$ and $(3, [1,2])$ at position $k=3$.
 %
-To compute the successors of node $[2,1]$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$.
+To compute the successors of node $(3, [2,1])$ we call Algorithm~\ref{alg:imcdf} with arguments $(4,[2,1])$, $(4,[3,1])$ and $(4,[2,2])$.
 %
 We store the results of these calculation in a map that we call MCDF cache with the algorithm arguments ($k$ and the minimum protected candidates of each group) as key and the corresponding mcdf as value.
 %
-Next we compute the successors of node $[1,2]$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
+Next we compute the successors of node $(3, [1,2])$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
 %
 We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
 

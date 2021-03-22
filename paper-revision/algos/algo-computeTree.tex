@@ -36,7 +36,7 @@
 		\AlgComment{test whether the multinomial cdf is greater than $\alphaadj$, if one more candidate of group $j$ was required at postion $i$}
 			\tt temp[j] $\leftarrow$ temp[j] + 1\\
 			\tt mcdfTemp $\leftarrow F(\texttt{temp}; j, p_G)$ \\
-			\If{$\texttt{mcdf} > \alpha_c$}{
+			\If{$\texttt{mcdf} > \alphaadj$}{
 			\AlgComment{if yes, append the new requirement to the mTree}
 				children.add(temp)			
 			}

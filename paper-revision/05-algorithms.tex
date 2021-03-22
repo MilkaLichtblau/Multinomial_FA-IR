@@ -8,8 +8,8 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 	\caption{Algorithm \algoFAIR finds a ranking that maximizes utility subject to in-group monotonicity and ranked group fairness constraints. Checks for special cases (e.g., insufficient candidates of a class) are not included for clarity.}
 	\label{alg:fair}  % But whenever possible refer to this algo. by name not number
 	\small
-	\AlgInput{$k \in [n]$, the size of the list to return; $\forall~c \in [n]$: $q_c$, the qualifications for candidate $c$, and $g_c$ an indicator that is $>0$ iff candidate $c$ is protected; $p_G$ with $\forall p \in p_G \in ]0,1[$, the vector of minimum proportions for each group of protected elements; $\alphaadj \in ]0,1[$, the adjusted significance for each fair representation test.}
-	\AlgOutput{$\tau$ satisfying the group fairness condition with parameters $p, \sigma$, and maximizing utility.}
+	\AlgInput{$k \in [n]$, the size of the list to return; $\forall~c \in [n]$: $q_c$, the qualifications for candidate $c$, and $g_c$ an indicator that is $>0$ iff candidate $c$ is protected; $p_G$ with $\forall p_g \in (0,1)$, the vector of minimum proportions for each group of protected elements; $\alphaadj \in (0,1)$, the adjusted significance for each fair representation test.}
+	\AlgOutput{fair ranking $\tau^*$ satisfying the ranked group fairness condition (Def.~\ref{def:ranked-group-fairness-condition}).}
 	%\AlgComment{compute min. protected candidates per position}
 	$P_0, P_1, \ldots P_{|G|} \leftarrow$ empty priority queues with bounded capacity $k$\\
 	\For{$c \leftarrow 1$ \KwTo $n$}{
@@ -31,19 +31,19 @@ In this section we present the multinomial \algoFAIR algorithm (\S\ref{subsec:al
 			\If{$t_g < m_g(i)$}{\label{alg:fair:pstart}
 				\AlgComment{add a protected candidate}
 				$t_g \leftarrow t_g + 1$ \\
-				$\tau[i] \leftarrow \operatorname{pop}(P_g)$ \\
+				$\tau^*[i] \leftarrow \operatorname{pop}(P_g)$ \\
 				\texttt{noCandidateAdded = False}
 			}\label{alg:fair:pend}
 		}
 		\If{\texttt{noCandidateAdded}}{ \label{alg:fair:anystart}
 			\AlgComment{no protected candidate needed: add the best available}
 			$P_g \leftarrow$ \texttt{findBestCandidateQueue()} \\
-			$\tau[i] \leftarrow \operatorname{pop}(P_g)$\\
+			$\tau^*[i] \leftarrow \operatorname{pop}(P_g)$\\
 			$t_g \leftarrow t_g + 1$
 		}\label{alg:fair:anyend}
 
 	}
-	\Return{$\tau$}
+	\Return{$\tau^*$}
 \end{algorithm}
 
 \subsection{Algorithm Description}\label{subsec:algorithm-description}
@@ -62,7 +62,7 @@ The algorithm works as follows.
 %
 In the initialization, qualifications $q_c$ are used to create one ranked list of up to $k$ candidates for each of the protected groups ($P_g$) and for the non-protected group ($P_0$).
 %
-On line \ref{alg:fair:mtree}, the algorithm creates a ranked group fairness tree (mTree) similar to the one shown on Figure~\ref{fig:mtree-asymmetric-adjusted}, indicating the minimum number of protected candidates needed at every position. % group, given $p_G$, $k$ and $\alphaadj$.
+On line \ref{alg:fair:mtree}, the algorithm creates a ranked group fairness tree (mTree) similar to the one shown on Figure~\ref{fig:mtree-symmetric-adjusted}, indicating the minimum number of protected candidates needed at every position. % group, given $p_G$, $k$ and $\alphaadj$.
 %
 Then, the algorithm greedily merges the per-group rankings, making sure to satisfy the minimum number of protected elements required at each position.
 %
@@ -72,7 +72,7 @@ If we require a protected candidate from group $g$, the algorithm picks the high
 We observe that the
 choice of the group from which the element at position $i$ should be drawn, i.e., the node selected at level $i$, depends on the path chosen along the \texttt{mtree}. % and therefore on its concrete parent at level $i-1$.
 %
-In case there are multiple possibilities that satisfy ranked group fairness (as we saw in the example of Fig.~\ref{fig:mtree-asymmetric-adjusted} at level $k=4$), the algorithm selects the branch that has the higher probability (larger $F$), breaking ties at random.
+In case there are multiple possibilities that satisfy ranked group fairness (as we saw in the example of Fig.~\ref{fig:mtree-symmetric-adjusted} at level $k=6$), the algorithm selects the branch that has the higher probability (larger $F$), breaking ties at random.
 %
 %If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
 %
