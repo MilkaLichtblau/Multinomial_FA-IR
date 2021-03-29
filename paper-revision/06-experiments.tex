@@ -41,7 +41,7 @@ In this section, we consider several reference datasets for evaluating the multi
 	\label{fig:dataset:compas:sex}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_sex_kde.png}}\hfill
 	\subfloat
-	[Score distribution of white candidates and people of color in the COMPAS dataset. Experiment D1.
+	[Score distribution of white candidates and people of color (PoC) in the COMPAS dataset. Experiment D1.
 	\label{fig:dataset:compas:race}]
 	{\includegraphics[width=.48\textwidth]{pics/compas_race_kde.png}}\hfill
 	\subfloat
@@ -87,7 +87,7 @@ We calculated a candidate's overall score as a weighted summation of the columns
 %
 To break ties we added normally distributed random noise with $\mu=0, \sigma=0.00001$ to the score of each candidate.
 %
-Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``person of color'', age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
+Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``person of color'' (PoC), age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
 We observe in Figure~\ref{fig:dataset:compas} that PoC (\ref{fig:dataset:compas:race}), as well as males (\ref{fig:dataset:compas:sex}) are given a larger recidivism score than other groups.
 %
@@ -183,7 +183,7 @@ We also report the maximum rank drop, {\em i.e.}, the number of positions lost b
 
 \spara{NDCG (Performance Measure). }
 %
-We report a normalized weighted summation (Normalized Discounted Cummulative Gaing - NDCG) of the scores of the elements in the ranking, $\sum_{i=1}^{k} w_i q_{(\tau_i)}$, in which the weights are chosen to have a logarithmic discount in the position:  $w_i = \frac{1}{\log_2 (i+1)}$. This is a standard measure to evaluate search rankings~\cite{jarvelin2002cumulated}.
+We report a normalized weighted summation (Normalized Discounted Cumulative Gain - NDCG) of the scores of the elements in the ranking, $\sum_{i=1}^{k} w_i q_{(\tau_i)}$, in which the weights are chosen to have a logarithmic discount in the position:  $w_i = \frac{1}{\log_2 (i+1)}$. This is a standard measure to evaluate search rankings~\cite{jarvelin2002cumulated}.
 %%
 This is normalized so that the maximum value is $1.0$.
 
