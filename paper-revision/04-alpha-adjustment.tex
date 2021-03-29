@@ -2,7 +2,7 @@
 
 \section{Ranked Group Fairness Verification}
 \label{sec:fairness-verification}
-To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the inverse \emph{multinomial cumulative distribution function} (MCDF) with parameters $k, p_G$ and $ \alpha $.
+To verify ranked group fairness efficiently in time $O(k)$, a pre-computed data structure can be used, which is obtained by the \emph{inverse multinomial CDF} with parameters $k, p_G$ and $ \alpha $.
 %
 The inverse CDF takes as input a probability (in our case multiple probabilities $p_G$) and returns that value of a random variable, at which the probability of said random variable being less than or equal to the returned value equals the input probability.
 %
@@ -29,7 +29,7 @@ The other nodes ``(5, [1,1]),'' ``(5, [1,2]),'' and ``(5, [0,3])'' are not a chi
 %
 The tree is symmetric when the minimum proportions $p_g \in p_G$ are equal, and asymmetric when they are different.
 %
-\changed{We note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.}
+\changed{In the asymmetric case, we note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.}
 %
 %Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
 
@@ -213,23 +213,27 @@ Note that the ranking would fail at node $(9, [3,0])$, but with $\tau_G = (1,1)$
 Let $MT$ be a mTree and $\tau$ a ranking of size $k$.
 %
 There exists at least one successful test for $\tau$ at each level of $MT$,
-iff there exists a valid path from the root of $MT$ to a leaf of $MT$.
+iff there exists a \removed{valid} path from the root of $MT$ to a leaf of $MT$ \changed{where $\tau$ passes the test at each node on that path}.
 \end{theorem}
 %
 \meike{This proof is to be reviewed}
 \begin{proof}
 	\label{proof:lazy-mTree-test}
-	It is clear that at least one successful test per level is necessary for the path to exist.
+\changed{\paragraph{"$\Leftarrow$"}:
+If there exists a path for which $\tau$ passes the test at each node, the exists a node on each level of $MT$ where $\tau$ passes the test because every path has a node on every level.
+}
+\removed{It is clear that at least one successful test per level is necessary for the path to exist.
 	%
-	Let us proof that one successful test is a sufficient condition for the path to exist.
+	Let us proof that one successful test is a sufficient condition for the path to exist.}
 	%
+\changed{\paragraph{"$\Rightarrow$"}:}
 	Let $MT$ be a mTree and $\tau$ be a ranking that passes the test at level $h$ of $MT$.
 	%
 	Let $m_{G,h}=[m_{1}(h), \ldots, m_{|G|}(h)]$ be the node on level $h$ that successfully tested $\tau$.
 	%
 	Let further be $\tau_g(h)$ the number of protected candidates of group $g$ ranked at up to position $h$.
 	%
-	Without loss of generality let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more.
+	\removed{Without loss of generality} Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum. If we would assume that $\tau$ includes more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test. Thus, we can proof this direction with the above assumption without loss of generality.}
 	%
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
@@ -385,7 +389,7 @@ We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can 
 %%
 %Generally, if $p_1 = p_2 = \cdots = p_{|G|}$, we can make use of the mTree's symmetry: we calculate the mcdf only for node $m(i)$ and store it in the cache \emph{as well as its mirror} (see Subsection~\ref{subsubsec:reducing-space-requirements}), because their mcdf values are the same.
 
-Note that the mcdf computation is only depends on $p_G$ and not on $\alpha$.
+Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
 %
 We can therefore persists the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
 
@@ -427,7 +431,7 @@ Table~\ref{tbl:time-space} shows the asymptotic costs for each algorithm without
 The complexity analysis for \algoFAIR is done in Subsection~\ref{subsec:FAIR-complexity}, but Table~\ref{tbl:time-space} already contains the summary, such that it shows time and space complexity for all algorithms in this paper.
 
 \subsubsection{\algoImcdf complexity}\label{subsubsec:imcdf-complexity}
-The complexity of the multinomial CDF is dependent on the current position $i$ (also understood as number of trials), $|G|$ the number of protected groups, and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$ (also number of successes).
+The complexity of the multinomial cdf is dependant on the current position $i$ (also understood as \textit{number of trials}), $|G|$ the number of protected groups, and $m_{G,i}$ the vector of minimum required protected candidates for each group at position $i$ (also \textit{number of successes}).
 %
 We will write $\mathcal{O}(\text{MCDF}(i,p_G,\alpha))$ as the asymptotic complexity of this function.
 %
@@ -471,4 +475,4 @@ Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
 However a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
 %
 \subsection{Exact Solution for the Binomial Case}
-In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact fail probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level \cite{zehlike2020note}. The implementation can be found in our GitHub \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.
+In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact fail probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level \cite{zehlike2020note}. The implementation can be found in our Github \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.
