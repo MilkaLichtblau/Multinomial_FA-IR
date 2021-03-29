@@ -50,6 +50,8 @@ This is however very memory-intensive and the algorithm then needs to run on lar
 %
 Additionally one could provide a script that fills the MCDF Cache with various configurations of $p_G$ and $\alpha$.
 %
+\changed{Future work could also investigate other routes of optimizing the creation of mTrees. One field of action could be the parallelization of mTree calculations during significance adjustment. Furthermore, a tailored multinomial CDF function which reuses recurring computation steps might boost the mTree construction significantly.}
+%
 This calculation can continuously run as a separate process on a server which then provides the obtained caches to users who want to compute new mTrees.
 
 One of the main challenges for fair ranking algorithms in general is that there is not yet much empirical evidence that re-ordering items actually helps to overcome the bias in click-probability across groups.
