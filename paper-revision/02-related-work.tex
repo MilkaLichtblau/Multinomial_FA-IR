@@ -13,6 +13,10 @@ Two basic frameworks have been adopted in recent studies on algorithmic discrimi
 	\item \emph{individual fairness}, a requirement that individuals should be treated consistently~\cite{Dwork2012, zliobaite2015survey}; and
 	\item \emph{group fairness}, \removed{also known as statistical parity,} a requirement that the protected groups should be treated similarly to the advantaged group or the population as a whole \cite{peder2008,pederruggi2009}.
 \end{inparaenum}
+%
+\changed{Other work speaks of \emph{inter-} and \emph{intra-group fairness}~\cite{grgic2017fairness, yeom2021avoiding, beutel2019fairness}, where inter-group fairness is concerned with fair assignment of outcomes for items from different groups, and intra-group fairness relates to items that belong to the same group.
+%
+}
 
 Different fairness-aware algorithms have been proposed to achieve group and/or individual fairness, mostly for predictive tasks. \citet{Calders2010} consider three approaches to deal with naive Bayes models by modifying the learning algorithm.
 %, two of which consist in modifying the learning algorithm: training a separate model for each protected group; and adding a
