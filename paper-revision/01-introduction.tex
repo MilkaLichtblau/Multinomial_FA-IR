@@ -74,7 +74,9 @@ Suppose we have two protected groups, namely young white candidates and old blac
 \begin{table}[t]
 	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''.
 		%
-		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$, which translates into having at least one protected person in the first seven positions.
+		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$.
+		%
+		Using binomial \algoFAIR~\cite{zehlike2017fair}, this translates into having at least one protected person in the first seven positions.
 		%
 		The first ranking shows the colorblind ranking, which is unfair for both groups (note that the remaining protected candidates have been ranked outside of the top-10 and are not shown).
 		%

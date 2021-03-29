@@ -44,7 +44,7 @@ Though we already implemented improvements to reduce complexity, calculating an 
 %
 Of course this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration these calculation times are currently unavoidable.
 %
-A significant speed-up could be achieved by programming a customized mcdf-function which can store the results of repetitive computation steps.
+A significant speed-up could be achieved by programming a customized MCDF-function which can store the results of repetitive computation steps.
 %
 This is however very memory-intensive and the algorithm then needs to run on large computer clusters.
 %
@@ -66,7 +66,7 @@ Additionally, further experimental research using synthetic data could allow us 
 %
 \changed{This can help us better understand the trade-offs between individual losses and increased group fairness. 
 %
-Our experiments show that, while decreases in NDCG are often neglectible, the rank drop for an unlucky individual candidate from the non-protected group can still be large. 
+Our experiments show that, while decreases in NDCG are often negligible, the rank drop for an unlucky individual candidate from the non-protected group can still be large. 
 %
 An interesting next step for our method would be to use individual rank drops as input for a second fairness-enhancing method, that could try to optimize for individual fairness, while maintaining the ordering of groups that is required by a given mTree.}
 %
