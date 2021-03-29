@@ -213,19 +213,14 @@ Note that the ranking would fail at node $(9, [3,0])$, but with $\tau_G = (1,1)$
 Let $MT$ be a mTree and $\tau$ a ranking of size $k$.
 %
 There exists at least one successful test for $\tau$ at each level of $MT$,
-iff there exists a \removed{valid} path from the root of $MT$ to a leaf of $MT$ \changed{where $\tau$ passes the test at each node on that path}.
+iff there exists a \removed{valid} path from the root of $MT$ to a leaf of $MT$ \changed{and $\tau$ passes the test at each node on that path}.
 \end{theorem}
 %
-\meike{This proof is to be reviewed}
 \begin{proof}
 	\label{proof:lazy-mTree-test}
 \changed{\paragraph{"$\Leftarrow$"}:
-If there exists a path for which $\tau$ passes the test at each node, the exists a node on each level of $MT$ where $\tau$ passes the test because every path has a node on every level.
+If there exists a path for which $\tau$ passes the test at each node, there also exists a node on each level of $MT$ where $\tau$ passes the test because every path has a node on every level.
 }
-\removed{It is clear that at least one successful test per level is necessary for the path to exist.
-	%
-	Let us proof that one successful test is a sufficient condition for the path to exist.}
-	%
 \changed{\paragraph{"$\Rightarrow$"}:}
 	Let $MT$ be a mTree and $\tau$ be a ranking that passes the test at level $h$ of $MT$.
 	%
@@ -233,7 +228,11 @@ If there exists a path for which $\tau$ passes the test at each node, the exists
 	%
 	Let further be $\tau_g(h)$ the number of protected candidates of group $g$ ranked at up to position $h$.
 	%
-	\removed{Without loss of generality} Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum. If we would assume that $\tau$ includes more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test. Thus, we can proof this direction with the above assumption without loss of generality.}
+	Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum. 
+	%
+	If we assumed that $\tau$ included more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test. 
+	%
+	Thus, we can proof this direction with the above assumption without loss of generality.}
 	%
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
