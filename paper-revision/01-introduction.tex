@@ -190,14 +190,14 @@ We formulate a criterion by applying a statistical test on the proportion of pro
 %
 %This procedure can be seen as a form of positive action to ensure that the proportion of protected candidates in every prefix of the top-$k$ ranking is statistically indistinguishable from a policy target.
 %
-We also show that the verification of the ranked group fairness criterion can be implemented efficiently by pre-computing a verification data structure that we call \emph{mTree}.
+We also show that the verification of the ranked group fairness criterion can be implemented efficiently \removed{by} \changed{after} pre-computing a verification data structure that we call \emph{mTree}.
 %
 This tree contains all possibilities to create a ranking that satisfies ranked group fairness and we provide an algorithm to build and persist it.
 %
 We also provide an algorithm \algoCorrect for the mTree adjustment due to multiple dependent hypothesis testing, where we compute $\alphaadj$ such that the type-I-error is less or equal to $\alpha$ for the \emph{entire tree}.
 %
 
-Finally, we propose an efficient algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
+Finally, we propose an \removed{efficient} algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
 Note that if a group of protected candidates is too small to satisfy ranked group fairness, the ranking is necessarily bound to under-represent them.
 %
@@ -208,7 +208,7 @@ Summarizing, the main contributions of this paper are:
 	\item the principled definition of \emph{ranked group fairness} for multiple protected groups, and the associated  {\sc Fair Top-$k$ Ranking problem};
 	\item the \algoFAIR\ algorithm for multiple protected groups to produce a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
 	\item a mathematical framework to solve the problem of multiple \emph{dependent} hypotheses testing: we will see how to adjust the given significance level $\alpha$ to a corrected $\alphaadj$, such that the \emph{overall} probability for a type-1-error equals the given significance level $\alpha$.
-	\item the algorithms \algoComputeMTree and \algoCorrect which translate ranked group fairness into a pre-computed data structure. This will enable efficient verification of ranked group fairness at testing time and efficient creation of fair rankings.
+	\item the algorithms \algoComputeMTree and \algoCorrect which translate ranked group fairness into a pre-computed data structure. This will enable efficient verification of ranked group fairness at testing time and efficient creation of fair rankings \changed{at creation time}.
 \end{compactenum}
 
 Our method can be used within an anti-discrimination framework such as \emph{affirmative actions}~\cite{sowell2005affirmative}.
