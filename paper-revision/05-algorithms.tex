@@ -62,11 +62,11 @@ The algorithm works as follows.
 %
 In the initialization, qualifications $q_c$ are used to create one ranked list of up to $k$ candidates for each of the protected groups ($P_g$) and for the non-protected group ($P_0$).
 %
-On line \ref{alg:fair:mtree}, the algorithm creates a ranked group fairness tree (mTree) similar to the one shown on Figure~\ref{fig:mtree-symmetric-adjusted}, indicating the minimum number of protected candidates needed at every position. % group, given $p_G$, $k$ and $\alphaadj$.
+At Line \ref{alg:fair:mtree}, the algorithm creates a ranked group fairness tree (mTree) similar to the one shown on Figure~\ref{fig:mtree-symmetric-adjusted}, indicating the minimum number of protected candidates needed at every position. % group, given $p_G$, $k$ and $\alphaadj$.
 %
 Then, the algorithm greedily merges the per-group rankings, making sure to satisfy the minimum number of protected elements required at each position.
 %
-If we require a protected candidate from group $g$, the algorithm picks the highest ranked element in $P_g$ (lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it picks the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
+If we require a protected candidate from group $g$, the algorithm picks the highest ranked element in $P_g$ (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it picks the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
 
 We observe that the
@@ -76,7 +76,7 @@ In case there are multiple possibilities that satisfy ranked group fairness (as 
 %
 %If two branches are equally likely, which happens for instance when $p_1 = p_2 = \ldots = p_{|G|}$, then one of them is chosen at random.
 %
-Thus, the algorithm returns the most-likely child $m_{G,i}$ for a given parent (line~\ref{alg:fair:childNode}).
+Thus, the algorithm returns the most-likely child $m_{G,i}$ for a given parent (Line~\ref{alg:fair:childNode}).
 %
 
 
