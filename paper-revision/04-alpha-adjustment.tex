@@ -359,7 +359,7 @@ Algorithm~\ref{alg:regression_search} shows the overall adjustment algorithm in 
     $\alphaadj \leftarrow \textsc{MultinomialBinarySearchAdjustment}(\alpha_{c_r},k,p_G)$ \\
     \Return{$\alphaadj$}
 \end{algorithm}
-\subsection{Further Optimizations}
+\subsection{Further Optimizations}\label{subsec:further-optimizations}
 In addition to the optimizations \emph{during} mTree calculation which we presented in Subsection~\ref{subsec:mtree-optimization}, our implementation caches already computed mTrees and their components to never do the same computation twice.
 %
 We denote that a mTree has to be computed only once for a particular combination of $k, p_G, \alpha$.
