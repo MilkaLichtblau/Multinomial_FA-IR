@@ -61,6 +61,7 @@ The ranked group fairness criterion compares the number of protected elements in
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a type-I-error, which means rejecting a fair ranking.
 %
 
+\changed{
 \paragraph{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just applying binomial \algoFAIR to a ranking for each group consecutively.
 %
 Consider the rankings in Table~\ref{tbl:multinomial_intro_example} corresponding to a number of top-10 rankings of applicants in a credit approval process.
@@ -69,42 +70,42 @@ The rankings are obtained based on the credit worthiness of each applicant takin
 %
 We also present to which protected group each individual belongs based on their demographics ``age'' and ``race.''
 %
-In this example we consider people as protected, if they are either young, or black, or both.
+%In this example we consider people as protected, if they are either young, or black, or both.
 %
-Suppose we have two protected groups, namely young white candidates and old black candidates, and one non-protected group, old white candidates (for now, we do not consider young black candidates on purpose).
+Suppose we have two protected groups, namely young white candidates and old black candidates, and one non-protected group, old white candidates. (for now, we do not consider young black candidates on purpose).}
 
 \begin{table}[t]
-	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results involving people belonging to two age groups ``y'' and ``o'' and two racial groups ``w'' and ``b''.
-		%
-		Suppose the protected groups only contain three young white (red) and three old black persons (blue), and that we set the same minimum proportions for these two groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$.
-		%
-		Using binomial \algoFAIR~\cite{zehlike2017fair}, this translates into having at least one protected person in the first seven positions.
-		%
-		The first ranking shows the colorblind ranking, which is unfair for both groups (note that the remaining protected candidates have been ranked outside of the top-10 and are not shown).
-		%
-		The second ranking would be considered fair for young people, but not for black people; the third ranking would be considered fair for black people, but not for young people; the fourth ranking combines black and young people into one protected group, but because the group-specific bias is higher for young people, they are ranked below all black candidates; the fifth ranking was created using the multinomial extension of \algoFAIR and would satisfy the multinomial ranked group fairness condition for both young and black people.
-		%
-		Note that this is only one possible fair ranking out of many possibilities.
+	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results with people from two protected groups: young white (red) and old black persons (blue), and one non-protected group: old white persons. 
+	%
+	Suppose we set the same minimum proportions for these two groups $\minprop_{\text{y/w}} = \minprop_{\text{o/b}} = 0.3$.
+%		%
+	The first ranking shows the colorblind ranking, which is unfair for both groups (note that the remaining protected candidates have been ranked outside of the top-10 and are not shown).
+	%
+	The next three rankings are created using \algoFAIR from~\cite{zehlike2017fair} with respective minimum proportions:
+	%
+	The second ranking would be considered fair for young people, but not for black people; the third ranking would be considered fair for black people, but not for young people; the fourth ranking combines black and young people into one protected group, but because the group-specific bias is higher for young people, they are ranked below all black candidates; the fifth ranking was created using the multinomial extension of \algoFAIR and would satisfy the multinomial ranked group fairness condition for both young and black people.
+	%
+	Note that this is only one possible fair ranking out of many possibilities.
 		\label{tbl:multinomial_intro_example}}
 	\centering\begin{tabular}{lcccccccccc}\toprule
 		Position & 1 &2 & 3 &4& 5& 6& 7& 8& 9& 10  \\
 		\midrule
 		\rowcolor[HTML]{C0C0C0}
 		Colorblind & o/w & o/w & o/w & o/w & o/w & o/w & o/w & o/w & \textcolor{blue}{o/b} & \textcolor{red}{y/w} \\
-		Young $\minprop_\textit{y}=0.3$ & o/w &o/w& o/w& o/w& o/w& o/w& \textcolor{red}{y/w}& o/w & o/w & \textcolor{blue}{o/b} \\
+		Young Whites $\minprop_\textit{y/w}=0.3$ & o/w &o/w& o/w& o/w& o/w& o/w& \textcolor{red}{y/w}& o/w & o/w & \textcolor{blue}{o/b} \\
 		\rowcolor[HTML]{C0C0C0}
-		Black $\minprop_b=0.3$ & o/w &o/w &o/w& o/w &o/w &o/w& \textcolor{blue}{o/b}& o/w& o/w& \textcolor{red}{y/w} \\
-		Young and Black $p_{\textit{yb}}=0.6$& o/w &o/w& \textcolor{blue}{o/b} & o/w& \textcolor{blue}{o/b}& o/w & \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& o/w \\
-		\algoFAIR from~\cite{zehlike2017fair} &&&&&&&&&&\\
+		Old Blacks $\minprop_\textit{o/b}=0.3$ & o/w &o/w &o/w& o/w &o/w &o/w& \textcolor{blue}{o/b}& o/w& o/w& \textcolor{red}{y/w} \\
+		y/w and o/b as one group & o/w &o/w& \textcolor{blue}{o/b} & o/w& \textcolor{blue}{o/b}& o/w & \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& o/w \\
+		$p_{\textit{y/w + o/b}}=0.6$; &&&&&&&&&&\\
 		\rowcolor[HTML]{C0C0C0}
-		Young and Black $\minprop_{\textit{y}} = \minprop_{\textit{b}} = 0.3$& o/w& o/w &\textcolor{red}{y/w}& \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w} &\textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& \textcolor{blue}{o/b} \\
+		y/w and o/b as distinct groups& o/w& o/w &\textcolor{red}{y/w}& \textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w} &\textcolor{blue}{o/b}& o/w& \textcolor{red}{y/w}& \textcolor{blue}{o/b} \\
 		\rowcolor[HTML]{C0C0C0}
-		multinomial \algoFAIR &&&&&&&&&&\\
+		 $\minprop_{\textit{y/w}} = \minprop_{\textit{o/b}} = 0.3$; &&&&&&&&&&\\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-Considering the definition of \textit{ranked group fairness} for one protected group (Definition~3.1 and~3.2 in~\cite{zehlike2017fair}) with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-7 positions of a ranking with ten positions in total (see Table 2 in~\cite{zehlike2017fair}).
+\changed{When using the definition of \textit{ranked group fairness} for one protected group from~\cite{zehlike2017fair} with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-7 positions of a ranking with ten positions in total.
 %
 Suppose we set the same minimum proportions for both protected groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$ and we assume that the colorblind ranking (upper most ranking in Table~\ref{tbl:multinomial_intro_example}) does not meet ranked group fairness with these requirements.
 %
@@ -118,9 +119,9 @@ More importantly, it is also not clear how to proceed with the candidate that is
 %
 Let us assume that the young candidate is chosen to be ranked to position 7.
 %
-As old black candidates are not considered as protected by this mTable, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).
+As old black candidates are not considered as protected in this setting, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).}
 
-To overcome this, suppose we aggregate all protected groups together into one big protected group and add up the minimum proportions to one that fits the total share of protected candidates.
+\changed{To overcome this, suppose we aggregate all protected groups together into one big protected group and add up the minimum proportions to one that fits the total share of protected candidates.
 %
 In our example, we combine the group of young whites and old blacks into one group with minimum proportion $\minprop=0.6$.
 %
@@ -135,18 +136,19 @@ Intersectional discrimination refers to the fact that personal, political, and s
 If we also consider young black people as a third protected group, the bias in their scores would manifest itself through two dimensions of discrimination, namely through age \emph{and} race, which may lead to even more bias in their scores, and thus potentially to the lowest positions, even when applying \algoFAIR.
 %
 Therefore young black candidates should be considered as their own group whose scores are not comparable with the ones of young whites, or old blacks.
+}
 
 From the above we conclude that providing a fairness definition for rankings that either treats protected groups consecutively, or assembles all groups into one big group, cannot guarantee a fair ranking for multiple protected groups with different bias manifestations.
 %
 This highlights the need for a ranked group fairness notion for multiple protected groups that is based on a multinomial distribution.
 %
-The fifth ranking in Table~\ref{tbl:multinomial_intro_example} is an example of a multinomially fair top-10 ranking for the protected groups young and black.
+\changed{The fifth ranking in Table~\ref{tbl:multinomial_intro_example} is an example of a multinomially fair top-10 ranking for the protected groups young and black.
 %
 It is created using our \textit{multinomial ranked group fairness criteria} and the multinomial \algoFAIR algorithm proposed in this paper.
 %
 Note that this is only one of the possible fair rankings out of many possibilities. 
 %
-We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.
+We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.}
 
 \subsection{Contributions and Roadmap}
 We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criterion.
