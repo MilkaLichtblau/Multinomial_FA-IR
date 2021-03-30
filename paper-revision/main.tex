@@ -234,8 +234,14 @@ ensuring that the proportion of protected candidates in every prefix of the top-
 
 Our notion of utility requires, intuitively, that every individual included in the top-$k$ should be more qualified than every candidate not included; and that for every pair of candidates in the top-$k$, the more qualified candidate should be ranked above.
 
-Our main result is an \removed{efficient} algorithm for producing a fair top-$k$ ranking.
-We also consider the case in which more than one protected group is present, which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution. This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
+\changed{The main contribution of this paper is an algorithm for producing a fair top-$k$ ranking that can be used when
+%Our main result is an \removed{efficient} algorithm for producing a fair top-$k$ ranking.
+%
+more than one protected group is present},
+%
+which means that a statistical test based on a multinomial distribution needs to be used instead of one for a binomial distribution\changed{, as the original FA*IR algorithms does}.
+%
+This poses important technical challenges and increases both, the space and time complexity, of the re-ranking algorithm.
 
 Our experimental assessment on real-world datasets shows that our approach yields small distortions with respect to rankings that maximize utility without considering our fairness criteria.
 %	%
