@@ -107,17 +107,17 @@ Suppose we have two protected groups, namely young white candidates and old blac
 
 \changed{When using the definition of \textit{ranked group fairness} for one protected group from~\cite{zehlike2017fair} with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top-7 positions of a ranking with ten positions in total.
 %
-Suppose we set the same minimum proportions for both protected groups $\minprop_{\text{young}} = \minprop_{\text{black}} = 0.3$ and we assume that the colorblind ranking (upper most ranking in Table~\ref{tbl:multinomial_intro_example}) does not meet ranked group fairness with these requirements.
+Suppose we set the same minimum proportions for both protected groups $\minprop_{\text{y/w}} = \minprop_{\text{o/b}} = 0.3$ and we assume that the colorblind ranking (upper most ranking in Table~\ref{tbl:multinomial_intro_example}) does not meet ranked group fairness with these requirements.
 %
 The next two rankings have been obtained using \algoFAIR for one protected group, each focusing either on the protected group of old blacks or young whites, while treating the rest as non-protected.
 %
 We see directly why this is problematic: equal minimum proportions $\minprop$ result in exactly the same requirements of protected candidates for each group.
 %
-It is not clear whether a black or a young candidate should be preferred at position 7.
+It is not clear whether an old black or a young white candidate should be preferred at position 7.
 %
 More importantly, it is also not clear how to proceed with the candidate that is not chosen.
 %
-Let us assume that the young candidate is chosen to be ranked to position 7.
+Let us assume that the young white candidate is chosen to be ranked to position 7.
 %
 As old black candidates are not considered as protected in this setting, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).}
 
@@ -133,7 +133,7 @@ Additionally, combining all protected groups into one group ignores the problem 
 %
 Intersectional discrimination refers to the fact that personal, political, and social identities of an individual can be combined to form a unique profile that can be discriminated.
 %
-If we also consider young black people as a third protected group, the bias in their scores would manifest itself through two dimensions of discrimination, namely through age \emph{and} race, which may lead to even more bias in their scores, and thus potentially to the lowest positions, even when applying \algoFAIR.
+If we also considered young black people as a third protected group, the bias in their scores would manifest itself through two dimensions of discrimination, namely through age \emph{and} race, which may lead to even more bias in their scores, and thus potentially to the lowest positions, even when applying \algoFAIR.
 %
 Therefore young black candidates should be considered as their own group whose scores are not comparable with the ones of young whites, or old blacks.
 }
