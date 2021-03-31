@@ -36,7 +36,7 @@ Their method uses optimal transport to calculate a fair score representation for
 %
 It also enables a ``continuous interpolation'' that generates protected group scores between the original distribution in the protected groups and the distribution of the barycenter; this is controlled by a parameter but there are no guarantees on the proportions along the ranking.
 %
-Recently, other fairness-aware algorithms have been proposed for mostly supervised learning algorithms and different bias mitigation strategies \cite{hardt2016equality, jabbari2016fair, friedler2016possibility, celis2016fair, corbett2017algorithmic}.
+Recently, other fairness-aware algorithms have been proposed for mostly supervised learning algorithms and different bias mitigation strategies \cite{hardt2016equality, jabbari2016fair, friedler2016possibility, celis2016fair, corbett2017algorithmic, mcnair2018preventing}.
 %
 \citet{hardt2016equality} study fairness in terms of \emph{equalized odds} and proposes methods to ensure equal precision across groups.
 %
@@ -120,3 +120,19 @@ In contrast to most of the research on diversity of ranking results or recommend
 Furthermore, \emph{we are not only concerned with the utility that search- and recommendation system users receive}, but also with the exposure received by the ranked items, which can represent individuals, places or organizations.
 %
 Another main difference is that diversification is usually symmetric yielding interchangeable groups, while \emph{fairness-aware algorithms are mostly asymmetric}, because they focus on increasing the overall benefit received by a protected or disadvantaged group.
+
+\subsection{Fairness in recommender systems}
+
+Next line of complimentary related work is looking at algorithmic bias in recommender systems ~\cite{chakraborty2019equality, ekstrand2021exploring, jannach2015recommenders, burke2018balanced, kamishima2018recommendation, steck2018calibrated, yao2017beyond, zhu2018fairness, edizel2020fairecsys}. Recommendation and personalization are
+useful technologies which influence more and more our
+daily decisions. Recent works show that biased recommendations can reinforce stereotypes
+such as those based on gender or ethnicity, possibly resulting in disparate impact. Even when the recommender system does not take as input any demographic information: nevertheless, by carefully exploiting items' and users'
+similarities, the algorithm might end up recommending
+an item to a very homogeneous set of users. For example, the algorithm would be considered biased if 
+displays ads for high-income jobs to men much more
+often than it does to women. Thus, even when recommendations are of high quality, they might be not
+well perceived by the user that might find them “too
+accurate” and discriminatory. To address such biases in recommender systems, different mitigation approaches have been proposed such as
+limiting the predictability of sensitive features from the
+user-item recommendation matrix ~\cite{kamishima2018recommendation, edizel2020fairecsys}.
+
