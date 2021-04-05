@@ -65,7 +65,7 @@ We used multiple datasets in our experiments, each dataset represents a set of p
 %
 Table~\ref{tbl:datasets} presents some general characteristics of each dataset.
 %
-Dataset D1 corresponds to the same experimental setup as in our previous paper~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
+Dataset D1 corresponds to the same experimental setup as in our previous work~\cite{zehlike2017fair}, but instead of using the original algorithm \algoFAIR, we run the binomial experiment with the multinomial extension proposed in Section~\ref{sec:problem}.
 %
 We perform tests with various values of $k<n$ in each dataset.
 %
@@ -87,7 +87,7 @@ In our experiment, we test a scenario in which we want to create a fair ranking 
 %
 We calculated a candidate's overall score as a weighted summation of the columns ``recidivism, violent recidivism'' and ``prior arrests'' from the original dataset.
 %
-To break ties we added normally distributed random noise with $\mu=0, \sigma=0.00001$ to the score of each candidate.
+To break ties, we added normally distributed random noise with $\mu=0, \sigma=0.00001$ to the score of each candidate.
 %
 Our protected groups are formed by different combination of the attributes ``race, age'' and ``sex'', where race is either ``white'' or ``person of color'' (PoC), age is either ``younger than 25'', ``between 25 and 45'' or ``older than 45'', and sex is either ``male'' or ``female''.
 %
@@ -147,7 +147,7 @@ The baseline methods for comparison that we use are the following:
 
 \spara{Baseline 1: Group-unaware or ``color-blind'' ranking.} This method merely order the candidates by decreasing scores/qualifications (see Section~\ref{concept:color-blind-ranking}) \changed{and therefore maximizes selection and ordering utility.
 	%
-	We evaluate all methods relative to the metrics achieved by the colorblind ranking, i.e. we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
+We evaluate all methods relative to the metrics achieved by the colorblind ranking, {\it i.e.}, we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
 
 \spara{Baseline 2: Continuous Fairness Algorithm (CFA$\theta$).} This is a post-processing method introduced by \citet{zehlike2020matching}\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
 %
@@ -159,7 +159,7 @@ This fair representation corresponds to the idea to rank groups separately and t
 %
 Note that setting $\theta=1$ to its maximum corresponds to setting the minimum proportions in $p_G$ to the dataset proportions of each group.
 %
-This means that with CFA$\theta$ we can not achieve an exposure gain that would require minimum proportions beyond statistical parity.
+This means that with CFA$\theta$ we cannot achieve an exposure gain that would require minimum proportions beyond statistical parity.
 %
 Hence this method is comparable to our method only if all values in $p_G$ are less or equal to statistical parity.
 %
@@ -385,7 +385,7 @@ However, we found the following problems when closely investigating the result: 
 %
 This means that the originally best candidate from the non-protected group (rank 3 in $cb|_k$) was ranked out of the top-500 by CFA$\theta$, hence the in-group ordering is not preserved.
 %
-We suspect that this is because the method can not handle ties well.
+We suspect that this is because the method cannot handle ties well.  % RIC: This is not very formal
 %
 If lots of candidates have very similar original scores, the fair representation scores may have large ties in which candidates are ordered randomly and not w.r.t. their original ordering.
 %
@@ -397,7 +397,7 @@ This means while very similar scores appear to be problematic for CFA$\theta$, t
 %
 \changed{This problem also explains the large differences between the methods in Kendall's Tau.}
 
-Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D4: it can not handle data sets with very small groups or groups that show low variance.
+Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D4: it cannot handle data sets with very small groups or groups that show low variance.
 %
 It increases the exposure of the non-protected group while decreasing it for the oldest males, and youngest males and females.
 %
@@ -425,7 +425,7 @@ As such, a protected group can only lose exposure for another protected group, b
 
 \spara{A wide range of possibilities to set $p_G$.}
 %
-An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with CFA$\theta$ (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, i.e. to the maximum value).
+An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with CFA$\theta$ (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, {\it i.e.}, to the maximum value).
 
 Figure~\ref{fig:results-moving-p} shows results when varying $p_1$ and $p_2$ in data set D2: COMPAS, the protected groups are people of age 25--45 ($p_1$) and people under 25 years ($p_2$).
 %
