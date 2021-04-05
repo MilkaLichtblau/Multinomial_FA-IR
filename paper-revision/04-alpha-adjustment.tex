@@ -458,15 +458,15 @@ Therefore, the complexity of the binary search depends on the tolerance $\epsilo
 %
 As we are searching on the interval $\left[0,\alpha\right[$ the resulting number of possible mTrees is $\frac{\alpha}{\epsilon}$.
 %
-Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its fail probability for each step.
+Thus the binary search needs $\mathcal{O}(\log{}\frac{\alpha}{\epsilon})$ time because we calculate one mTree and its failure probability for each step.
 %
-The fail probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree.
+The failure probability is computed experimentally by creating 10.000 rankings and testing them against the current mTree.
 %
 This process needs $\mathcal{O}(10.000 \cdot k)$ to create the rankings plus $\mathcal{O}(k)$ to test each of them.
 %
 Hence the overall time complexity becomes $\mathcal{O}(\log{}\frac{\alpha}{\epsilon}) \cdot (\mathcal{O}(k^2) + \mathcal{O}(\text{\algoComputeMTree}))$.
 %
-The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and their fail probability.
+The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and their failure probability.
 %
 \subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
 Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
@@ -474,4 +474,4 @@ Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
 However, a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
 %
 \subsection{Exact Solution for the Binomial Case}
-In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact fail probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level \cite{zehlike2020note}. The implementation can be found in our Github \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.
+In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact failure probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level \cite{zehlike2020note}. The implementation can be found in our Github \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.
