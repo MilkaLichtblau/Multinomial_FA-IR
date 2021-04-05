@@ -20,7 +20,7 @@ For instance, for $p=0.5$ we see that at least 1 candidate from the protected gr
 	\AlgOutput{$ \mtable $: A list that contains the minimum number of protected candidates required at each position of a ranking of size $k$.}
 	$\mtable \leftarrow [k]$ \AlgComment{list of size $k$}
 	\For{$i \leftarrow 1$ \KwTo $k$}{
-		$\mtable[i] \leftarrow F^{-1}(i,p,\alphaadj)$ \AlgComment{the inverse binomial cdf}
+		$\mtable[i] \leftarrow F^{-1}(i,p,\alphaadj)$ \AlgComment{the inverse binomial CDF}
 	}
 	\Return{$ \mtable $ }
 \end{algorithm}
@@ -173,7 +173,7 @@ Note that there are at most $\prod_{j=1}^{m(k)}b(j)$ possible combinations to di
 %
 Furthermore many $v \in I_{m(k)}$ share the same prefix and hence have the same probability density value for these prefixes.
 %
-To reduce computation time the algorithm stores the binomial probability density value for each prefix in a hash map with the prefix as key and the respective pdf as value.
+To reduce computation time the algorithm stores the binomial probability density value for each prefix in a hash map with the prefix as key and the respective PDF as value.
 %
 Thus the overall computational complexity becomes $O(\prod_{j=1}^{m(k)}b(j) \cdot O(\texttt{binomPDF}))$.
 
@@ -255,7 +255,7 @@ In the following we relate the continuous $\alpha$-space to the discrete mass of
 \end{lemma}
 \begin{proof}
 \label{proof:05:non-decreasing-with-alpha-mtable}
-Every entry $m(i)$ for $i=1,\ldots,k$ is computed by line 3 of Algorithm~\ref{alg:constructMTable}, {\it i.e.}, every entry is the inverse binomial cdf $F^{-1}(i,p,\alphaadj)$. In other words, $m(i)$ is the smallest integer such that\\
+Every entry $m(i)$ for $i=1,\ldots,k$ is computed by line 3 of Algorithm~\ref{alg:constructMTable}, {\it i.e.}, every entry is the inverse binomial CDF $F^{-1}(i,p,\alphaadj)$. In other words, $m(i)$ is the smallest integer such that\\
 \begin{equation}
 \alphaadj \leq \sum_{j=0}^{m(i)}\binom{i}{j}p^i (1-p)^{i-j} = F^{-1}(i,p,\alphaadj)
 \end{equation}
@@ -367,7 +367,7 @@ This is the number of non-decreasing sequences of integers that end with a numbe
 \end{proof}
 %
 \subsubsection{\algoMtable complexity}\label{subsubsec:construct-mtable-complexity}
-\algoMtable computes the inverse binomial cdf for $k$ positions of the ranking and stores each of the computed values in the MCDF Cache.
+\algoMtable computes the inverse binomial CDF for $k$ positions of the ranking and stores each of the computed values in the MCDF Cache.
 %
 This leads to a time complexity of $\mathcal{O}(k) \cdot \mathcal{O}(F^{-1}(p,k,\alpha))$.
 %
