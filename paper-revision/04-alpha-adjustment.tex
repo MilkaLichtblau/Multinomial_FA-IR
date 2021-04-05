@@ -13,7 +13,7 @@ Instead, there are various manifestations of $ \tau_G $ that satisfy the fair re
 \input{pics/mTrees}
 Figure~\ref{fig:mtree-symmetric-unadjusted} shows an example of such tree with $p_G = \langle 1/3, 1/3 \rangle$.
 %
-Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, i.e. the root level corresponds to the first ranking position and so forth.
+Each tree level corresponds to the $k$-th position in the ranking and are to be read from left to right, {\it i.e.}, the root level corresponds to the first ranking position and so forth.
 %
 As an example, consider tree level 4 in Fig.~\ref{fig:mtree-symmetric-unadjusted}.
 %
@@ -61,7 +61,7 @@ Recall that we restrict the probability of a type-I-error in our ranked group fa
 %
 To verify ranked group fairness, we test if a ranking satisfies the \emph{fair representation condition} (Def.~\ref{def:fair-representation-condition}) for each prefix  of size $1, 2, \dots, k$. 
 %
-Because of this multiple hypotheses testing, if we perform each test with significance $\alphaadj = \alpha$, we risk rejecting fair rankings at a rate larger than $\alpha$.
+Because of \changed{these} multiple hypotheses testing, if we perform each test with significance $\alphaadj = \alpha$, we risk rejecting fair rankings at a rate larger than $\alpha$.
 %
 Hence, we require an adjusted significance $\alphaadj = \adj(\alpha, k, p)$ for each fair representation test.
 %
@@ -110,7 +110,7 @@ In contrast to the model adjustment for one protected group which we used in~\ci
 %(see also Section~\ref{sec:adjustment-binomial})
 we found no analytical way to calculate all permutations which pass or fail the test.
 %
-Therefore we develop an experimental procedure to adjust $ \alpha $:
+Therefore, we develop an experimental procedure to adjust $ \alpha $:
 %
 \begin{enumerate}
 	\item Get input $ p_G, k, \alpha $.
@@ -154,7 +154,7 @@ We use three strategies to drastically reduce computational costs of this simula
 \label{subsubsec:reducing-space-requirements}
 We improve the mTree data structure by excluding the calculation and storage of redundant information.
 %
-First we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
+First, we store each node only once at each level and duplicate nodes are combined into a single node with multiple parents.
 
 Second, in case of equal minimum proportions for all groups $p_1 = p_2 = \ldots = p_{|G|}$ the mTree shows a convenient property that we can use to reduce additional space, as well as computation time.
 %
@@ -170,9 +170,9 @@ Both have the same multinomial CDF values.
 %
 We store only one of the nodes and flag it as ``has mirrored node'' and continue our mTree computation only in the stored branch.
 %
-This way we save half of the space and computation time needed, without loosing any information about the tree.
+This way we save half of the space and computation time needed, without \changed{losing} any information about the tree.
 
-Furthermore we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
+Furthermore, we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
 Figure~\ref{fig:mtree-symmetric-adjusted} %and~\ref{fig:mtree-asymmetric-adjusted} 
 shows the mTree structure with all parent-child relations as edges.
@@ -185,7 +185,7 @@ Before we can prove this property, we need to introduce the following definition
 \label{def:valid-mtree-test}
 Let $\tau$ be a ranking of size $k$ and $\tau_{G,i}=(\tau_{1},\ldots,\tau_{|G|})$ the numbers of ranked protected elements from group $1,\ldots,|G|$ up to position $i$.
 %
-Let furthermore $MT$ be a $mTree$, with node $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ giving the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
+Let \changed{assume} $MT$ be a $mTree$, with node $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ giving the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
 %
 We write $\tau_{G,i} \geq m_{G,i}$ if $\tau_g \geq m_g$ for all $g=1,\ldots,|G|$.
 %
@@ -196,11 +196,11 @@ Again, in order to remove the parental relationships in the mTree, thus reducing
 %
 We prove this by showing that, if a ranking passes the test for any two nodes $n_1$ and $n_2$ at two consecutive levels $h$ and $h+1$, and $n_1$ is \emph{not} a parent of $n_2$, then all actual children of $n_1$ will have a weaker requirement than $n_2$ and will hence also test successfully.
 %
-Furthermore we show that all nodes at level $h+1$ for which the ranking fails the test are part of a path that already rejected it as unfair at level $h$.
+Moreover, we show that all nodes at level $h+1$ for which the ranking fails the test are part of a path that already rejected it as unfair at level $h$.
 %
 Consider an example from Figure~\ref{fig:mtree-symmetric-adjusted} : Let us assume a ranking passes the test at level $8$ with exactly the required protected items $(8, [1,1])$.
 %
-Now lets assume that at level $9$, the given ranking would pass the test for node $(9, [2,1])$, which is not a successor of $(9, [1,1])$.
+Now let's assume that at level $9$, the given ranking would pass the test for node $(9, [2,1])$, which is not a successor of $(9, [1,1])$.
 %
 In fact we see that the actual successor of $(8, [1,1])$ is a node with the same requirements $(9, [1,1])$.
 %
@@ -260,13 +260,13 @@ If there exists a path for which $\tau$ passes the test at each node, there also
 	Case (2.1) means because of $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1 > \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ that the mTree accepts a ranking with one more protected candidate than required by the actual child of $m_{G,h}$, which contradicts our hypothesis that the ranking included the exact amount of required protected candidates. It follows that if we test $\tau_g (h+1)$ successfully with $m_{G,h+1}$ it would also satisfy ${m'}_{G,h+1}$.
 Case (2.2) is impossible according to algorithm \ref{alg:imcdf}.
 In detail, if $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ it means that $ m_g(h+1) = m_{g}(h)$ and therefore, $F(m_{g}(h);h+1,p_G) > \alpha$ (line $4$ of algorithm \ref{alg:imcdf}). But if for the child of $m_{G,h}$, namely ${m'}_{G,h+1}$ it holds that $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it means that
-$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) can not occur.
+$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) \changed{cannot} occur.
 \\
-In summary, Case (2.1) will only occur if we ranked more protected candidates than needed, and that the resulting test would be more strict than following a path through the mTree.
+In summary, Case (2.1) will only occur if we ranked more protected candidates than needed, and that the resulting test would be \changed{stricter} than following a path through the mTree.
 %
 We showed that Case (2.2) is impossible. There is only Case 1 left if we have ranked exactly the number of protected candidates needed at each level of the mTree.
 %
-It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is more strict than such path.
+It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is \changed{stricter} than such path.
 \end{proof}
 %
 \noindent Because of Theorem~\ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, while removing duplicate entries.
@@ -390,7 +390,7 @@ We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can 
 
 Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
 %
-We can therefore persists the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
+We can therefore \changed{persist} the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
 
 \subsubsection{Stored mTrees}
 \label{subsubsec:stored-mtrees}
@@ -436,7 +436,7 @@ We will write $\mathcal{O}(\text{MCDF}(i,p_G,\alpha))$ as the asymptotic complex
 %
 In the library we used for our implementation, the time complexity to calculate the multinomial CDF at position $i$ is in $\mathcal{O}(\text{MCDF}(i,p_G,\alpha)) = \mathcal{O}(i^{|G|})$.
 %
-Thus the most expensive position to calculate the multinomial CDF for is $k$.
+Thus, the most expensive position to calculate the multinomial CDF for is $k$.
 %
 For the overall time complexity of \algoImcdf we get $\mathcal{O}(|G|) \cdot \mathcal{O}(\text{MCDF}(k,p,\alpha ))$ with $|G|$ being the number of protected groups.
 %
@@ -450,11 +450,11 @@ There may be up to $|G|$ possible children for each node in the tree resulting i
 We store $|G|^{k-1} +1$ nodes with arrays of length $|G|$, leading to space complexity of $\mathcal{O}(|G|^{k})$.
 %
 \subsubsection{\algoMultBinary complexity}\label{subsubsec:multBinary-complexity}
-Also in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic.
+Also, in the multinomial case we adjust $\alpha$ to $\alpha_c$ with a binary search heuristic.
 %
 However there is no discrete measure for mTrees as was in case of the mTable mass.
 %
-Therefore the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria.
+Therefore, the complexity of the binary search depends on the tolerance $\epsilon$ set beforehand as a stopping criteria.
 %
 As we are searching on the interval $\left[0,\alpha\right[$ the resulting number of possible mTrees is $\frac{\alpha}{\epsilon}$.
 %
@@ -471,7 +471,7 @@ The space complexity is in $\mathcal{O}(|G|^k)$ for storing three mTrees and the
 \subsubsection{\algoReg complexity}\label{subsubsec:regression-complexity}
 Algorithm \algoReg has the same asymptotic complexity as \algoMultBinary.
 %
-However a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
+However, a significant reduction in computation time compared can be achieved when combining the two, instead of using \algoMultBinary only (see Figure~\ref{fig:regression_adjustment_benefits}, green vs. orange line).
 %
 \subsection{Exact Solution for the Binomial Case}
 In this section we described how to tackle the challenges of the inverse multinomial cumulative distribution function in the form of mTrees. However, the special case of two protected groups (the binomial case), which is extensively described by \citet{zehlike2017fair}, opens up a variety of more efficient and exact solutions. We developed an algorithm to compute the exact fail probability of a binomial mTree (mTable) and utilize it in a more efficient binary search for the correct significance level \cite{zehlike2020note}. The implementation can be found in our Github \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} repository.
