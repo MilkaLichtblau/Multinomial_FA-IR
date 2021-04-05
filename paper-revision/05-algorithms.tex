@@ -94,34 +94,35 @@ The complexity is summarized in Table~\ref{tbl:time-space}.
 %
 
 \label{subsec:scalability}
-\changed{
-\subsection{Scalability and MTree Recycling}
+\changed{  % Please keep lowercase m in mTree -- ChaTo
+\subsection{Scalability and mTree Reuse}
 In this section, we describe how \algoFAIR can be used in practice despite the high computational costs of the mTree calculation.
 \subsubsection{Storing and Loading mTrees}
-Once computed, a mTree can be used either to test or to create fair rankings according to Def.~\ref{def:ranked-group-fairness-condition}. 
+Once computed, a mTree can be used either to test or to create fair rankings according to Def.~\ref{def:ranked-group-fairness-condition}.
 %
-The mTree itself is independent of the data tested or ranked and thus is reusable for all rankings of length $m\leq k$ with required proportions $p_G$ and significance $\alpha$. 
+The mTree itself is independent of the data tested or ranked and thus is reusable for all rankings of length $m\leq k$ with required proportions $p_G$ and significance $\alpha$.
 %
-Since testing and ranking with mTrees is efficient, but mTree creation is not, it is important to store already computed mTrees and never compute a mTree twice. %
-Our implementation \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} provides the infrastructure for loading and storing mTrees for all steps of our algorithm. 
+Since testing and ranking with mTrees is efficient, but mTree creation is not, it is important to store already computed mTrees and never compute a mTree twice.
+%
+Our implementation\footnote{\url{https://github.com/MilkaLichtblau/Multinomial_FA-IR}} provides the infrastructure for loading and storing mTrees for all steps of our algorithm.
 %
 We also provide the pre-computed set of mTrees from our experiments.
-\subsubsection{Recycling mTrees}
-As mentioned above, a mTree of depth $k$ can be used to create and test rankings of every length up to and including $k$. Thus, for given $\alpha$, $p_G$ only the largest mTree has to be stored. 
+\subsubsection{Reusing mTrees}
+As mentioned above, a mTree of depth $k$ can be used to create and test rankings of every length up to and including $k$. Thus, for given $\alpha$, $p_G$ only the largest mTree has to be stored.
 %
-Furthermore, all mTrees calculated during the binary search in Algorithm \ref{alg:regression_search} \algoMultBinary can be reused too, if only the parameter $\alpha$ changes. 
+Furthermore, all mTrees calculated during the binary search in Algorithm \ref{alg:regression_search} \algoMultBinary can be reused too, if only the parameter $\alpha$ changes.
 %
-More specifically, \algoMultBinary computes many mTrees which are persisted. 
+More specifically, \algoMultBinary computes many mTrees which are persisted.
 %
-If we want to later compute a mTree for the same $p_G$ but with a different $\alpha$, many of the binary search steps (computed mTrees) will be repeated and the respective trees can be loaded from disc. 
+If we want to later compute a mTree for the same $p_G$ but with a different $\alpha$, many of the binary search steps (computed mTrees) will be repeated and the respective trees can be loaded from disc.
 %
-In summary, the first calculation of a large mTree for many protected groups is expensive, but has to be done only once. 
+In summary, the first calculation of a large mTree for many protected groups is expensive, but has to be done only once.
 %
-After that, adjustments of $k$ and $\alpha$ are fast through recycling of already computed mTrees and MCDFs (see also Section~\ref{subsec:further-optimizations}). 
+After that, adjustments of $k$ and $\alpha$ are fast through recycling of already computed mTrees and MCDFs (see also Section~\ref{subsec:further-optimizations}).
 %
-The only parameter in which mTrees cannot be recycled easily, is if $p_G$ changes. 
+The only case in which mTrees cannot be reused easily is if $p_G$ changes.
 %
-However, in many cases $p_G$ will most certainly be determined by policy, company guidelines or demographic data, which should change not often.}
+However, in many cases $p_G$ will most certainly be determined by policy, company guidelines or demographic data, which probably do not change as often as other elements, such as the value of $k$ used to display information to users.}
 \subsection{Partial Ordering of Solutions}
 \label{sec:algo:partialOrdering}
 When there is a single protected group,
