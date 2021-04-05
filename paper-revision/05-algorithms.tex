@@ -69,8 +69,7 @@ Then, the algorithm greedily merges the per-group rankings, making sure to satis
 If we require a protected candidate from group $g$, the algorithm picks the highest ranked element in $P_g$ (Lines \ref{alg:fair:pstart}-\ref{alg:fair:pend}); otherwise, it picks the best candidate from $P_0 \cup P_1 \cup \ldots \cup P_{|G|}$ (Lines \ref{alg:fair:anystart}-\ref{alg:fair:anyend}).
 %
 
-We observe that the
-choice of the group from which the element at position $i$ should be drawn, i.e., the node selected at level $i$, depends on the path chosen along the \texttt{mtree}. % and therefore on its concrete parent at level $i-1$.
+We observe that the choice of the group from which the element at position $i$ should be drawn, i.e., the node selected at level $i$, depends on the path chosen along the \texttt{mtree}. % and therefore on its concrete parent at level $i-1$.
 %
 In case there are multiple possibilities that satisfy ranked group fairness (as we saw in the example of Fig.~\ref{fig:mtree-symmetric-adjusted} at level $k=6$), the algorithm selects the branch that has the higher probability (larger $F$), breaking ties at random.
 %
@@ -108,7 +107,7 @@ Our implementation \footnote{\url{https://github.com/MilkaLichtblau/Multinomial_
 %
 We also provide the pre-computed set of mTrees from our experiments.
 \subsubsection{Recycling mTrees}
-As mentioned above, a mTree of depth $k$ can be used to create and test rankings of every length up to and including $k$. Thus for given $\alpha$, $p_G$ only the largest mTree has to be stored. 
+As mentioned above, a mTree of depth $k$ can be used to create and test rankings of every length up to and including $k$. Thus, for given $\alpha$, $p_G$ only the largest mTree has to be stored. 
 %
 Furthermore, all mTrees calculated during the binary search in Algorithm \ref{alg:regression_search} \algoMultBinary can be reused too, if only the parameter $\alpha$ changes. 
 %
@@ -120,7 +119,7 @@ In summary, the first calculation of a large mTree for many protected groups is 
 %
 After that, adjustments of $k$ and $\alpha$ are fast through recycling of already computed mTrees and MCDFs (see also Section~\ref{subsec:further-optimizations}). 
 %
-The only parameter in which mTrees can not be recycled easily, is if $p_G$ changes. 
+The only parameter in which mTrees cannot be recycled easily, is if $p_G$ changes. 
 %
 However, in many cases $p_G$ will most certainly be determined by policy, company guidelines or demographic data, which should change not often.}
 \subsection{Partial Ordering of Solutions}
@@ -131,7 +130,7 @@ top-$k$ rankings that have a given ranked group fairness form a total ordering w
 %
 This allowed us to prove that \algoFAIR for a single protected group finds the optimal solution w.r.t. selection and ordering utility~\cite{zehlike2017fair}.
 %
-The proof comes from the observation that decreases in utility that maintain ranked group fairness can only occur when a high-scoring non-protected candidate is ranked below a low-scoring protected one.%, but not vice versa.
+The proof comes from the observation that decreases in utility that maintain ranked group fairness can only occur when a high-scoring non-protected candidate is ranked below a low-scoring protected one. %, but not vice versa.
 %
 
 When multiple groups are present there is no total ordering as some rankings cannot be compared.
@@ -147,7 +146,7 @@ Hence, multiple solutions (rankings) are equivalent.
 
 The way in which we decided to choose among these equivalent rankings is in line with the probabilistic nature of the design of \algoFAIR.
 %
-We decided to pick the path that is ``most likely'', i.e., that has the highest MCDF value.
+We decided to pick the path that is ``most likely'', {\it i.e.}, that has the highest MCDF value.
 %
 An alternative implementation could select the highest utility path, picking the candidate with the highest qualifications when multiple choices exist.
 %
