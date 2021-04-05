@@ -12,13 +12,14 @@ The notation used in this paper is summarized on Table~\ref{tbl:notation}.
 
 \subsection{Preliminaries and Notation}
 \label{subsec:preliminaries}
-For our setting we examine a set of candidates $[n] = \{ 1, 2, \dots, n \}$, where $k$ of them will be selected based on their respective qualification. We denote this ``utility'' of candidate $c$ for each $c \in [n]$ by $q_c$, which can be viewed as the fitness of candidate $c$ for the task at hand, or e.g. a search query. We assume this score to be given and denote that it may be a weighted combination of several different attributes.
+For our setting we examine a set of candidates $[n] = \{ 1, 2, \dots, n \}$, where $k$ of them will be selected based on their respective qualification. We denote this ``utility'' of candidate $c$ for each $c \in [n]$ by $q_c$, which can be viewed as the fitness of candidate $c$ for the task at hand, or {\it e.g.}, a search query. We assume this score to be given and denote that it may be a weighted combination of several different attributes.
 %
-If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases towards a protected group to be embodied in the model (see, e.g., \cite{Sweeney2013}).
+If this utility is computed by a machine learning model, an effort must be done to prevent preexisting and technical biases towards a protected group to be embodied in the model (see, {\it e.g.}, \cite{Sweeney2013}).
 %
 We define a set of candidate groups $G = \left\{g_0, g_1, \ldots g_{|G|}\right\}$ that form a partition of $[n]$. We will consider $g_0$ as non-protected (or privileged) and all remaining groups as protected (or disadvantaged).
 %
 We assume there are at least $k$ candidates in each group. % enough candidates of each group, i.e., at least $k$ of each kind.
+% RIC: What happens if there are less than k?
 
 Let ${\mathcal P}_{k,n}$ denote all subsets of $[n]$ with exactly $k$ elements and let ${\mathcal T}_{k,n}$ represent the union of all permutations of sets in ${\mathcal P}_{k,n}$.
 %
