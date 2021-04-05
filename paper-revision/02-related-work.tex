@@ -90,19 +90,19 @@ as in the work by~\citet{shang2020list},
 whereas~\citet{beutel2019fairness} and~\citet{singh2019policy} introduce fairness objectives in learning to rank methods that comply with disparate treatment considerations.
 
 \changed{
-For various reasons, the referenced works cannot be directly compared with the method we propose in this paper.
+The referenced works cannot be directly compared with the method we propose in this paper.
 %
-Some previous works require the number of protected candidates at each position to be given as an input~\cite{celis2017ranking}, while we determine the required number of candidates, or require input preferences to be given as rankings to be aggregated~\cite{kuhlman2020rank}.
+Some of them require the number of protected candidates at each position to be given as an input~\cite{celis2017ranking}, while we determine the required number of candidates, or require input preferences to be given as rankings to be aggregated~\cite{kuhlman2020rank}.
 %
 Others introduce metrics of exposure~\cite{singh2018fairness}, amortized exposure~\cite{biega2018equity}, or NDCG variants~\cite{yang2016measuring}, or ratios (``skew'') or KL-divergence based metrics~\cite{geyik2019fairness} that do not match the probability-based metric that we use.
 %
-In our experiments, we compare with CFA$\theta$~\cite{zehlike2020matching}, which is an utility-based framework such as ours, and in which utilities can only be considered comparable within a group, but not across groups.
+In our experiments, we compare with CFA$\theta$~\cite{zehlike2020matching}, which is an utility-based framework such as ours, and one in which utilities can only be considered comparable within a group, but not across groups.
 }
 
 \subsection{Diversity}
 
 %To avoid showing only items of the same class has been studied in Information Retrieval for many years. The motivation there is that the user query may have different intents and we want to cover several of them with the answers.
-The Information Retrieval community has studied for many years how to avoid showing only items of the same class. A motivation to investigate this problem is that user queries may have different intents and the system should cover several of them with answers.
+The Information Retrieval community has studied for many years how to avoid showing only items of the same class in a ranking. A motivation to investigate this problem is that user queries may have different intents and the system should cover several of them with answers.
 %
 %A common approach, since \citet{carbonell1998use}, is to consider the distances between elements, and maximize a combination of relevance (utility) with a penalty for adding to the ranking an element that is similar to an element already appearing at a higher position.
 A common approach to solve this, since \citet{carbonell1998use}, is to retrieve a "diverse" but relevant set of items. This is achieved through on one side, maximizing the overall relevance (utility) and on the other side, considering the distances between elements and adding a penalty for selecting an item that is too similar to an item already ranked at a higher position.
@@ -128,11 +128,10 @@ useful technologies which influence more and more our
 daily decisions. Recent works show that biased recommendations can reinforce stereotypes
 such as those based on gender or ethnicity, possibly resulting in disparate impact. Even when the recommender system does not take as input any demographic information: nevertheless, by carefully exploiting items' and users'
 similarities, the algorithm might end up recommending
-an item to a very homogeneous set of users. For example, the algorithm would be considered biased if 
+an item to a very homogeneous set of users. For example, the algorithm would be considered biased if
 displays ads for high-income jobs to men much more
 often than it does to women. Thus, even when recommendations are of high quality, they might be not
 well perceived by the user that might find them “too
 accurate” and discriminatory. To address such biases in recommender systems, different mitigation approaches have been proposed such as
 limiting the predictability of sensitive features from the
 user-item recommendation matrix ~\cite{kamishima2018recommendation, edizel2020fairecsys}.
-

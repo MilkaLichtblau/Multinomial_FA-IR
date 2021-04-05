@@ -49,9 +49,9 @@ First it creates an auxiliary root node that contains $|G|$ zero entries, which 
 Then, for each parent node \texttt{parent} at each position position $i \leq k$ it calls the inverse multinomial CDF function.
 %
 The second algorithm \algoImcdf takes as input a 4-tuple $(\alphaadj, i, p_G, \texttt{parent})$ and returns all nodes satisfying the following two conditions:
-\begin{inparaenum}[(i.)]
+\begin{inparaenum}[(i)]
 	\item they have to be children of node \texttt{parent}, and
-	\item they satisfy the fair representation condition (Def.~\ref{def:fair-representation-condition}, page~\pageref{def:fair-representation-condition}).
+	\item they satisfy the fair representation condition (Def.~\ref{def:fair-representation-condition}).
 \end{inparaenum}
 
 \section{Model Adjustment}
@@ -59,7 +59,7 @@ The second algorithm \algoImcdf takes as input a 4-tuple $(\alphaadj, i, p_G, \t
 
 Recall that we restrict the probability of a type-I-error in our ranked group fairness test to $\alpha$ (Def.~\ref{def:fair-representation-condition}).
 %
-To verify ranked group fairness, we test if a ranking satisfies the \emph{fair representation condition} (Def.~\ref{def:fair-representation-condition}) for each prefix  of size $1, 2, \dots, k$. 
+To verify ranked group fairness, we test if a ranking satisfies the \emph{fair representation condition} (Def.~\ref{def:fair-representation-condition}) for each prefix  of size $1, 2, \dots, k$.
 %
 Because of \changed{these} multiple hypotheses testing, if we perform each test with significance $\alphaadj = \alpha$, we risk rejecting fair rankings at a rate larger than $\alpha$.
 %
@@ -87,7 +87,7 @@ Hence, we require an adjusted significance $\alphaadj = \adj(\alpha, k, p)$ for 
 	\label{fig:why-adjustment-is-needed-multinomial}
 \end{figure}
 
-Figure~\ref{fig:why-adjustment-is-needed-multinomial} illustrates what happens, if we do correct the significance level $\alpha$. 
+Figure~\ref{fig:why-adjustment-is-needed-multinomial} illustrates what happens, if we do correct the significance level $\alpha$.
 %
 In the figure, we assume there are two protected groups with $p_1=p_2=\frac{1}{3}$, and we generate inherently fair rankings of various lengths from $k=5$ to $k=5,000$.
 %
@@ -133,7 +133,7 @@ shows the adjusted mTree with the same parameters $p_G$.
 
 \subsection{Optimizations for the MTree Calculation}
 \label{subsec:mtree-optimization}
-In this subsection we explain how we optimize the adjustment procedure from the previous section to reduce complexity. 
+In this subsection we explain how we optimize the adjustment procedure from the previous section to reduce complexity.
 %
 At each iteration as it requires to compute a new mTree which is expensive on its own.
 %
@@ -174,7 +174,7 @@ This way we save half of the space and computation time needed, without \changed
 
 Furthermore, we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
-Figure~\ref{fig:mtree-symmetric-adjusted} %and~\ref{fig:mtree-asymmetric-adjusted} 
+Figure~\ref{fig:mtree-symmetric-adjusted} %and~\ref{fig:mtree-asymmetric-adjusted}
 shows the mTree structure with all parent-child relations as edges.
 %
 We leave out these edges, thus reducing space, because we can prove that, if a single node exists on each level, which accepts a given ranking as fair, then a valid path to that node exists in the tree.
@@ -228,9 +228,9 @@ If there exists a path for which $\tau$ passes the test at each node, there also
 	%
 	Let further be $\tau_g(h)$ the number of protected candidates of group $g$ ranked at up to position $h$.
 	%
-	Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum. 
+	Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum.
 	%
-	If we assumed that $\tau$ included more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test. 
+	If we assumed that $\tau$ included more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test.
 	%
 	Thus, we can proof this direction with the above assumption without loss of generality.}
 	%
