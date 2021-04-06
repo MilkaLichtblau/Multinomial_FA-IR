@@ -31,7 +31,7 @@
 	\vspace{-3mm}
 \end{table}
 %
-In this section, we evaluate the multinomial \algoFAIR algorithm. 
+In this section, we evaluate the multinomial \algoFAIR algorithm.
 %
 We present the datasets we used in \S\ref{sec:experiments-datasets}, metrics and comparison with baselines in \S\ref{sec:experiments-baselines}, and results in \S\ref{sec:experiments-results}.
 
@@ -149,7 +149,7 @@ The baseline methods for comparison that we use are the following:
 	%
 We evaluate all methods relative to the metrics achieved by the colorblind ranking, {\it i.e.}, we report utility loss and fairness gain of the methods w.r.t. the colorblind ranking.}
 
-\spara{Baseline 2: Continuous Fairness Algorithm (CFA$\theta$).} This is a post-processing method introduced by \citet{zehlike2020matching}\changed{, and as explained in Section~\ref{subsec:fair-ranking}, it is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
+\spara{Baseline 2: Continuous Fairness Algorithm (CFA$\theta$).} This is a post-processing method introduced by \citet{zehlike2020matching}\changed{, and as explained in Section~\ref{subsec:fair-ranking}, to the best of our knowledge this is the only utility-based method in the literature that does not assume that utilities can be compared across groups}.
 %
 It aligns the score distributions of the protected candidates with the Wasserstein-barycenter of all group distributions.
 %
@@ -300,7 +300,7 @@ First, we observe that, for \algoFAIR $p_{\text{stat}}$ and CFA$\theta$, in gene
 %
 This can be explained as the utility is dominated by the top positions, which usually do not change dramatically.
 %
-\changed{However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of Kendall's tau, which means that the fair rankings constructed by CFA$\theta$ have a lot more ordering inversions w.r.t. the colorblind ranking than those constructed by \algoFAIR. }
+\changed{However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of Kendall's tau, which means that the rankings constructed by CFA$\theta$ have much more ordering inversions w.r.t. the color-blind ranking than those constructed by \algoFAIR. }
 
 Second we see that in experiments D1 and D5 \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well at first glance.
 %
@@ -393,9 +393,9 @@ In such a setting, \algoFAIR has an important advantage: it guarantees in-group 
 %
 No matter which group has to be picked at the current position, the respective candidate will always be the best available from that group.
 %
-This means while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
+This means that while very similar scores appear to be problematic for CFA$\theta$, they are the best-scenario for \algoFAIR, because ranked-group fairness can be ensured without losing any relevance at all (NDCG stays unaffected).
 %
-\changed{This problem also explains the large differences between the methods in Kendall's Tau.}
+\changed{This problem also explains the large differences between the methods in terms of Kendall's Tau.}
 
 Third we observe a formerly known weakness of CFA$\theta$ manifesting in experiment D4: it cannot handle data sets with very small groups or groups that show low variance.
 %
@@ -421,7 +421,7 @@ As such, a protected group can only lose exposure for another protected group, b
 	%
 	However in experiments D4 and D5 \algoFAIR $p_\text{stat}$ and \emph{dice roll} $p_\text{stat}$ yield very different results, even though the underlying stochastic process of the two methods is the same.
 	%
-	In contrast to a dice rolling process, \algoFAIR constructs fair rankings in a deterministic way and therefore always guarantees a minimum fairness for each protected group. }
+	In contrast to a dice rolling process, \algoFAIR constructs fair rankings in a deterministic way and therefore always guarantees a minimum representation for each protected group. }
 
 \spara{A wide range of possibilities to set $p_G$.}
 %

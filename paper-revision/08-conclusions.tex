@@ -34,13 +34,13 @@ Additionally, the user can control the degree of fairness that is obtained in th
 %
 This lets them transparently control the trade-off between fairness and utility, instead of having a less intuitive fairness parameter $\theta$ that operates on the barycenter of group distributions.
 %
-By reporting the largest utility loss and rank drop that an individual receives, we explicitly expressed trade-offs from our group fairness criterion to individual fairness as defined by~\citet{Dwork2012}. 
+By reporting the largest utility loss and rank drop that an individual receives, we explicitly expressed trade-offs from our group fairness criterion to individual fairness as defined by~\citet{Dwork2012}.
 
 \spara{Future work.}
 %
 An important challenge is the algorithmic complexity of calculating the mTree for a particular configuration of $p_G$ and $\alpha$.
 %
-Though we already implemented improvements to reduce complexity, calculating an adjusted mTree of length $k=100$ with six groups takes several weeks.
+Though we already implemented improvements to reduce complexity, calculating an adjusted mTree of length $k=100$ with six protected groups takes several weeks.
 %
 Of course, this mTree has to be calculated only once and can then be persistent and shared among users of \algoFAIR, however when a situation demands a new configuration these calculation times are currently unavoidable.
 %
@@ -56,15 +56,15 @@ This calculation can continuously run as a separate process on a server which th
 
 One of the main challenges for fair ranking algorithms in general is that there is not yet much empirical evidence that re-ordering items actually helps to overcome the bias in click-probability across groups.
 %
-Recent research \cite{suhr2020does}, however, suggests that guarantees for a minimum representation of underrepresented groups yield to higher selection rates in different hiring contexts, but does not mitigate user biases completely. 
+Recent research \cite{suhr2020does}, however, suggests that guarantees for a minimum representation of underrepresented groups yield to higher selection rates in different hiring contexts, but does not mitigate user biases completely.
 %
-For example, if a user prefers male candidates for a moving assistance task over female candidates, ranking female candidates higher will not mitigate users' biases completely. 
+For example, if a user prefers male candidates for a moving assistance task over female candidates, ranking female candidates higher will not mitigate users' biases completely.
 %
-\changed{Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups by setting the values for $p_G$ higher than the desired click probability. 
+\changed{Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups by setting the values for $p_G$ higher than the desired click probability.
 %
-For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group. 
+For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group.
 %
-Nonetheless the study also shows that user biases are complex and hard to mitigate through ranking algorithms alone. 
+Nonetheless the study also shows that user biases are complex and hard to mitigate through ranking algorithms alone.
 %
 For example, users in their study relied heavily on the displayed features, suggesting that showing or hiding certain features may impact user decisions significantly.}
 %
@@ -76,9 +76,9 @@ For example, users in their study relied heavily on the displayed features, sugg
 
 Additionally, further experimental research using synthetic data could allow us to test with a wider range of differences across groups, larger than the one that real datasets exhibit.
 %
-\changed{This can help us better understand the trade-offs between individual losses and increased group fairness. 
+\changed{This can help us better understand the trade-offs between individual losses and increased group fairness.
 %
-Our experiments show that, while decreases in NDCG are often negligible, the rank drop for an unlucky individual candidate from the non-protected group can still be large. 
+Our experiments show that, while decreases in NDCG are often negligible, the rank drop for an (unlucky) individual candidate from the non-protected group can still be large.
 %
 An interesting next step for our method would be to use individual rank drops as input for a second fairness-enhancing method, that could try to optimize for individual fairness, while maintaining the ordering of groups that is required by a given mTree.}
 %
