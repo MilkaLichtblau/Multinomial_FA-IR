@@ -382,13 +382,9 @@ We store the results of these calculation in a map that we call MCDF cache with 
 %
 Next we compute the successors of node $(3, [1,2])$ and call Algorithm~\ref{alg:imcdf} with arguments $(4,[1,2])$, $(4,[2,2])$ and $(4,[1,3])$.
 %
-We see that we would compute the mcdf for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
-
-%Furthermore, if our example has symmetric minimum proportions $p_1 = p_1$, the mcdf of $(4,[2,1])$ is equal to $(4,[1,2])$ and $\textit{mcdf}(4,[1,3]) = \textit{mcdf}(4,[3,1])$.
-%%
-%Generally, if $p_1 = p_2 = \cdots = p_{|G|}$, we can make use of the mTree's symmetry: we calculate the mcdf only for node $m(i)$ and store it in the cache \emph{as well as its mirror} (see Subsection~\ref{subsubsec:reducing-space-requirements}), because their mcdf values are the same.
-
-Note that the mcdf computation is only depends on $p_G$ and not on $alpha$.
+We see that we would compute the MCDF for $(4,[2,2])$ twice, but instead we can now read it from the MCDF cache.
+%
+Note that the MCDF computation is only depends on $p_G$ and not on $alpha$.
 %
 We can therefore \changed{persist} the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
 
