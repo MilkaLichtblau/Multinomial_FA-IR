@@ -33,25 +33,26 @@ def main():
     outputFilename = sys.argv[4]
 
     fairRanking = pd.DataFrame(columns=["score", "group", "uuid"])
-
     # separate groups into dict of group arrays
     groupArrays = {}
     for groupName, _ in enumerate(minProps):
         groupArrays[groupName] = origRanking.loc[origRanking['group'] == groupName]
 
-    for _ in range(k):
-        groupToPut = rollDice(minProps)
-        # get best candidate from group and pop candidate
-        candidate = groupArrays.get(groupToPut).head(n=1)
-        groupArrays[groupToPut] = groupArrays.get(groupToPut)[1:]
-        fairRanking = fairRanking.append(candidate)
+    # repeat each experiment 10000 and average results later
+    for i in range(10000):
+        for _ in range(k):
+            groupToPut = rollDice(minProps)
+            # get best candidate from group and pop candidate
+            candidate = groupArrays.get(groupToPut).head(n=1)
+            groupArrays[groupToPut] = groupArrays.get(groupToPut)[1:]
+            fairRanking = fairRanking.append(candidate)
 
-    # save remaining candidates for later evaluation in colorblind ranking
-    remainings = pd.concat(groupArrays.values(), ignore_index=True)
-    remainings = remainings.sort_values(by=['score', 'uuid'], ascending=[False, True])
+        # save remaining candidates for later evaluation in colorblind ranking
+        remainings = pd.concat(groupArrays.values(), ignore_index=True)
+        remainings = remainings.sort_values(by=['score', 'uuid'], ascending=[False, True])
 
-    fairRanking.to_csv(outputFilename[:-4] + "_fair" + outputFilename[-4:], header=True, index=False)
-    remainings.to_csv(outputFilename[:-4] + "_remaining" + outputFilename[-4:], header=True, index=False)
+        fairRanking.to_csv(outputFilename[:-4] + "_fair_" + str(i) + outputFilename[-4:], header=True, index=False)
+        remainings.to_csv(outputFilename[:-4] + "_remaining_" + str(i) + outputFilename[-4:], header=True, index=False)
 
 
 if __name__ == '__main__':

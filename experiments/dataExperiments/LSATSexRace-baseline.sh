@@ -5,7 +5,10 @@ PATH_TO_JAR=$GIT_ROOT/algorithm
 PATH_TO_CFA_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/cfa/src
 PATH_TO_DICEROLL_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/diceroll
 PATH_TO_LSAT_DATA=$GIT_ROOT/experiments/dataExperiments/data/LSAT
-PATH_TO_LSAT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/LSAT/rankings
+PATH_TO_LSAT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/LSAT/rankings/diceroll
+
+#create path if not exists
+mkdir -p $PATH_TO_LSAT_RESULTS
 
 k=300
 minpropsParity=0.49,0.35,0.084,0.076

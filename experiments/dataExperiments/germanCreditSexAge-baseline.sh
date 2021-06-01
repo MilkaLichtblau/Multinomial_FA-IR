@@ -5,7 +5,10 @@ PATH_TO_JAR=$GIT_ROOT/algorithm
 PATH_TO_CFA_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/cfa/src
 PATH_TO_DICEROLL_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/diceroll
 PATH_TO_GERMAN_CREDIT_DATA=$GIT_ROOT/experiments/dataExperiments/data/GermanCredit
-PATH_TO_GERMAN_CREDIT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/GermanCredit/rankings
+PATH_TO_GERMAN_CREDIT_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/GermanCredit/rankings/diceroll
+
+#create path if not exists
+mkdir -p $PATH_TO_GERMAN_CREDIT_RESULTS
 
 k=50
 minpropsParity=0.58,0.22,0.065,0.045,0.03,0.06

@@ -5,7 +5,10 @@ PATH_TO_FAIR_JAR=$GIT_ROOT/algorithm
 PATH_TO_CFA_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/cfa/src
 PATH_TO_DICEROLL_ALGORITHM=$GIT_ROOT/experiments/dataExperiments/baselines/diceroll
 PATH_TO_COMPAS_DATA=$GIT_ROOT/experiments/dataExperiments/data/COMPAS
-PATH_TO_COMPAS_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/COMPAS/rankings/race
+PATH_TO_COMPAS_RESULTS=$GIT_ROOT/experiments/dataExperiments/results/COMPAS/rankings/race/diceroll
+
+#create path if not exists
+mkdir -p $PATH_TO_COMPAS_RESULTS
 
 k=1500
 minpropsParity=0.34,0.66
