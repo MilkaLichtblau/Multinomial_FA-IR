@@ -110,16 +110,16 @@ In contrast to the model adjustment for one protected group which we used in~\ci
 %(see also Section~\ref{sec:adjustment-binomial})
 we found no analytical way to calculate all permutations which pass or fail the test.
 %
-Therefore, we develop an experimental procedure to adjust $ \alpha $:
+Therefore, we develop an empirical procedure to adjust $ \alpha $:
 %
 \begin{enumerate}
 	\item Get input $ p_G, k, \alpha $.
-	\item Build mTree with input $ \alpha $.
+	\item Build mTree with input $ \alphaadj = \alpha $.
 	\item Create $M$ rankings by rolling a biased $ |G| $-sided dice with each side's probability to show corresponding to a minimum proportion in vector $ p_G $.
 	\item Test all those rankings against the mTree and count how many tests fail.
 	%
 	Remember that we want to observe a maximum failure probability of $ \failprob=\alpha $, because all rankings created by this multinomial stochastic process are considered to be inherently fair.
-	\item If $ \failprob \neq \alpha $, we choose a new $ \alphaadj $ using a binary search heuristic.
+	\item If $ \failprob > \alpha $, we choose a new $ \alphaadj $ using a binary search heuristic.
 	\item Now we build a new mTree using $ \alphaadj $ and repeat the procedure until $ \failprob \approx \alpha $.
 \end{enumerate}
 %
