@@ -5,7 +5,7 @@ Created on Jul 15, 2020
 '''
 
 import pandas as pd
-import glob
+import glob, os
 # from sklearn.metrics import ndcg_score
 from src.util import *
 import sklearn.metrics
@@ -15,15 +15,18 @@ import scipy.stats
 def main():
     # evaluate compas
     print("Evaluation for COMPAS experiments")
+    evaluateDiceRollAverage("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"], numExps=5)
     evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
 
     # evaluate German credit
     print("Evaluation for GermanCredit experiments")
     evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
+    evaluateDiceRollAverage("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
 
     # evaluate LSAT
     print("Evaluation for LSAT experiments")
     evaluate("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
+    evaluateDiceRollAverage("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
 
 
 def evaluate(rankingsDir, evalDir, experimentNames):
@@ -106,7 +109,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             cfaOne_result.to_csv(evalDir + experiment + "/" + kString + "_cfaOneResult.csv")
 
             #####################################################
-            # eval for dice roll algorithm
+            # eval for dice roll algorithm single trial
             #####################################################
 
             # do this evaluation only if dice roll experiments exists for given k
@@ -140,6 +143,72 @@ def evaluate(rankingsDir, evalDir, experimentNames):
             diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), diceRollFairRanking.head(kay), diceRoll_result)
             diceRoll_result = diceRoll_result.sort_values(by=['group'])
             diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResult.csv")
+
+
+def evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames, numExps=10000):
+    # eval for dice roll algorithm
+    for experiment in experimentNames:
+        print("\nEXPERIMENT: " + experiment)
+        allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
+        allDiceRollFairFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_fair_*.csv")
+        allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_remaining_*.csv")
+
+        diceRoll_result_total = pd.DataFrame()
+        # get all files with corresponding k, p and i
+        for fairDiceRollFilename in allDiceRollFairFilenames:
+
+            # find corresponding colorblind ranking and remaining rankings that have not been
+            # included into the fair ranking
+            pString = fairDiceRollFilename.split(sep="_")[4]
+            kString = fairDiceRollFilename.split(sep="_")[3]
+            globPathName = rankingsDir + experiment + "/diceroll/*" + kString + "_" + glob.escape(pString) + "*_fair_*.csv"
+            allFairDiceRankingsOfSameExperimentFilenames = glob.glob(globPathName)
+
+            for fairDiceRankingFileName in allFairDiceRankingsOfSameExperimentFilenames:
+                fairDiceRanking = pd.read_csv(fairDiceRankingFileName, header=0, skipinitialspace=True)
+                iString = fairDiceRankingFileName.split(sep="_")[6]
+
+                print("\n", kString, pString, iString)
+                colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames
+                                                        if ((pString in string) and (kString in string))][0],
+                                                 header=0,
+                                                 skipinitialspace=True)
+
+                diceRollRemainingRanking = pd.read_csv([string for string in allDiceRollRemainingFilenames
+                                                               if ((pString in string) and (kString in string)
+                                                                   and (iString in string))][0],
+                                                       header=0,
+                                                       skipinitialspace=True)
+
+                diceRoll_result = pd.DataFrame()
+                diceRoll_result["group"] = colorblindRanking['group'].unique()
+
+                # individual fairness metrics
+                diceRoll_result = selectionUtilityLossPerGroup(diceRollRemainingRanking, fairDiceRanking, diceRoll_result)
+                diceRoll_result = orderingUtilityLossPerGroup(colorblindRanking, fairDiceRanking, diceRoll_result)
+
+                # performance metrics
+                kay = len(fairDiceRanking)
+                diceRoll_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
+                                                             fairDiceRanking["score"].to_numpy(),
+                                                             k=kay)
+                diceRoll_result["kendallTau"] = scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
+                                                                       fairDiceRanking.head(kay)["score"].to_numpy())[0]
+
+                # group fairness metrics
+                diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), fairDiceRanking.head(kay), diceRoll_result)
+                diceRoll_result = diceRoll_result.sort_values(by=['group'])
+
+                if diceRoll_result_total.empty:
+                    diceRoll_result_total = diceRoll_result
+                else:
+                    diceRoll_result_total += diceRoll_result
+            # calculate average
+            diceRoll_result_total = diceRoll_result_total / numExps
+            diceRoll_result_total.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResultAveraged.csv")
+
+            # remove all files from todo list that have already been processed
+            allDiceRollFairFilenames = [item for item in allDiceRollFairFilenames if item not in allFairDiceRankingsOfSameExperimentFilenames]
 
 
 if __name__ == '__main__':
