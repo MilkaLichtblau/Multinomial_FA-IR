@@ -1,0 +1,2 @@
+- Table 1: in the example we already run fair and the rows 2-4 are the output of the fair algorithm with two groups
+- the average dice roll is not a ranking, it is the expectation but not a real ranking
