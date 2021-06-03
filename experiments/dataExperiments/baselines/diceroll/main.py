@@ -39,7 +39,7 @@ def main():
         groupArrays[groupName] = origRanking.loc[origRanking['group'] == groupName]
 
     # repeat each experiment 10000 and average results later
-    for i in range(10000):
+    for i in range(5):
         for _ in range(k):
             groupToPut = rollDice(minProps)
             # get best candidate from group and pop candidate
