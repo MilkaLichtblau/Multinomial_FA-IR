@@ -3,7 +3,7 @@ Created on Mar 16, 2021
 
 @author: meike
 '''
-import sys
+import sys, os
 import numpy as np
 import pandas as pd
 import random
@@ -39,7 +39,7 @@ def main():
         groupArrays[groupName] = origRanking.loc[origRanking['group'] == groupName]
 
     # repeat each experiment 10000 and average results later
-    for i in range(5):
+    for i in range(10000):
         for _ in range(k):
             groupToPut = rollDice(minProps)
             # get best candidate from group and pop candidate
@@ -50,7 +50,8 @@ def main():
         # save remaining candidates for later evaluation in colorblind ranking
         remainings = pd.concat(groupArrays.values(), ignore_index=True)
         remainings = remainings.sort_values(by=['score', 'uuid'], ascending=[False, True])
-
+        print(os.getcwd())
+        print(outputFilename[:-4] + "_fair_" + str(i) + outputFilename[-4:])
         fairRanking.to_csv(outputFilename[:-4] + "_fair_" + str(i) + outputFilename[-4:], header=True, index=False)
         remainings.to_csv(outputFilename[:-4] + "_remaining_" + str(i) + outputFilename[-4:], header=True, index=False)
 

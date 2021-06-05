@@ -148,7 +148,7 @@ def evaluate(rankingsDir, evalDir, experimentNames):
 def evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames, numExps=10000):
     # eval for dice roll algorithm
     for experiment in experimentNames:
-        print("\nEXPERIMENT: " + experiment)
+        print("\nDICE ROLL AVERAGE EXPERIMENT: " + experiment)
         allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
         allDiceRollFairFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_fair_*.csv")
         allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_remaining_*.csv")
@@ -161,6 +161,12 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames, numExps=10000
             # included into the fair ranking
             pString = fairDiceRollFilename.split(sep="_")[4]
             kString = fairDiceRollFilename.split(sep="_")[3]
+
+            colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames
+                                                    if ((pString in string) and (kString in string))][0],
+                                             header=0,
+                                             skipinitialspace=True)
+
             globPathName = rankingsDir + experiment + "/diceroll/*" + kString + "_" + glob.escape(pString) + "*_fair_*.csv"
             allFairDiceRankingsOfSameExperimentFilenames = glob.glob(globPathName)
 
@@ -169,10 +175,6 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames, numExps=10000
                 iString = fairDiceRankingFileName.split(sep="_")[6]
 
                 print("\n", kString, pString, iString)
-                colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames
-                                                        if ((pString in string) and (kString in string))][0],
-                                                 header=0,
-                                                 skipinitialspace=True)
 
                 diceRollRemainingRanking = pd.read_csv([string for string in allDiceRollRemainingFilenames
                                                                if ((pString in string) and (kString in string)
