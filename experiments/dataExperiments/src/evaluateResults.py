@@ -5,7 +5,7 @@ Created on Jul 15, 2020
 '''
 
 import pandas as pd
-import glob, os
+import glob, sys
 # from sklearn.metrics import ndcg_score
 from util import *
 import sklearn.metrics
@@ -214,4 +214,9 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames, numExps=10000
 
 
 if __name__ == '__main__':
-    main()
+    rankingsDir = sys.argv[1]
+    evalDir = sys.argv[2]
+    experimentNames = sys.argv[3]
+
+    evaluateDiceRollAverage(rankingsDir, evalDir, experimentNames)
+    evaluate(rankingsDir, evalDir, experimentNames)
