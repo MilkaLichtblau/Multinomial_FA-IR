@@ -54,6 +54,6 @@ def main():
 
 if __name__ == '__main__':
     # repeat each experiment 10000 and average results later
-    for i in range(5):
+    for i in range(10000):
         print("Current run: " + str(i))
         main()
