@@ -1,0 +1,96 @@
+%!TEX root = main.tex
+\section{Appendix}
+\label{sec:appendix}
+%\begin{table}[h!]
+%	\caption{Adjusted significance $\alphaadj$ obtained by using \algoCorrect with $\alpha=0.1$ for selected $k, p$. For small values of $k, p$ there is no $\alphaadj$ that yields the required significance.}
+%	\vspace{-3mm}
+%	\label{tbl:alpha_corrected}
+%	\small\begin{tabular}{r|cccc}
+%		\diaghead{soi text}%
+%		{$\;$\\p}{k}&
+%		%    & \multicolumn{4}{c}{$k$} \\
+%		$40$ & $100$ & $1,000$ & $1,500$ \\\midrule
+%		0.1 & -- & -- & 0.0140 & 0.0122 \\
+%		0.2 & -- & -- & 0.0115 & 0.0101 \\
+%		0.3 & -- & 0.0220 & 0.0103 & 0.0092 \\
+%		0.4 & -- & 0.0222 & 0.0099 & 0.0088 \\
+%		0.5 & 0.0168 & 0.0207 & 0.0096 & 0.0084 \\
+%		0.6 & 0.0321 & 0.0209 & 0.0093 & 0.0085 \\
+%		0.7 & 0.0293 & 0.0216 & 0.0094 & 0.0084 \\
+%		\bottomrule
+%	\end{tabular}
+%\end{table}
+
+%\begin{algorithm}[h]
+%	\caption{Algorithm \algoCorrect used to compute model adjustment. Note that for notational convenience, vector indexes start at zero. Operator ``$>>$'' shifts vector components to the right, padding on the left with zeros.}
+%	\label{alg:correction} % But whenever possible refer to this algo. by name not number
+%	\small
+%	\AlgInput{$k$, the size of the ranking to produce; $p$, the expected proportion of protected elements; $\alphaadj$, the significance for each individual test.}
+%	\AlgOutput{The probability of rejecting a fair ranking.}
+%	$(m_{\operatorname{old}},i_{\operatorname{old}}) \leftarrow (0, 0)$ \AlgComment{Auxiliary vectors}
+%	\For{$i \leftarrow 1$ \KwTo $k$}{
+%		$m[i] \leftarrow F^{-1}(\alphaadj; i, p)$ \\
+%		\If{$m[i] > m_{\operatorname{old}}$}{
+%			$\minv[m_{\operatorname{old}}] \leftarrow i$ \\
+%			$b[m_{\operatorname{old}}] \leftarrow i - i_{\operatorname{old}}$ \\
+%			$(m_{\operatorname{old}},i_{\operatorname{old}}) \leftarrow (m[i], i)$ \\
+%		}
+%	}
+%	$S[0] \leftarrow 1$ \AlgComment{Success probabilities}
+%	\For{$j \leftarrow 1$ \KwTo $m(k)$}{
+%		$S_{\operatorname{new}} \leftarrow$ zero vector of dimension $j$ \\
+%		\For{$i \leftarrow 0$ \KwTo $b(j)$}{
+%			\AlgComment{$f(i;b(j),p)$ is the prob. mass of $Bin(b(j),p)$}
+%			$S_{\operatorname{new}} \leftarrow S_{\operatorname{new}} + ( S >> i ) \cdot f(i; b(j), p)$ \\
+%		}
+%		$S_{\operatorname{new}}[j-1] \leftarrow 0$ \\
+%		$S \leftarrow S_{\operatorname{new}}$ \\
+%	}
+%	\Return{probability of rejecting a fair ranking: $1 - \sum S[i]$ }
+%\end{algorithm}
+\begin{algorithm}[h!]
+	\caption{Algorithm \algoMultBinary calculates the corrected significance level $\alpha_c$ for multiple protected groups, such that the mTree $m(\alpha_c , k, p_G)$ has the probability of rejecting a fair ranking $\alpha$}
+	\label{alg:mult_binary} % But whenever possible refer to this algo. by name not number
+	\small
+	\AlgInput{$k$, the size of the ranking to produce; $p_G$, the vector of expected proportions of protected elements; $\alpha$, the desired significance level, $\epsilon$ the tolerance for variance in the experimental fail probability calculation.}
+	\AlgOutput{$\alphaadj$ the adjusted significance level, \texttt{m\_{adjusted}} the adjusted mTree}
+	\AlgComment{initialize all needed variables}
+	\texttt{aMin $\leftarrow$ 0};
+	\texttt{aMax $\leftarrow \alpha$ };
+	\texttt{aMid} $\leftarrow \frac{(\texttt{aMin + aMax})}{2}$ \\
+	\texttt{m\_min} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMin)} 
+	\texttt{m\_max} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMax)}
+	\texttt{m\_mid} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMid)} \\
+	
+	\While{True}{
+		\If{\texttt{m\_mid.getFailProb()} $< \alpha$}{
+			\texttt{aMin} $\leftarrow$ \texttt{aMid} \\
+			\texttt{m\_min} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMin)} \\
+			\texttt{aMid} $\leftarrow$ $\frac{\texttt{aMin}+\texttt{aMax}}{2}$ \\
+			\texttt{m\_mid} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMid)}
+		}
+		\If{\texttt{m\_mid.getFailProb()} $> \alpha$}{
+			\texttt{aMax} $\leftarrow$ \texttt{aMid} \\
+			\texttt{m\_max} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMax)} \\
+			\texttt{aMid} $\leftarrow$ $\frac{\texttt{aMin}+\texttt{aMax}}{2}$ \\
+			\texttt{m\_mid} $\leftarrow$ \texttt{computeMTree(k,$p_G$,aMid)}
+		}
+		\tcp{compute all differences between fail probability and $\alpha$}
+		\texttt{midDiff} $\leftarrow$ $|\texttt{m\_mid.getFailProb()} - \alpha|$ \\
+		\texttt{maxDiff} $\leftarrow$ $|\texttt{m\_max.getFailProb()} - \alpha|$ \\
+		\texttt{minDiff} $\leftarrow$ $|\texttt{m\_min.getFailProb()} - \alpha|$ \\
+		\tcp{case where midDiff is the the smallest difference from desired significance}
+		\If{\texttt{midDiff} $\leq \epsilon$ AND \texttt{midDiff} $\leq \texttt{maxDiff}$ AND \texttt{midDiff} $\leq \texttt{minDiff}$}{
+			\Return{\texttt{aMid, m\_mid}}
+		}
+		\tcp{case where minDiff is the the smallest difference from desired significance}
+		\If{\texttt{minDiff} $\leq \epsilon$ AND \texttt{minDiff} $\leq \texttt{maxDiff}$ AND \texttt{minDiff} $\leq \texttt{midDiff}$}{
+			\Return{\texttt{aMin, m\_min}}
+		}
+		\tcp{case where maxDiff is the the smallest difference from desired significance}
+		\If{\texttt{maxDiff} $\leq \epsilon$ AND \texttt{maxDiff} $\leq \texttt{minDiff}$ AND \texttt{maxDiff} $\leq \texttt{midDiff}$}{
+			\Return{\texttt{aMax, m\_max}}
+		}
+	}
+\end{algorithm}
+

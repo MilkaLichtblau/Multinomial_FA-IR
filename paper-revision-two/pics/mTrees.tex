@@ -1,0 +1,149 @@
+%!TEX root = main.tex
+
+\begin{figure}[t!]
+	\centering
+	\resizebox{1\columnwidth}{!}{%
+	\begin{forest}
+		for tree={
+			child anchor=west,
+			parent anchor=east,
+			grow'=east,
+			draw,
+			anchor=west,
+		}
+		[{1, [0, 0]}
+		[{2, [0, 0]}
+			[{3, [1, 0]}
+				[{4, [2, 0]$^*$}
+					[{5, [3, 0]}
+						[{6, [3, 1]}
+							[{7, [3, 1]}, name=doubled5
+								[{8, [4, 1]}
+									[{9, [5, 1]}]
+									[{9, [4, 2]}]
+								]
+								[{8, [3, 2]}, name=parentDoubled8]
+							]
+						]
+					]
+					[{5, [2, 1]}, name=parentDoubled2]
+				]
+				[{4, [1, 1]}, name=doubled1
+					[{5, [1, 1]}
+						[{6, [2, 1]}, name=doubled2
+							[{7, [2, 2]}, name=doubled6, before drawing tree={y-=1em}
+								[{8, [2, 2]}, before drawing tree={y-=1em}
+									[{9, [3, 2]}, name=doubled8, before drawing tree={y-=1em}]
+									[{9, [2, 3]}, name=doubled9, before drawing tree={y-=1em}]
+								]
+							]
+						]
+						[{6, [1, 2]}, name=doubled3]
+					]
+				]
+			]
+			[{3, [0, 1]}, name=parentDoubled1
+				[{4, [0, 2]}
+					[{5, [1, 2]}, name=parentDoubled3]
+					[{5, [0, 3]}
+						[{6, [1, 3]}
+							[{7, [1, 3]}, name=doubled7
+								[{8, [2, 3]}, name=parentDoubled9]
+								[{8, [1, 4]}
+									[{9, [2, 4]}]
+									[{9, [1, 5]}]
+								]
+							]
+						]
+					]
+				]
+			]
+		]]
+		\draw (parentDoubled1.east)--(doubled1.west);
+		\draw (parentDoubled2.east)--(doubled2.west);
+		\draw (parentDoubled3.east)--(doubled3.west);
+		\draw (doubled2.east)--(doubled5.west);
+		\draw (doubled3.east)--(doubled6.west);
+		\draw (doubled3.east)--(doubled7.west);
+		\draw (parentDoubled8.east)--(doubled8.west);
+		\draw (parentDoubled9.east)--(doubled9.west);
+	\end{forest}
+	}
+	\CaptionMargin
+	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=\langle 1/3, 1/3 \rangle $ and $ \alpha=0.1 $. \changed{The notation $(k, [x,y])$ indicates that at ranking position $k$, we need at least $x$ elements of group $1$ and $y$ elements of group $2$ to satisfy ranked group fairness; group 0, which is the non-protected group, is always unconstrained.
+	%
+	%Levels go from left to right starting from 1, as indicated by the first number in the nodes.
+	For instance, the node marked ``(4, [2, 0])$^*$'' indicates that in the first 4 positions of this ranking, one of the acceptable configurations is to have 2 or more elements from group 1 and 0 or more elements from group 2.}
+	%
+	We see that in case of multiple protected groups, there are various ways of satisfying Definition~\ref{def:ranked-group-fairness-condition}.
+	%
+	Thus, each path in the tree corresponds to one valid strategy to place protected candidates in the ranking.
+	\label{fig:mtree-symmetric-unadjusted}}
+\end{figure}
+%
+%\begin{figure}[t!]
+%	\centering
+%	\begin{forest}
+%		for tree={
+%			child anchor=west,
+%			parent anchor=east,
+%			grow'=east,
+%			draw,
+%			anchor=west,
+%		}
+%		[{[0, 0]}
+%		[{[0, 0]}
+%			[{[1, 0]}
+%				[{[2, 0]}, before drawing tree={y-=1em}
+%					[{[2, 1]}, before drawing tree={y-=1em}
+%						[{[2, 1]}, before drawing tree={y-=1em}
+%							[{[2, 1]}, name=doubled5, before drawing tree={y-=2em}
+%								[{[2, 2]},  before drawing tree={y-=2em}
+%									[{[2, 2]}, name=doubled6, before drawing tree={y-=2em}
+%										[{[3, 2]},  before drawing tree={y-=2em}]
+%									]
+%								]
+%							]
+%						]]]
+%				[{[1, 1]}
+%				[{[1, 1]}, name=doubled1
+%					[{[1, 1]}, name=parentDoubled5
+%						[{[1, 2]}, name=doubled2, before drawing tree={y-=1em}
+%							[{[1, 2]}, name=parentDoubled6, before drawing tree={y-=1em}
+%								[{[1, 3]}, name=doubled3, before drawing tree={y-=2em}
+%									[{[2, 3]},  before drawing tree={y-=2em}]
+%									[{[1, 4]}, name=doubled4, before drawing tree={y-=2em}]
+%								]
+%							]
+%						]
+%					]]]
+%			]
+%			[{[0, 1]}
+%				[{[0, 1]}, name=parentDoubled1
+%					[{[0, 2]}
+%						[{[1, 2]}, name=parentDoubled2]
+%						[{[0, 3]}
+%							[{[0, 3]}
+%								[{[1, 3]}, name=parentDoubled3]
+%								[{[0, 4]}
+%									[{[1, 4]}, name=parentDoubled4]
+%									[{[0, 5]}
+%										[{[1, 5]}]
+%									]
+%								]
+%							]
+%						]
+%					]
+%				]]
+%		]]
+%		\draw (parentDoubled1.east)--(doubled1.west);
+%		\draw (parentDoubled2.east)--(doubled2.west);
+%		\draw (parentDoubled3.east)--(doubled3.west);
+%		\draw (parentDoubled4.east)--(doubled4.west);
+%		\draw (parentDoubled5.east)--(doubled5.west);
+%		\draw (parentDoubled6.east)--(doubled6.west);
+%	\end{forest}
+%	\CaptionMargin
+%	\caption{Example of an mTree with two protected groups with minimum proportions $ p_G=\langle 0.2, 0.4 \rangle $ and $ \alpha=0.1 $. We see that the tree, in contrast to the mTree in Figure~\ref{fig:mtree-symmetric-unadjusted}, is not symmetric because the minimum proportions $ p_G $ differ.
+%	\label{fig:mtree-asymmetric-unadjusted}}
+%\end{figure}

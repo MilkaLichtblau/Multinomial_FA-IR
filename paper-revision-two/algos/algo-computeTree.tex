@@ -1,0 +1,47 @@
+\setlength{\textfloatsep}{2pt}
+\begin{algorithm}[t!]
+	\caption{Algorithm \algoComputeMTree computes the data structure to efficiently verify or construct a ranking that satisfies multinomial ranked group fairness.}
+	\label{alg:computeMTree}
+	\small
+	\AlgInput{$k$, the size of the ranking to produce; $p_G$, the expected proportions of protected elements for each group; $\alphaadj$, the significance for each individual test.}
+	\AlgOutput{$ \mtree $: A tree data structure that contains the minimum number of protected candidates for each group.}
+	$\mtree[0] \leftarrow \text{zeros(|G|)}$ \AlgComment{initialize auxiliary root node with $ |G| $ entries} 
+	\For{$i \leftarrow 1$ \KwTo $k$}{
+		\For{\tt parent in $ \mtree[i - 1] $}{
+			\AlgComment{find all child nodes that satisfy ranked group fairness}
+			$\tt children \leftarrow \algoImcdf(\alphaadj; i, p_G, \tt parent)$ \\
+			\tt parent.children $ \leftarrow $ \tt children\\
+		}
+	}
+	\Return{$ \mtree $ }
+\end{algorithm}
+\setlength{\textfloatsep}{2pt}
+\begin{algorithm}[t!]
+	\caption{Algorithm \algoImcdf computes the inverse of the multinomial cumulative distribution function $ F^{-1}(\alphaadj; i, p_G) $. It finds all possible child nodes of a given parent that satisfy the ranked group fairness condition. }
+	\label{alg:imcdf} 
+	\small
+	\AlgInput{ \texttt{parent}, the node of which we calculate all minimum target children; \\
+		$i$, the current position in the ranking; \\
+		$p_G$, the vector of expected proportions of protected elements of each group;\\
+		$\alphaadj$, the significance for each individual test.}
+	\AlgOutput{ \texttt{children}: A list of nodes with minimum targets that satisfy ranked group fairness}
+	\tt children $\leftarrow \lbrace \rbrace$ \\
+	\tt child $ \leftarrow  $ \tt copy(parent) \\
+	\tt mcdf $ \leftarrow  F(\texttt{child}; i, p_G) $ \\
+	\If{\tt mcdf $ > \alphaadj $}{
+	\AlgComment{if the multinomial cdf is greater than $\alphaadj$ we do not need to increase the number of required protected candidates}
+		\tt children.add(child)
+	} \Else {
+		\For{$j \leftarrow 1 $ to $ |G|$}{
+		\AlgComment{test whether the multinomial cdf is greater than $\alphaadj$, if one more candidate of group $j$ was required at postion $i$}
+			\tt temp $\leftarrow$ child\\
+			\tt temp[j] $\leftarrow$ temp[j] + 1\\
+			\tt mcdfTemp $\leftarrow F(\texttt{temp}; i, p_G)$ \\
+			\If{$\texttt{mcdfTemp} > \alphaadj$}{
+			\AlgComment{if yes, append the new requirement to the mTree}
+				children.add(temp)			
+			}
+		}
+	}
+	\Return{\tt children}
+\end{algorithm}
