@@ -8,4 +8,4 @@ EXPERIMENT_NAMES=""
 
 cd $PATH_TO_EVAL_CODE
 echo "Eval German Credit"
-python3 evaluateResults.py $RANKINGS_DIR $EVAL_DIR $EXPERIMENT_NAMES
+python3 evaluateResults.py $RANKINGS_DIR $EVAL_DIR "$EXPERIMENT_NAMES"
