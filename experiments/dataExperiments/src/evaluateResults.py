@@ -7,17 +7,12 @@ Created on Jul 15, 2020
 import pandas as pd
 import glob, os
 # from sklearn.metrics import ndcg_score
-from src.util import *
+from util import *
 import sklearn.metrics
 import scipy.stats
 
 
 def main():
-    # evaluate compas
-    print("Evaluation for COMPAS experiments")
-    evaluateDiceRollAverage("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"], numExps=5)
-    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
-
     # evaluate German credit
     print("Evaluation for GermanCredit experiments")
     evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
@@ -27,6 +22,11 @@ def main():
     print("Evaluation for LSAT experiments")
     evaluate("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
     evaluateDiceRollAverage("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
+
+    # evaluate compas
+    print("Evaluation for COMPAS experiments")
+    evaluateDiceRollAverage("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
+    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
 
 
 def evaluate(rankingsDir, evalDir, experimentNames):
