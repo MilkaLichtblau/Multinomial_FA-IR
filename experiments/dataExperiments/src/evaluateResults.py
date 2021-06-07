@@ -8,29 +8,11 @@ import pandas as pd
 import glob, sys
 # from sklearn.metrics import ndcg_score
 from util import *
-import sklearn.metrics
 import scipy.stats
 
 
-def main():
-    # evaluate German credit
-    print("Evaluation for GermanCredit experiments")
-    evaluate("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
-    evaluateDiceRollAverage("../results/GermanCredit/rankings/", "../results/GermanCredit/evalAndPlots/", [""])
-
-    # evaluate LSAT
-    print("Evaluation for LSAT experiments")
-    evaluate("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
-    evaluateDiceRollAverage("../results/LSAT/rankings/", "../results/LSAT/evalAndPlots/", [""])
-
-    # evaluate compas
-    print("Evaluation for COMPAS experiments")
-    evaluateDiceRollAverage("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
-    evaluate("../results/COMPAS/rankings/", "../results/COMPAS/evalAndPlots/", ["age", "race" , "worstThree"])
-
-
 def evaluate(rankingsDir, evalDir, experiment):
-    print("\nEXPERIMENT: " + experiment)
+    print("\nFAIR AND CFA EXPERIMENT: " + experiment)
     allFairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*alpha*" + "*_fair.csv")
     allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
     allRemainingFilenames = glob.glob(rankingsDir + experiment + "/" + "*alpha*" + "*_remaining.csv")
@@ -157,8 +139,8 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
 
         # find corresponding colorblind ranking and remaining rankings that have not been
         # included into the fair ranking
-        pString = fairDiceRollFilename.split(sep="_")[4]
-        kString = fairDiceRollFilename.split(sep="_")[3]
+        pString = fairDiceRollFilename.split(sep="_")[5]
+        kString = fairDiceRollFilename.split(sep="_")[4]
 
         colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames
                                                 if ((pString in string) and (kString in string))][0],
@@ -170,7 +152,7 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
 
         for fairDiceRankingFileName in allFairDiceRankingsOfSameExperimentFilenames:
             fairDiceRanking = pd.read_csv(fairDiceRankingFileName, header=0, skipinitialspace=True)
-            iString = fairDiceRankingFileName.split(sep="_")[6]
+            iString = fairDiceRankingFileName.split(sep="_")[7]
 
             print("\n", kString, pString, iString)
 

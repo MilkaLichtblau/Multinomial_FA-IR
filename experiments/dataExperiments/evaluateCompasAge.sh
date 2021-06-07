@@ -8,4 +8,6 @@ EXPERIMENT_NAMES="age"
 
 cd $PATH_TO_EVAL_CODE
 echo "Eval Compas Age"
+echo $RANKINGS_DIR
+echo "${PWD}"
 python3 evaluateResults.py $RANKINGS_DIR $EVAL_DIR $EXPERIMENT_NAMES
