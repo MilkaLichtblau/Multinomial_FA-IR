@@ -5,10 +5,12 @@ Created on Jul 15, 2020
 '''
 
 import pandas as pd
-import glob, sys
+import glob, sys, os
 # from sklearn.metrics import ndcg_score
 from util import *
 import scipy.stats
+from multiprocessing import Pool
+import functools
 
 
 def evaluate(rankingsDir, evalDir, experiment):
@@ -126,6 +128,31 @@ def evaluate(rankingsDir, evalDir, experiment):
         diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResult.csv")
 
 
+def evalDiceResultsOneExperimentalSetting(fairDiceRankingFileName, allRemainingFilenames, pStr, kStr, colblindRank, resultPath):
+
+    fairDiceRanking = pd.read_csv(fairDiceRankingFileName, header=0, skipinitialspace=True)
+    iString = fairDiceRankingFileName.split(sep="_")[7]
+    print("\n", kStr, pStr, iString)
+    diceRollRemainingRanking = pd.read_csv(
+        [filename for filename in allRemainingFilenames if ((pStr in filename) and (kStr in filename) and (iString in filename))][0],
+        header=0,
+        skipinitialspace=True)
+    diceRoll_result = pd.DataFrame()
+    diceRoll_result["group"] = colblindRank['group'].unique()
+    # individual fairness metrics
+    diceRoll_result = selectionUtilityLossPerGroup(diceRollRemainingRanking, fairDiceRanking, diceRoll_result)
+    diceRoll_result = orderingUtilityLossPerGroup(colblindRank, fairDiceRanking, diceRoll_result)
+    # performance metrics
+    kay = len(fairDiceRanking)
+    diceRoll_result["ndcgLoss"] = 1 - ndcg_score(colblindRank["score"].to_numpy(), fairDiceRanking["score"].to_numpy(),
+        k=kay)
+    diceRoll_result["kendallTau"] = scipy.stats.kendalltau(colblindRank.head(kay)["score"].to_numpy(), fairDiceRanking.head(kay)["score"].to_numpy())[0]
+    # group fairness metrics
+    diceRoll_result = averageGroupExposureGain(colblindRank.head(kay), fairDiceRanking.head(kay), diceRoll_result)
+    diceRoll_result = diceRoll_result.sort_values(by=['group'])
+    diceRoll_result.to_csv(resultPath + kStr + "_" + pStr + "_diceRollResult_" + iString)
+
+
 def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
     # eval for dice roll algorithm
     print("\nDICE ROLL AVERAGE EXPERIMENT: " + experiment)
@@ -133,7 +160,6 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
     allDiceRollFairFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_fair_*.csv")
     allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_remaining_*.csv")
 
-    diceRoll_result_total = pd.DataFrame()
     # get all files with corresponding k, p and i
     for fairDiceRollFilename in allDiceRollFairFilenames:
 
@@ -150,46 +176,20 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
         globPathName = rankingsDir + experiment + "/diceroll/*" + kString + "_" + glob.escape(pString) + "*_fair_*.csv"
         allFairDiceRankingsOfSameExperimentFilenames = glob.glob(globPathName)
 
-        for fairDiceRankingFileName in allFairDiceRankingsOfSameExperimentFilenames:
-            fairDiceRanking = pd.read_csv(fairDiceRankingFileName, header=0, skipinitialspace=True)
-            iString = fairDiceRankingFileName.split(sep="_")[7]
+        resultPatth = evalDir + experiment + "/diceroll/"
+        if not os.path.exists(resultPatth):
+            os.makedirs(resultPatth)
 
-            print("\n", kString, pString, iString)
-
-            diceRollRemainingRanking = pd.read_csv([string for string in allDiceRollRemainingFilenames
-                                                           if ((pString in string) and (kString in string)
-                                                               and (iString in string))][0],
-                                                   header=0,
-                                                   skipinitialspace=True)
-
-            diceRoll_result = pd.DataFrame()
-            diceRoll_result["group"] = colorblindRanking['group'].unique()
-
-            # individual fairness metrics
-            diceRoll_result = selectionUtilityLossPerGroup(diceRollRemainingRanking, fairDiceRanking, diceRoll_result)
-            diceRoll_result = orderingUtilityLossPerGroup(colorblindRanking, fairDiceRanking, diceRoll_result)
-
-            # performance metrics
-            kay = len(fairDiceRanking)
-            diceRoll_result["ndcgLoss"] = 1 - ndcg_score(colorblindRanking["score"].to_numpy(),
-                                                         fairDiceRanking["score"].to_numpy(),
-                                                         k=kay)
-            diceRoll_result["kendallTau"] = scipy.stats.kendalltau(colorblindRanking.head(kay)["score"].to_numpy(),
-                                                                   fairDiceRanking.head(kay)["score"].to_numpy())[0]
-
-            # group fairness metrics
-            diceRoll_result = averageGroupExposureGain(colorblindRanking.head(kay), fairDiceRanking.head(kay), diceRoll_result)
-            diceRoll_result = diceRoll_result.sort_values(by=['group'])
-
-            if diceRoll_result_total.empty:
-                diceRoll_result_total = diceRoll_result
-            else:
-                diceRoll_result_total += diceRoll_result
-        # calculate average
-        diceRoll_result_total = diceRoll_result_total / numExps
-        diceRoll_result_total.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResultAveraged.csv")
-
-        # remove all files from todo list that have already been processed
+        parallelFunc = functools.partial(evalDiceResultsOneExperimentalSetting,
+                                         allRemainingFilenames=allDiceRollRemainingFilenames,
+                                         pStr=pString,
+                                         kStr=kString,
+                                         colblindRank=colorblindRanking,
+                                         resultPath=resultPatth)
+        pooll = Pool(processes=48)
+        pooll.map(parallelFunc, allFairDiceRankingsOfSameExperimentFilenames)
+        pooll.close()
+        pooll.join()
         allDiceRollFairFilenames = [item for item in allDiceRollFairFilenames if item not in allFairDiceRankingsOfSameExperimentFilenames]
 
 
@@ -199,4 +199,4 @@ if __name__ == '__main__':
     experimentName = sys.argv[3]
 
     evaluateDiceRollAverage(rankingsDir, evalDir, experimentName)
-    evaluate(rankingsDir, evalDir, experimentName)
+#     evaluate(rankingsDir, evalDir, experimentName)
