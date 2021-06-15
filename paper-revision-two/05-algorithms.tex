@@ -122,7 +122,11 @@ After that, adjustments of $k$ and $\alpha$ are fast through recycling of alread
 %
 The only case in which mTrees cannot be reused easily is if $p_G$ changes.
 %
-However, in many cases $p_G$ will most certainly be determined by policy, company guidelines or demographic data, which probably do not change as often as other elements, such as the value of $k$ used to display information to users.}
+However, in many cases $p_G$} \changedtwo{is determined by law, or alternatively by policies or guidelines that change in a time frame of years.}
+%
+\changedtwo{For instance, the International Labour Organization's research shows that, among the countries that seek to increase the participation of people with disabilities in employment, most set a fixed quota between 1\% and 10\%; some countries also set an intersectional quota for people with disabilities \cite{ilo2019}. The European Union has goals of 40\% of participation for women in several areas, including company boards, but also slates of candidates for elected positions.\footnote{\url{https://www.theguardian.com/world/2020/mar/05/eu-revives-plans-for-mandatory-quotas-of-women-on-company-boards}}}
+%
+\changed{Under those circumstances, $p_G$ do not change as often as other elements, such as the value of $k$ used to display information to users.}
 \subsection{Partial Ordering of Solutions}
 \label{sec:algo:partialOrdering}
 When there is a single protected group,
@@ -133,7 +137,6 @@ This allowed us to prove that \algoFAIR for a single protected group finds the o
 %
 The proof comes from the observation that decreases in utility that maintain ranked group fairness can only occur when a high-scoring non-protected candidate is ranked below a low-scoring protected one. %, but not vice versa.
 %
-
 When multiple groups are present there is no total ordering as some rankings cannot be compared.
 %
 It may happen that a high-scoring candidate from a \emph{better-performing protected} group is ranked below a low-scoring candidate from a \emph{low-performing protected} group.
