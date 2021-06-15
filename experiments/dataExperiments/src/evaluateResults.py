@@ -161,7 +161,8 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
     allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_remaining_*.csv")
 
     # get all files with corresponding k, p and i
-    for fairDiceRollFilename in allDiceRollFairFilenames:
+    while len(allDiceRollFairFilenames) != 0:
+        fairDiceRollFilename = allDiceRollFairFilenames[0]
 
         # find corresponding colorblind ranking and remaining rankings that have not been
         # included into the fair ranking
