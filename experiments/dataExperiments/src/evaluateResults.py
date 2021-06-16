@@ -128,7 +128,7 @@ def evaluate(rankingsDir, evalDir, experiment):
         diceRoll_result.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResult.csv")
 
 
-def evalDiceResultsOneExperimentalSetting(fairDiceRankingFileName, allRemainingFilenames, pStr, kStr, colblindRank, resultPath):
+def parallelDiceRollEvalFunc(fairDiceRankingFileName, allRemainingFilenames, pStr, kStr, colblindRank, resultPath):
 
     fairDiceRanking = pd.read_csv(fairDiceRankingFileName, header=0, skipinitialspace=True)
     iString = fairDiceRankingFileName.split(sep="_")[7]
@@ -150,12 +150,12 @@ def evalDiceResultsOneExperimentalSetting(fairDiceRankingFileName, allRemainingF
     # group fairness metrics
     diceRoll_result = averageGroupExposureGain(colblindRank.head(kay), fairDiceRanking.head(kay), diceRoll_result)
     diceRoll_result = diceRoll_result.sort_values(by=['group'])
-    diceRoll_result.to_csv(resultPath + kStr + "_" + pStr + "_diceRollResult_" + iString)
+    diceRoll_result.to_csv(resultPath + "diceRollResult_" + kStr + "_" + pStr + "_" + iString)
 
 
-def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
+def evaluateDiceRollPerExperiment(rankingsDir, evalDir, experiment, numExps=10000):
     # eval for dice roll algorithm
-    print("\nDICE ROLL AVERAGE EXPERIMENT: " + experiment)
+    print("\nDICE ROLL AVERAGE EXPERIMENT EVALUATION: " + experiment)
     allUnfairRankingFilenames = glob.glob(rankingsDir + experiment + "/" + "*_unfair.csv")
     allDiceRollFairFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_fair_*.csv")
     allDiceRollRemainingFilenames = glob.glob(rankingsDir + experiment + "/diceroll/" + "*_remaining_*.csv")
@@ -164,11 +164,9 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
     while len(allDiceRollFairFilenames) != 0:
         fairDiceRollFilename = allDiceRollFairFilenames[0]
 
-        # find corresponding colorblind ranking and remaining rankings that have not been
-        # included into the fair ranking
         pString = fairDiceRollFilename.split(sep="_")[5]
         kString = fairDiceRollFilename.split(sep="_")[4]
-
+        # find corresponding colorblind ranking
         colorblindRanking = pd.read_csv([string for string in allUnfairRankingFilenames
                                                 if ((pString in string) and (kString in string))][0],
                                          header=0,
@@ -181,7 +179,7 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
         if not os.path.exists(resultPatth):
             os.makedirs(resultPatth)
 
-        parallelFunc = functools.partial(evalDiceResultsOneExperimentalSetting,
+        parallelFunc = functools.partial(parallelDiceRollEvalFunc,
                                          allRemainingFilenames=allDiceRollRemainingFilenames,
                                          pStr=pString,
                                          kStr=kString,
@@ -194,10 +192,51 @@ def evaluateDiceRollAverage(rankingsDir, evalDir, experiment, numExps=10000):
         allDiceRollFairFilenames = [item for item in allDiceRollFairFilenames if item not in allFairDiceRankingsOfSameExperimentFilenames]
 
 
+def readAndPrepareDiceRollEvalFiles(filename):
+    return pd.read_csv(filename)
+
+
+def evaluateDiceRollStatistics(evalDir, experiment):
+    allEvalDiceRollFileNames = glob.glob(evalDir + experiment + "/diceroll/*.csv")
+    while len(allEvalDiceRollFileNames) != 0:
+        evalFilename = allEvalDiceRollFileNames[0]
+        pString = evalFilename.split(sep="_")[3]
+        kString = evalFilename.split(sep="_")[2]
+        globPathName = evalDir + experiment + "/diceroll/*" + kString + "_" + glob.escape(pString) + "*.csv"
+        allEvalFilenamesOfSameExperiment = glob.glob(globPathName)
+
+        with Pool(processes=48) as pool:
+            scoresPerGroup = pd.concat(pool.map(readAndPrepareDiceRollEvalFiles, allEvalFilenamesOfSameExperiment))
+
+        print(scoresPerGroup)
+        for colName in scoresPerGroup.columns:
+            if 'group' in colName or 'Unnamed' in colName:
+                continue
+            newMeanCol = colName + "_mean"
+            newStdCol = colName + "_std"
+            scoresPerGroup[newMeanCol] = 0.0
+            scoresPerGroup[newStdCol] = 0.0
+            for groupName in scoresPerGroup["group"].unique():
+                groupRows = scoresPerGroup.loc[scoresPerGroup["group"] == groupName]
+                groupMean = groupRows[colName].mean()
+                groupStd = groupRows[colName].std()
+                scoresPerGroup.at[scoresPerGroup[scoresPerGroup["group"] == groupName].index[0], newMeanCol] = groupMean
+                scoresPerGroup.at[scoresPerGroup[scoresPerGroup["group"] == groupName].index[0], newStdCol] = groupStd
+
+        # only keep means and std
+        keepCols = [c for c in scoresPerGroup.columns if (c[-4:] == 'mean') or (c[-3:] == 'std') or (c == 'group')]
+        scoresPerGroup = scoresPerGroup[keepCols]
+        scoresPerGroup = scoresPerGroup.drop_duplicates()
+
+        scoresPerGroup.to_csv(evalDir + experiment + "/" + kString + "_" + pString + "_diceRollResultWithMeanAndStd.csv")
+        allEvalDiceRollFileNames = [item for item in allEvalDiceRollFileNames if item not in allEvalFilenamesOfSameExperiment]
+
+
 if __name__ == '__main__':
     rankingsDir = sys.argv[1]
     evalDir = sys.argv[2]
     experimentName = sys.argv[3]
 
-    evaluateDiceRollAverage(rankingsDir, evalDir, experimentName)
-#     evaluate(rankingsDir, evalDir, experimentName)
+    evaluateDiceRollPerExperiment(rankingsDir, evalDir, experimentName)
+    evaluateDiceRollStatistics(evalDir, experimentName)
+    evaluate(rankingsDir, evalDir, experimentName)

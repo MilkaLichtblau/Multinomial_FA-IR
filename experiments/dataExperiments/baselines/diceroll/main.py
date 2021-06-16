@@ -31,6 +31,8 @@ def main():
     minProps = parseMinprops(sys.argv[2])
     k = int(sys.argv[3])
     outputFilename = sys.argv[4]
+    if not os.path.exists(outputFilename):
+        os.makedirs(outputFilename)
 
     fairRanking = pd.DataFrame(columns=["score", "group", "uuid"])
     # separate groups into dict of group arrays
