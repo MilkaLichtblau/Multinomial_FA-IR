@@ -177,6 +177,8 @@ Each side of the dice represents one group $g \in G$ and shows with probability 
 %
 We further note that the results we report are only taken w.r.t. one dice rolling experiment, hence another instance may show different utility losses and fairness gains.
 }
+\\
+\changed{\spara{Baseline 4: Binomial \algoFAIR.} We additionally report the experimental results using the binomial version of \algoFAIR \citep{zehlike2017fair, zehlike2020fairsearch}. Because this version of \algoFAIR accepts only one value $p \in \mathbb{R}$, we aggregated all protected groups into one. The evaluation on the other side was done for each group separately in order to see what changes compared to the multinomial version of \algoFAIR. The resulting values for $p$ are $p=\sum p_{\text{eq}}$ which is the sum of the entries of $p$ in the multinomial case, where all groups have the same proportion. Furthermore, $p=\sum p_{\text{stat}}$ refers to the sum of the entries of $p$ in the multinomial case, where all values $p_1, ...p_{|G|}$ refer to the actual proportions of the protected groups in the data. We further report the results for $p=0.5$.}
 
 \spara{Utility (Performance Measure). } We report the loss in ranked utility after score normalization, in which all $q_i$ are normalized to be within $[0, 1]$.
 %
@@ -359,7 +361,10 @@ While the former yields better numbers in terms of utility, with the latter the 
 			age (2 prot.)	& \algoFAIR $p_{\text{stat}}$ 	& $[0.21, 0.21, 0.00]$ & $[287, 0, 0]$ 		& $[0.21, 0.21, 0.00]$ \\
 							& CFA$\theta$ 					& $[0.19, 0.18 ,0.00]$ & $[159, 282, 0]$ 	& $[0.19, 0.17, 0.00]$ \\ %\cline{2-7}
 							& \changed{dice roll} $p_{\text{stat}}$ 	& $[0.22, 0.22, 0.00]$ & $[310, 0, 0]$ 		& $[0.22, 0.22, 0.00]$ \\
-
+								\cline{2-5}
+								& \changed{\algoFAIR $p = \sum p_{\text{eq}}$}	& \changed{$[0.01,0,0]$}		&\changed{ $[180,0,0]$}		&\changed{ $[0.01,0,0]$ } \\
+								& \changed{\algoFAIR $p = \sum p_{\text{stat}}$}	& \changed{$[0.01,0,0]$}		&\changed{ $[283,0,0]$}		&\changed{ $[0.01,0,0]$ }	 \\													
+								& \changed{\algoFAIR $p = 0.5$}	& \changed{$[0.00,0,0]$}		&\changed{ $[23,0,0]$}		&\changed{ $[0.00,0,0]$ } \\
 			\midrule
 			\midrule
 			D3 -- COMPAS, 			& \algoFAIR  $p_{\text{eq}}$ 	& $[0.60, 0.26, 0.00, 0.37]$ 	& $[206, 0, 0, 0]$ 		& $[0.60, 0.26, 0.00, 0.37]$ \\
@@ -368,7 +373,10 @@ While the former yields better numbers in terms of utility, with the latter the 
 			3 worst off (3 prot.)	& \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03, 0.00, 0.02]$ & $[38, 0, 0, 0]$ 				& $[0.17, 0.01,0.01, 0.00] $  \\
 								 	& CFA$\theta$ 					& $[0.15, 0.01, 0.00, 0.00] $ & $[268, 0, 0, 0]$ 	& $[0.15, 0.00, 0.00, 0.00]$   \\
 									& \changed{dice roll} $p_{\text{stat}}$ 	& $[0.20, 0.001, 0.006, 0.02]$ & $[62, 0, 0, 0]$ 		& $[0.20, 0.01, 0.03, 0.00]$ \\
-
+								\cline{2-5}
+								& \changed{\algoFAIR $p = \sum p_{\text{eq}}$}	& \changed{$[0.28,0,0, 0]$}		&\changed{ $[208,0,0, 0]$}		&\changed{ $[0.28,0,0, 0]$ } \\
+								& \changed{\algoFAIR $p = \sum p_{\text{stat}}$}	& \changed{$[0.17,0,0, 0]$}		&\changed{ $[39,0,0, 0]$}		&\changed{ $[0.17,0,0, 0]$ }	 \\													
+								& \changed{\algoFAIR $p = 0.5$}	& \changed{$[0.24,0,0, 0]$}		&\changed{ $[131,0,0, 0]$}		&\changed{ $[0.24,0,0, 0]$ } \\
 			\midrule
 			\midrule
 			D4 -- German credit, 	& \algoFAIR $p_{\text{eq}}$ 	&  $[3.57, 2.70, 3.42, 0.55, 1.23, 1.76]$ 	& $[28, 4, 6, 1, 0, 0]$ 	& $[3.05, 1.82, 1.34, 0.00, 0.18, 0.33]$ \\
@@ -377,7 +385,10 @@ While the former yields better numbers in terms of utility, with the latter the 
 			sex \& age (5 prot.) 	& \algoFAIR $p_{\text{stat}}$ & $[1.84, 1.56, 0.45, 0.00, 0.33, 1.28]$ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23, 0.00, 1.18, 1.54]$  \\
 									& CFA$\theta$ &  $[0.50, 0.91, 2.07, 1.46, 0.72, 0.00]$ & $[2, 1, 32, 14, 2, 0]$ & $[0.34, 0.00, 1.93, 2.20, 0.00, 0.00]$ \\
 									& \changed{dice roll} $p_{\text{stat}}$ 	& $[0.92, 0.54, 1.76, 2.55, 0.00, 0.29]$ & $[1, 0, 15, 38, 0, 0]$ 		& $[0.96, 0.56, 2.74, 0.00, 2.92, 0.20]$ \\
-
+								\cline{2-5}
+								& \changed{\algoFAIR $p = \sum p_{\text{eq}}$}	& \changed{$[1.53,0,0, 0,0,0]$}		&\changed{ $[25,0,0, 0,0,0]$}		&\changed{ $[1.37,0,0, 0,0,0]$ } \\
+								& \changed{\algoFAIR $p = \sum p_{\text{stat}}$}	& \changed{$[0,0,0, 0,0,0]$}		&\changed{ $[0,0,0, 0,0,0]$}		&\changed{ $[0,0,0, 0,0,0]$ }	 \\													
+								& \changed{\algoFAIR $p = 0.5$}	& \changed{$[0,0,0, 0,0,0]$}		&\changed{ $[0,0,0, 0,0,0]$}		&\changed{ $[0,0,0, 0,0,0]$ } \\
 			\midrule
 			\midrule
 			D5 -- LSAT, 			& \algoFAIR $p_{\text{eq}}$ 	& $[4, 4, 1, 0]$	& $[220, 10, 0, 0]$ & $[4, 3, 0, 0]$  \\
@@ -386,6 +397,10 @@ While the former yields better numbers in terms of utility, with the latter the 
 			sex \& race (3 prot.) 	& \algoFAIR $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ 	& $[136, 13, 0, 0]$ & $[2, 1, 0, 0]$  \\
 									& CFA$\theta$ 					& $[1, 1, 1, 0]$ 	& $[122, 26, 0, 0]$ & $[1, 0, 0, 0]$  \\
 									& \changed{dice roll} $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ & $[75, 12, 0, 0]$ 	& $[2, 1, 0, 0]$ \\
+								\cline{2-5}
+								& \changed{\algoFAIR $p = \sum p_{\text{eq}}$}	& \changed{$[1,0,0, 0]$}		&\changed{ $[157,0,0, 0]$}		&\changed{ $[1,0,0, 0]$ } \\
+								& \changed{\algoFAIR $p = \sum p_{\text{stat}}$}	& \changed{$[1,0,0, 0]$}		&\changed{ $[113,0,0, 0]$}		&\changed{ $[1,0,0, 0]$ }	 \\													
+								& \changed{\algoFAIR $p = 0.5$}	& \changed{$[1,0,0, 0]$}		&\changed{ $[113,0,0, 0]$}		&\changed{ $[1,0,0, 0]$ } \\
 			\bottomrule
 		\end{tabular}
 	}
@@ -460,4 +475,6 @@ This experiment shows that \algoFAIR allows a wide range of positive actions, fo
 In this case, the Figure~\ref{fig:experiments:compasAge:ndcgloss} shows that we can double the proportion of young people in the top-$k$ ranking (e.g. from 0\% in the original up to 40\% in the fair ranking) without introducing a large drop for the other protected group loss: in the colorblind ranking they received exposure equivalent to $0.4 > p_1 > 0.5$, so setting $p_1 = p_2 = 0.4$ only causes an exposure drop of 5.8\%.
 %
 At the same time the NDCG loss is just 5.6\% and never exceeds 15\%, even when favoring young people with $p_2=0.8$.
-%
+\\
+\\
+\changed{\spara{Comparison of Binomial \algoFAIR and Multinomial \algoFAIR.} Table \ref{tbl:results-part-one} and tabel \ref{tbl:results-part-two} reveal the importance of considering multiple protected groups and thus using the multinomial version of \algoFAIR instead of the binomial version. For example, in the case of D3 - COMPAS, binomial \algoFAIR achieves higher Kendall's Tau and less total NDCG loss. However, when we look at the exposure gain per group, we can see that this is due to less improvements of protected group 1 and 2 compared to the multinomial version of \algoFAIR. In other words, binomial \algoFAIR may discriminate within all protected groups and thus may uprank less candidates of a specific group. This effect can lead to no improvement for certain protected groups at all, e.g. D4  German credit, D2-COMPAS protected group 2. Furthermore, D4- German credit reveals another weakness of binomial \algoFAIR compared to multinomial \algoFAIR: For $p=\sum p_{\text{stat}}$ and $p=0.5$ the colorblind ranking is already "bionomial"-fair, which leads to no change while the multinomial version of \algoFAIR improves all protected groups. Table \ref{tbl:results-part-two} shows another effect of \textit{pooling} all protected groups into one: For all data sets, binomial \algoFAIR only downranks the unprotected candidates which we see at all rank drops of the protected groups being 0. In the multinomial case however, \algoFAIR is able to adjust not only the unprotected candidate ranks but also the ranks of advantaged protected candidates in some parts of the ranking. In summary, while the binomial version of \algoFAIR is computationally preferable, it has some weaknesses which can lead to undesirable outcomes for some protected groups compared to the multinomial version of \algoFAIR.}
