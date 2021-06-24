@@ -22,6 +22,6 @@ python3 main.py LSAT_sexRace 1 1,1,1,1 $PATH_TO_LSAT_RESULTS/LSAT_sexRace_CFA_th
 # Dice Roll baseline
 cd $PATH_TO_DICEROLL_ALGORITHM
 echo "Baseline dice roll with biased dice"
-python3 main.py $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv $minpropsParity $k $PATH_TO_LSAT_RESULTS/LSAT_sexRace_dice_k="$k"_p=[$minpropsParity].csv
+#python3 main.py $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv $minpropsParity $k $PATH_TO_LSAT_RESULTS/LSAT_sexRace_dice_k="$k"_p=[$minpropsParity].csv
 echo "Baseline dice roll with unbiased dice"
 python3 main.py $PATH_TO_LSAT_DATA/LSAT_sexRace_java.csv $minpropsEqual $k $PATH_TO_LSAT_RESULTS/LSAT_sexRace_dice_k="$k"_p=[$minpropsEqual].csv
