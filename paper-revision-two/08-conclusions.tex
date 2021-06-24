@@ -50,7 +50,7 @@ This is however very memory-intensive and the algorithm then needs to run on lar
 %
 Moreover, one could provide a script that fills the MCDF Cache with various configurations of $p_G$ and $\alpha$.
 %
-\changed{Future work could also investigate other routes of optimizing the creation of mTrees. One field of action could be the parallelization of mTree calculations during significance adjustment. Furthermore, a tailored multinomial CDF function which reuses recurring computation steps might boost the mTree construction significantly.}
+Future work could also investigate other routes of optimizing the creation of mTrees. One field of action could be the parallelization of mTree calculations during significance adjustment. Furthermore, a tailored multinomial CDF function which reuses recurring computation steps might boost the mTree construction significantly.
 %
 This calculation can continuously run as a separate process on a server which then provides the obtained caches to users who want to compute new mTrees.
 
@@ -60,27 +60,25 @@ Recent research \cite{suhr2020does}, however, suggests that guarantees for a min
 %
 For example, if a user prefers male candidates for a moving assistance task over female candidates, ranking female candidates higher will not mitigate users' biases completely.
 %
-\changed{Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups by setting the values for $p_G$ higher than the desired click probability.
+Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups by setting the values for $p_G$ higher than the desired click probability.
 %
 For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group.
 %
 Nonetheless the study also shows that user biases are complex and hard to mitigate through ranking algorithms alone.
 %
-For example, users in their study relied heavily on the displayed features, suggesting that showing or hiding certain features may impact user decisions significantly.}
+For example, users in their study relied heavily on the displayed features, suggesting that showing or hiding certain features may impact user decisions significantly.
 %
-\removed{Thus, a method such as \algoFAIR may be able to increase the click probability for protected groups. Furthermore, setting the values for $p_G$ higher than desired may mitigate user biases. For example, it might be effective to set the minimum proportion for the protected group women in the context of hiring for moving assistance to $60\%$ in order to achieve a click probability of $50\%$ for this group.}
+Further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
 %
-\removed{However} Further research has to be conducted to study the effect on users of re-ordering items in a ranking and to understand the best means to overcome these strong prejudices against minority groups in certain domains.
-%
-\changed{This is an empirical question that needs to be addressed through user studies; approaches based on simulating clicks using pre-existing user preferences, such as the one used by \citet{abdollahpouri2021user}, may not uncover the actual interplay between the displayed ranking and latent user preferences.}
+This is an empirical question that needs to be addressed through user studies; approaches based on simulating clicks using pre-existing user preferences, such as the one used by \citet{abdollahpouri2021user}, may not uncover the actual interplay between the displayed ranking and latent user preferences.
 
 Additionally, further experimental research using synthetic data could allow us to test with a wider range of differences across groups, larger than the one that real datasets exhibit.
 %
-\changed{This can help us better understand the trade-offs between individual losses and increased group fairness.
+This can help us better understand the trade-offs between individual losses and increased group fairness.
 %
 Our experiments show that, while decreases in NDCG are often negligible, the rank drop for an (unlucky) individual candidate from the non-protected group can still be large.
 %
-An interesting next step for our method would be to use individual rank drops as input for a second fairness-enhancing method, that could try to optimize for individual fairness, while maintaining the ordering of groups that is required by a given mTree.}
+An interesting next step for our method would be to use individual rank drops as input for a second fairness-enhancing method, that could try to optimize for individual fairness, while maintaining the ordering of groups that is required by a given mTree.
 %
 Finally, robustness tests to measure the sensitivity of the rankings to noise in the qualification/score inputs could be helpful to determine to what extent they may affect our fairness objectives.
 

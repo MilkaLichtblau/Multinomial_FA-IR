@@ -17,7 +17,7 @@ As people search engines are increasingly common for job recruiting~\cite{raghav
 
 The main concern motivating this work is that ranking algorithms based in machine learning, may produce ranked lists that can systematically reduce the visibility of already disadvantaged groups~\cite{peder2008,Dwork2012} and legally protected categories such as people with disabilities, racial or ethnic minorities, or an under-represented gender in a specific professional domain.
 %
-\changed{This systematic bias may have various origins, including training data annotated by biased experts, click data from users exhibiting various kinds of biases, and even differences in document construction across groups ({\em e.g.}, women and men complete sections of their professional profiles differently \cite{altenburger2017there}).}
+This systematic bias may have various origins, including training data annotated by biased experts, click data from users exhibiting various kinds of biases, and even differences in document construction across groups ({\em e.g.}, women and men complete sections of their professional profiles differently \cite{altenburger2017there}).
 %
 Furthermore, it is assumed that this bias manifests differently across groups, rendering inter-group relevance scores incomparable with each other.
 
@@ -35,12 +35,12 @@ In a ranking, the desired outcome for an individual is to be ranked as high as p
 %
 In this regard, the main issue is that machine learning models trained on data sets incorporating \textit{preexisting societal biases} will learn and structure such biases, eventually producing biased results, which once deployed in decision making in the real world, can reinforce existing biases and strengthen inequalities~\cite{oneil2016weapons}.
 %
-\changed{In some cases, the bias can even be amplified \cite{kleinberg2018}.}
+In some cases, the bias can even be amplified \cite{kleinberg2018}.
 %
 
 Based on this observation, in this article we study the problem of producing a ranking that we will consider fair, given legally-protected attributes.
 %
-\changed{Specifically, we extend the top-$k$ ranking algorithm \algoFAIR ~\cite{zehlike2017fair} and its \emph{ranked group fairness criterion} to handle multiple protected groups.}
+Specifically, we extend the top-$k$ ranking algorithm \algoFAIR ~\cite{zehlike2017fair} and its \emph{ranked group fairness criterion} to handle multiple protected groups.
 %
 Intuitively, given a set $G$ of different minority groups, our aim is to produce a ranking in which the proportion of each group $g \in G$ in any ranking prefix does not fall below given minimum proportions $p_G$, where $p_G$ is a vector containing the respective minimum proportion~$p_g$ per group $g$.
 %
@@ -61,10 +61,8 @@ In general these measures do not mandate perfect parity, in part because distrib
 The ranked group fairness criterion compares the number of protected elements in every prefix of the ranking with the expected number of protected elements if they were picked at random using a multinomially distributed statistical process (``dice rolls'' with each side $g$ of the dice representing a group, and having success probability $p_g \in p_G$).
 %
 Given that we use a statistical test for this comparison, we include a significance parameter $\alpha$ corresponding to the probability of a type-I-error, which means rejecting a fair ranking.
-%
 
-\changed{
-\paragraph{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just applying binomial \algoFAIR to a ranking for each group consecutively.
+\spara{Example.} In the following we want to illustrate why we have to extend the Fair Top-$k$ Ranking Problem from~\citet{zehlike2017fair} to be based on a multinomial distribution, instead of just applying binomial \algoFAIR to a ranking for each group consecutively.
 %
 Consider the rankings in Table~\ref{tbl:multinomial_intro_example}, corresponding to five hypothetical ways of ranking ten candidate applicants in a credit approval process.
 %
@@ -74,7 +72,7 @@ We also present to which protected group each individual belongs based on their 
 %
 %In this example we consider people as protected, if they are either young, or black, or both.
 %
-Suppose we have two protected groups, namely ``young'' white candidates and ``old'' black candidates, and one non-protected group, old white candidates; for now, in this example, we do not consider young black candidates on purpose.}
+Suppose we have two protected groups, namely ``young'' white candidates and ``old'' black candidates, and one non-protected group, old white candidates; for now, in this example, we do not consider young black candidates on purpose.
 
 \begin{table}[t]
 	\caption[Introductory example for the extension of \algoFAIR to multiple protected groups]{Five possible rankings of top-10 results with people from two protected groups: young white (red) and old black persons (blue), and one non-protected group: old white persons.
@@ -107,7 +105,7 @@ Suppose we have two protected groups, namely ``young'' white candidates and ``ol
 	\end{tabular}
 \end{table}
 
-\changed{When using the definition of \textit{ranked group fairness} for one protected group~\cite{zehlike2017fair} with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$, these parameters translate into requiring at least one protected candidate in the top seven positions of a ranking with ten positions in total.
+Running \algoFAIR for one protected group~\cite{zehlike2017fair} with minimum proportion $\minprop=0.3$ and significance $\alpha=0.1$ translates into requiring at least one protected candidate in the top seven positions of a ranking with ten positions in total.
 %
 Suppose we set the same minimum proportions for both protected groups $\minprop_{\text{y/w}} = \minprop_{\text{o/b}} = 0.3$ and we assume that the colorblind ranking (upper most ranking in Table~\ref{tbl:multinomial_intro_example}) does not meet ranked group fairness with these requirements.
 %
@@ -121,9 +119,9 @@ More importantly, it is also not clear how to proceed with the candidate that is
 %
 Let us assume that the young white candidate is chosen to be ranked to position 7.
 %
-As old black candidates are not considered as protected in this setting, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).}
+As old black candidates are not considered as protected in this setting, then they would be ranked even lower than their original position in the colorblind ranking (observe the second ranking in Table~\ref{tbl:multinomial_intro_example}).
 
-\changed{To overcome this, suppose we aggregate all protected groups together into a single protected group and add up the minimum proportions to one that fits the total share of protected candidates.
+To overcome this, suppose we aggregate all protected groups together into a single protected group and add up the minimum proportions to one that fits the total share of protected candidates.
 %
 In our example, we combine the group of young whites and old blacks into one group with minimum proportion $\minprop=0.6$.
 %
@@ -138,19 +136,18 @@ Intersectional discrimination refers to the fact that personal, political, and s
 If we also considered young black people as a third protected group, the bias in their scores would manifest itself through two dimensions of discrimination, namely through age \emph{and} race, which may lead to even more bias in their scores, and thus potentially to the lowest positions, even when applying \algoFAIR.
 %
 Therefore young black candidates should be considered as their own group whose scores are not comparable with the ones of young whites, or old blacks.
-}
 
 From the above we conclude that providing a fairness definition for rankings that either treats protected groups consecutively, or assembles all groups into one big group, cannot guarantee a fair ranking for multiple protected groups with different bias manifestations.
 %
 This highlights the need for a ranked group fairness notion for multiple protected groups that is based on a multinomial distribution.
 %
-\changed{The fifth ranking in Table~\ref{tbl:multinomial_intro_example} is an example of a multinomially fair top-10 ranking for the protected groups young and black.
+The fifth ranking in Table~\ref{tbl:multinomial_intro_example} is an example of a multinomially fair top-10 ranking for the protected groups young and black.
 %
 It is created using our \textit{multinomial ranked group fairness criteria} and the multinomial \algoFAIR algorithm proposed in this paper.
 %
 Note that this is only one of the possible fair rankings out of many possibilities.
 %
-We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.}
+We remark that our method is suitable for concerns about intersectional discrimination, by forming groups through the Cartesian product of protected attributes.
 
 \subsection{Contributions and Roadmap}
 We define and analyze the {\sc Fair Top-$k$ Ranking problem} with multiple protected groups, in which we want to determine a subset of $k$ candidates from a large pool of $n \gg k$ candidates, in a way that maintains high utility (selects the ``best'' candidates from each group), subject to a group fairness criterion.
@@ -196,16 +193,16 @@ We formulate a criterion by applying a statistical test on the proportion of pro
 %
 %This procedure can be seen as a form of positive action to ensure that the proportion of protected candidates in every prefix of the top-$k$ ranking is statistically indistinguishable from a policy target.
 %
-We also show that the verification of the ranked group fairness criterion can be implemented efficiently \removed{by} \changed{after} pre-computing a verification data structure that we call \emph{mTree}.
+We also show that the verification of the ranked group fairness criterion can be implemented efficiently after pre-computing a verification data structure that we call \emph{mTree}.
 %
 This tree contains all possibilities to create a ranking that satisfies ranked group fairness and we provide an algorithm to build and maintain it.
 %
 We also provide an algorithm \algoCorrect for the mTree adjustment due to multiple dependent hypothesis testing, where we compute $\alphaadj$ such that the type-I-error is less or equal to $\alpha$ for the \emph{entire tree}.
 %
 
-Finally, we propose an \removed{efficient} algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
+Finally, we propose an algorithm, named \algoFAIR, for producing a top-$k$ ranking that maintains high utility while satisfying ranked group fairness, as long as there are ``enough'' protected candidates from each group to achieve the desired minimum proportions.
 %
-Note that if a group of protected candidates is too small to satisfy ranked group fairness, the ranking is necessarily bound to under-represent them. \changed{Nevertheless, we output a ranking that follows our utility principles.}
+Note that if a group of protected candidates is too small to satisfy ranked group fairness, the ranking is necessarily bound to under-represent them. Nevertheless, we output a ranking that follows our utility principles.
 %
 We also present extensive experiments to evaluate the performance of our approach compared to a group-unaware method (the so-called ``color-blind'' method) with respect to both, the expected utility of a ranking and the fairness degree measured, in terms of expected exposure.
 
@@ -214,7 +211,7 @@ Summarizing, the main contributions of this paper are:
 	\item the principled definition of \emph{ranked group fairness} for multiple protected groups, and the associated {\sc Fair Top-$k$ Ranking problem};
 	\item the \algoFAIR\ algorithm for multiple protected groups to produce a top-$k$ ranking that maximizes utility while satisfying ranked group fairness.
 	\item a mathematical framework to solve the problem of multiple \emph{dependent} hypotheses testing: we will see how to adjust the given significance level $\alpha$ to a corrected $\alphaadj$, such that the \emph{overall} probability for a type-1-error equals the given significance level $\alpha$.
-	\item the algorithms \algoComputeMTree and \algoCorrect which translate ranked group fairness into a pre-computed data structure. This will enable efficient verification of ranked group fairness at testing time and efficient creation of fair rankings \changed{at creation time}.
+	\item the algorithms \algoComputeMTree and \algoCorrect which translate ranked group fairness into a pre-computed data structure. This will enable efficient verification of ranked group fairness at testing time and efficient creation of fair rankings at creation time.
 \end{compactenum}
 
 Our method can be used within an anti-discrimination framework such as \emph{affirmative actions}~\cite{sowell2005affirmative}.
