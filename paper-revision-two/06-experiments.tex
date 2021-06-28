@@ -487,14 +487,24 @@ Consider D3 -- COMPAS, where binomial \algoFAIR achieves higher Kendall's Tau an
 %
 However, when we look at the exposure gain per group, we can see that this is due to less improvements of protected group 1 and 2 compared to the multinomial version of \algoFAIR. 
 %
-As we explained in the introductory example, binomial \algoFAIR will order all candidates from the protected group by decreasing qualifications and thus rank less candidates of a specific group to higher positions, if they show low overall scores.
+As we explained in the introductory example, binomial \algoFAIR will order all candidates from the artificially created protected group by decreasing qualifications and thus rank less candidates of a real protected group to higher positions, if they show low overall scores.
 %
 This effect can lead to no improvement for certain protected groups at all, as in D2 -- COMPAS for group 2, and D4 -- German credit for group 2. 
 %
-D4 -- German credit reveals another weakness of binomial \algoFAIR compared to multinomial \algoFAIR: For $p=\sum p_{\text{stat}}$ the colorblind ranking is already "bionomial"-fair, while the multinomial version of \algoFAIR improves visibility for all protected groups. 
+D4 -- German credit reveals another weakness of binomial \algoFAIR compared to multinomial \algoFAIR: For $p=\sum p_{\text{stat}}$ the colorblind ranking is already "binomial"-fair, while the multinomial version of \algoFAIR improves visibility for all protected groups according the respective minimum proportions. 
+
+Having said that, D1 -- COMPAS reveals a strength of the binomial \algoFAIR implementation: though we would not expect to see any difference between multinomial \algoFAIR and binomial \algoFAIR if only one protected group is present, we see from the results that the colorblind ranking is judged as already fair by binomial \algoFAIR, but not by multinomial \algoFAIR. 
 %
-\changed{However, D1 -- COMPAS reveals one strength of the binomial \algoFAIR implementation and the guarantees we proved for the binomial case. We would expect no difference for one protected group between multinomial \algoFAIR and binomial \algoFAIR. However, as desribed in section \ref{sec:model-adjustment}, the significance adjustment of the multinomial method has variance in its' precision. This has no impact on the fair ranking for small $p$ and smaller $k$. In this case of $k=1500$ even a small difference can lead to slightly different results. Thus we recommend to use the binomial version of \algoFAIR if only one protected group exists, as it guarantees the best possible significance adjustment \cite{zehlike2020note}.}
+As described in Section \ref{sec:model-adjustment}, the significance adjustment of the multinomial method has variance in its precision. 
 %
+We may therefore observe a slight difference between the analytical $\alpha$ calculated by binomial \algoFAIR, and the experimental $\alpha$ calculated by multinomial \algoFAIR.
+%
+This has no impact on the fair ranking for small $p$ and $k$. 
+%
+In D1 with $k=1500$ the small difference in $\alpha$ can lead to slightly different result rankings. 
+%
+Thus we recommend to use the binomial version of \algoFAIR if only one protected group exists, as it guarantees the best possible significance adjustment (see~\citet{zehlike2020note} for details).
+
 In summary, while the binomial version of \algoFAIR is computationally preferable, it cannot handle cases where discriminatory patterns manifest differently across protected groups, as we explained in the introduction. 
 
 \spara{A wide range of possibilities to set $p_G$.}
