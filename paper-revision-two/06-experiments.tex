@@ -493,6 +493,8 @@ This effect can lead to no improvement for certain protected groups at all, as i
 %
 D4 -- German credit reveals another weakness of binomial \algoFAIR compared to multinomial \algoFAIR: For $p=\sum p_{\text{stat}}$ the colorblind ranking is already "bionomial"-fair, while the multinomial version of \algoFAIR improves visibility for all protected groups. 
 %
+\changed{However, D1 -- COMPAS reveals one strength of the binomial \algoFAIR implementation and the guarantees we proved for the binomial case. We would expect no difference for one protected group between multinomial \algoFAIR and binomial \algoFAIR. However, as desribed in section \ref{sec:model-adjustment}, the significance adjustment of the multinomial method has variance in its' precision. This has no impact on the fair ranking for small $p$ and smaller $k$. In this case of $k=1500$ even a small difference can lead to slightly different results. Thus we recommend to use the binomial version of \algoFAIR if only one protected group exists, as it guarantees the best possible significance adjustment \cite{zehlike2020note}.}
+%
 In summary, while the binomial version of \algoFAIR is computationally preferable, it cannot handle cases where discriminatory patterns manifest differently across protected groups, as we explained in the introduction. 
 
 \spara{A wide range of possibilities to set $p_G$.}
