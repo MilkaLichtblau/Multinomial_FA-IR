@@ -22,6 +22,6 @@ python3 main.py compas_worstThreeGroups 0.005 1,1,1,1 $PATH_TO_COMPAS_RESULTS/co
 # Dice Roll baseline
 cd $PATH_TO_DICEROLL_ALGORITHM
 echo "Baseline dice roll with biased dice"
-python3 main.py $PATH_TO_COMPAS_DATA/compas_worstThreeGroups_java.csv $minpropsParity $k $PATH_TO_COMPAS_RESULTS/compas_worstThreeGroups_dice_k="$k"_p=[$minpropsParity].csv
+#python3 main.py $PATH_TO_COMPAS_DATA/compas_worstThreeGroups_java.csv $minpropsParity $k $PATH_TO_COMPAS_RESULTS/compas_worstThreeGroups_dice_k="$k"_p=[$minpropsParity].csv
 echo "Baseline dice roll with unbiased dice"
 python3 main.py $PATH_TO_COMPAS_DATA/compas_worstThreeGroups_java.csv $minpropsEqual $k $PATH_TO_COMPAS_RESULTS/compas_worstThreeGroups_dice_k="$k"_p=[$minpropsEqual].csv

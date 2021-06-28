@@ -29,7 +29,7 @@ The other nodes ``(5, [1,1]),'' ``(5, [1,2]),'' and ``(5, [0,3])'' are not a chi
 %
 The tree is symmetric when the minimum proportions $p_g \in p_G$ are equal, and asymmetric when they are different.
 %
-\changed{We note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.}
+We note that it is possible to trade-off under-representation in one protected group against over-representation in another protected group, but only up to a point: the representation of every protected group cannot fall below a certain minimum. Additionally, when using this method to construct a ranking, we choose the most likely path, not any path, and thus avoid extremely unbalanced situations.
 %
 %Figure~\ref{fig:mtree-asymmetric-unadjusted} show the tree is asymmetric when the minimum proportions are different, in that example $0.2$ and $0.4$.
 
@@ -61,7 +61,7 @@ Recall that we restrict the probability of a type-I-error in our ranked group fa
 %
 To verify ranked group fairness, we test if a ranking satisfies the \emph{fair representation condition} (Def.~\ref{def:fair-representation-condition}) for each prefix  of size $1, 2, \dots, k$.
 %
-Because of \changed{these} multiple hypotheses testing, if we perform each test with significance $\alphaadj = \alpha$, we risk rejecting fair rankings at a rate larger than $\alpha$.
+Because of this multiple hypotheses testing, if we perform each test with significance $\alphaadj = \alpha$, we risk rejecting fair rankings at a rate larger than $\alpha$.
 %
 Hence, we require an adjusted significance $\alphaadj = \adj(\alpha, k, p)$ for each fair representation test.
 %
@@ -170,7 +170,7 @@ Both have the same multinomial CDF values.
 %
 We store only one of the nodes and flag it as ``has mirrored node'' and continue our mTree computation only in the stored branch.
 %
-This way we save half of the space and computation time needed, without \changed{losing} any information about the tree.
+This way we save half of the space and computation time needed, without losing any information about the tree.
 
 Furthermore, we reduce the size of the mTree by actually leaving out the parent-child relationship and merely storing the nodes itself together with their respective depth levels.
 %
@@ -185,7 +185,7 @@ Before we can prove this property, we need to introduce the following definition
 \label{def:valid-mtree-test}
 Let $\tau$ be a ranking of size $k$ and $\tau_{G,i}=(\tau_{1},\ldots,\tau_{|G|})$ the numbers of ranked protected elements from group $1,\ldots,|G|$ up to position $i$.
 %
-Let us \changed{assume} $MT$ be a $mTree$, with node $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ giving the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
+Let us assume $MT$ be a $mTree$, with node $MT_{G,i}=[m_1(i),\ldots,m_{|G|}(i)]$ giving the number of protected candidates of group $1,\ldots,|G|$ required up to position $i$.
 %
 We write $\tau_{G,i} \geq m_{G,i}$ if $\tau_g \geq m_g$ for all $g=1,\ldots,|G|$.
 %
@@ -213,26 +213,29 @@ Note that the ranking would fail at node $(9, [3,0])$, but with $\tau_G = (1,1)$
 Let $MT$ be a mTree and $\tau$ a ranking of size $k$.
 %
 There exists at least one successful test for $\tau$ at each level of $MT$,
-iff there exists a \removed{valid} path from the root of $MT$ to a leaf of $MT$ \changed{and $\tau$ passes the test at each node on that path}.
+iff there exists a path from the root of $MT$ to a leaf of $MT$ and $\tau$ passes the test at each node on that path.
 \end{theorem}
 %
 \begin{proof}
 	\label{proof:lazy-mTree-test}
-\changed{\paragraph{"$\Leftarrow$"}:
+	$\;$\\
+\paragraph{"$\Leftarrow$"}:
 If there exists a path for which $\tau$ passes the test at each node, there also exists a node on each level of $MT$ where $\tau$ passes the test because every path has a node on every level.
-}
-\changed{\paragraph{"$\Rightarrow$"}:}
+
+\paragraph{"$\Rightarrow$"}:
 	Let $MT$ be a mTree and $\tau$ be a ranking that passes the test at level $h$ of $MT$.
 	%
 	Let $m_{G,h}=[m_{1}(h), \ldots, m_{|G|}(h)]$ be the node on level $h$ that successfully tested $\tau$.
 	%
 	Let further be $\tau_g(h)$ the number of protected candidates of group $g$ ranked at up to position $h$.
 	%
-	Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. \changed{Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum.
+	Let $\sum_{g=1}^{|G|} |m_{g}(h) - \tau_{g}(h)| = 0$, meaning that the ranking includes the exact amount of required protected candidates at level $h$ and not more. 
+	%
+	Note that this assumption reduces the number of nodes at which $\tau$ passes the test at level $h$ to a minimum.
 	%
 	If we assumed that $\tau$ included more protected candidates than required, we would only increase the number of nodes at level $h$ for which $\tau$ would pass the test.
 	%
-	Thus, we can proof this direction with the above assumption without loss of generality.}
+	Thus, we can proof this direction with the above assumption without loss of generality.
 	%
 	Let $m_{G,(h+1)}$ be a node which tests $\tau$ successfully on level $h+1$ with $\sum_{g=1}^{|G|} |m_{g}(h+1) - \tau_{g}(h+1)| = 0$.
 	%
@@ -260,13 +263,13 @@ If there exists a path for which $\tau$ passes the test at each node, there also
 	Case (2.1) means because of $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 1 > \sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 0$ that the mTree accepts a ranking with one more protected candidate than required by the actual child of $m_{G,h}$, which contradicts our hypothesis that the ranking included the exact amount of required protected candidates. It follows that if we test $\tau_g (h+1)$ successfully with $m_{G,h+1}$ it would also satisfy ${m'}_{G,h+1}$.
 Case (2.2) is impossible according to algorithm \ref{alg:imcdf}.
 In detail, if $\sum_{g=1}^{|G|} |m_{g}(h) - m_g(h+1)| = 0$ it means that $ m_g(h+1) = m_{g}(h)$ and therefore, $F(m_{g}(h);h+1,p_G) > \alpha$ (line $4$ of algorithm \ref{alg:imcdf}). But if for the child of $m_{G,h}$, namely ${m'}_{G,h+1}$ it holds that $\sum_{g=1}^{|G|} |m_{g}(h) - m'_g(h+1)| = 1$, it means that
-$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) \changed{cannot} occur.
+$F(m_{g}(h);h+1,p_G) \leq \alpha$ so that we would have added a new node as a child of $m_{g}(h)$ according to lines  $8-14$ of algorithm \ref{alg:imcdf}. Since both conditions cannot be true at the same time, Case (2.2) cannot occur.
 \\
-In summary, Case (2.1) will only occur if we ranked more protected candidates than needed, and that the resulting test would be \changed{stricter} than following a path through the mTree.
+In summary, Case (2.1) will only occur if we ranked more protected candidates than needed, and that the resulting test would be stricter than following a path through the mTree.
 %
 We showed that Case (2.2) is impossible. There is only Case 1 left if we have ranked exactly the number of protected candidates needed at each level of the mTree.
 %
-It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is \changed{stricter} than such path.
+It follows that for any ranking that is tested successfully on each level of the mTree, it either was tested by nodes of a path through the mTree or was tested by a series of nodes which is stricter than such path.
 \end{proof}
 %
 \noindent Because of Theorem~\ref{theorem:lazy-mTree-test} we do not need to keep the tree structure (i.e. parental relationship between nodes) and may store only a set of nodes for each level, while removing duplicate entries.
@@ -386,7 +389,7 @@ We see that we would compute the MCDF for $(4,[2,2])$ twice, but instead we can 
 %
 Note that the MCDF computation is only depends on $p_G$ and not on $alpha$.
 %
-We can therefore \changed{persist} the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
+We can therefore persist the MCDF cache on disk for a particular vector $p_G$ and load it for any mTree calculation with the same $p_G$ in the future.
 
 \subsubsection{Stored mTrees}
 \label{subsubsec:stored-mtrees}
