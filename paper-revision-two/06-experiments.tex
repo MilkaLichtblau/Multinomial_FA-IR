@@ -320,6 +320,105 @@ We show that large increases in average group exposure can be achieved with rela
 	}
 \end{table}
 %
+\begin{table}[t!]
+	\caption{Experimental results, changes of individual utility loss respect to colorblind results.
+		%
+		%Colorblind results are not shown because they are always zero.
+		%
+		All measures are presented per group.
+		%
+		Groups are in the same order as in Table~\ref{tbl:datasets}, and the first value is always for the non-protected group.
+		%
+		%With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
+		%
+		%With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
+		%
+		We report mean and standard deviation of all metrics for the dice roll baseline. 
+		%
+		Note however, that these are just result statistics which do not relate to a specific ranking.
+		%
+		Comparable results are grouped together.
+	}
+	\vspace{-4mm}
+	\label{tbl:results-part-two}
+	\resizebox{1.02\columnwidth}{!}{%
+		\centering\begin{tabular}{llccc}\toprule
+			& 			& Ordering     & Rank & Selection \\
+			Experiment 	& Method 	& utility loss & drop & utility loss \\
+			
+			\midrule
+			\midrule
+			D1 -- COMPAS,	& mult. \algoFAIR $p_{\text{eq}}$ 	& $[0.0066, 0]$ & $[17, 0]$ 	& $[0, 0]$ \\
+			k=1500, 		& dice roll $p_{\text{eq}}$ 	& $[0.0066, 0.0066]$ & $[60, 30]$ 	& $[0, 0.0066]$ \\
+			race (1 prot.)	& dice roll $p_{\text{eq}}$ mean / std	& $[0.0061 / 0.0061, 0.0135 / 0.0089]$ & $[32.19 / 19.38, 42.15 / 26.21]$ 	& $[0.0002 / 0.0014, 0.0118 / 0.0095]$ \\
+			& binom. \algoFAIR
+			$p=\sum p_{\text{eq}}$ 	& $[0, 0]$ & $[0, 0]$ 	& $[0,0]$ \\
+			\cline{2-5}
+			& mult. \algoFAIR  $p_{\text{stat}}$ 	& $[0.0702, 0]$ & $[387, 0]$ 	& $[0.0621,0]$ \\
+			& CFA$\theta$ 					& $[0.0687, 0]$ & $[579, 297]$ 	& $[0.0636, 0]$ \\
+			& dice roll $p_{\text{stat}}$ 	& $[0.0833, 0]$ & $[524, 0]$ 	& $[0.0833, 0]$ \\
+			& dice roll $p_{\text{stat}}$ mean / std	& $[0.0772 / 0.0056, 0 / 0]$ & $[477.35 / 36.78, 0.45 / 1.10]$ 	& $[0.0736 / 0.0078, 0 / 0]$ \\
+			& binom. \algoFAIR
+			$p=\sum p_{\text{stat}}$ 	& $[0.0636, 0]$ & $[373, 0]$ 	& $[0.0621,0]$ \\
+			\midrule
+			\midrule
+			D2 -- COMPAS, 	& mult. \algoFAIR $p_{\text{eq}}$ 	& $[0.23, 0,23, 0.00]$ & $[182, 116, 0]$ 	& $[0.23, 0.23, 0.00]$ \\
+			k=500, 			& dice roll $p_{\text{eq}}$ 	& $[0.23, 0.23, 0.00]$ & $[214, 77, 0]$ 	& $[0.23, 0.23, 0.00]$ \\
+			age (2 prot.)	& dice roll $p_{\text{eq}}$ mean / std	& $[0.24 / 0.01, 0.24 / 0.01, 0 / 0]$ & $[214.5 / 17.0, 103.4 / 20.9, 0 / 0]$ 	& $[0.24 / 0.01, 0.24 / 0.01, 0 / 0]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[0.01,0,0]$	& $[180,0,0]$		& $[0.01,0,0]$  \\
+			\cline{2-5}
+			& mult. \algoFAIR $p_{\text{stat}}$ 	& $[0.21, 0.21, 0.00]$ & $[287, 0, 0]$ 		& $[0.21, 0.21, 0.00]$ \\
+			& CFA$\theta$ 					& $[0.19, 0.18 ,0.00]$ & $[159, 282, 0]$ 	& $[0.19, 0.17, 0.00]$ \\ %\cline{2-7}
+			& dice roll $p_{\text{stat}}$ 	& $[0.22, 0.22, 0.00]$ & $[310, 0, 0]$ 		& $[0.22, 0.22, 0.00]$ \\
+			& dice roll $p_{\text{stat}}$ mean / std	& $[0.21 / 0.01, 0.21 / 0.01, 0 / 0]$ & $[323.4 / 16.2, 1.4 / 1.9, 0 / 0]$ 		& $[0.22 / 0.01, 0.21 / 0.01, 0 / 0]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0.01,0,0]$		& $[283,0,0]$	& $[0.01,0,0]$ \\													
+			\midrule
+			\midrule
+			D3 -- COMPAS, 		& mult. \algoFAIR  $p_{\text{eq}}$ 	& $[0.60, 0.26, 0.00, 0.37]$ 	& $[206, 0, 0, 0]$ 		& $[0.60, 0.26, 0.00, 0.37]$ \\
+			k=300,				& dice roll $p_{\text{eq}}$ 	& $[0.63, 0.37, 0.00, 0.49]$ & $[209, 0, 0, 0]$ 	& $[0.71, 0.37, 0.00, 0.49]$ \\
+			3 worst off (3 prot.)	& dice roll $p_{\text{eq}}$ mean	& $[0.67, 0.33, 0.00, 0.44]$ & $[218.5, 0, 0, 0]$ 	& $[0.67, 0.32, 0.00, 0.45]$ \\
+			& dice roll $p_{\text{eq}}$ std	& $[0.08, 0.08, 0.01, 0.08]$ & $[7.9, 0, 0, 0]$ 	& $[0.07, 0.08, 0.00, 0.07]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[0.28,0,0, 0]$		& $[208,0,0, 0]$		& $[0.28,0,0, 0]$  \\
+			\cline{2-5}
+			& mult. \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03, 0.00, 0.02]$ & $[38, 0, 0, 0]$ 				& $[0.17, 0.01,0.01, 0.00] $  \\
+			& CFA$\theta$ 					& $[0.15, 0.01, 0.00, 0.00] $ & $[268, 0, 0, 0]$ 	& $[0.15, 0.00, 0.00, 0.00]$   \\
+			& dice roll $p_{\text{stat}}$ 	& $[0.20, 0.001, 0.006, 0.02]$ & $[62, 0, 0, 0]$ 		& $[0.20, 0.01, 0.03, 0.00]$ \\
+			& dice roll $p_{\text{stat}}$ mean	& $[0.20, 0.03, 0.02, 0.04]$ & $[52.0, 0, 0, 0]$ 		& $[0.20, 0.02, 0.02, 0.00]$ \\
+			& dice roll $p_{\text{stat}}$ std	& $[0.01, 0.02, 0.01, 0.03]$ & $[6.5, 0, 0, 0]$ 		& $[0.01, 0.02, 0.01, 0.01]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0.17,0,0, 0]$		& $[39,0,0, 0]$		& $[0.17,0,0, 0]$  \\												
+			\midrule
+			\midrule
+			D4 -- German credit, 	& mult. \algoFAIR $p_{\text{eq}}$ 	&  $[3.57, 2.70, 3.42, 0.55, 1.23, 1.76]$ 	& $[28, 4, 6, 1, 0, 0]$ 	& $[3.05, 1.82, 1.34, 0.00, 0.18, 0.33]$ \\
+			k=50,					& dice roll $p_{\text{eq}}$ 	& $[3.65, 5.07, 4.19, 1.05, 1.23, 2.14]$ & $[22, 17, 9, 0, 0, 0]$ 	& $[3.13, 2.27, 1.46, 0.00, 0.25, 0.23]$ \\
+			sex \& age (5 prot.)	& dice roll $p_{\text{eq}}$ mean	& $[3.32, 3.00, 3.00, 2.65, 1.20, 1.14]$ & $[26.2, 7.9, 11.8, 10.5, 1.7, 0.1]$ 	& $[3.13, 1.99, 1.38, 0.12, 0.20, 0.31]$ \\
+			& dice roll $p_{\text{eq}}$ std	& $[0.36, 0.85, 0.76, 0.95, 0.90, 0.68]$ & $[5.3, 6.7, 9.3, 8.8, 3.9, 0.8]$ 	& $[0.25, 0.43, 0.51, 0.38, 0.30, 0.38]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[1.53,0,0, 0,0,0]$		& $[25,0,0, 0,0,0]$		& $[1.37,0,0, 0,0,0]$  \\
+			\cline{2-5}
+			& mult. \algoFAIR $p_{\text{stat}}$ & $[1.84, 1.56, 0.45, 0.00, 0.33, 1.28]$ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23, 0.00, 1.18, 1.54]$  \\
+			& CFA$\theta$ &  $[0.50, 0.91, 2.07, 1.46, 0.72, 0.00]$ & $[2, 1, 32, 14, 2, 0]$ & $[0.34, 0.00, 1.93, 2.20, 0.00, 0.00]$ \\
+			& dice roll $p_{\text{stat}}$ 	& $[0.92, 0.54, 1.76, 2.55, 0.00, 0.29]$ & $[1, 0, 15, 38, 0, 0]$ 		& $[0.96, 0.56, 2.74, 0.00, 2.92, 0.20]$ \\
+			& dice roll $p_{\text{stat}}$ mean	& $[1.23, 1.59, 2.15, 2.03, 1.11, 0.46]$ & $[3.7, 4.6, 24.7, 23.1, 10.5, 1.8]$ 		& $[0.85, 0.49, 1.77, 1.71, 0.75, 0.34]$ \\
+			& dice roll $p_{\text{stat}}$ std	& $[0.53, 0.81, 0.81, 0.96, 0.95, 0.56]$ & $[3.6, 4.8, 11.9, 14.0, 12.7, 4.3]$ 		& $[0.47, 0.49, 1.15, 1.38, 1.11, 0.51]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0,0,0, 0,0,0]$		& $[0,0,0, 0,0,0]$	& $[0,0,0, 0,0,0]$ 	 \\	
+			\midrule
+			\midrule
+			D5 -- LSAT, 			& mult. \algoFAIR $p_{\text{eq}}$ 	& $[4, 4, 1, 0]$	& $[220, 10, 0, 0]$ & $[4, 3, 0, 0]$  \\
+			k=300, 					& dice roll $p_{\text{eq}}$ 	& $[5, 5, 2, 0]$ & $[194, 81, 0, 0]$ 	& $[5, 5, 1, 0]$ \\
+			sex \& race (3 prot.)	& dice roll $p_{\text{eq}}$ mean 	& $[4.2, 4.2, 1.4, 0.3]$ & $[180.7, 69.8, 0, 0]$ 	& $[4.2, 4.2, 0.3, 0.02]$ \\
+			& dice roll $p_{\text{eq}}$ std	& $[0.4, 0.4, 0.5, 0.5]$ & $[10.5, 16.7, 0, 0]$ 	& $[0.4, 0.4, 0.5, 0.1]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[1,0,0, 0]$		& $[157,0,0, 0]$		& $[1,0,0, 0]$  \\
+			\cline{2-5}
+			& mult. \algoFAIR $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ 	& $[136, 13, 0, 0]$ & $[2, 1, 0, 0]$  \\
+			& CFA$\theta$ 					& $[1, 1, 1, 0]$ 	& $[122, 26, 0, 0]$ & $[1, 0, 0, 0]$  \\
+			& dice roll $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ & $[75, 12, 0, 0]$ 	& $[2, 1, 0, 0]$ \\
+			& dice roll $p_{\text{stat}}$ mean	& $[2.0, 1.9, 0.8, 0.4]$ & $[64.2, 16.1, 0.3, 1.1]$ 	& $[2.0, 1.2, 0.5, 0.04]$ \\
+			& dice roll $p_{\text{stat}}$ std	& $[0.4, 0.5, 0.5, 0.5]$ & $[15.3, 11.0, 2.5, 5.7]$ 	& $[0.4, 0.6, 0.6, 0.2]$ \\
+			& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[1,0,0, 0]$		& $[113,0,0, 0]$		& $[1,0,0, 0]$ 	 \\													
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+%
 Table~\ref{tbl:results-part-one} and~\ref{tbl:results-part-two} summarize the results.
 %
 We report on the result for \algoFAIR using $p_G$ in two different settings, namely as a statistical parity vector i.e. the $p$-values for each group correspond to their respective proportions in the dataset ($p_{\text{stat}}$), and as a vector with all $p$-values being equal ($p_{\text{eq}}$).
@@ -343,101 +442,6 @@ However, we see that \algoFAIR outperforms CFA$\theta$ significantly in terms of
 Second we see that in experiments D1 and D5 \algoFAIR with $p_{\text{stat}}$ and the baseline CFA$\theta$ seem to perform more or less equally well at first glance.
 %
 While the former yields better numbers in terms of utility, with the latter the protected groups gain higher exposure.
-%
-\begin{table}[t!]
-	\caption{Experimental results, changes of individual utility loss respect to colorblind results.
-		%
-		%Colorblind results are not shown because they are always zero.
-		%
-		All measures are presented per group.
-		%
-		Groups are in the same order as in Table~\ref{tbl:datasets}, and the first value is always for the non-protected group.
-		%
-		%With $p_{\text{stat}}$ we denote a vector $p_G$ that contains the share of a group as its $p$-value, hence the produced ranking should obtain statistical parity.
-		%
-		%With $p_{\text{equal}}$ we denote a vector $p_G$ that contains the same value for all $p$.
-		%
-		Experiments that allow for meaningful comparisons are grouped together.
-	}
-	\vspace{-4mm}
-	\label{tbl:results-part-two}
-	\resizebox{1.02\columnwidth}{!}{%
-		\centering\begin{tabular}{llccc}\toprule
-			& 			& Ordering     & Rank & Selection \\
-			Experiment 	& Method 	& utility loss & drop & utility loss \\
-
-			\midrule
-			\midrule
-			D1 -- COMPAS,	& mult. \algoFAIR $p_{\text{eq}}$ 	& $[0.0066, 0]$ & $[17, 0]$ 	& $[0, 0]$ \\
-			k=1500, 		& dice roll $p_{\text{eq}}$ 	& $[0.0066, 0.0066]$ & $[60, 30]$ 	& $[0, 0.0066]$ \\
-			race (1 prot.)	& dice roll $p_{\text{eq}}$ mean / std	& $[0.0061 / 0.0061, 0.0135 / 0.0089]$ & $[32.19 / 19.38, 42.15 / 26.21]$ 	& $[0.0002 / 0.0014, 0.0118 / 0.0095]$ \\
-			& binom. \algoFAIR
-$p=\sum p_{\text{eq}}$ 	& $[0, 0]$ & $[0, 0]$ 	& $[0,0]$ \\
-							\cline{2-5}
-			& mult. \algoFAIR  $p_{\text{stat}}$ 	& $[0.0702, 0]$ & $[387, 0]$ 	& $[0.0621,0]$ \\
-							& CFA$\theta$ 					& $[0.0687, 0]$ & $[579, 297]$ 	& $[0.0636, 0]$ \\
-							& dice roll $p_{\text{stat}}$ 	& $[0.0833, 0]$ & $[524, 0]$ 	& $[0.0833, 0]$ \\
-							& dice roll $p_{\text{stat}}$ mean / std	& $[0.0772 / 0.0056, 0 / 0]$ & $[477.35 / 36.78, 0.45 / 1.10]$ 	& $[0.0736 / 0.0078, 0 / 0]$ \\
-			& binom. \algoFAIR
-$p=\sum p_{\text{stat}}$ 	& $[0.0636, 0]$ & $[373, 0]$ 	& $[0.0621,0]$ \\
-			\midrule
-			\midrule
-			D2 -- COMPAS, 	& mult. \algoFAIR $p_{\text{eq}}$ 	& $[0.23, 0,23, 0.00]$ & $[182, 116, 0]$ 	& $[0.23, 0.23, 0.00]$ \\
-			k=500, 			& dice roll $p_{\text{eq}}$ 	& $[0.23, 0.23, 0.00]$ & $[214, 77, 0]$ 	& $[0.23, 0.23, 0.00]$ \\
-			age (2 prot.)	& dice roll $p_{\text{eq}}$ mean / std	& $[0.24 / 0.01, 0.24 / 0.01, 0 / 0]$ & $[214.5 / 17.0, 103.4 / 20.9, 0 / 0]$ 	& $[0.24 / 0.01, 0.24 / 0.01, 0 / 0]$ \\
-							& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[0.01,0,0]$	& $[180,0,0]$		& $[0.01,0,0]$  \\
-							\cline{2-5}
-							& mult. \algoFAIR $p_{\text{stat}}$ 	& $[0.21, 0.21, 0.00]$ & $[287, 0, 0]$ 		& $[0.21, 0.21, 0.00]$ \\
-							& CFA$\theta$ 					& $[0.19, 0.18 ,0.00]$ & $[159, 282, 0]$ 	& $[0.19, 0.17, 0.00]$ \\ %\cline{2-7}
-							& dice roll $p_{\text{stat}}$ 	& $[0.22, 0.22, 0.00]$ & $[310, 0, 0]$ 		& $[0.22, 0.22, 0.00]$ \\
-							& dice roll $p_{\text{stat}}$ mean / std	& $[0.21 / 0.01, 0.21 / 0.01, 0 / 0]$ & $[323.4 / 16.2, 1.4 / 1.9, 0 / 0]$ 		& $[0.22 / 0.01, 0.21 / 0.01, 0 / 0]$ \\
-							& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0.01,0,0]$		& $[283,0,0]$	& $[0.01,0,0]$ \\													
-			\midrule
-			\midrule
-			D3 -- COMPAS, 		& mult. \algoFAIR  $p_{\text{eq}}$ 	& $[0.60, 0.26, 0.00, 0.37]$ 	& $[206, 0, 0, 0]$ 		& $[0.60, 0.26, 0.00, 0.37]$ \\
-			k=300,				& dice roll $p_{\text{eq}}$ 	& $[0.63, 0.37, 0.00, 0.49]$ & $[209, 0, 0, 0]$ 	& $[0.71, 0.37, 0.00, 0.49]$ \\
-			3 worst off (3 prot.)	& dice roll $p_{\text{eq}}$ mean	& $[0.67, 0.33, 0.00, 0.44]$ & $[218.5, 0, 0, 0]$ 	& $[0.67, 0.32, 0.00, 0.45]$ \\
-								& dice roll $p_{\text{eq}}$ std	& $[0.08, 0.08, 0.01, 0.08]$ & $[7.9, 0, 0, 0]$ 	& $[0.07, 0.08, 0.00, 0.07]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[0.28,0,0, 0]$		& $[208,0,0, 0]$		& $[0.28,0,0, 0]$  \\
-									\cline{2-5}
-								& mult. \algoFAIR  $p_{\text{stat}}$ 	& $[0.17, 0.03, 0.00, 0.02]$ & $[38, 0, 0, 0]$ 				& $[0.17, 0.01,0.01, 0.00] $  \\
-							 	& CFA$\theta$ 					& $[0.15, 0.01, 0.00, 0.00] $ & $[268, 0, 0, 0]$ 	& $[0.15, 0.00, 0.00, 0.00]$   \\
-								& dice roll $p_{\text{stat}}$ 	& $[0.20, 0.001, 0.006, 0.02]$ & $[62, 0, 0, 0]$ 		& $[0.20, 0.01, 0.03, 0.00]$ \\
-								& dice roll $p_{\text{stat}}$ mean	& $[0.20, 0.03, 0.02, 0.04]$ & $[52.0, 0, 0, 0]$ 		& $[0.20, 0.02, 0.02, 0.00]$ \\
-								& dice roll $p_{\text{stat}}$ std	& $[0.01, 0.02, 0.01, 0.03]$ & $[6.5, 0, 0, 0]$ 		& $[0.01, 0.02, 0.01, 0.01]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0.17,0,0, 0]$		& $[39,0,0, 0]$		& $[0.17,0,0, 0]$  \\												
-			\midrule
-			\midrule
-			D4 -- German credit, 	& mult. \algoFAIR $p_{\text{eq}}$ 	&  $[3.57, 2.70, 3.42, 0.55, 1.23, 1.76]$ 	& $[28, 4, 6, 1, 0, 0]$ 	& $[3.05, 1.82, 1.34, 0.00, 0.18, 0.33]$ \\
-			k=50,					& dice roll $p_{\text{eq}}$ 	& $[3.65, 5.07, 4.19, 1.05, 1.23, 2.14]$ & $[22, 17, 9, 0, 0, 0]$ 	& $[3.13, 2.27, 1.46, 0.00, 0.25, 0.23]$ \\
-			sex \& age (5 prot.)	& dice roll $p_{\text{eq}}$ mean	& $[3.32, 3.00, 3.00, 2.65, 1.20, 1.14]$ & $[26.2, 7.9, 11.8, 10.5, 1.7, 0.1]$ 	& $[3.13, 1.99, 1.38, 0.12, 0.20, 0.31]$ \\
-									& dice roll $p_{\text{eq}}$ std	& $[0.36, 0.85, 0.76, 0.95, 0.90, 0.68]$ & $[5.3, 6.7, 9.3, 8.8, 3.9, 0.8]$ 	& $[0.25, 0.43, 0.51, 0.38, 0.30, 0.38]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[1.53,0,0, 0,0,0]$		& $[25,0,0, 0,0,0]$		& $[1.37,0,0, 0,0,0]$  \\
-									\cline{2-5}
-									& mult. \algoFAIR $p_{\text{stat}}$ & $[1.84, 1.56, 0.45, 0.00, 0.33, 1.28]$ & $[5, 3, 1, 0, 0, 5]$ & $[1.89, 1.56, 1.23, 0.00, 1.18, 1.54]$  \\
-									& CFA$\theta$ &  $[0.50, 0.91, 2.07, 1.46, 0.72, 0.00]$ & $[2, 1, 32, 14, 2, 0]$ & $[0.34, 0.00, 1.93, 2.20, 0.00, 0.00]$ \\
-									& dice roll $p_{\text{stat}}$ 	& $[0.92, 0.54, 1.76, 2.55, 0.00, 0.29]$ & $[1, 0, 15, 38, 0, 0]$ 		& $[0.96, 0.56, 2.74, 0.00, 2.92, 0.20]$ \\
-									& dice roll $p_{\text{stat}}$ mean	& $[1.23, 1.59, 2.15, 2.03, 1.11, 0.46]$ & $[3.7, 4.6, 24.7, 23.1, 10.5, 1.8]$ 		& $[0.85, 0.49, 1.77, 1.71, 0.75, 0.34]$ \\
-									& dice roll $p_{\text{stat}}$ std	& $[0.53, 0.81, 0.81, 0.96, 0.95, 0.56]$ & $[3.6, 4.8, 11.9, 14.0, 12.7, 4.3]$ 		& $[0.47, 0.49, 1.15, 1.38, 1.11, 0.51]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[0,0,0, 0,0,0]$		& $[0,0,0, 0,0,0]$	& $[0,0,0, 0,0,0]$ 	 \\	
-			\midrule
-			\midrule
-			D5 -- LSAT, 			& mult. \algoFAIR $p_{\text{eq}}$ 	& $[4, 4, 1, 0]$	& $[220, 10, 0, 0]$ & $[4, 3, 0, 0]$  \\
-			k=300, 					& dice roll $p_{\text{eq}}$ 	& $[5, 5, 2, 0]$ & $[194, 81, 0, 0]$ 	& $[5, 5, 1, 0]$ \\
-			sex \& race (3 prot.)	& dice roll $p_{\text{eq}}$ mean 	& $[4.2, 4.2, 1.4, 0.3]$ & $[180.7, 69.8, 0, 0]$ 	& $[4.2, 4.2, 0.3, 0.02]$ \\
-									& dice roll $p_{\text{eq}}$ std	& $[0.4, 0.4, 0.5, 0.5]$ & $[10.5, 16.7, 0, 0]$ 	& $[0.4, 0.4, 0.5, 0.1]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{eq}}$	& $[1,0,0, 0]$		& $[157,0,0, 0]$		& $[1,0,0, 0]$  \\
-									\cline{2-5}
-								 	& mult. \algoFAIR $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ 	& $[136, 13, 0, 0]$ & $[2, 1, 0, 0]$  \\
-									& CFA$\theta$ 					& $[1, 1, 1, 0]$ 	& $[122, 26, 0, 0]$ & $[1, 0, 0, 0]$  \\
-									& dice roll $p_{\text{stat}}$ 	& $[2, 2, 1, 0]$ & $[75, 12, 0, 0]$ 	& $[2, 1, 0, 0]$ \\
-									& dice roll $p_{\text{stat}}$ mean	& $[2.0, 1.9, 0.8, 0.4]$ & $[64.2, 16.1, 0.3, 1.1]$ 	& $[2.0, 1.2, 0.5, 0.04]$ \\
-									& dice roll $p_{\text{stat}}$ std	& $[0.4, 0.5, 0.5, 0.5]$ & $[15.3, 11.0, 2.5, 5.7]$ 	& $[0.4, 0.6, 0.6, 0.2]$ \\
-								& binom. \algoFAIR $p = \sum p_{\text{stat}}$	& $[1,0,0, 0]$		& $[113,0,0, 0]$		& $[1,0,0, 0]$ 	 \\													
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
 %
 Nonetheless, we found a very important drawback in the results of CFA$\theta$ in experiment D2: \citet{zehlike2020matching} does not guarantee in-group monotonicity, which we observed in our experiments.
 %
@@ -511,6 +515,26 @@ Thus we recommend to use the binomial version of \algoFAIR if only one protected
 
 In summary, while the binomial version of \algoFAIR is computationally preferable, it cannot handle cases where discriminatory patterns manifest differently across protected groups, as we explained in the introduction. 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HAD TO MOVE FIGURE FROM EXPERIMENTS HERE, OTHERWISE HALF OF A PAGE IS BLANK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+	\vspace{-5mm}
+	\centering
+	\subfloat[Exposure loss for the non-protected group. \label{fig:experiments:compasAge:expGain:groupNP}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroupNP.png}}
+	\subfloat[Exposure gain/loss for group ``age 25 -- 45''. \label{fig:experiments:compasAge:expGain:group1}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup1.png}}\hfill
+	\subfloat[Exposure gain for group ``age < 25''. \label{fig:experiments:compasAge:expGain:group2}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-expGainGroup2.png}}
+	\subfloat[NDCG loss. \label{fig:experiments:compasAge:ndcgloss}]{\includegraphics[width=.49\textwidth]{pics/k=200-heatmap-ndcgLoss.png}}
+	\vspace{-3mm}
+	\caption{Normalized exposure gain/loss and NDCG loss w.r.t. the colorblind ranking in experiment D2 (COMPAS with age as protected category) for different values of $p_1$ and $p_2$ ($k=200, \alpha=0.1$).
+		%
+		$p_1$ relates to group ``age 25 -- 45'', $p_2$ relates to group ``age < 25''.
+		%
+		Blue fields in Fig.~\ref{fig:experiments:compasAge:expGain:groupNP} -- \ref{fig:experiments:compasAge:expGain:group2} indicate that this group lost exposure w.r.t. the colorblind ranking, red fields indicate exposure gain.
+	}
+	\label{fig:results-moving-p}
+\end{figure}
+%
 \spara{A wide range of possibilities to set $p_G$.}
 %
 An important advantage of \algoFAIR is, that it allows to create rankings for user-defined values of $p$ and in particular for values beyond statistical parity, something that cannot be done directly with CFA$\theta$ (\citet{zehlike2020matching} allows at maximum statistical parity in the result ranking when setting $\theta=1$, {\it i.e.}, to the maximum value).
